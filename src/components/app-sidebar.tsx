@@ -10,16 +10,17 @@ import {
   SidebarInput,
   SidebarSeparator,
 } from "@/components/ui/sidebar";
-import { earningOpportunities } from "@/lib/data";
+import { EarningCategory } from "@/lib/data";
 import { Button } from "./ui/button";
 import { Search, LogOut, ArrowDownAZ, ArrowUpAZ } from "lucide-react";
 
 interface AppSidebarProps {
+    categories: EarningCategory[];
     onSortClick: () => void;
     sortOrder: 'asc' | 'desc';
 }
 
-export function AppSidebar({ onSortClick, sortOrder }: AppSidebarProps) {
+export function AppSidebar({ categories, onSortClick, sortOrder }: AppSidebarProps) {
   return (
     <Sidebar>
       <SidebarHeader>
@@ -36,7 +37,7 @@ export function AppSidebar({ onSortClick, sortOrder }: AppSidebarProps) {
             </Button>
         </div>
         <SidebarMenu>
-          {earningOpportunities.map((category) => (
+          {categories.map((category) => (
             <SidebarMenuItem key={category.id}>
               <SidebarMenuButton asChild tooltip={category.name}>
                 <a href={`#${category.id}`}>
