@@ -57,7 +57,7 @@ export type EarningCategory = {
   opportunities: Opportunity[];
 };
 
-const createImage = (index: number) => `https://picsum.photos/600/4${index.toString().padStart(2, '0')}`
+const createImage = (index: number) => `https://picsum.photos/seed/${index}/600/400`;
 
 export const earningOpportunities: EarningCategory[] = [
     {
@@ -66,9 +66,9 @@ export const earningOpportunities: EarningCategory[] = [
         icon: Clock,
         description: "Opportunities you've recently viewed.",
         opportunities: [
-          { title: 'Recent Item 1', description: 'Previously viewed opportunity', link: '#', image: createImage(0), aiHint: 'history clock' },
-          { title: 'Recent Item 2', description: 'Previously viewed opportunity', link: '#', image: createImage(1), aiHint: 'history clock' },
-          { title: 'Recent Item 3', description: 'Previously viewed opportunity', link: '#', image: createImage(2), aiHint: 'history clock' },
+          { title: 'Upwork', description: 'Freelance platform for various jobs', link: 'https://www.upwork.com/', image: createImage(7), aiHint: 'data spreadsheet' },
+          { title: 'Rev', description: 'Transcription and captioning services', link: 'https://www.rev.com/', image: createImage(13), aiHint: 'audio transcription' },
+          { title: 'Swagbucks', description: 'Rewards and survey site', link: 'https://www.swagbucks.com/', image: createImage(24), aiHint: 'survey form' },
         ],
     },
     {
