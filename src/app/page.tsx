@@ -40,6 +40,22 @@ export default function Home() {
       }
     });
   }, []);
+
+  const handleMarkAsVisited = useCallback((opportunityId: string) => {
+    setEarningOpportunities(prev => {
+      return prev.map(category => {
+        return {
+          ...category,
+          opportunities: category.opportunities.map(op => {
+            if (op.id === opportunityId) {
+              return { ...op, visited: true };
+            }
+            return op;
+          })
+        };
+      });
+    });
+  }, []);
   
   const filteredOpportunities = useMemo(() => {
     let opportunities = [...earningOpportunities];
@@ -68,7 +84,7 @@ export default function Home() {
       if (sortOrder === 'asc') {
         return a.name.localeCompare(b.name);
       } else {
-        return b.name.localeCompare(b.name);
+        return b.name.localeCompare(a.name);
       }
     });
   }, [earningOpportunities, sortOrder, categorySearchQuery, opportunitySearchQuery]);
@@ -99,11 +115,11 @@ export default function Home() {
               </div>
               {viewMode === 'grid' ? (
                 filteredOpportunities.map((category) => (
-                  <CategoryCarousel key={category.id} category={category} />
+                  <CategoryCarousel key={category.id} category={category} onOpportunityClick={handleMarkAsVisited} />
                 ))
               ) : (
                  filteredOpportunities.map((category) => (
-                  <CategoryList key={category.id} category={category} />
+                  <CategoryList key={category.id} category={category} onOpportunityClick={handleMarkAsVisited} />
                 ))
               )}
             </main>

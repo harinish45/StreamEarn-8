@@ -43,11 +43,13 @@ import {
 } from 'lucide-react';
 
 export type Opportunity = {
+  id: string;
   title: string;
   description: string;
   link: string;
   image: string;
   aiHint: string;
+  visited?: boolean;
 };
 
 export type EarningCategory = {
@@ -68,9 +70,9 @@ export const earningOpportunities: EarningCategory[] = [
         icon: Clock,
         description: "Opportunities you've recently viewed.",
         opportunities: [
-          { title: 'Upwork', description: 'Freelance platform for various jobs', link: 'https://www.upwork.com/', image: createImage(7), aiHint: 'data spreadsheet' },
-          { title: 'Rev', description: 'Transcription and captioning services', link: 'https://www.rev.com/', image: createImage(13), aiHint: 'audio transcription' },
-          { title: 'Swagbucks', description: 'Rewards and survey site', link: 'https://www.swagbucks.com/', image: createImage(24), aiHint: 'survey form' },
+          { id: 'rw-1', title: 'Upwork', description: 'Freelance platform for various jobs', link: 'https://www.upwork.com/', image: createImage(7), aiHint: 'data spreadsheet' },
+          { id: 'rw-2', title: 'Rev', description: 'Transcription and captioning services', link: 'https://www.rev.com/', image: createImage(13), aiHint: 'audio transcription' },
+          { id: 'rw-3', title: 'Swagbucks', description: 'Rewards and survey site', link: 'https://www.swagbucks.com/', image: createImage(24), aiHint: 'survey form' },
         ],
     },
     {
@@ -79,10 +81,10 @@ export const earningOpportunities: EarningCategory[] = [
         icon: MousePointerClick,
         description: "Earn by solving captchas.",
         opportunities: [
-            { title: '2Captcha', description: 'Captcha solving service', link: 'https://2captcha.com/', image: createImage(3), aiHint: 'captcha security' },
-            { title: 'Megatypers', description: 'Captcha solving service', link: 'https://www.megatypers.com/', image: createImage(4), aiHint: 'captcha security' },
-            { title: 'Kolotibablo', description: 'Captcha solving service', link: 'https://kolotibablo.com/', image: createImage(5), aiHint: 'captcha security' },
-            { title: 'ProTypers', description: 'Captcha solving service', link: 'https://www.protypers.com/', image: createImage(6), aiHint: 'captcha security' },
+            { id: 'ce-1', title: '2Captcha', description: 'Captcha solving service', link: 'https://2captcha.com/', image: createImage(3), aiHint: 'captcha security' },
+            { id: 'ce-2', title: 'Megatypers', description: 'Captcha solving service', link: 'https://www.megatypers.com/', image: createImage(4), aiHint: 'captcha security' },
+            { id: 'ce-3', title: 'Kolotibablo', description: 'Captcha solving service', link: 'https://kolotibablo.com/', image: createImage(5), aiHint: 'captcha security' },
+            { id: 'ce-4', title: 'ProTypers', description: 'Captcha solving service', link: 'https://www.protypers.com/', image: createImage(6), aiHint: 'captcha security' },
         ],
     },
     {
@@ -91,12 +93,12 @@ export const earningOpportunities: EarningCategory[] = [
         icon: Type,
         description: "Jobs involving entering data into systems.",
         opportunities: [
-            { title: 'Upwork', description: 'Freelance platform for various jobs', link: 'https://www.upwork.com/', image: createImage(7), aiHint: 'data spreadsheet' },
-            { title: 'Fiverr', description: 'Freelance platform for various jobs', link: 'https://www.fiverr.com/', image: createImage(8), aiHint: 'data spreadsheet' },
-            { title: 'Clickworker', description: 'Microtask and data processing platform', link: 'https://www.clickworker.com/', image: createImage(9), aiHint: 'data spreadsheet' },
-            { title: 'Amazon Mechanical Turk', description: 'Crowdsourcing marketplace', link: 'https://www.mturk.com/', image: createImage(10), aiHint: 'data spreadsheet' },
-            { title: 'Freelancer', description: 'Freelance platform for various jobs', link: 'https://www.freelancer.com/', image: createImage(11), aiHint: 'data spreadsheet' },
-            { title: 'Guru', description: 'Freelance platform for various jobs', link: 'https://www.guru.com/', image: createImage(12), aiHint: 'data spreadsheet' },
+            { id: 'de-1', title: 'Upwork', description: 'Freelance platform for various jobs', link: 'https://www.upwork.com/', image: createImage(7), aiHint: 'data spreadsheet' },
+            { id: 'de-2', title: 'Fiverr', description: 'Freelance platform for various jobs', link: 'https://www.fiverr.com/', image: createImage(8), aiHint: 'data spreadsheet' },
+            { id: 'de-3', title: 'Clickworker', description: 'Microtask and data processing platform', link: 'https://www.clickworker.com/', image: createImage(9), aiHint: 'data spreadsheet' },
+            { id: 'de-4', title: 'Amazon Mechanical Turk', description: 'Crowdsourcing marketplace', link: 'https://www.mturk.com/', image: createImage(10), aiHint: 'data spreadsheet' },
+            { id: 'de-5', title: 'Freelancer', description: 'Freelance platform for various jobs', link: 'https://www.freelancer.com/', image: createImage(11), aiHint: 'data spreadsheet' },
+            { id: 'de-6', title: 'Guru', description: 'Freelance platform for various jobs', link: 'https://www.guru.com/', image: createImage(12), aiHint: 'data spreadsheet' },
         ],
     },
     {
@@ -105,11 +107,11 @@ export const earningOpportunities: EarningCategory[] = [
         icon: Headphones,
         description: "Convert audio to text.",
         opportunities: [
-            { title: 'Rev', description: 'Transcription and captioning services', link: 'https://www.rev.com/', image: createImage(13), aiHint: 'audio transcription' },
-            { title: 'TranscribeMe', description: 'Transcription services', link: 'https://www.transcribeme.com/', image: createImage(14), aiHint: 'audio transcription' },
-            { title: 'Scribie', description: 'Transcription services', link: 'https://scribie.com/', image: createImage(15), aiHint: 'audio transcription' },
-            { title: 'GoTranscript', description: 'Transcription services', link: 'https://gotranscript.com/', image: createImage(16), aiHint: 'audio transcription' },
-            { title: 'Tigerfish', description: 'Transcription services', link: 'https://tigerfish.com/', image: createImage(17), aiHint: 'audio transcription' },
+            { id: 't-1', title: 'Rev', description: 'Transcription and captioning services', link: 'https://www.rev.com/', image: createImage(13), aiHint: 'audio transcription' },
+            { id: 't-2', title: 'TranscribeMe', description: 'Transcription services', link: 'https://www.transcribeme.com/', image: createImage(14), aiHint: 'audio transcription' },
+            { id: 't-3', title: 'Scribie', description: 'Transcription services', link: 'https://scribie.com/', image: createImage(15), aiHint: 'audio transcription' },
+            { id: 't-4', title: 'GoTranscript', description: 'Transcription services', link: 'https://gotranscript.com/', image: createImage(16), aiHint: 'audio transcription' },
+            { id: 't-5', title: 'Tigerfish', description: 'Transcription services', link: 'https://tigerfish.com/', image: createImage(17), aiHint: 'audio transcription' },
         ],
     },
     {
@@ -118,8 +120,8 @@ export const earningOpportunities: EarningCategory[] = [
         icon: ClipboardList,
         description: "Complete small, simple online tasks.",
         opportunities: [
-            { title: 'Clickworker', description: 'Microtask platform', link: 'https://www.clickworker.com/', image: createImage(18), aiHint: 'task list' },
-            { title: 'MicroWorkers', description: 'Micro job platform', link: 'https://www.microworkers.com/', image: createImage(19), aiHint: 'task list' },
+            { id: 'm-1', title: 'Clickworker', description: 'Microtask platform', link: 'https://www.clickworker.com/', image: createImage(18), aiHint: 'task list' },
+            { id: 'm-2', title: 'MicroWorkers', description: 'Micro job platform', link: 'https://www.microworkers.com/', image: createImage(19), aiHint: 'task list' },
         ],
     },
     {
@@ -128,10 +130,10 @@ export const earningOpportunities: EarningCategory[] = [
         icon: UserCheck,
         description: "Provide remote administrative support.",
         opportunities: [
-            { title: 'Belay Solutions', description: 'Virtual assistant services', link: 'https://belaysolutions.com/', image: createImage(20), aiHint: 'virtual assistant' },
-            { title: 'Time ETC', description: 'Virtual assistant services', link: 'https://www.timeetc.com/', image: createImage(21), aiHint: 'virtual assistant' },
-            { title: 'Zirtual', description: 'Virtual assistant services', link: 'https://www.zirtual.com/', image: createImage(22), aiHint: 'virtual assistant' },
-            { title: 'Virtual Vocations', description: 'Remote job board', link: 'https://www.virtualvocations.com/', image: createImage(23), aiHint: 'virtual assistant' },
+            { id: 'va-1', title: 'Belay Solutions', description: 'Virtual assistant services', link: 'https://belaysolutions.com/', image: createImage(20), aiHint: 'virtual assistant' },
+            { id: 'va-2', title: 'Time ETC', description: 'Virtual assistant services', link: 'https://www.timeetc.com/', image: createImage(21), aiHint: 'virtual assistant' },
+            { id: 'va-3', title: 'Zirtual', description: 'Virtual assistant services', link: 'https://www.zirtual.com/', image: createImage(22), aiHint: 'virtual assistant' },
+            { id: 'va-4', title: 'Virtual Vocations', description: 'Remote job board', link: 'https://www.virtualvocations.com/', image: createImage(23), aiHint: 'virtual assistant' },
         ],
     },
     {
@@ -140,12 +142,12 @@ export const earningOpportunities: EarningCategory[] = [
         icon: MessageSquare,
         description: "Share your opinion for rewards.",
         opportunities: [
-            { title: 'Swagbucks', description: 'Rewards and survey site', link: 'https://www.swagbucks.com/', image: createImage(24), aiHint: 'survey form' },
-            { title: 'Survey Junkie', description: 'Survey site', link: 'https://www.surveyjunkie.com/', image: createImage(25), aiHint: 'survey form' },
-            { title: 'Toluna', description: 'Survey and community site', link: 'https://www.toluna.com/', image: createImage(26), aiHint: 'survey form' },
-            { title: 'InboxDollars', description: 'Rewards site', link: 'https://www.inboxdollars.com/', image: createImage(27), aiHint: 'survey form' },
-            { title: 'YouGov', description: 'Market research and data company', link: 'https://yougov.com/', image: createImage(28), aiHint: 'survey form' },
-            { title: 'PineCone Research', description: 'Survey panel', link: 'https://www.pineconeresearch.com/', image: createImage(29), aiHint: 'survey form' },
+            { id: 'os-1', title: 'Swagbucks', description: 'Rewards and survey site', link: 'https://www.swagbucks.com/', image: createImage(24), aiHint: 'survey form' },
+            { id: 'os-2', title: 'Survey Junkie', description: 'Survey site', link: 'https://www.surveyjunkie.com/', image: createImage(25), aiHint: 'survey form' },
+            { id: 'os-3', title: 'Toluna', description: 'Survey and community site', link: 'https://www.toluna.com/', image: createImage(26), aiHint: 'survey form' },
+            { id: 'os-4', title: 'InboxDollars', description: 'Rewards site', link: 'https://www.inboxdollars.com/', image: createImage(27), aiHint: 'survey form' },
+            { id: 'os-5', title: 'YouGov', description: 'Market research and data company', link: 'https://yougov.com/', image: createImage(28), aiHint: 'survey form' },
+            { id: 'os-6', title: 'PineCone Research', description: 'Survey panel', link: 'https://www.pineconeresearch.com/', image: createImage(29), aiHint: 'survey form' },
         ],
     },
     {
@@ -154,10 +156,10 @@ export const earningOpportunities: EarningCategory[] = [
         icon: FlaskConical,
         description: "Test new products and give feedback.",
         opportunities: [
-            { title: 'UserTesting', description: 'Usability testing platform', link: 'https://www.usertesting.com/', image: createImage(30), aiHint: 'product testing' },
-            { title: 'Testbirds', description: 'Crowdtesting platform', link: 'https://www.testbirds.com/', image: createImage(31), aiHint: 'product testing' },
-            { title: 'Trymata', description: 'Usability testing platform', link: 'https://trymata.com/', image: createImage(32), aiHint: 'product testing' },
-            { title: 'Userlytics', description: 'User testing platform', link: 'https://www.userlytics.com/', image: createImage(33), aiHint: 'product testing' },
+            { id: 'pt-1', title: 'UserTesting', description: 'Usability testing platform', link: 'https://www.usertesting.com/', image: createImage(30), aiHint: 'product testing' },
+            { id: 'pt-2', title: 'Testbirds', description: 'Crowdtesting platform', link: 'https://www.testbirds.com/', image: createImage(31), aiHint: 'product testing' },
+            { id: 'pt-3', title: 'Trymata', description: 'Usability testing platform', link: 'https://trymata.com/', image: createImage(32), aiHint: 'product testing' },
+            { id: 'pt-4', title: 'Userlytics', description: 'User testing platform', link: 'https://www.userlytics.com/', image: createImage(33), aiHint: 'product testing' },
         ],
     },
     {
@@ -166,11 +168,11 @@ export const earningOpportunities: EarningCategory[] = [
         icon: PenTool,
         description: "Get paid to write reviews.",
         opportunities: [
-            { title: 'Amazon Vine', description: 'Amazon review program', link: 'https://www.amazon.com/vine', image: createImage(34), aiHint: 'writing review' },
-            { title: 'Influenster', description: 'Product discovery and review platform', link: 'https://www.influenster.com/', image: createImage(35), aiHint: 'writing review' },
-            { title: 'Bazaarvoice', description: 'User-generated content solutions', link: 'https://www.bazaarvoice.com/', image: createImage(36), aiHint: 'writing review' },
-            { title: 'ReviewStream', description: 'Get paid to write reviews', link: 'https://www.reviewstream.com/', image: createImage(37), aiHint: 'writing review' },
-            { title: 'Capterra', description: 'Software review site', link: 'https://www.capterra.com/', image: createImage(38), aiHint: 'writing review' },
+            { id: 'wpr-1', title: 'Amazon Vine', description: 'Amazon review program', link: 'https://www.amazon.com/vine', image: createImage(34), aiHint: 'writing review' },
+            { id: 'wpr-2', title: 'Influenster', description: 'Product discovery and review platform', link: 'https://www.influenster.com/', image: createImage(35), aiHint: 'writing review' },
+            { id: 'wpr-3', title: 'Bazaarvoice', description: 'User-generated content solutions', link: 'https://www.bazaarvoice.com/', image: createImage(36), aiHint: 'writing review' },
+            { id: 'wpr-4', title: 'ReviewStream', description: 'Get paid to write reviews', link: 'https://www.reviewstream.com/', image: createImage(37), aiHint: 'writing review' },
+            { id: 'wpr-5', title: 'Capterra', description: 'Software review site', link: 'https://www.capterra.com/', image: createImage(38), aiHint: 'writing review' },
         ],
     },
     {
@@ -179,10 +181,10 @@ export const earningOpportunities: EarningCategory[] = [
         icon: Laptop,
         description: "Test mobile and web apps.",
         opportunities: [
-            { title: 'uTest', description: 'Software testing platform', link: 'https://www.utest.com/', image: createImage(39), aiHint: 'app testing' },
-            { title: 'Trymata', description: 'Usability testing platform', link: 'https://trymata.com/', image: createImage(40), aiHint: 'app testing' },
-            { title: 'Applause', description: 'Digital quality testing', link: 'https://www.applause.com/', image: createImage(41), aiHint: 'app testing' },
-            { title: 'BetaTesting', description: 'Beta testing platform', link: 'https://www.betatesting.com/', image: createImage(42), aiHint: 'app testing' },
+            { id: 'at-1', title: 'uTest', description: 'Software testing platform', link: 'https://www.utest.com/', image: createImage(39), aiHint: 'app testing' },
+            { id: 'at-2', title: 'Trymata', description: 'Usability testing platform', link: 'https://trymata.com/', image: createImage(40), aiHint: 'app testing' },
+            { id: 'at-3', title: 'Applause', description: 'Digital quality testing', link: 'https://www.applause.com/', image: createImage(41), aiHint: 'app testing' },
+            { id: 'at-4', title: 'BetaTesting', description: 'Beta testing platform', link: 'https://www.betatesting.com/', image: createImage(42), aiHint: 'app testing' },
         ],
     },
     {
@@ -191,9 +193,9 @@ export const earningOpportunities: EarningCategory[] = [
         icon: Users,
         description: "Test websites and apps for user-friendliness.",
         opportunities: [
-            { title: 'Userfeel', description: 'Usability testing platform', link: 'https://www.userfeel.com/', image: createImage(43), aiHint: 'user feedback' },
-            { title: 'Lyssna', description: 'Usability testing platform', link: 'https://lyssna.com/', image: createImage(44), aiHint: 'user feedback' },
-            { title: 'TestingTime', description: 'Test user recruiting', link: 'https://www.testingtime.com/', image: createImage(45), aiHint: 'user feedback' },
+            { id: 'ut-1', title: 'Userfeel', description: 'Usability testing platform', link: 'https://www.userfeel.com/', image: createImage(43), aiHint: 'user feedback' },
+            { id: 'ut-2', title: 'Lyssna', description: 'Usability testing platform', link: 'https://lyssna.com/', image: createImage(44), aiHint: 'user feedback' },
+            { id: 'ut-3', title: 'TestingTime', description: 'Test user recruiting', link: 'https://www.testingtime.com/', image: createImage(45), aiHint: 'user feedback' },
         ],
     },
     {
@@ -202,9 +204,9 @@ export const earningOpportunities: EarningCategory[] = [
         icon: FileText,
         description: "Write articles, blog posts, and more.",
         opportunities: [
-            { title: 'iWriter', description: 'Content writing service', link: 'https://www.iwriter.com/', image: createImage(46), aiHint: 'content writing' },
-            { title: 'Textbroker', description: 'Content writing service', link: 'https://www.textbroker.com/', image: createImage(47), aiHint: 'content writing' },
-            { title: 'ProBlogger Job Board', description: 'Job board for bloggers', link: 'https://problogger.com/jobs/', image: createImage(48), aiHint: 'content writing' },
+            { id: 'cw-1', title: 'iWriter', description: 'Content writing service', link: 'https://www.iwriter.com/', image: createImage(46), aiHint: 'content writing' },
+            { id: 'cw-2', title: 'Textbroker', description: 'Content writing service', link: 'https://www.textbroker.com/', image: createImage(47), aiHint: 'content writing' },
+            { id: 'cw-3', title: 'ProBlogger Job Board', description: 'Job board for bloggers', link: 'https://problogger.com/jobs/', image: createImage(48), aiHint: 'content writing' },
         ],
     },
     {
@@ -213,8 +215,8 @@ export const earningOpportunities: EarningCategory[] = [
         icon: BookOpen,
         description: "Write compelling marketing copy.",
         opportunities: [
-            { title: 'ProBlogger Job Board', description: 'Job board for bloggers', link: 'https://problogger.com/jobs/', image: createImage(49), aiHint: 'copywriting book' },
-            { title: 'PeoplePerHour', description: 'Freelance marketplace', link: 'https://www.peopleperhour.com/', image: createImage(50), aiHint: 'copywriting book' },
+            { id: 'c-1', title: 'ProBlogger Job Board', description: 'Job board for bloggers', link: 'https://problogger.com/jobs/', image: createImage(49), aiHint: 'copywriting book' },
+            { id: 'c-2', title: 'PeoplePerHour', description: 'Freelance marketplace', link: 'https://www.peopleperhour.com/', image: createImage(50), aiHint: 'copywriting book' },
         ],
     },
     {
@@ -223,8 +225,8 @@ export const earningOpportunities: EarningCategory[] = [
         icon: GraduationCap,
         description: "Correct grammar and style in texts.",
         opportunities: [
-            { title: 'Scribendi', description: 'Editing and proofreading services', link: 'https://www.scribendi.com/', image: createImage(51), aiHint: 'editing document' },
-            { title: 'ProofreadingServices.com', description: 'Proofreading services', link: 'https://www.proofreadingservices.com/', image: createImage(52), aiHint: 'editing document' },
+            { id: 'pe-1', title: 'Scribendi', description: 'Editing and proofreading services', link: 'https://www.scribendi.com/', image: createImage(51), aiHint: 'editing document' },
+            { id: 'pe-2', title: 'ProofreadingServices.com', description: 'Proofreading services', link: 'https://www.proofreadingservices.com/', image: createImage(52), aiHint: 'editing document' },
         ],
     },
     {
@@ -233,21 +235,21 @@ export const earningOpportunities: EarningCategory[] = [
         icon: BriefcaseBusiness,
         description: "Help people create professional resumes.",
         opportunities: [
-            { title: 'LinkedIn Services Marketplace', description: 'Find professionals on LinkedIn', link: 'https://www.linkedin.com/services/', image: createImage(53), aiHint: 'resume document' },
-            { title: 'TopResume', description: 'Resume writing service', link: 'https://www.topresume.com/', image: createImage(54), aiHint: 'resume document' },
-            { title: 'Monster', description: 'Job board and resume services', link: 'https://www.monster.com/', image: createImage(55), aiHint: 'resume document' },
+            { id: 'rw-4', title: 'LinkedIn Services Marketplace', description: 'Find professionals on LinkedIn', link: 'https://www.linkedin.com/services/', image: createImage(53), aiHint: 'resume document' },
+            { id: 'rw-5', title: 'TopResume', description: 'Resume writing service', link: 'https://www.topresume.com/', image: createImage(54), aiHint: 'resume document' },
+            { id: 'rw-6', title: 'Monster', description: 'Job board and resume services', link: 'https://www.monster.com/', image: createImage(55), aiHint: 'resume document' },
         ],
     },
     {
-        id: 'translation',
-        name: 'Translation',
+        id: 'translation-jobs',
+        name: 'Translation Jobs',
         icon: Languages,
         description: "Translate documents and audio.",
         opportunities: [
-            { title: 'Gengo', description: 'Translation platform', link: 'https://gengo.com/', image: createImage(56), aiHint: 'language translation' },
-            { title: 'Unbabel', description: 'AI-powered translation', link: 'https://unbabel.com/', image: createImage(57), aiHint: 'language translation' },
-            { title: 'ProZ.com', description: 'Directory of translation services', link: 'https://www.proz.com/', image: createImage(58), aiHint: 'language translation' },
-            { title: 'TranslatorsCafé', description: 'Translation community', link: 'https://www.translatorscafe.com/', image: createImage(59), aiHint: 'language translation' },
+            { id: 'tj-1', title: 'Gengo', description: 'Translation platform', link: 'https://gengo.com/', image: createImage(56), aiHint: 'language translation' },
+            { id: 'tj-2', title: 'Unbabel', description: 'AI-powered translation', link: 'https://unbabel.com/', image: createImage(57), aiHint: 'language translation' },
+            { id: 'tj-3', title: 'ProZ.com', description: 'Directory of translation services', link: 'https://www.proz.com/', image: createImage(58), aiHint: 'language translation' },
+            { id: 'tj-4', title: 'TranslatorsCafé', description: 'Translation community', link: 'https://www.translatorscafe.com/', image: createImage(59), aiHint: 'language translation' },
         ],
     },
     {
@@ -256,12 +258,12 @@ export const earningOpportunities: EarningCategory[] = [
         icon: School,
         description: "Tutor students in various subjects.",
         opportunities: [
-            { title: 'Chegg Tutors', description: 'Online tutoring', link: 'https://www.chegg.com/tutors/', image: createImage(60), aiHint: 'online tutoring' },
-            { title: 'Tutor.com', description: 'Online tutoring', link: 'https://www.tutor.com/', image: createImage(61), aiHint: 'online tutoring' },
-            { title: 'Wyzant', description: 'Tutoring marketplace', link: 'https://www.wyzant.com/', image: createImage(62), aiHint: 'online tutoring' },
-            { title: 'Preply', description: 'Language tutoring platform', link: 'https://preply.com/', image: createImage(63), aiHint: 'online tutoring' },
-            { title: 'Varsity Tutors', description: 'Online tutoring and test prep', link: 'https://www.varsitytutors.com/', image: createImage(64), aiHint: 'online tutoring' },
-            { title: 'iTalki', description: 'Language learning platform', link: 'https://www.italki.com/', image: createImage(65), aiHint: 'online tutoring' },
+            { id: 'ot-1', title: 'Chegg Tutors', description: 'Online tutoring', link: 'https://www.chegg.com/tutors/', image: createImage(60), aiHint: 'online tutoring' },
+            { id: 'ot-2', title: 'Tutor.com', description: 'Online tutoring', link: 'https://www.tutor.com/', image: createImage(61), aiHint: 'online tutoring' },
+            { id: 'ot-3', title: 'Wyzant', description: 'Tutoring marketplace', link: 'https://www.wyzant.com/', image: createImage(62), aiHint: 'online tutoring' },
+            { id: 'ot-4', title: 'Preply', description: 'Language tutoring platform', link: 'https://preply.com/', image: createImage(63), aiHint: 'online tutoring' },
+            { id: 'ot-5', title: 'Varsity Tutors', description: 'Online tutoring and test prep', link: 'https://www.varsitytutors.com/', image: createImage(64), aiHint: 'online tutoring' },
+            { id: 'ot-6', title: 'iTalki', description: 'Language learning platform', link: 'https://www.italki.com/', image: createImage(65), aiHint: 'online tutoring' },
         ],
     },
     {
@@ -270,10 +272,10 @@ export const earningOpportunities: EarningCategory[] = [
         icon: Home,
         description: "Assist students with their homework.",
         opportunities: [
-            { title: 'Course Hero', description: 'Online learning platform', link: 'https://www.coursehero.com/', image: createImage(66), aiHint: 'student homework' },
-            { title: 'StudyPool', description: 'Online tutoring and homework help', link: 'https://www.studypool.com/', image: createImage(67), aiHint: 'student homework' },
-            { title: 'Chegg Study', description: 'Homework help and textbook solutions', link: 'https://www.chegg.com/study', image: createImage(68), aiHint: 'student homework' },
-            { title: 'Brainfuse', description: 'Online tutoring and academic help', link: 'https://www.brainfuse.com/', image: createImage(69), aiHint: 'student homework' },
+            { id: 'hh-1', title: 'Course Hero', description: 'Online learning platform', link: 'https://www.coursehero.com/', image: createImage(66), aiHint: 'student homework' },
+            { id: 'hh-2', title: 'StudyPool', description: 'Online tutoring and homework help', link: 'https://www.studypool.com/', image: createImage(67), aiHint: 'student homework' },
+            { id: 'hh-3', title: 'Chegg Study', description: 'Homework help and textbook solutions', link: 'https://www.chegg.com/study', image: createImage(68), aiHint: 'student homework' },
+            { id: 'hh-4', title: 'Brainfuse', description: 'Online tutoring and academic help', link: 'https://www.brainfuse.com/', image: createImage(69), aiHint: 'student homework' },
         ],
     },
     {
@@ -282,9 +284,9 @@ export const earningOpportunities: EarningCategory[] = [
         icon: Palette,
         description: "Design user interfaces and experiences.",
         opportunities: [
-            { title: 'Dribbble', description: 'Design portfolio platform', link: 'https://dribbble.com/', image: createImage(70), aiHint: 'design prototype' },
-            { title: 'Behance', description: 'Design portfolio platform', link: 'https://www.behance.net/', image: createImage(71), aiHint: 'design prototype' },
-            { title: 'Toptal', description: 'Freelance talent network', link: 'https://www.toptal.com/', image: createImage(72), aiHint: 'design prototype' },
+            { id: 'ui-1', title: 'Dribbble', description: 'Design portfolio platform', link: 'https://dribbble.com/', image: createImage(70), aiHint: 'design prototype' },
+            { id: 'ui-2', title: 'Behance', description: 'Design portfolio platform', link: 'https://www.behance.net/', image: createImage(71), aiHint: 'design prototype' },
+            { id: 'ui-3', title: 'Toptal', description: 'Freelance talent network', link: 'https://www.toptal.com/', image: createImage(72), aiHint: 'design prototype' },
         ],
     },
     {
@@ -293,11 +295,11 @@ export const earningOpportunities: EarningCategory[] = [
         icon: Bug,
         description: "Find and report software bugs.",
         opportunities: [
-            { title: 'HackerOne', description: 'Bug bounty platform', link: 'https://www.hackerone.com/', image: createImage(73), aiHint: 'hacker code' },
-            { title: 'Bugcrowd', description: 'Bug bounty platform', link: 'https://www.bugcrowd.com/', image: createImage(74), aiHint: 'hacker code' },
-            { title: 'Synack', description: 'Crowdsourced security testing', link: 'https://www.synack.com/', image: createImage(75), aiHint: 'hacker code' },
-            { title: 'Open Bug Bounty', description: 'Open bug bounty platform', link: 'https://www.openbugbounty.org/', image: createImage(76), aiHint: 'hacker code' },
-            { title: 'Cobalt', description: 'Pentesting as a Service', link: 'https://cobalt.io/', image: createImage(77), aiHint: 'hacker code' },
+            { id: 'bb-1', title: 'HackerOne', description: 'Bug bounty platform', link: 'https://www.hackerone.com/', image: createImage(73), aiHint: 'hacker code' },
+            { id: 'bb-2', title: 'Bugcrowd', description: 'Bug bounty platform', link: 'https://www.bugcrowd.com/', image: createImage(74), aiHint: 'hacker code' },
+            { id: 'bb-3', title: 'Synack', description: 'Crowdsourced security testing', link: 'https://www.synack.com/', image: createImage(75), aiHint: 'hacker code' },
+            { id: 'bb-4', title: 'Open Bug Bounty', description: 'Open bug bounty platform', link: 'https://www.openbugbounty.org/', image: createImage(76), aiHint: 'hacker code' },
+            { id: 'bb-5', title: 'Cobalt', description: 'Pentesting as a Service', link: 'https://cobalt.io/', image: createImage(77), aiHint: 'hacker code' },
         ],
     },
     {
@@ -306,8 +308,8 @@ export const earningOpportunities: EarningCategory[] = [
         icon: Share2,
         description: "Manage social media accounts for businesses.",
         opportunities: [
-            { title: 'Simply Hired', description: 'Job search engine', link: 'https://www.simplyhired.com/', image: createImage(78), aiHint: 'social media' },
-            { title: 'Remote.co', description: 'Remote job board', link: 'https://remote.co/', image: createImage(79), aiHint: 'social media' },
+            { id: 'sm-1', title: 'Simply Hired', description: 'Job search engine', link: 'https://www.simplyhired.com/', image: createImage(78), aiHint: 'social media' },
+            { id: 'sm-2', title: 'Remote.co', description: 'Remote job board', link: 'https://remote.co/', image: createImage(79), aiHint: 'social media' },
         ],
     },
     {
@@ -316,12 +318,12 @@ export const earningOpportunities: EarningCategory[] = [
         icon: Tag,
         description: "Promote products and earn commissions.",
         opportunities: [
-            { title: 'Amazon Associates', description: 'Amazon affiliate program', link: 'https://affiliate-program.amazon.com/', image: createImage(80), aiHint: 'affiliate chart' },
-            { title: 'ShareASale', description: 'Affiliate marketing network', link: 'https://www.shareasale.com/', image: createImage(81), aiHint: 'affiliate chart' },
-            { title: 'CJ Affiliate', description: 'Affiliate marketing network', link: 'https://www.cj.com/', image: createImage(82), aiHint: 'affiliate chart' },
-            { title: 'Rakuten Advertising', description: 'Affiliate marketing network', link: 'https://rakutenadvertising.com/', image: createImage(83), aiHint: 'affiliate chart' },
-            { title: 'ClickBank', description: 'Affiliate marketplace', link: 'https://www.clickbank.com/', image: createImage(84), aiHint: 'affiliate chart' },
-            { title: 'Impact', description: 'Partnership automation platform', link: 'https://impact.com/', image: createImage(85), aiHint: 'affiliate chart' },
+            { id: 'am-1', title: 'Amazon Associates', description: 'Amazon affiliate program', link: 'https://affiliate-program.amazon.com/', image: createImage(80), aiHint: 'affiliate chart' },
+            { id: 'am-2', title: 'ShareASale', description: 'Affiliate marketing network', link: 'https://www.shareasale.com/', image: createImage(81), aiHint: 'affiliate chart' },
+            { id: 'am-3', title: 'CJ Affiliate', description: 'Affiliate marketing network', link: 'https://www.cj.com/', image: createImage(82), aiHint: 'affiliate chart' },
+            { id: 'am-4', title: 'Rakuten Advertising', description: 'Affiliate marketing network', link: 'https://rakutenadvertising.com/', image: createImage(83), aiHint: 'affiliate chart' },
+            { id: 'am-5', title: 'ClickBank', description: 'Affiliate marketplace', link: 'https://www.clickbank.com/', image: createImage(84), aiHint: 'affiliate chart' },
+            { id: 'am-6', title: 'Impact', description: 'Partnership automation platform', link: 'https://impact.com/', image: createImage(85), aiHint: 'affiliate chart' },
         ],
     },
     {
@@ -330,10 +332,10 @@ export const earningOpportunities: EarningCategory[] = [
         icon: Youtube,
         description: "Create and monetize YouTube videos.",
         opportunities: [
-            { title: 'YouTube Partner Program', description: 'Monetize YouTube content', link: 'https://www.youtube.com/creators/how-things-work/getting-paid/', image: createImage(86), aiHint: 'youtube creator' },
-            { title: 'Patreon', description: 'Membership platform for creators', link: 'https://www.patreon.com/', image: createImage(87), aiHint: 'youtube creator' },
-            { title: 'YouTube BrandConnect', description: 'Branded content platform', link: 'https://www.youtube.com/brandconnect/', image: createImage(88), aiHint: 'youtube creator' },
-            { title: 'IZEA', description: 'Influencer marketing platform', link: 'https://izea.com/', image: createImage(89), aiHint: 'youtube creator' },
+            { id: 'yt-1', title: 'YouTube Partner Program', description: 'Monetize YouTube content', link: 'https://www.youtube.com/creators/how-things-work/getting-paid/', image: createImage(86), aiHint: 'youtube creator' },
+            { id: 'yt-2', title: 'Patreon', description: 'Membership platform for creators', link: 'https://www.patreon.com/', image: createImage(87), aiHint: 'youtube creator' },
+            { id: 'yt-3', title: 'YouTube BrandConnect', description: 'Branded content platform', link: 'https://www.youtube.com/brandconnect/', image: createImage(88), aiHint: 'youtube creator' },
+            { id: 'yt-4', title: 'IZEA', description: 'Influencer marketing platform', link: 'https://izea.com/', image: createImage(89), aiHint: 'youtube creator' },
         ],
     },
     {
@@ -342,11 +344,11 @@ export const earningOpportunities: EarningCategory[] = [
         icon: Instagram,
         description: "Market products and services on Instagram.",
         opportunities: [
-            { title: 'Aspire', description: 'Influencer marketing platform', link: 'https://www.aspire.io/', image: createImage(90), aiHint: 'instagram phone' },
-            { title: 'TRIBE', description: 'Influencer marketing platform', link: 'https://www.tribegroup.co/', image: createImage(91), aiHint: 'instagram phone' },
-            { title: 'Upfluence', description: 'Influencer marketing platform', link: 'https://www.upfluence.com/', image: createImage(92), aiHint: 'instagram phone' },
-            { title: 'Influencity', description: 'Influencer marketing platform', link: 'https://influencity.com/', image: createImage(93), aiHint: 'instagram phone' },
-            { title: 'Fohr', description: 'Influencer marketing platform', link: 'https://www.fohr.co/', image: createImage(94), aiHint: 'instagram phone' },
+            { id: 'im-1', title: 'Aspire', description: 'Influencer marketing platform', link: 'https://www.aspire.io/', image: createImage(90), aiHint: 'instagram phone' },
+            { id: 'im-2', title: 'TRIBE', description: 'Influencer marketing platform', link: 'https://www.tribegroup.co/', image: createImage(91), aiHint: 'instagram phone' },
+            { id: 'im-3', title: 'Upfluence', description: 'Influencer marketing platform', link: 'https://www.upfluence.com/', image: createImage(92), aiHint: 'instagram phone' },
+            { id: 'im-4', title: 'Influencity', description: 'Influencer marketing platform', link: 'https://influencity.com/', image: createImage(93), aiHint: 'instagram phone' },
+            { id: 'im-5', title: 'Fohr', description: 'Influencer marketing platform', link: 'https://www.fohr.co/', image: createImage(94), aiHint: 'instagram phone' },
         ],
     },
     {
@@ -355,8 +357,8 @@ export const earningOpportunities: EarningCategory[] = [
         icon: BrainCircuit,
         description: "Craft and sell prompts for AI models.",
         opportunities: [
-            { title: 'PromptBase', description: 'Marketplace for AI prompts', link: 'https://promptbase.com/', image: createImage(95), aiHint: 'ai brain' },
-            { title: 'PromptHero', description: 'Marketplace for AI prompts', link: 'https://prompthero.com/', image: createImage(96), aiHint: 'ai brain' },
+            { id: 'aip-1', title: 'PromptBase', description: 'Marketplace for AI prompts', link: 'https://promptbase.com/', image: createImage(95), aiHint: 'ai brain' },
+            { id: 'aip-2', title: 'PromptHero', description: 'Marketplace for AI prompts', link: 'https://prompthero.com/', image: createImage(96), aiHint: 'ai brain' },
         ],
     },
     {
@@ -365,12 +367,12 @@ export const earningOpportunities: EarningCategory[] = [
         icon: Paintbrush,
         description: "Create and sell art made with AI.",
         opportunities: [
-            { title: 'Etsy', description: 'Marketplace for handmade and vintage goods', link: 'https://www.etsy.com/', image: createImage(97), aiHint: 'ai art' },
-            { title: 'Redbubble', description: 'Print-on-demand marketplace', link: 'https://www.redbubble.com/', image: createImage(98), aiHint: 'ai art' },
-            { title: 'Society6', description: 'Print-on-demand marketplace', link: 'https://society6.com/', image: createImage(99), aiHint: 'ai art' },
-            { title: 'Fine Art America', description: 'Art marketplace', link: 'https://fineartamerica.com/', image: createImage(100), aiHint: 'ai art' },
-            { title: 'ArtPal', description: 'Art marketplace', link: 'https://www.artpal.com/', image: createImage(101), aiHint: 'ai art' },
-            { title: 'Zazzle', description: 'Print-on-demand marketplace', link: 'https://www.zazzle.com/', image: createImage(102), aiHint: 'ai art' },
+            { id: 'aia-1', title: 'Etsy', description: 'Marketplace for handmade and vintage goods', link: 'https://www.etsy.com/', image: createImage(97), aiHint: 'ai art' },
+            { id: 'aia-2', title: 'Redbubble', description: 'Print-on-demand marketplace', link: 'https://www.redbubble.com/', image: createImage(98), aiHint: 'ai art' },
+            { id: 'aia-3', title: 'Society6', description: 'Print-on-demand marketplace', link: 'https://society6.com/', image: createImage(99), aiHint: 'ai art' },
+            { id: 'aia-4', title: 'Fine Art America', description: 'Art marketplace', link: 'https://fineartamerica.com/', image: createImage(100), aiHint: 'ai art' },
+            { id: 'aia-5', title: 'ArtPal', description: 'Art marketplace', link: 'https://www.artpal.com/', image: createImage(101), aiHint: 'ai art' },
+            { id: 'aia-6', title: 'Zazzle', description: 'Print-on-demand marketplace', link: 'https://www.zazzle.com/', image: createImage(102), aiHint: 'ai art' },
         ],
     },
     {
@@ -379,11 +381,11 @@ export const earningOpportunities: EarningCategory[] = [
         icon: Mic,
         description: "Use AI for voiceover projects.",
         opportunities: [
-            { title: 'Descript', description: 'AI-powered audio/video editor', link: 'https://www.descript.com/', image: createImage(103), aiHint: 'voiceover microphone' },
-            { title: 'Play.ht', description: 'AI text-to-speech generator', link: 'https://play.ht/', image: createImage(104), aiHint: 'voiceover microphone' },
-            { title: 'Murf.ai', description: 'AI voice generator', link: 'https://murf.ai/', image: createImage(105), aiHint: 'voiceover microphone' },
-            { title: 'Bunny Studio', description: 'Creative services marketplace', link: 'https://bunnystudio.com/voice-overs/', image: createImage(106), aiHint: 'voiceover microphone' },
-            { title: 'Voices.com', description: 'Voiceover marketplace', link: 'https://www.voices.com/', image: createImage(107), aiHint: 'voiceover microphone' },
+            { id: 'aiv-1', title: 'Descript', description: 'AI-powered audio/video editor', link: 'https://www.descript.com/', image: createImage(103), aiHint: 'voiceover microphone' },
+            { id: 'aiv-2', title: 'Play.ht', description: 'AI text-to-speech generator', link: 'https://play.ht/', image: createImage(104), aiHint: 'voiceover microphone' },
+            { id: 'aiv-3', title: 'Murf.ai', description: 'AI voice generator', link: 'https://murf.ai/', image: createImage(105), aiHint: 'voiceover microphone' },
+            { id: 'aiv-4', title: 'Bunny Studio', description: 'Creative services marketplace', link: 'https://bunnystudio.com/voice-overs/', image: createImage(106), aiHint: 'voiceover microphone' },
+            { id: 'aiv-5', title: 'Voices.com', description: 'Voiceover marketplace', link: 'https://www.voices.com/', image: createImage(107), aiHint: 'voiceover microphone' },
         ],
     },
     {
@@ -392,11 +394,11 @@ export const earningOpportunities: EarningCategory[] = [
         icon: Book,
         description: "Write and sell ebooks with AI assistance.",
         opportunities: [
-            { title: 'Amazon KDP', description: 'Self-publishing platform', link: 'https://kdp.amazon.com/', image: createImage(108), aiHint: 'ebook library' },
-            { title: 'Smashwords', description: 'Ebook distribution platform', link: 'https://www.smashwords.com/', image: createImage(109), aiHint: 'ebook library' },
-            { title: 'Lulu', description: 'Self-publishing platform', link: 'https://www.lulu.com/', image: createImage(110), aiHint: 'ebook library' },
-            { title: 'Blurb', description: 'Self-publishing platform', link: 'https://www.blurb.com/', image: createImage(111), aiHint: 'ebook library' },
-            { title: 'Draft2Digital', description: 'Ebook distribution platform', link: 'https://www.draft2digital.com/', image: createImage(112), aiHint: 'ebook library' },
+            { id: 'aie-1', title: 'Amazon KDP', description: 'Self-publishing platform', link: 'https://kdp.amazon.com/', image: createImage(108), aiHint: 'ebook library' },
+            { id: 'aie-2', title: 'Smashwords', description: 'Ebook distribution platform', link: 'https://www.smashwords.com/', image: createImage(109), aiHint: 'ebook library' },
+            { id: 'aie-3', title: 'Lulu', description: 'Self-publishing platform', link: 'https://www.lulu.com/', image: createImage(110), aiHint: 'ebook library' },
+            { id: 'aie-4', title: 'Blurb', description: 'Self-publishing platform', link: 'https://www.blurb.com/', image: createImage(111), aiHint: 'ebook library' },
+            { id: 'aie-5', title: 'Draft2Digital', description: 'Ebook distribution platform', link: 'https://www.draft2digital.com/', image: createImage(112), aiHint: 'ebook library' },
         ],
     },
     {
@@ -405,12 +407,12 @@ export const earningOpportunities: EarningCategory[] = [
         icon: Bot,
         description: "Develop chatbots using AI.",
         opportunities: [
-            { title: 'OpenAI API', description: 'API for AI models', link: 'https://platform.openai.com/', image: createImage(113), aiHint: 'chatbot robot' },
-            { title: 'Botpress', description: 'Chatbot building platform', link: 'https://botpress.com/', image: createImage(114), aiHint: 'chatbot robot' },
-            { title: 'Google Dialogflow', description: 'Conversational AI platform', link: 'https://cloud.google.com/dialogflow', image: createImage(115), aiHint: 'chatbot robot' },
-            { title: 'Microsoft Bot Framework', description: 'Bot building framework', link: 'https://dev.botframework.com/', image: createImage(116), aiHint: 'chatbot robot' },
-            { title: 'IBM Watson Assistant', description: 'AI assistant platform', link: 'https://www.ibm.com/products/watson-assistant', image: createImage(117), aiHint: 'chatbot robot' },
-            { title: 'Rasa', description: 'Open source conversational AI', link: 'https://rasa.com/', image: createImage(118), aiHint: 'chatbot robot' },
+            { id: 'aicd-1', title: 'OpenAI API', description: 'API for AI models', link: 'https://platform.openai.com/', image: createImage(113), aiHint: 'chatbot robot' },
+            { id: 'aicd-2', title: 'Botpress', description: 'Chatbot building platform', link: 'https://botpress.com/', image: createImage(114), aiHint: 'chatbot robot' },
+            { id: 'aicd-3', title: 'Google Dialogflow', description: 'Conversational AI platform', link: 'https://cloud.google.com/dialogflow', image: createImage(115), aiHint: 'chatbot robot' },
+            { id: 'aicd-4', title: 'Microsoft Bot Framework', description: 'Bot building framework', link: 'https://dev.botframework.com/', image: createImage(116), aiHint: 'chatbot robot' },
+            { id: 'aicd-5', title: 'IBM Watson Assistant', description: 'AI assistant platform', link: 'https://www.ibm.com/products/watson-assistant', image: createImage(117), aiHint: 'chatbot robot' },
+            { id: 'aicd-6', title: 'Rasa', description: 'Open source conversational AI', link: 'https://rasa.com/', image: createImage(118), aiHint: 'chatbot robot' },
         ],
     },
     {
@@ -419,12 +421,12 @@ export const earningOpportunities: EarningCategory[] = [
         icon: CircleDollarSign,
         description: "Earn rewards by staking crypto.",
         opportunities: [
-            { title: 'Binance Earn', description: 'Crypto earning platform', link: 'https://www.binance.com/en/earn', image: createImage(119), aiHint: 'crypto coin' },
-            { title: 'Kraken', description: 'Crypto exchange and staking', link: 'https://www.kraken.com/', image: createImage(120), aiHint: 'crypto coin' },
-            { title: 'Coinbase', description: 'Crypto exchange and staking', link: 'https://www.coinbase.com/', image: createImage(121), aiHint: 'crypto coin' },
-            { title: 'Crypto.com', description: 'Crypto platform', link: 'https://crypto.com/', image: createImage(122), aiHint: 'crypto coin' },
-            { title: 'KuCoin', description: 'Crypto exchange', link: 'https://www.kucoin.com/', image: createImage(123), aiHint: 'crypto coin' },
-            { title: 'Bitfinex', description: 'Crypto exchange', link: 'https://www.bitfinex.com/', image: createImage(124), aiHint: 'crypto coin' },
+            { id: 'cs-1', title: 'Binance Earn', description: 'Crypto earning platform', link: 'https://www.binance.com/en/earn', image: createImage(119), aiHint: 'crypto coin' },
+            { id: 'cs-2', title: 'Kraken', description: 'Crypto exchange and staking', link: 'https://www.kraken.com/', image: createImage(120), aiHint: 'crypto coin' },
+            { id: 'cs-3', title: 'Coinbase', description: 'Crypto exchange and staking', link: 'https://www.coinbase.com/', image: createImage(121), aiHint: 'crypto coin' },
+            { id: 'cs-4', title: 'Crypto.com', description: 'Crypto platform', link: 'https://crypto.com/', image: createImage(122), aiHint: 'crypto coin' },
+            { id: 'cs-5', title: 'KuCoin', description: 'Crypto exchange', link: 'https://www.kucoin.com/', image: createImage(123), aiHint: 'crypto coin' },
+            { id: 'cs-6', title: 'Bitfinex', description: 'Crypto exchange', link: 'https://www.bitfinex.com/', image: createImage(124), aiHint: 'crypto coin' },
         ],
     },
     {
@@ -433,12 +435,12 @@ export const earningOpportunities: EarningCategory[] = [
         icon: TrendingUp,
         description: "Trade stocks on the financial markets.",
         opportunities: [
-            { title: 'Robinhood', description: 'Stock trading platform', link: 'https://robinhood.com/', image: createImage(125), aiHint: 'stock chart' },
-            { title: 'E*TRADE', description: 'Online brokerage', link: 'https://us.etrade.com/', image: createImage(126), aiHint: 'stock chart' },
-            { title: 'Fidelity', description: 'Financial services company', link: 'https://www.fidelity.com/', image: createImage(127), aiHint: 'stock chart' },
-            { title: 'TD Ameritrade', description: 'Online brokerage', link: 'https://www.tdameritrade.com/', image: createImage(128), aiHint: 'stock chart' },
-            { title: 'Interactive Brokers', description: 'Online brokerage', link: 'https://www.interactivebrokers.com/', image: createImage(129), aiHint: 'stock chart' },
-            { title: 'Charles Schwab', description: 'Financial services company', link: 'https://www.schwab.com/', image: createImage(130), aiHint: 'stock chart' },
+            { id: 'st-1', title: 'Robinhood', description: 'Stock trading platform', link: 'https://robinhood.com/', image: createImage(125), aiHint: 'stock chart' },
+            { id: 'st-2', title: 'E*TRADE', description: 'Online brokerage', link: 'https://us.etrade.com/', image: createImage(126), aiHint: 'stock chart' },
+            { id: 'st-3', title: 'Fidelity', description: 'Financial services company', link: 'https://www.fidelity.com/', image: createImage(127), aiHint: 'stock chart' },
+            { id: 'st-4', title: 'TD Ameritrade', description: 'Online brokerage', link: 'https://www.tdameritrade.com/', image: createImage(128), aiHint: 'stock chart' },
+            { id: 'st-5', title: 'Interactive Brokers', description: 'Online brokerage', link: 'https://www.interactivebrokers.com/', image: createImage(129), aiHint: 'stock chart' },
+            { id: 'st-6', title: 'Charles Schwab', description: 'Financial services company', link: 'https://www.schwab.com/', image: createImage(130), aiHint: 'stock chart' },
         ],
     },
     {
@@ -447,12 +449,12 @@ export const earningOpportunities: EarningCategory[] = [
         icon: Landmark,
         description: "Buy and sell Non-Fungible Tokens.",
         opportunities: [
-            { title: 'OpenSea', description: 'NFT marketplace', link: 'https://opensea.io/', image: createImage(131), aiHint: 'nft art' },
-            { title: 'Rarible', description: 'NFT marketplace', link: 'https://rarible.com/', image: createImage(132), aiHint: 'nft art' },
-            { title: 'Foundation', description: 'NFT marketplace', link: 'https://foundation.app/', image: createImage(133), aiHint: 'nft art' },
-            { title: 'SuperRare', description: 'NFT marketplace', link: 'https://superrare.com/', image: createImage(134), aiHint: 'nft art' },
-            { title: 'Nifty Gateway', description: 'NFT marketplace', link: 'https://niftygateway.com/', image: createImage(135), aiHint: 'nft art' },
-            { title: 'MakersPlace', description: 'NFT marketplace', link: 'https://makersplace.com/', image: createImage(136), aiHint: 'nft art' },
+            { id: 'nft-1', title: 'OpenSea', description: 'NFT marketplace', link: 'https://opensea.io/', image: createImage(131), aiHint: 'nft art' },
+            { id: 'nft-2', title: 'Rarible', description: 'NFT marketplace', link: 'https://rarible.com/', image: createImage(132), aiHint: 'nft art' },
+            { id: 'nft-3', title: 'Foundation', description: 'NFT marketplace', link: 'https://foundation.app/', image: createImage(133), aiHint: 'nft art' },
+            { id: 'nft-4', title: 'SuperRare', description: 'NFT marketplace', link: 'https://superrare.com/', image: createImage(134), aiHint: 'nft art' },
+            { id: 'nft-5', title: 'Nifty Gateway', description: 'NFT marketplace', link: 'https://niftygateway.com/', image: createImage(135), aiHint: 'nft art' },
+            { id: 'nft-6', title: 'MakersPlace', description: 'NFT marketplace', link: 'https://makersplace.com/', image: createImage(136), aiHint: 'nft art' },
         ],
     },
     {
@@ -461,12 +463,12 @@ export const earningOpportunities: EarningCategory[] = [
         icon: Wallet,
         description: "Trade currencies on the foreign exchange market.",
         opportunities: [
-            { title: 'Forex.com', description: 'Forex trading platform', link: 'https://www.forex.com/', image: createImage(137), aiHint: 'forex graph' },
-            { title: 'OANDA', description: 'Forex trading platform', link: 'https://www.oanda.com/', image: createImage(138), aiHint: 'forex graph' },
-            { title: 'IG Group', description: 'Online trading provider', link: 'https://www.ig.com/', image: createImage(139), aiHint: 'forex graph' },
-            { title: 'FXTM', description: 'Forex broker', link: 'https://www.forextime.com/', image: createImage(140), aiHint: 'forex graph' },
-            { title: 'XM', description: 'Forex broker', link: 'https://www.xm.com/', image: createImage(141), aiHint: 'forex graph' },
-            { title: 'Pepperstone', description: 'Forex broker', link: 'https://pepperstone.com/', image: createImage(142), aiHint: 'forex graph' },
+            { id: 'ft-1', title: 'Forex.com', description: 'Forex trading platform', link: 'https://www.forex.com/', image: createImage(137), aiHint: 'forex graph' },
+            { id: 'ft-2', title: 'OANDA', description: 'Forex trading platform', link: 'https://www.oanda.com/', image: createImage(138), aiHint: 'forex graph' },
+            { id: 'ft-3', title: 'IG Group', description: 'Online trading provider', link: 'https://www.ig.com/', image: createImage(139), aiHint: 'forex graph' },
+            { id: 'ft-4', title: 'FXTM', description: 'Forex broker', link: 'https://www.forextime.com/', image: createImage(140), aiHint: 'forex graph' },
+            { id: 'ft-5', title: 'XM', description: 'Forex broker', link: 'https://www.xm.com/', image: createImage(141), aiHint: 'forex graph' },
+            { id: 'ft-6', title: 'Pepperstone', description: 'Forex broker', link: 'https://pepperstone.com/', image: createImage(142), aiHint: 'forex graph' },
         ],
     },
     {
@@ -475,10 +477,10 @@ export const earningOpportunities: EarningCategory[] = [
         icon: Shield,
         description: "Receive free tokens from new crypto projects.",
         opportunities: [
-            { title: 'CoinMarketCap Airdrops', description: 'Airdrop listings', link: 'https://coinmarketcap.com/airdrop/', image: createImage(143), aiHint: 'crypto airdrop' },
-            { title: 'Airdrop Alert', description: 'Airdrop listings', link: 'https://airdropalert.com/', image: createImage(144), aiHint: 'crypto airdrop' },
-            { title: 'Airdrops.io', description: 'Airdrop listings', link: 'https://airdrops.io/', image: createImage(145), aiHint: 'crypto airdrop' },
-            { title: 'ICO Drops', description: 'ICO and airdrop listings', link: 'https://icodrops.com/', image: createImage(146), aiHint: 'crypto airdrop' },
+            { id: 'a-1', title: 'CoinMarketCap Airdrops', description: 'Airdrop listings', link: 'https://coinmarketcap.com/airdrop/', image: createImage(143), aiHint: 'crypto airdrop' },
+            { id: 'a-2', title: 'Airdrop Alert', description: 'Airdrop listings', link: 'https://airdropalert.com/', image: createImage(144), aiHint: 'crypto airdrop' },
+            { id: 'a-3', 'title': 'Airdrops.io', description: 'Airdrop listings', link: 'https://airdrops.io/', image: createImage(145), aiHint: 'crypto airdrop' },
+            { id: 'a-4', title: 'ICO Drops', description: 'ICO and airdrop listings', link: 'https://icodrops.com/', image: createImage(146), aiHint: 'crypto airdrop' },
         ],
     },
     {
@@ -487,12 +489,12 @@ export const earningOpportunities: EarningCategory[] = [
         icon: Printer,
         description: "Sell custom designs on products.",
         opportunities: [
-            { title: 'Redbubble', description: 'Print-on-demand marketplace', link: 'https://www.redbubble.com/', image: createImage(147), aiHint: 'tshirt design' },
-            { title: 'Spring (Teespring)', description: 'Print-on-demand platform', link: 'https://creator-spring.com/', image: createImage(148), aiHint: 'tshirt design' },
-            { title: 'Merch by Amazon', description: 'Amazon print-on-demand', link: 'https://merch.amazon.com/', image: createImage(149), aiHint: 'tshirt design' },
-            { title: 'Zazzle', description: 'Print-on-demand marketplace', link: 'https://www.zazzle.com/', image: createImage(150), aiHint: 'tshirt design' },
-            { title: 'Spreadshirt', description: 'Print-on-demand platform', link: 'https://www.spreadshirt.com/', image: createImage(151), aiHint: 'tshirt design' },
-            { title: 'Society6', description: 'Print-on-demand marketplace', link: 'https://society6.com/', image: createImage(152), aiHint: 'tshirt design' },
+            { id: 'pod-1', title: 'Redbubble', description: 'Print-on-demand marketplace', link: 'https://www.redbubble.com/', image: createImage(147), aiHint: 'tshirt design' },
+            { id: 'pod-2', title: 'Spring (Teespring)', description: 'Print-on-demand platform', link: 'https://creator-spring.com/', image: createImage(148), aiHint: 'tshirt design' },
+            { id: 'pod-3', title: 'Merch by Amazon', description: 'Amazon print-on-demand', link: 'https://merch.amazon.com/', image: createImage(149), aiHint: 'tshirt design' },
+            { id: 'pod-4', title: 'Zazzle', description: 'Print-on-demand marketplace', link: 'https://www.zazzle.com/', image: createImage(150), aiHint: 'tshirt design' },
+            { id: 'pod-5', title: 'Spreadshirt', description: 'Print-on-demand platform', link: 'https://www.spreadshirt.com/', image: createImage(151), aiHint: 'tshirt design' },
+            { id: 'pod-6', title: 'Society6', description: 'Print-on-demand marketplace', link: 'https://society6.com/', image: createImage(152), aiHint: 'tshirt design' },
         ],
     },
     {
@@ -501,11 +503,11 @@ export const earningOpportunities: EarningCategory[] = [
         icon: Package,
         description: "Sell products without holding inventory.",
         opportunities: [
-            { title: 'Shopify', description: 'E-commerce platform', link: 'https://www.shopify.com/', image: createImage(153), aiHint: 'shipping box' },
-            { title: 'AliExpress', description: 'E-commerce marketplace', link: 'https://www.aliexpress.com/', image: createImage(154), aiHint: 'shipping box' },
-            { title: 'WooCommerce', description: 'E-commerce platform for WordPress', link: 'https://woocommerce.com/', image: createImage(155), aiHint: 'shipping box' },
-            { title: 'BigCommerce', description: 'E-commerce platform', link: 'https://www.bigcommerce.com/', image: createImage(156), aiHint: 'shipping box' },
-            { title: 'Spocket', description: 'Dropshipping marketplace', link: 'https://www.spocket.co/', image: createImage(157), aiHint: 'shipping box' },
+            { id: 'd-1', title: 'Shopify', description: 'E-commerce platform', link: 'https://www.shopify.com/', image: createImage(153), aiHint: 'shipping box' },
+            { id: 'd-2', title: 'AliExpress', description: 'E-commerce marketplace', link: 'https://www.aliexpress.com/', image: createImage(154), aiHint: 'shipping box' },
+            { id: 'd-3', title: 'WooCommerce', description: 'E-commerce platform for WordPress', link: 'https://woocommerce.com/', image: createImage(155), aiHint: 'shipping box' },
+            { id: 'd-4', title: 'BigCommerce', description: 'E-commerce platform', link: 'https://www.bigcommerce.com/', image: createImage(156), aiHint: 'shipping box' },
+            { id: 'd-5', title: 'Spocket', description: 'Dropshipping marketplace', link: 'https://www.spocket.co/', image: createImage(157), aiHint: 'shipping box' },
         ],
     },
     {
@@ -514,12 +516,12 @@ export const earningOpportunities: EarningCategory[] = [
         icon: Laptop,
         description: "Sell your own digital creations.",
         opportunities: [
-            { title: 'Gumroad', description: 'Platform for creators to sell products', link: 'https://gumroad.com/', image: createImage(158), aiHint: 'digital download' },
-            { title: 'Sellfy', description: 'E-commerce platform for creators', link: 'https://sellfy.com/', image: createImage(159), aiHint: 'digital download' },
-            { title: 'Etsy', description: 'Marketplace for digital products', link: 'https://www.etsy.com/', image: createImage(160), aiHint: 'digital download' },
-            { title: 'Creative Market', description: 'Marketplace for design assets', link: 'https://creativemarket.com/', image: createImage(161), aiHint: 'digital download' },
-            { title: 'E-junkie', description: 'E-commerce platform', link: 'https://www.e-junkie.com/', image: createImage(162), aiHint: 'digital download' },
-            { title: 'Payhip', description: 'Platform to sell digital products', link: 'https://payhip.com/', image: createImage(163), aiHint: 'digital download' },
+            { id: 'dp-1', title: 'Gumroad', description: 'Platform for creators to sell products', link: 'https://gumroad.com/', image: createImage(158), aiHint: 'digital download' },
+            { id: 'dp-2', title: 'Sellfy', description: 'E-commerce platform for creators', link: 'https://sellfy.com/', image: createImage(159), aiHint: 'digital download' },
+            { id: 'dp-3', title: 'Etsy', description: 'Marketplace for digital products', link: 'https://www.etsy.com/', image: createImage(160), aiHint: 'digital download' },
+            { id: 'dp-4', title: 'Creative Market', description: 'Marketplace for design assets', link: 'https://creativemarket.com/', image: createImage(161), aiHint: 'digital download' },
+            { id: 'dp-5', title: 'E-junkie', description: 'E-commerce platform', link: 'https://www.e-junkie.com/', image: createImage(162), aiHint: 'digital download' },
+            { id: 'dp-6', title: 'Payhip', description: 'Platform to sell digital products', link: 'https://payhip.com/', image: createImage(163), aiHint: 'digital download' },
         ],
     },
     {
@@ -528,11 +530,11 @@ export const earningOpportunities: EarningCategory[] = [
         icon: Camera,
         description: "Monetize your photography and videography.",
         opportunities: [
-            { title: 'Shutterstock', description: 'Stock photo marketplace', link: 'https://www.shutterstock.com/', image: createImage(164), aiHint: 'camera lens' },
-            { title: 'Adobe Stock', description: 'Stock photo marketplace', link: 'https://stock.adobe.com/', image: createImage(165), aiHint: 'camera lens' },
-            { title: 'iStock', description: 'Stock photo marketplace', link: 'https://www.istockphoto.com/', image: createImage(166), aiHint: 'camera lens' },
-            { title: 'Dreamstime', description: 'Stock photo marketplace', link: 'https://www.dreamstime.com/', image: createImage(167), aiHint: 'camera lens' },
-            { title: 'Alamy', description: 'Stock photo marketplace', link: 'https://www.alamy.com/', image: createImage(168), aiHint: 'camera lens' },
+            { id: 'spv-1', title: 'Shutterstock', description: 'Stock photo marketplace', link: 'https://www.shutterstock.com/', image: createImage(164), aiHint: 'camera lens' },
+            { id: 'spv-2', title: 'Adobe Stock', description: 'Stock photo marketplace', link: 'https://stock.adobe.com/', image: createImage(165), aiHint: 'camera lens' },
+            { id: 'spv-3', title: 'iStock', description: 'Stock photo marketplace', link: 'https://www.istockphoto.com/', image: createImage(166), aiHint: 'camera lens' },
+            { id: 'spv-4', title: 'Dreamstime', description: 'Stock photo marketplace', link: 'https://www.dreamstime.com/', image: createImage(167), aiHint: 'camera lens' },
+            { id: 'spv-5', title: 'Alamy', description: 'Stock photo marketplace', link: 'https://www.alamy.com/', image: createImage(168), aiHint: 'camera lens' },
         ],
     },
     {
@@ -541,11 +543,11 @@ export const earningOpportunities: EarningCategory[] = [
         icon: Store,
         description: "Evaluate online businesses anonymously.",
         opportunities: [
-            { title: 'BestMark', description: 'Mystery shopping company', link: 'https://www.bestmark.com/', image: createImage(169), aiHint: 'online shopping' },
-            { title: 'IntelliShop', description: 'Mystery shopping company', link: 'https://www.intelli-shop.com/', image: createImage(170), aiHint: 'online shopping' },
-            { title: 'Secret Shopper', description: 'Mystery shopping company', link: 'https://www.secretshopper.com/', image: createImage(171), aiHint: 'online shopping' },
-            { title: 'Market Force', description: 'Customer experience management', link: 'https://www.marketforce.com/', image: createImage(172), aiHint: 'online shopping' },
-            { title: 'Coyle Hospitality Group', description: 'Mystery shopping for hospitality', link: 'https://www.coylehospitality.com/', image: createImage(173), aiHint: 'online shopping' },
+            { id: 'oms-1', title: 'BestMark', description: 'Mystery shopping company', link: 'https://www.bestmark.com/', image: createImage(169), aiHint: 'online shopping' },
+            { id: 'oms-2', title: 'IntelliShop', description: 'Mystery shopping company', link: 'https://www.intelli-shop.com/', image: createImage(170), aiHint: 'online shopping' },
+            { id: 'oms-3', title: 'Secret Shopper', description: 'Mystery shopping company', link: 'https://www.secretshopper.com/', image: createImage(171), aiHint: 'online shopping' },
+            { id: 'oms-4', title: 'Market Force', description: 'Customer experience management', link: 'https://www.marketforce.com/', image: createImage(172), aiHint: 'online shopping' },
+            { id: 'oms-5', title: 'Coyle Hospitality Group', description: 'Mystery shopping for hospitality', link: 'https://www.coylehospitality.com/', image: createImage(173), aiHint: 'online shopping' },
         ],
     },
     {
@@ -554,9 +556,9 @@ export const earningOpportunities: EarningCategory[] = [
         icon: Wifi,
         description: "Share your internet bandwidth for cash.",
         opportunities: [
-            { title: 'Honeygain', description: 'Share internet to earn', link: 'https://www.honeygain.com/', image: createImage(174), aiHint: 'internet router' },
-            { title: 'Peer2Profit', description: 'Share internet to earn', link: 'https://peertoprofit.com/', image: createImage(175), aiHint: 'internet router' },
-            { title: 'PacketStream', description: 'Share internet to earn', link: 'https://packetstream.io/', image: createImage(176), aiHint: 'internet router' },
+            { id: 'rds-1', title: 'Honeygain', description: 'Share internet to earn', link: 'https://www.honeygain.com/', image: createImage(174), aiHint: 'internet router' },
+            { id: 'rds-2', title: 'Peer2Profit', description: 'Share internet to earn', link: 'https://peertoprofit.com/', image: createImage(175), aiHint: 'internet router' },
+            { id: 'rds-3', title: 'PacketStream', description: 'Share internet to earn', link: 'https://packetstream.io/', image: createImage(176), aiHint: 'internet router' },
         ],
     },
     {
@@ -565,8 +567,8 @@ export const earningOpportunities: EarningCategory[] = [
         icon: Tag,
         description: "Label data to train AI models.",
         opportunities: [
-            { title: 'Appen', description: 'Data annotation services', link: 'https://appen.com/', image: createImage(177), aiHint: 'data label' },
-            { title: 'Lionbridge', description: 'Data annotation services', link: 'https://www.lionbridge.com/', image: createImage(178), aiHint: 'data label' },
+            { id: 'da-1', title: 'Appen', description: 'Data annotation services', link: 'https://appen.com/', image: createImage(177), aiHint: 'data label' },
+            { id: 'da-2', title: 'Lionbridge', description: 'Data annotation services', link: 'https://www.lionbridge.com/', image: createImage(178), aiHint: 'data label' },
         ],
     },
 ];
