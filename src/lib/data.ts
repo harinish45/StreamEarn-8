@@ -38,6 +38,7 @@ import {
   Tag,
   PenTool,
   Wallet,
+  Clock,
 } from 'lucide-react';
 
 export type Opportunity = {
@@ -65,6 +66,13 @@ const placeholderOpportunities = (count: number, hint: string) => Array.from({ l
 }));
 
 export const earningOpportunities: EarningCategory[] = [
+    {
+        id: 'recently-watched',
+        name: 'Recently Watched',
+        icon: Clock,
+        description: "Opportunities you've recently viewed.",
+        opportunities: placeholderOpportunities(3, 'history clock'),
+    },
     {
         id: 'captcha-entry',
         name: 'Captcha Entry',
