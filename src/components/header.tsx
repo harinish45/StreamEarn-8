@@ -17,9 +17,11 @@ import { cn } from "@/lib/utils";
 interface HeaderProps {
     viewMode: 'grid' | 'list';
     setViewMode: (mode: 'grid' | 'list') => void;
+    searchQuery: string;
+    setSearchQuery: (query: string) => void;
 }
 
-export function Header({ viewMode, setViewMode }: HeaderProps) {
+export function Header({ viewMode, setViewMode, searchQuery, setSearchQuery }: HeaderProps) {
   return (
     <header className="sticky top-0 z-20 flex h-16 items-center gap-4 border-b bg-background/80 px-4 backdrop-blur-sm md:px-6">
       <div className="md:hidden">
@@ -43,6 +45,8 @@ export function Header({ viewMode, setViewMode }: HeaderProps) {
           <Input
             placeholder="Search opportunities..."
             className="w-48 bg-secondary pl-8 md:w-64"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
           />
         </div>
         <Button variant="ghost" size="icon" className="rounded-full">
