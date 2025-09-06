@@ -1,3 +1,4 @@
+
 import { Search, Bell, List, Grid } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -11,15 +12,14 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select"
+import { cn } from "@/lib/utils";
 
-export function Header() {
+interface HeaderProps {
+    viewMode: 'grid' | 'list';
+    setViewMode: (mode: 'grid' | 'list') => void;
+}
+
+export function Header({ viewMode, setViewMode }: HeaderProps) {
   return (
     <header className="sticky top-0 z-20 flex h-16 items-center gap-4 border-b bg-background/80 px-4 backdrop-blur-sm md:px-6">
       <div className="md:hidden">
@@ -27,21 +27,11 @@ export function Header() {
       </div>
       <div className="flex flex-1 items-center gap-4">
         <div className="hidden items-center gap-2 md:flex">
-          <Select defaultValue="newest">
-            <SelectTrigger className="w-40 bg-secondary">
-              <SelectValue placeholder="Sort by" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="popularity">Popularity</SelectItem>
-              <SelectItem value="newest">Newest</SelectItem>
-              <SelectItem value="name">Name</SelectItem>
-            </SelectContent>
-          </Select>
           <div className="flex items-center gap-1 rounded-md bg-secondary p-1">
-            <Button variant="ghost" size="icon" className="h-8 w-8 bg-background shadow">
+            <Button variant="ghost" size="icon" className={cn("h-8 w-8", viewMode === 'grid' && "bg-background shadow")} onClick={() => setViewMode('grid')}>
               <Grid className="h-4 w-4" />
             </Button>
-            <Button variant="ghost" size="icon" className="h-8 w-8">
+            <Button variant="ghost" size="icon" className={cn("h-8 w-8", viewMode === 'list' && "bg-background shadow")} onClick={() => setViewMode('list')}>
               <List className="h-4 w-4" />
             </Button>
           </div>

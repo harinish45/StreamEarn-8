@@ -1,3 +1,4 @@
+
 import {
   Sidebar,
   SidebarHeader,
@@ -13,7 +14,11 @@ import { earningOpportunities } from "@/lib/data";
 import { Button } from "./ui/button";
 import { Search, LogOut, ArrowDownUp } from "lucide-react";
 
-export function AppSidebar() {
+interface AppSidebarProps {
+    onSortClick: () => void;
+}
+
+export function AppSidebar({ onSortClick }: AppSidebarProps) {
   return (
     <Sidebar>
       <SidebarHeader>
@@ -24,7 +29,7 @@ export function AppSidebar() {
       </SidebarHeader>
       <SidebarContent className="p-2">
         <div className="flex items-center justify-end px-2 mb-2">
-            <Button variant="ghost" size="sm">
+            <Button variant="ghost" size="sm" onClick={onSortClick}>
                 Sort <ArrowDownUp className="ml-2 h-4 w-4" />
             </Button>
         </div>
