@@ -10,9 +10,8 @@ import {
   SidebarSeparator,
 } from "@/components/ui/sidebar";
 import { earningOpportunities } from "@/lib/data";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "./ui/button";
-import { Search, Shield, LogOut, Rocket } from "lucide-react";
+import { Search, Shield, LogOut } from "lucide-react";
 import { Switch } from "./ui/switch";
 import { Label } from "./ui/label";
 
@@ -21,8 +20,7 @@ export function AppSidebar() {
     <Sidebar>
       <SidebarHeader>
         <div className="flex items-center gap-2">
-          <Rocket className="w-8 h-8 text-primary" />
-          <h1 className="text-2xl font-semibold font-headline">StreamEarn</h1>
+          <h1 className="text-2xl font-semibold font-headline">App Name</h1>
         </div>
         <div className="relative">
           <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
@@ -54,15 +52,7 @@ export function AppSidebar() {
           </div>
           <Switch id="vpn-switch" defaultChecked />
         </div>
-        <div className="flex items-center gap-2 p-2 mt-2">
-          <Avatar>
-            <AvatarImage src="https://picsum.photos/100/100" alt="User" data-ai-hint="person face"/>
-            <AvatarFallback>U</AvatarFallback>
-          </Avatar>
-          <div className="flex-1">
-            <p className="text-sm font-semibold">John Doe</p>
-            <p className="text-xs text-muted-foreground">Pro Member</p>
-          </div>
+        <div className="flex items-center justify-end p-2 mt-2">
           <Button variant="ghost" size="icon">
             <LogOut />
           </Button>

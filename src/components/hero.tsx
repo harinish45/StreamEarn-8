@@ -16,12 +16,8 @@ export function Hero() {
       <div className="absolute inset-0 bg-gradient-to-t from-background/80 via-background/20 to-transparent" />
       <div className="absolute bottom-0 left-0 p-6 text-white md:p-12">
         <h1 className="mb-4 max-w-2xl text-4xl font-bold text-foreground md:text-6xl font-headline">
-          Unlock Your Earning Potential
+          Earning Opportunities
         </h1>
-        <p className="mb-6 max-w-xl text-lg text-foreground/80">
-          Explore curated opportunities from data entry to AI development. Start
-          earning today with StreamEarn.
-        </p>
         <div className="flex flex-wrap gap-4">
           <Button size="lg">
             <PlayCircle className="mr-2 h-5 w-5" />
