@@ -15,8 +15,8 @@ export function Hero() {
       />
       <div className="absolute inset-0 bg-gradient-to-t from-background/80 via-background/20 to-transparent" />
       <div className="absolute bottom-0 left-0 p-6 text-white md:p-12">
-        <h1 className="mb-4 max-w-2xl text-4xl font-bold text-foreground md:text-6xl font-headline">
-          Earning Opportunities
+        <h1 className="mb-4 max-w-2xl text-4xl font-bold text-foreground md:text-6xl">
+          
         </h1>
         <div className="flex flex-wrap gap-4">
           <Button size="lg">

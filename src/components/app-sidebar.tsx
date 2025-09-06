@@ -11,9 +11,7 @@ import {
 } from "@/components/ui/sidebar";
 import { earningOpportunities } from "@/lib/data";
 import { Button } from "./ui/button";
-import { Search, Shield, LogOut } from "lucide-react";
-import { Switch } from "./ui/switch";
-import { Label } from "./ui/label";
+import { Search, LogOut } from "lucide-react";
 
 export function AppSidebar() {
   return (
@@ -43,15 +41,6 @@ export function AppSidebar() {
       </SidebarContent>
       <SidebarSeparator />
       <SidebarFooter>
-        <div className="flex items-center justify-between p-2 rounded-lg bg-sidebar-accent">
-          <div className="flex items-center gap-2">
-            <Shield className="w-5 h-5 text-green-500" />
-            <Label htmlFor="vpn-switch" className="text-sm font-medium">
-              Secure Connection
-            </Label>
-          </div>
-          <Switch id="vpn-switch" defaultChecked />
-        </div>
         <div className="flex items-center justify-end p-2 mt-2">
           <Button variant="ghost" size="icon">
             <LogOut />
