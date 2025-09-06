@@ -31,7 +31,7 @@ export default function Home() {
   return (
     <SidebarProvider>
       <div className="flex min-h-screen bg-background">
-        <AppSidebar onSortClick={handleSortCategories} />
+        <AppSidebar onSortClick={handleSortCategories} sortOrder={sortOrder} />
         <SidebarInset>
           <Header viewMode={viewMode} setViewMode={setViewMode} />
           <ScrollArea className="h-[calc(100vh-4rem)]">
