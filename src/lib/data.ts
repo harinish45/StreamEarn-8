@@ -39,6 +39,7 @@ import {
   PenTool,
   Wallet,
   Clock,
+  Pin,
 } from 'lucide-react';
 
 export type Opportunity = {
@@ -55,6 +56,7 @@ export type EarningCategory = {
   description: string;
   icon: LucideIcon;
   opportunities: Opportunity[];
+  pinned?: boolean;
 };
 
 const createImage = (index: number) => `https://picsum.photos/seed/${index}/600/400`;

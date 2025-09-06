@@ -5,10 +5,10 @@ import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/app-sidebar";
 import { Header } from "@/components/header";
 import { Hero } from "@/components/hero";
-import { earningOpportunities as initialEarningOpportunities } from "@/lib/data";
+import { EarningCategory, earningOpportunities as initialEarningOpportunities } from "@/lib/data";
 import { CategoryCarousel } from "@/components/category-carousel";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useMemo } from "react";
 import { CategoryList } from "@/components/category-list";
 
 export default function Home() {
@@ -17,21 +17,48 @@ export default function Home() {
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
 
   const handleSortCategories = useCallback(() => {
-    const newSortOrder = sortOrder === 'asc' ? 'desc' : 'asc';
-    const sorted = [...earningOpportunities].sort((a, b) => {
-      if (a.name < b.name) return newSortOrder === 'asc' ? -1 : 1;
-      if (a.name > b.name) return newSortOrder === 'asc' ? 1 : -1;
-      return 0;
+    setSortOrder(prev => prev === 'asc' ? 'desc' : 'asc');
+  }, []);
+
+  const handlePinCategory = useCallback((categoryId: string) => {
+    setEarningOpportunities(prev => {
+      const category = prev.find(c => c.id === categoryId);
+      if (!category) return prev;
+
+      const isPinned = !category.pinned;
+      const updatedCategory = { ...category, pinned: isPinned };
+
+      const otherCategories = prev.filter(c => c.id !== categoryId);
+      if (isPinned) {
+        return [updatedCategory, ...otherCategories];
+      } else {
+        return [...otherCategories, updatedCategory];
+      }
     });
-    setEarningOpportunities(sorted);
-    setSortOrder(newSortOrder);
+  }, []);
+  
+  const sortedAndPinnedOpportunities = useMemo(() => {
+    return [...earningOpportunities].sort((a, b) => {
+      if (a.pinned && !b.pinned) return -1;
+      if (!a.pinned && b.pinned) return 1;
+      if (sortOrder === 'asc') {
+        return a.name.localeCompare(b.name);
+      } else {
+        return b.name.localeCompare(a.name);
+      }
+    });
   }, [earningOpportunities, sortOrder]);
 
 
   return (
     <SidebarProvider>
       <div className="flex min-h-screen bg-background">
-        <AppSidebar categories={earningOpportunities} onSortClick={handleSortCategories} sortOrder={sortOrder} />
+        <AppSidebar 
+          categories={sortedAndPinnedOpportunities} 
+          onSortClick={handleSortCategories} 
+          sortOrder={sortOrder}
+          onPinClick={handlePinCategory}
+        />
         <SidebarInset>
           <Header viewMode={viewMode} setViewMode={setViewMode} />
           <ScrollArea className="h-[calc(100vh-4rem)]">
@@ -40,11 +67,11 @@ export default function Home() {
                 <Hero />
               </div>
               {viewMode === 'grid' ? (
-                earningOpportunities.map((category) => (
+                sortedAndPinnedOpportunities.map((category) => (
                   <CategoryCarousel key={category.id} category={category} />
                 ))
               ) : (
-                 earningOpportunities.map((category) => (
+                 sortedAndPinnedOpportunities.map((category) => (
                   <CategoryList key={category.id} category={category} />
                 ))
               )}

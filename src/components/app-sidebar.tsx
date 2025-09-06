@@ -12,15 +12,17 @@ import {
 } from "@/components/ui/sidebar";
 import { EarningCategory } from "@/lib/data";
 import { Button } from "./ui/button";
-import { Search, LogOut, ArrowDownAZ, ArrowUpAZ } from "lucide-react";
+import { Search, LogOut, ArrowDownAZ, ArrowUpAZ, Pin } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 interface AppSidebarProps {
     categories: EarningCategory[];
     onSortClick: () => void;
     sortOrder: 'asc' | 'desc';
+    onPinClick: (categoryId: string) => void;
 }
 
-export function AppSidebar({ categories, onSortClick, sortOrder }: AppSidebarProps) {
+export function AppSidebar({ categories, onSortClick, sortOrder, onPinClick }: AppSidebarProps) {
   return (
     <Sidebar>
       <SidebarHeader>
@@ -45,6 +47,14 @@ export function AppSidebar({ categories, onSortClick, sortOrder }: AppSidebarPro
                   <span>{category.name}</span>
                 </a>
               </SidebarMenuButton>
+               <Button
+                variant="ghost"
+                size="icon"
+                className="absolute right-2 top-1/2 -translate-y-1/2 h-7 w-7 opacity-0 group-hover/menu-item:opacity-100"
+                onClick={() => onPinClick(category.id)}
+              >
+                <Pin className={cn("h-4 w-4", category.pinned && "fill-current text-foreground")} />
+              </Button>
             </SidebarMenuItem>
           ))}
         </SidebarMenu>
