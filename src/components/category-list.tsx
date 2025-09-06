@@ -14,7 +14,7 @@ export function CategoryList({ category }: CategoryListProps) {
     <section id={category.id} className="py-6 md:py-8">
       <div className="flex items-center justify-between mb-4 px-4 md:px-6">
         <div className="flex items-center gap-4">
-          <h2 className="text-2xl md:text-3xl font-bold font-headline">
+          <h2 className="text-2xl md:text-3xl font-bold">
             {category.name}
           </h2>
         </div>

@@ -20,7 +20,7 @@ export function CategoryCarousel({ category }: CategoryCarouselProps) {
     <section id={category.id} className="py-6 md:py-8">
       <div className="flex items-center justify-between mb-4 px-4 md:px-6">
         <div className="flex items-center gap-4">
-          <h2 className="text-2xl md:text-3xl font-bold font-headline">
+          <h2 className="text-2xl md:text-3xl font-bold">
             {category.name}
           </h2>
         </div>
@@ -41,7 +41,7 @@ export function CategoryCarousel({ category }: CategoryCarouselProps) {
           {category.opportunities.map((opportunity, index) => (
             <CarouselItem
               key={index}
-              className="pl-2 md:pl-4 basis-1/2 sm:basis-1/3 md:basis-1/4 lg:basis-1/5 xl:basis-1/6"
+              className="pl-2 md:pl-4 basis-1/2 sm:basis-1/3 md:basis-1/4 lg:basis-1/5"
             >
               <div className="p-1">
                 <OpportunityCard opportunity={opportunity} />

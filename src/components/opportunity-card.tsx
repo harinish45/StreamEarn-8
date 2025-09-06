@@ -16,7 +16,7 @@ export function OpportunityCard({ opportunity }: OpportunityCardProps) {
         rel="noopener noreferrer"
         className="block"
       >
-        <div className="aspect-[3/4] transition-all duration-300 ease-in-out">
+        <div className="aspect-[3/2] transition-all duration-300 ease-in-out">
           <Image
             src={opportunity.image}
             alt={opportunity.title}

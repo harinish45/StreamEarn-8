@@ -2,7 +2,7 @@ import Image from "next/image";
 
 export function Hero() {
   return (
-    <div className="relative h-[40vh] w-full overflow-hidden rounded-lg md:h-[50vh]">
+    <div className="relative h-[25vh] w-full overflow-hidden rounded-lg md:h-[30vh]">
       <Image
         src="https://picsum.photos/1600/900"
         alt="Featured Earning Opportunity"
