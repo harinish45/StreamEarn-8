@@ -1,4 +1,4 @@
-import { Search, Bell } from "lucide-react";
+import { Search, Bell, List, Grid } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { SidebarTrigger } from "@/components/ui/sidebar";
@@ -11,6 +11,13 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
 
 export function Header() {
   return (
@@ -18,8 +25,27 @@ export function Header() {
       <div className="md:hidden">
         <SidebarTrigger />
       </div>
-      <div className="flex-1">
-        {/* Can be used for page titles or breadcrumbs */}
+      <div className="flex flex-1 items-center gap-4">
+        <div className="hidden items-center gap-2 md:flex">
+          <Select defaultValue="newest">
+            <SelectTrigger className="w-40 bg-secondary">
+              <SelectValue placeholder="Sort by" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="popularity">Popularity</SelectItem>
+              <SelectItem value="newest">Newest</SelectItem>
+              <SelectItem value="name">Name</SelectItem>
+            </SelectContent>
+          </Select>
+          <div className="flex items-center gap-1 rounded-md bg-secondary p-1">
+            <Button variant="ghost" size="icon" className="h-8 w-8 bg-background shadow">
+              <Grid className="h-4 w-4" />
+            </Button>
+            <Button variant="ghost" size="icon" className="h-8 w-8">
+              <List className="h-4 w-4" />
+            </Button>
+          </div>
+        </div>
       </div>
       <div className="flex items-center gap-2 md:gap-4">
         <div className="relative hidden md:block">

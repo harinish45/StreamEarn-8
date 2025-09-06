@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/sidebar";
 import { earningOpportunities } from "@/lib/data";
 import { Button } from "./ui/button";
-import { Search, LogOut } from "lucide-react";
+import { Search, LogOut, ArrowDownUp } from "lucide-react";
 
 export function AppSidebar() {
   return (
@@ -23,6 +23,11 @@ export function AppSidebar() {
         </div>
       </SidebarHeader>
       <SidebarContent className="p-2">
+        <div className="flex items-center justify-end px-2 mb-2">
+            <Button variant="ghost" size="sm">
+                Sort <ArrowDownUp className="ml-2 h-4 w-4" />
+            </Button>
+        </div>
         <SidebarMenu>
           {earningOpportunities.map((category) => (
             <SidebarMenuItem key={category.id}>

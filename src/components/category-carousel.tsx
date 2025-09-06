@@ -9,7 +9,7 @@ import {
 import { OpportunityCard } from "./opportunity-card";
 import Link from "next/link";
 import { Button } from "./ui/button";
-import { ArrowRight, Pin, ArrowDownUp } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 
 interface CategoryCarouselProps {
   category: EarningCategory;
@@ -23,14 +23,6 @@ export function CategoryCarousel({ category }: CategoryCarouselProps) {
           <h2 className="text-2xl md:text-3xl font-bold font-headline">
             {category.name}
           </h2>
-          <div className="flex items-center gap-1">
-            <Button variant="ghost" size="icon">
-                <Pin className="h-4 w-4" />
-            </Button>
-            <Button variant="ghost" size="icon">
-                <ArrowDownUp className="h-4 w-4" />
-            </Button>
-          </div>
         </div>
         <Button variant="link" asChild>
           <Link href="#">
