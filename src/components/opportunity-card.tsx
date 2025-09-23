@@ -32,7 +32,7 @@ export function OpportunityCard({ opportunity, onClick }: OpportunityCardProps) 
         </div>
         <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
         <div className="absolute bottom-0 left-0 right-0 p-3 text-white">
-          <h3 className="font-semibold text-base">{opportunity.title}</h3>
+          <p className="font-semibold text-base">{opportunity.description}</p>
         </div>
         <div className="absolute right-2 top-2 translate-y-2 transform rounded-full bg-primary/80 p-2 opacity-0 backdrop-blur-sm transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100">
           <ArrowUpRight className="h-4 w-4 text-primary-foreground" />

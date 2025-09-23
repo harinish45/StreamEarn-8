@@ -11,6 +11,10 @@ interface CategoryListProps {
 }
 
 export function CategoryList({ category, onOpportunityClick }: CategoryListProps) {
+  if (category.opportunities.length === 0) {
+    return null;
+  }
+
   return (
     <section id={category.id} className="py-6 md:py-8">
       <div className="flex items-center justify-between mb-4 px-4 md:px-6">

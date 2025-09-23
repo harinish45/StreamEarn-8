@@ -31,15 +31,21 @@ export default function Home() {
       const updatedCategory = { ...category, pinned: isPinned };
 
       const otherCategories = prev.filter(c => c.id !== categoryId);
-      if (isPinned) {
-        return [updatedCategory, ...otherCategories];
-      } else {
-        const pinned = [updatedCategory, ...otherCategories].filter(c => c.pinned);
-        const unpinned = [updatedCategory, ...otherCategories].filter(c => !c.pinned);
-        return [...pinned, ...unpinned];
-      }
+      
+      const allCategories = [updatedCategory, ...otherCategories];
+
+      const pinned = allCategories.filter(c => c.pinned);
+      const unpinned = allCategories.filter(c => !c.pinned).sort((a, b) => {
+        if (sortOrder === 'asc') {
+          return a.name.localeCompare(b.name);
+        } else {
+          return b.name.localeCompare(a.name);
+        }
+      });
+
+      return [...pinned, ...unpinned];
     });
-  }, []);
+  }, [sortOrder]);
 
   const handleMarkAsVisited = useCallback((opportunityId: string) => {
     setEarningOpportunities(prev => {
@@ -57,36 +63,44 @@ export default function Home() {
     });
   }, []);
   
-  const filteredOpportunities = useMemo(() => {
-    let opportunities = [...earningOpportunities];
+  const filteredAndSortedCategories = useMemo(() => {
+    let categories = [...earningOpportunities];
 
     // Filter categories by category search query
     if (categorySearchQuery) {
-      opportunities = opportunities.filter(category =>
+      categories = categories.filter(category =>
         category.name.toLowerCase().includes(categorySearchQuery.toLowerCase())
       );
     }
-
-    // Filter opportunities within categories by opportunity search query
-    if (opportunitySearchQuery) {
-      opportunities = opportunities.map(category => {
-        const filteredOps = category.opportunities.filter(op =>
+    
+    // Process opportunities within categories
+    let categoriesWithFilteredOpportunities = categories.map(category => {
+      let opportunities = category.opportunities;
+      // Filter opportunities within categories by opportunity search query
+      if (opportunitySearchQuery) {
+        opportunities = opportunities.filter(op =>
           op.title.toLowerCase().includes(opportunitySearchQuery.toLowerCase())
         );
-        return { ...category, opportunities: filteredOps };
-      }).filter(category => category.opportunities.length > 0);
-    }
+      }
+      return { ...category, opportunities };
+    }).filter(category => category.opportunities.length > 0);
     
-    // Sort categories
-    return opportunities.sort((a, b) => {
-      if (a.pinned && !b.pinned) return -1;
-      if (!a.pinned && b.pinned) return 1;
+    
+    // Separate pinned and unpinned categories
+    const pinned = categoriesWithFilteredOpportunities.filter(c => c.pinned);
+    const unpinned = categoriesWithFilteredOpportunities.filter(c => !c.pinned);
+
+    // Sort unpinned categories
+    unpinned.sort((a, b) => {
       if (sortOrder === 'asc') {
         return a.name.localeCompare(b.name);
       } else {
         return b.name.localeCompare(a.name);
       }
     });
+
+    // Combine pinned and sorted unpinned categories
+    return [...pinned, ...unpinned];
   }, [earningOpportunities, sortOrder, categorySearchQuery, opportunitySearchQuery]);
 
 
@@ -94,7 +108,7 @@ export default function Home() {
     <SidebarProvider>
       <div className="flex min-h-screen bg-background">
         <AppSidebar 
-          categories={filteredOpportunities} 
+          categories={filteredAndSortedCategories} 
           onSortClick={handleSortCategories} 
           sortOrder={sortOrder}
           onPinClick={handlePinCategory}
@@ -114,11 +128,11 @@ export default function Home() {
                 <Hero />
               </div>
               {viewMode === 'grid' ? (
-                filteredOpportunities.map((category) => (
+                filteredAndSortedCategories.map((category) => (
                   <CategoryCarousel key={category.id} category={category} onOpportunityClick={handleMarkAsVisited} />
                 ))
               ) : (
-                 filteredOpportunities.map((category) => (
+                 filteredAndSortedCategories.map((category) => (
                   <CategoryList key={category.id} category={category} onOpportunityClick={handleMarkAsVisited} />
                 ))
               )}

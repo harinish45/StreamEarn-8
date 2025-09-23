@@ -47,7 +47,7 @@ export function AppSidebar({ categories, onSortClick, sortOrder, onPinClick, sea
         </div>
         <SidebarMenu>
           {categories.map((category) => (
-            <SidebarMenuItem key={category.id}>
+            <SidebarMenuItem key={category.id} className="group/menu-item">
               <SidebarMenuButton asChild tooltip={category.name}>
                 <a href={`#${category.id}`}>
                   <category.icon />
