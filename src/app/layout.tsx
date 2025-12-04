@@ -1,14 +1,14 @@
 import type { Metadata } from "next";
-import { Inter, Poppins } from "next/font/google";
+import { Inter, Bungee } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "@/components/ui/toaster";
 import { ThemeProvider } from "@/components/theme-provider";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-sans" });
-const poppins = Poppins({
+const bungee = Bungee({
   subsets: ["latin"],
-  weight: ["400", "500", "600", "700", "800", "900"],
-  variable: "--font-poppins",
+  weight: ["400"],
+  variable: "--font-bungee",
 });
 
 export const metadata: Metadata = {
@@ -24,7 +24,7 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body
-        className={`font-sans ${inter.variable} ${poppins.variable} antialiased`}
+        className={`font-sans ${inter.variable} ${bungee.variable} antialiased`}
       >
         <ThemeProvider
           storageKey="theme"
