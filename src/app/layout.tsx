@@ -1,10 +1,11 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Inter, Lexend } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "@/components/ui/toaster";
 import { ThemeProvider } from "@/components/theme-provider";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-sans" });
+const lexend = Lexend({ subsets: ["latin"], variable: "--font-lexend" });
 
 export const metadata: Metadata = {
   title: "App",
@@ -18,7 +19,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={`font-sans ${inter.variable} antialiased`}>
+      <body
+        className={`font-sans ${inter.variable} ${lexend.variable} antialiased`}
+      >
         <ThemeProvider
           storageKey="theme"
           defaultTheme="dark"

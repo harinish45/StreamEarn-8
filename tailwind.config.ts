@@ -12,6 +12,7 @@ export default {
     extend: {
       fontFamily: {
         sans: ["var(--font-sans)", ...fontFamily.sans],
+        lexend: ["var(--font-lexend)", ...fontFamily.sans],
       },
       colors: {
         background: 'hsl(var(--background))',
