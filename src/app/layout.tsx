@@ -1,11 +1,15 @@
 import type { Metadata } from "next";
-import { Inter, Lexend } from "next/font/google";
+import { Inter, Poppins } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "@/components/ui/toaster";
 import { ThemeProvider } from "@/components/theme-provider";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-sans" });
-const lexend = Lexend({ subsets: ["latin"], variable: "--font-lexend" });
+const poppins = Poppins({
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700", "800", "900"],
+  variable: "--font-poppins",
+});
 
 export const metadata: Metadata = {
   title: "App",
@@ -20,7 +24,7 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body
-        className={`font-sans ${inter.variable} ${lexend.variable} antialiased`}
+        className={`font-sans ${inter.variable} ${poppins.variable} antialiased`}
       >
         <ThemeProvider
           storageKey="theme"
