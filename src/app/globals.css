@@ -65,68 +65,68 @@
   }
 
   .spider-man {
-    --background: 220 40% 10%; /* Deep Night Blue */
+    --background: 225 20% 12%; /* Dark Slate Gray */
     --foreground: 210 40% 98%; /* White */
-    --card: 220 40% 13%;
+    --card: 225 20% 15%;
     --card-foreground: 210 40% 98%;
-    --popover: 220 40% 10%;
+    --popover: 225 20% 10%;
     --popover-foreground: 210 40% 98%;
-    --primary: 350 85% 55%; /* Bright Red */
+    --primary: 0 80% 55%; /* Web-slinging Red */
     --primary-foreground: 210 40% 98%;
-    --secondary: 215 80% 30%; /* Medium Blue */
+    --secondary: 215 75% 45%; /* Heroic Blue */
     --secondary-foreground: 210 40% 98%;
-    --muted: 215 80% 20%;
+    --muted: 215 30% 25%;
     --muted-foreground: 215 20% 65%;
-    --accent: 215 80% 30%; /* Same as secondary */
+    --accent: 215 75% 45%;
     --accent-foreground: 210 40% 98%;
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 210 40% 98%;
-    --border: 215 80% 25%;
-    --input: 215 80% 25%;
-    --ring: 350 85% 55%; /* Bright Red */
-    --sidebar-background: 220 40% 10%;
+    --border: 215 30% 22%;
+    --input: 215 30% 22%;
+    --ring: 0 80% 55%;
+    --sidebar-background: 225 20% 12%;
     --sidebar-foreground: 210 40% 98%;
-    --sidebar-primary: 350 85% 55%;
+    --sidebar-primary: 0 80% 55%;
     --sidebar-primary-foreground: 210 40% 98%;
-    --sidebar-accent: 215 80% 20%;
+    --sidebar-accent: 215 30% 25%;
     --sidebar-accent-foreground: 210 40% 98%;
-    --sidebar-border: 215 80% 25%;
-    --sidebar-ring: 350 85% 55%;
+    --sidebar-border: 215 30% 22%;
+    --sidebar-ring: 0 80% 55%;
   }
 
   .batman {
-    --background: 240 10% 3.9%; /* Near Black */
-    --foreground: 53 90% 85%; /* Pale Yellow */
-    --card: 240 10% 7%;
-    --card-foreground: 53 90% 85%;
-    --popover: 240 10% 3.9%;
-    --popover-foreground: 53 90% 85%;
-    --primary: 53 90% 50%; /* Bat-Signal Yellow */
-    --primary-foreground: 240 10% 3.9%;
-    --secondary: 240 5% 15%; /* Dark Gray */
-    --secondary-foreground: 53 90% 85%;
+    --background: 240 10% 4%; /* Gotham Black */
+    --foreground: 60 40% 90%; /* Pale Yellow */
+    --card: 240 10% 8%;
+    --card-foreground: 60 40% 90%;
+    --popover: 240 10% 4%;
+    --popover-foreground: 60 40% 90%;
+    --primary: 53 90% 50%; /* Signal Yellow */
+    --primary-foreground: 240 10% 4%;
+    --secondary: 240 5% 15%; /* Stoic Gray */
+    --secondary-foreground: 60 40% 90%;
     --muted: 240 5% 15%;
     --muted-foreground: 240 5% 55%;
     --accent: 240 5% 20%;
-    --accent-foreground: 53 90% 85%;
+    --accent-foreground: 60 40% 90%;
     --destructive: 0 70% 40%;
-    --destructive-foreground: 53 90% 85%;
-    --border: 240 5% 20%;
-    --input: 240 5% 20%;
-    --ring: 53 90% 50%; /* Bat-Signal Yellow */
-    --sidebar-background: 240 10% 3.9%;
-    --sidebar-foreground: 53 90% 85%;
+    --destructive-foreground: 60 40% 90%;
+    --border: 240 5% 12%;
+    --input: 240 5% 12%;
+    --ring: 53 90% 50%;
+    --sidebar-background: 240 10% 4%;
+    --sidebar-foreground: 60 40% 90%;
     --sidebar-primary: 53 90% 50%;
-    --sidebar-primary-foreground: 240 10% 3.9%;
+    --sidebar-primary-foreground: 240 10% 4%;
     --sidebar-accent: 240 5% 15%;
-    --sidebar-accent-foreground: 53 90% 85%;
-    --sidebar-border: 240 5% 20%;
+    --sidebar-accent-foreground: 60 40% 90%;
+    --sidebar-border: 240 5% 12%;
     --sidebar-ring: 53 90% 50%;
   }
 
   .iron-man {
-    --background: 10 60% 8%; /* Dark Maroon */
-    --foreground: 35 90% 80%; /* Gold */
+    --background: 10 60% 8%; /* Metallic Charcoal (Dark Maroon) */
+    --foreground: 35 90% 80%; /* Midas Gold */
     --card: 10 60% 11%;
     --card-foreground: 35 90% 80%;
     --popover: 10 60% 8%;
@@ -143,7 +143,7 @@
     --destructive-foreground: 35 90% 80%;
     --border: 10 40% 25%;
     --input: 10 40% 25%;
-    --ring: 0 85% 55%; /* Arc Reactor Red */
+    --ring: 0 85% 55%;
     --sidebar-background: 10 60% 8%;
     --sidebar-foreground: 35 90% 80%;
     --sidebar-primary: 0 85% 55%;
@@ -155,45 +155,45 @@
   }
 
   .superman {
-    --background: 220 50% 12%; /* Deep Blue */
+    --background: 220 50% 12%; /* Kryptonian Blue */
     --foreground: 0 0% 98%; /* White */
     --card: 220 50% 16%;
     --card-foreground: 0 0% 98%;
     --popover: 220 50% 12%;
     --popover-foreground: 0 0% 98%;
-    --primary: 0 80% 50%; /* Superman Red */
+    --primary: 0 80% 50%; /* Heroic Red */
     --primary-foreground: 0 0% 100%;
-    --secondary: 50 90% 50%; /* Superman Yellow */
+    --secondary: 50 90% 50%; /* Sunshine Yellow */
     --secondary-foreground: 220 50% 12%;
-    --muted: 220 80% 25%;
+    --muted: 220 30% 25%;
     --muted-foreground: 220 20% 65%;
-    --accent: 220 80% 30%;
+    --accent: 220 30% 30%;
     --accent-foreground: 0 0% 98%;
     --destructive: 0 62% 50%;
     --destructive-foreground: 0 0% 98%;
-    --border: 220 80% 30%;
-    --input: 220 80% 30%;
-    --ring: 0 80% 50%; /* Superman Red */
+    --border: 220 30% 22%;
+    --input: 220 30% 22%;
+    --ring: 0 80% 50%;
     --sidebar-background: 220 50% 12%;
     --sidebar-foreground: 0 0% 98%;
     --sidebar-primary: 0 80% 50%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 220 80% 25%;
+    --sidebar-accent: 220 30% 25%;
     --sidebar-accent-foreground: 0 0% 98%;
-    --sidebar-border: 220 80% 30%;
+    --sidebar-border: 220 30% 22%;
     --sidebar-ring: 0 80% 50%;
   }
 
   .hulk {
-    --background: 120 20% 8%; /* Dark Green */
+    --background: 120 20% 8%; /* Dark Earthy Green */
     --foreground: 120 10% 90%; /* Light Green/White */
     --card: 120 20% 11%;
     --card-foreground: 120 10% 90%;
     --popover: 120 20% 8%;
     --popover-foreground: 120 10% 90%;
-    --primary: 120 60% 45%; /* Hulk Green */
+    --primary: 120 60% 45%; /* Gamma Green */
     --primary-foreground: 120 20% 5%; /* Near Black */
-    --secondary: 270 40% 35%; /* Ripped Pants Purple */
+    --secondary: 270 40% 35%; /* Smash Purple */
     --secondary-foreground: 270 10% 90%;
     --muted: 270 40% 25%;
     --muted-foreground: 270 15% 65%;
@@ -203,7 +203,7 @@
     --destructive-foreground: 120 10% 90%;
     --border: 270 40% 30%;
     --input: 270 40% 30%;
-    --ring: 120 60% 45%; /* Hulk Green */
+    --ring: 120 60% 45%;
     --sidebar-background: 120 20% 8%;
     --sidebar-foreground: 120 10% 90%;
     --sidebar-primary: 120 60% 45%;
