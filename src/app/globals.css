@@ -65,135 +65,135 @@
   }
 
   .spider-man {
-    --background: 220 40% 10%;
-    --foreground: 0 0% 98%;
-    --card: 220 40% 10%;
-    --card-foreground: 0 0% 98%;
+    --background: 220 40% 10%; /* Deep Night Blue */
+    --foreground: 210 40% 98%; /* White */
+    --card: 220 40% 13%;
+    --card-foreground: 210 40% 98%;
     --popover: 220 40% 10%;
-    --popover-foreground: 0 0% 98%;
-    --primary: 0 84% 60%;
-    --primary-foreground: 0 0% 100%;
-    --secondary: 215 80% 25%;
-    --secondary-foreground: 0 0% 98%;
-    --muted: 215 80% 25%;
+    --popover-foreground: 210 40% 98%;
+    --primary: 350 85% 55%; /* Bright Red */
+    --primary-foreground: 210 40% 98%;
+    --secondary: 215 80% 30%; /* Medium Blue */
+    --secondary-foreground: 210 40% 98%;
+    --muted: 215 80% 20%;
     --muted-foreground: 215 20% 65%;
-    --accent: 215 80% 25%;
-    --accent-foreground: 0 0% 98%;
-    --destructive: 0 62% 50%;
-    --destructive-foreground: 0 0% 98%;
-    --border: 215 80% 30%;
-    --input: 215 80% 30%;
-    --ring: 0 84% 60%;
+    --accent: 215 80% 30%; /* Same as secondary */
+    --accent-foreground: 210 40% 98%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 215 80% 25%;
+    --input: 215 80% 25%;
+    --ring: 350 85% 55%; /* Bright Red */
     --sidebar-background: 220 40% 10%;
-    --sidebar-foreground: 0 0% 98%;
-    --sidebar-primary: 0 84% 60%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 215 80% 25%;
-    --sidebar-accent-foreground: 0 0% 98%;
-    --sidebar-border: 215 80% 30%;
-    --sidebar-ring: 0 84% 60%;
+    --sidebar-foreground: 210 40% 98%;
+    --sidebar-primary: 350 85% 55%;
+    --sidebar-primary-foreground: 210 40% 98%;
+    --sidebar-accent: 215 80% 20%;
+    --sidebar-accent-foreground: 210 40% 98%;
+    --sidebar-border: 215 80% 25%;
+    --sidebar-ring: 350 85% 55%;
   }
 
   .batman {
-    --background: 240 10% 3.9%;
-    --foreground: 60 90% 90%;
-    --card: 240 10% 3.9%;
-    --card-foreground: 60 90% 90%;
+    --background: 240 10% 3.9%; /* Near Black */
+    --foreground: 53 90% 85%; /* Pale Yellow */
+    --card: 240 10% 7%;
+    --card-foreground: 53 90% 85%;
     --popover: 240 10% 3.9%;
-    --popover-foreground: 60 90% 90%;
-    --primary: 53 90% 50%;
+    --popover-foreground: 53 90% 85%;
+    --primary: 53 90% 50%; /* Bat-Signal Yellow */
     --primary-foreground: 240 10% 3.9%;
-    --secondary: 240 5% 15%;
-    --secondary-foreground: 60 90% 90%;
+    --secondary: 240 5% 15%; /* Dark Gray */
+    --secondary-foreground: 53 90% 85%;
     --muted: 240 5% 15%;
-    --muted-foreground: 60 30% 60%;
-    --accent: 240 5% 15%;
-    --accent-foreground: 60 90% 90%;
+    --muted-foreground: 240 5% 55%;
+    --accent: 240 5% 20%;
+    --accent-foreground: 53 90% 85%;
     --destructive: 0 70% 40%;
-    --destructive-foreground: 60 90% 90%;
+    --destructive-foreground: 53 90% 85%;
     --border: 240 5% 20%;
     --input: 240 5% 20%;
-    --ring: 53 90% 50%;
+    --ring: 53 90% 50%; /* Bat-Signal Yellow */
     --sidebar-background: 240 10% 3.9%;
-    --sidebar-foreground: 60 90% 90%;
+    --sidebar-foreground: 53 90% 85%;
     --sidebar-primary: 53 90% 50%;
     --sidebar-primary-foreground: 240 10% 3.9%;
     --sidebar-accent: 240 5% 15%;
-    --sidebar-accent-foreground: 60 90% 90%;
+    --sidebar-accent-foreground: 53 90% 85%;
     --sidebar-border: 240 5% 20%;
     --sidebar-ring: 53 90% 50%;
   }
 
   .iron-man {
-    --background: 350 30% 8%;
-    --foreground: 35 90% 80%;
-    --card: 350 30% 8%;
+    --background: 10 60% 8%; /* Dark Maroon */
+    --foreground: 35 90% 80%; /* Gold */
+    --card: 10 60% 11%;
     --card-foreground: 35 90% 80%;
-    --popover: 350 30% 8%;
+    --popover: 10 60% 8%;
     --popover-foreground: 35 90% 80%;
-    --primary: 0 85% 55%;
-    --primary-foreground: 35 90% 90%;
-    --secondary: 35 90% 50%;
-    --secondary-foreground: 350 30% 8%;
-    --muted: 350 40% 20%;
+    --primary: 0 85% 55%; /* Arc Reactor Red */
+    --primary-foreground: 35 90% 90%; /* Light Gold */
+    --secondary: 35 90% 50%; /* Bright Gold */
+    --secondary-foreground: 10 60% 8%;
+    --muted: 10 40% 20%;
     --muted-foreground: 35 50% 60%;
-    --accent: 350 40% 20%;
+    --accent: 10 40% 20%;
     --accent-foreground: 35 90% 80%;
     --destructive: 0 70% 40%;
     --destructive-foreground: 35 90% 80%;
-    --border: 350 40% 25%;
-    --input: 350 40% 25%;
-    --ring: 0 85% 55%;
-    --sidebar-background: 350 30% 8%;
+    --border: 10 40% 25%;
+    --input: 10 40% 25%;
+    --ring: 0 85% 55%; /* Arc Reactor Red */
+    --sidebar-background: 10 60% 8%;
     --sidebar-foreground: 35 90% 80%;
     --sidebar-primary: 0 85% 55%;
     --sidebar-primary-foreground: 35 90% 90%;
-    --sidebar-accent: 350 40% 20%;
+    --sidebar-accent: 10 40% 20%;
     --sidebar-accent-foreground: 35 90% 80%;
-    --sidebar-border: 350 40% 25%;
+    --sidebar-border: 10 40% 25%;
     --sidebar-ring: 0 85% 55%;
   }
 
   .superman {
-    --background: 220 50% 12%;
-    --foreground: 0 0% 98%;
-    --card: 220 50% 12%;
+    --background: 220 50% 12%; /* Deep Blue */
+    --foreground: 0 0% 98%; /* White */
+    --card: 220 50% 16%;
     --card-foreground: 0 0% 98%;
     --popover: 220 50% 12%;
     --popover-foreground: 0 0% 98%;
-    --primary: 0 80% 50%;
+    --primary: 0 80% 50%; /* Superman Red */
     --primary-foreground: 0 0% 100%;
-    --secondary: 220 80% 30%;
-    --secondary-foreground: 0 0% 98%;
-    --muted: 220 80% 30%;
+    --secondary: 50 90% 50%; /* Superman Yellow */
+    --secondary-foreground: 220 50% 12%;
+    --muted: 220 80% 25%;
     --muted-foreground: 220 20% 65%;
-    --accent: 50 90% 50%;
-    --accent-foreground: 220 50% 12%;
+    --accent: 220 80% 30%;
+    --accent-foreground: 0 0% 98%;
     --destructive: 0 62% 50%;
     --destructive-foreground: 0 0% 98%;
     --border: 220 80% 30%;
     --input: 220 80% 30%;
-    --ring: 0 80% 50%;
+    --ring: 0 80% 50%; /* Superman Red */
     --sidebar-background: 220 50% 12%;
     --sidebar-foreground: 0 0% 98%;
     --sidebar-primary: 0 80% 50%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 220 80% 30%;
+    --sidebar-accent: 220 80% 25%;
     --sidebar-accent-foreground: 0 0% 98%;
     --sidebar-border: 220 80% 30%;
     --sidebar-ring: 0 80% 50%;
   }
 
   .hulk {
-    --background: 120 20% 8%;
-    --foreground: 120 10% 90%;
-    --card: 120 20% 8%;
+    --background: 120 20% 8%; /* Dark Green */
+    --foreground: 120 10% 90%; /* Light Green/White */
+    --card: 120 20% 11%;
     --card-foreground: 120 10% 90%;
     --popover: 120 20% 8%;
     --popover-foreground: 120 10% 90%;
-    --primary: 120 60% 45%;
-    --primary-foreground: 120 20% 5%;
-    --secondary: 270 40% 25%;
+    --primary: 120 60% 45%; /* Hulk Green */
+    --primary-foreground: 120 20% 5%; /* Near Black */
+    --secondary: 270 40% 35%; /* Ripped Pants Purple */
     --secondary-foreground: 270 10% 90%;
     --muted: 270 40% 25%;
     --muted-foreground: 270 15% 65%;
@@ -203,7 +203,7 @@
     --destructive-foreground: 120 10% 90%;
     --border: 270 40% 30%;
     --input: 270 40% 30%;
-    --ring: 120 60% 45%;
+    --ring: 120 60% 45%; /* Hulk Green */
     --sidebar-background: 120 20% 8%;
     --sidebar-foreground: 120 10% 90%;
     --sidebar-primary: 120 60% 45%;
