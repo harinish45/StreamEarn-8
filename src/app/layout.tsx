@@ -19,7 +19,10 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={`font-sans ${inter.variable} antialiased`}>
-        <ThemeProvider>
+        <ThemeProvider
+          storageKey="theme"
+          defaultTheme="dark"
+        >
           {children}
           <Toaster />
         </ThemeProvider>

@@ -10,6 +10,13 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { Check } from 'lucide-react';
 
+function getThemeClass(themeName: string) {
+  if (themeName === 'Light' || themeName === 'Dark') {
+    return themeName.toLowerCase();
+  }
+  return themeName.toLowerCase().replace(/\s/g, "-");
+}
+
 export function ThemeSwitcher() {
   const { theme, setTheme } = useTheme();
 
@@ -20,10 +27,10 @@ export function ThemeSwitcher() {
       </DropdownMenuSubTrigger>
       <DropdownMenuSubContent>
         {themes.map((t) => (
-          <DropdownMenuItem key={t.name} onClick={() => setTheme(t)}>
+          <DropdownMenuItem key={t.name} onClick={() => setTheme(getThemeClass(t.name))}>
             <span className="flex items-center justify-between w-full">
               {t.name}
-              {theme.name === t.name && <Check className="h-4 w-4" />}
+              {theme === getThemeClass(t.name) && <Check className="h-4 w-4" />}
             </span>
           </DropdownMenuItem>
         ))}

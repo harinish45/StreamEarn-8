@@ -5,56 +5,62 @@ import { themes, type Theme } from "@/lib/themes"
 
 type ThemeProviderProps = {
   children: React.ReactNode
+  defaultTheme?: string
+  storageKey?: string
 }
 
 type ThemeProviderState = {
-  theme: Theme
-  setTheme: (theme: Theme) => void
+  theme: string
+  setTheme: (theme: string) => void
 }
 
 const initialState: ThemeProviderState = {
-  theme: themes[0],
+  theme: "system",
   setTheme: () => null,
 }
 
 const ThemeProviderContext = React.createContext<ThemeProviderState>(initialState)
 
 function getThemeClass(themeName: string) {
+  if (themeName === 'Light' || themeName === 'Dark') {
+    return themeName.toLowerCase();
+  }
   return themeName.toLowerCase().replace(/\s/g, "-");
 }
 
 export function ThemeProvider({
   children,
+  defaultTheme = "dark",
+  storageKey = "theme",
   ...props
 }: ThemeProviderProps) {
-  const [theme, setTheme] = React.useState<Theme>(
-    () => {
-      if (typeof window === "undefined") {
-        return themes[0];
-      }
-      const storedThemeName = window.localStorage.getItem("theme");
-      return themes.find(t => getThemeClass(t.name) === storedThemeName) || themes[0];
-    }
-  );
+  const [theme, setTheme] = React.useState(
+    () => (typeof window !== 'undefined' && localStorage.getItem(storageKey)) || defaultTheme
+  )
 
   React.useEffect(() => {
-    const root = window.document.documentElement;
+    const root = window.document.documentElement
+    root.classList.remove(...themes.map(t => getThemeClass(t.name)))
+
+    if (theme === "system") {
+      const systemTheme = window.matchMedia("(prefers-color-scheme: dark)")
+        .matches ? "dark" : "light"
+      root.classList.add(systemTheme)
+      return
+    }
     
-    // Remove all possible theme classes
-    root.classList.remove(...themes.map(t => getThemeClass(t.name)));
-    
-    // Add the new theme class
-    const newThemeClass = getThemeClass(theme.name);
+    const newThemeClass = getThemeClass(theme);
     root.classList.add(newThemeClass);
-    
-    // Save the new theme to local storage
-    localStorage.setItem("theme", newThemeClass);
+
   }, [theme])
 
   const value = {
     theme,
-    setTheme: (newTheme: Theme) => {
-      setTheme(newTheme)
+    setTheme: (theme: string) => {
+      if (typeof window !== 'undefined') {
+        localStorage.setItem(storageKey, theme)
+      }
+      setTheme(theme)
     },
   }
 

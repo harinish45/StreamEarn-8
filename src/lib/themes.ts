@@ -4,6 +4,12 @@ export type Theme = {
 
 export const themes: Theme[] = [
     {
+        name: 'Light',
+    },
+    {
+        name: 'Dark',
+    },
+    {
         name: 'Spider-Man',
     },
     {
