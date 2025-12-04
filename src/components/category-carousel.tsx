@@ -23,10 +23,10 @@ export function CategoryCarousel({ category, onOpportunityClick }: CategoryCarou
   }
   
   return (
-    <section id={category.id} className="py-6 md:py-8">
-      <div className="flex items-center justify-between mb-4 px-4 md:px-6">
+    <section id={category.id} className="py-8 md:py-12">
+      <div className="flex items-center justify-between mb-6 px-4 md:px-6">
         <div className="flex items-center gap-4">
-          <h2 className="text-2xl md:text-3xl font-extrabold tracking-tight">
+          <h2 className="text-3xl md:text-4xl font-extrabold tracking-tight text-foreground">
             {category.name}
           </h2>
         </div>
@@ -43,11 +43,11 @@ export function CategoryCarousel({ category, onOpportunityClick }: CategoryCarou
         }}
         className="w-full"
       >
-        <CarouselContent className="-ml-2 md:-ml-4">
+        <CarouselContent className="-ml-4">
           {category.opportunities.map((opportunity, index) => (
             <CarouselItem
               key={index}
-              className="pl-2 md:pl-4 basis-1/2 sm:basis-1/3 md:basis-1/4 lg:basis-1/5"
+              className="pl-4 basis-full sm:basis-1/2 md:basis-1/3 lg:basis-1/4 xl:basis-1/5"
             >
               <div className="p-1">
                 <OpportunityCard opportunity={opportunity} onClick={onOpportunityClick} />
@@ -55,8 +55,8 @@ export function CategoryCarousel({ category, onOpportunityClick }: CategoryCarou
             </CarouselItem>
           ))}
         </CarouselContent>
-        <CarouselPrevious className="ml-14 hidden md:flex" />
-        <CarouselNext className="mr-14 hidden md:flex" />
+        <CarouselPrevious className="ml-16 hidden md:flex" />
+        <CarouselNext className="mr-16 hidden md:flex" />
       </Carousel>
     </section>
   );
