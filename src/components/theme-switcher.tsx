@@ -1,0 +1,33 @@
+'use client';
+
+import { useTheme } from '@/components/theme-provider';
+import { themes } from '@/lib/themes';
+import {
+  DropdownMenuItem,
+  DropdownMenuSub,
+  DropdownMenuSubContent,
+  DropdownMenuSubTrigger,
+} from '@/components/ui/dropdown-menu';
+import { Check } from 'lucide-react';
+
+export function ThemeSwitcher() {
+  const { theme, setTheme } = useTheme();
+
+  return (
+    <DropdownMenuSub>
+      <DropdownMenuSubTrigger>
+        <span>Themes</span>
+      </DropdownMenuSubTrigger>
+      <DropdownMenuSubContent>
+        {themes.map((t) => (
+          <DropdownMenuItem key={t.name} onClick={() => setTheme(t)}>
+            <span className="flex items-center justify-between w-full">
+              {t.name}
+              {theme.name === t.name && <Check className="h-4 w-4" />}
+            </span>
+          </DropdownMenuItem>
+        ))}
+      </DropdownMenuSubContent>
+    </DropdownMenuSub>
+  );
+}
