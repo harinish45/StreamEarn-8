@@ -29,15 +29,16 @@ export function ThemeProvider({
         return themes[0];
       }
       const storedTheme = window.localStorage.getItem("theme");
-      return themes.find(t => t.name.toLowerCase() === storedTheme) || themes[0];
+      return themes.find(t => t.name.toLowerCase().replace(/\s/g, '-') === storedTheme) || themes[0];
     }
   );
 
   React.useEffect(() => {
     const root = window.document.documentElement
-    root.classList.remove(...themes.map(t => t.name.toLowerCase()))
-    root.classList.add(theme.name.toLowerCase())
-    localStorage.setItem("theme", theme.name.toLowerCase());
+    root.classList.remove(...themes.map(t => t.name.toLowerCase().replace(/\s/g, '-')))
+    const newThemeClass = theme.name.toLowerCase().replace(/\s/g, '-');
+    root.classList.add(newThemeClass)
+    localStorage.setItem("theme", newThemeClass);
   }, [theme])
 
   const value = {
