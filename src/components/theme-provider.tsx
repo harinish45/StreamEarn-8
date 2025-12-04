@@ -19,6 +19,10 @@ const initialState: ThemeProviderState = {
 
 const ThemeProviderContext = React.createContext<ThemeProviderState>(initialState)
 
+function getThemeClass(themeName: string) {
+  return themeName.toLowerCase().replace(/\s/g, "-");
+}
+
 export function ThemeProvider({
   children,
   ...props
@@ -28,16 +32,22 @@ export function ThemeProvider({
       if (typeof window === "undefined") {
         return themes[0];
       }
-      const storedTheme = window.localStorage.getItem("theme");
-      return themes.find(t => t.name.toLowerCase().replace(/\s/g, '-') === storedTheme) || themes[0];
+      const storedThemeName = window.localStorage.getItem("theme");
+      return themes.find(t => getThemeClass(t.name) === storedThemeName) || themes[0];
     }
   );
 
   React.useEffect(() => {
-    const root = window.document.documentElement
-    root.classList.remove(...themes.map(t => t.name.toLowerCase().replace(/\s/g, '-')))
-    const newThemeClass = theme.name.toLowerCase().replace(/\s/g, '-');
-    root.classList.add(newThemeClass)
+    const root = window.document.documentElement;
+    
+    // Remove all possible theme classes
+    root.classList.remove(...themes.map(t => getThemeClass(t.name)));
+    
+    // Add the new theme class
+    const newThemeClass = getThemeClass(theme.name);
+    root.classList.add(newThemeClass);
+    
+    // Save the new theme to local storage
     localStorage.setItem("theme", newThemeClass);
   }, [theme])
 
