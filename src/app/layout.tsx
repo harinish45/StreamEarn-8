@@ -1,15 +1,10 @@
 import type { Metadata } from "next";
-import { Inter, Bungee } from "next/font/google";
+import { Inter } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "@/components/ui/toaster";
 import { ThemeProvider } from "@/components/theme-provider";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-sans" });
-const bungee = Bungee({
-  subsets: ["latin"],
-  weight: ["400"],
-  variable: "--font-bungee",
-});
 
 export const metadata: Metadata = {
   title: "App",
@@ -24,7 +19,7 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body
-        className={`font-sans ${inter.variable} ${bungee.variable} antialiased`}
+        className={`font-sans ${inter.variable} antialiased`}
       >
         <ThemeProvider
           storageKey="theme"

@@ -26,7 +26,7 @@ export function CategoryCarousel({ category, onOpportunityClick }: CategoryCarou
     <section id={category.id} className="py-8 md:py-12">
       <div className="flex items-center justify-between mb-6 px-4 md:px-6">
         <div className="flex items-center gap-4">
-          <h2 className="text-2xl md:text-3xl font-bungee tracking-tighter text-foreground">
+          <h2 className="text-2xl md:text-3xl font-serif text-foreground">
             {category.name}
           </h2>
         </div>

@@ -12,7 +12,7 @@ export default {
     extend: {
       fontFamily: {
         sans: ["var(--font-sans)", ...fontFamily.sans],
-        bungee: ["var(--font-bungee)", ...fontFamily.sans],
+        serif: ["Times New Roman", "Times", "serif"],
       },
       colors: {
         background: 'hsl(var(--background))',
