@@ -65,6 +65,13 @@ const createImage = (index: number) => `https://picsum.photos/seed/${index}/600/
 
 export const earningOpportunities: EarningCategory[] = [
     {
+        id: 'home',
+        name: 'Home',
+        icon: Home,
+        description: "The main dashboard.",
+        opportunities: [],
+    },
+    {
         id: 'recently-watched',
         name: 'Recently Watched',
         icon: Clock,

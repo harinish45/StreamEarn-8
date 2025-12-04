@@ -10,6 +10,7 @@ import { CategoryCarousel } from "@/components/category-carousel";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import React, { useState, useCallback, useMemo } from "react";
 import { CategoryList } from "@/components/category-list";
+import { Breadcrumbs } from "@/components/breadcrumbs";
 
 export default function Home() {
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
@@ -124,7 +125,8 @@ export default function Home() {
           />
           <ScrollArea className="h-[calc(100vh-4rem)]">
             <main className="flex-1">
-              <div className="p-4 md:p-6 space-y-8">
+              <div className="p-4 md:p-6 space-y-4">
+                <Breadcrumbs path={[{ name: "Home", href: "/" }]} />
                 <Hero />
               </div>
               {viewMode === 'grid' ? (
