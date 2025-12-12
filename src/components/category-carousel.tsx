@@ -55,8 +55,8 @@ export function CategoryCarousel({ category, onOpportunityClick }: CategoryCarou
             </CarouselItem>
           ))}
         </CarouselContent>
-        <CarouselPrevious className="hidden md:flex" />
-        <CarouselNext className="hidden md:flex" />
+        <CarouselPrevious className="md:flex" />
+        <CarouselNext className="md:flex" />
       </Carousel>
     </section>
   );
