@@ -1,9 +1,10 @@
 
 import type { Opportunity } from "@/lib/data";
-import { ArrowUpRight, Star } from "lucide-react";
+import { ArrowUpRight } from "lucide-react";
 import { Button } from "./ui/button";
-import { cn } from "@/lib/utils";
 import Image from "next/image";
+import Link from "next/link";
+import { Badge } from "./ui/badge";
 
 interface OpportunityCardProps {
   opportunity: Opportunity;
@@ -12,44 +13,40 @@ interface OpportunityCardProps {
 
 export function OpportunityCard({ opportunity, onClick }: OpportunityCardProps) {
   return (
-    <div className="group relative h-full w-full overflow-hidden rounded-lg border border-border shadow-sm transition-all hover:shadow-lg hover:shadow-primary/20 bg-card">
-      <div className="p-4 flex flex-col justify-between h-full">
+    <Link 
+      href={opportunity.link}
+      target="_blank"
+      rel="noopener noreferrer"
+      onClick={() => onClick(opportunity.id)}
+      className="group relative block h-full w-full"
+    >
+      <div className="flex flex-col justify-between h-full w-full overflow-hidden rounded-lg border border-border bg-card p-4 shadow-sm transition-all hover:shadow-lg hover:border-primary/50">
         <div>
-          <div className="flex justify-between items-start mb-4">
-             <div className="flex items-center gap-3">
-              <Image
-                src={opportunity.logo}
-                alt={`${opportunity.title} logo`}
-                width={40}
-                height={40}
-                className="rounded-md object-contain"
-                data-ai-hint="logo"
-              />
-              <h3 className="font-bold text-lg leading-tight">{opportunity.title}</h3>
+          <div className="flex items-center justify-between mb-2">
+            <div className="flex items-center gap-3">
+                <Image
+                    src={opportunity.logo}
+                    alt={`${opportunity.title} logo`}
+                    width={24}
+                    height={24}
+                    className="rounded-md object-contain"
+                    data-ai-hint="logo"
+                />
+                <h3 className="font-semibold text-base">{opportunity.title}</h3>
             </div>
-            <a
-              href={opportunity.link}
-              target="_blank"
-              rel="noopener noreferrer"
-              onClick={() => onClick(opportunity.id)}
-              className="mt-1"
-            >
-              <ArrowUpRight className="h-5 w-5 text-muted-foreground group-hover:text-foreground transition-colors" />
-            </a>
+            {opportunity.visited && (
+              <Badge variant="secondary" className="bg-primary/20 text-primary-foreground hover:bg-primary/30">
+                Recently Seen
+              </Badge>
+            )}
           </div>
-          <p className="text-sm text-muted-foreground mt-1 line-clamp-2">{opportunity.description}</p>
+          <p className="text-sm text-muted-foreground line-clamp-2 min-h-[40px]">{opportunity.description}</p>
         </div>
-        <div className="flex justify-between items-center mt-4">
-          <Button variant="ghost" size="icon" className="h-8 w-8">
-            <Star className="h-4 w-4" />
-          </Button>
-          {opportunity.visited && (
-            <div className="text-xs font-semibold px-2 py-1 rounded-full bg-secondary text-secondary-foreground">
-              Visited
-            </div>
-          )}
-        </div>
+        <Button variant="default" className="w-full mt-4 bg-primary/80 hover:bg-primary text-primary-foreground">
+          Visit Website
+          <ArrowUpRight className="ml-2 h-4 w-4" />
+        </Button>
       </div>
-    </div>
+    </Link>
   );
 }
