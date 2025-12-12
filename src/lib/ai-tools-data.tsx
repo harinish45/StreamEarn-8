@@ -53,13 +53,14 @@ export const aiToolsPyramid: AiToolCategory[] = [
     ],
   },
   {
-    name: 'Productivity',
+    name: 'Lead Automation',
     tools: [
-      { name: 'RecCloud', logo: placeholderLogo('RecCloud'), link: '#' },
-      { name: 'Tidio', logo: placeholderLogo('Tidio'), link: 'https://www.tidio.com/' },
-      { name: 'Zapier', logo: placeholderLogo('Zapier'), link: 'https://zapier.com/' },
-      { name: 'Calendly', logo: placeholderLogo('Calendly'), link: 'https://calendly.com/' },
-      { name: 'PicWish', logo: placeholderLogo('PicWish'), link: 'https://picwish.com/' },
+      { name: 'Clay', logo: placeholderLogo('Clay'), link: 'https://www.clay.com/' },
+      { name: 'Apify', logo: placeholderLogo('Apify'), link: 'https://apify.com/' },
+      { name: 'Hunter', logo: placeholderLogo('Hunter'), link: 'https://hunter.io/' },
+      { name: 'Clearbit', logo: placeholderLogo('Clearbit'), link: 'https://clearbit.com/' },
+      { name: 'Lusha', logo: placeholderLogo('Lusha'), link: 'https://www.lusha.com/' },
+      { name: 'ZoomInfo', logo: placeholderLogo('ZoomInfo'), link: 'https://www.zoominfo.com/' },
     ],
   },
 ];
