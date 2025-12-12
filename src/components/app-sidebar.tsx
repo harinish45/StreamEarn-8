@@ -12,7 +12,7 @@ import {
 } from "@/components/ui/sidebar";
 import { EarningCategory } from "@/lib/data";
 import { Button } from "./ui/button";
-import { Search, LogOut, ArrowDownAZ, ArrowUpAZ, Pin, Home } from "lucide-react";
+import { Search, LogOut, ArrowDownAZ, ArrowUpAZ, Pin, Home, DollarSign } from "lucide-react";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
 
@@ -26,7 +26,7 @@ interface AppSidebarProps {
 }
 
 export function AppSidebar({ categories, onSortClick, sortOrder, onPinClick, searchQuery, setSearchQuery }: AppSidebarProps) {
-  const sidebarCategories = categories.filter(c => c.id !== 'home');
+  const sidebarCategories = categories.filter(c => c.id !== 'home' && c.id !== 'recently-watched');
 
   return (
     <Sidebar>
@@ -51,6 +51,14 @@ export function AppSidebar({ categories, onSortClick, sortOrder, onPinClick, sea
                     </Link>
                 </SidebarMenuButton>
             </SidebarMenuItem>
+             <SidebarMenuItem>
+                 <SidebarMenuButton asChild tooltip="Earnings">
+                    <Link href="/earnings">
+                        <DollarSign />
+                        <span>Earnings</span>
+                    </Link>
+                </SidebarMenuButton>
+            </SidebarMenuItem>
         </SidebarMenu>
         <SidebarSeparator />
         <div className="flex items-center justify-end px-2 mb-2">
@@ -63,10 +71,10 @@ export function AppSidebar({ categories, onSortClick, sortOrder, onPinClick, sea
           {sidebarCategories.map((category) => (
             <SidebarMenuItem key={category.id} className="group/menu-item">
               <SidebarMenuButton asChild tooltip={category.name}>
-                <a href={`#${category.id}`}>
+                <Link href={`/category/${category.id}`}>
                   <category.icon />
                   <span>{category.name}</span>
-                </a>
+                </Link>
               </SidebarMenuButton>
                <Button
                 variant="ghost"

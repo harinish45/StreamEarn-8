@@ -4,25 +4,26 @@
 import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/app-sidebar";
 import { Header } from "@/components/header";
+import { Hero } from "@/components/hero";
 import { EarningCategory, earningOpportunities as initialEarningOpportunities } from "@/lib/data";
+import { CategoryCarousel } from "@/components/category-carousel";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import React, from "react";
+import React, { useState, useCallback, useMemo } from "react";
+import { CategoryList } from "@/components/category-list";
 import { Breadcrumbs } from "@/components/breadcrumbs";
-import { LeadAutomationCard } from "@/components/lead-automation-card";
-import { leadAutomationTools } from "@/lib/lead-automation-data";
 
-export default function Home() {
-  const [viewMode, setViewMode] = React.useState<'grid' | 'list'>('grid');
-  const [earningOpportunities, setEarningOpportunities] = React.useState(initialEarningOpportunities);
-  const [sortOrder, setSortOrder] = React.useState<'asc' | 'desc'>('asc');
-  const [categorySearchQuery, setCategorySearchQuery] = React.useState('');
-  const [opportunitySearchQuery, setOpportunitySearchQuery] = React.useState('');
+export default function EarningsPage() {
+  const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
+  const [earningOpportunities, setEarningOpportunities] = useState(initialEarningOpportunities);
+  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
+  const [categorySearchQuery, setCategorySearchQuery] = useState('');
+  const [opportunitySearchQuery, setOpportunitySearchQuery] = useState('');
 
-  const handleSortCategories = React.useCallback(() => {
+  const handleSortCategories = useCallback(() => {
     setSortOrder(prev => prev === 'asc' ? 'desc' : 'asc');
   }, []);
 
-  const handlePinCategory = React.useCallback((categoryId: string) => {
+  const handlePinCategory = useCallback((categoryId: string) => {
     setEarningOpportunities(prev => {
       const category = prev.find(c => c.id === categoryId);
       if (!category) return prev;
@@ -46,8 +47,24 @@ export default function Home() {
       return [...pinned, ...unpinned];
     });
   }, [sortOrder]);
+
+  const handleMarkAsVisited = useCallback((opportunityId: string) => {
+    setEarningOpportunities(prev => {
+      return prev.map(category => {
+        return {
+          ...category,
+          opportunities: category.opportunities.map(op => {
+            if (op.id === opportunityId) {
+              return { ...op, visited: true };
+            }
+            return op;
+          })
+        };
+      });
+    });
+  }, []);
   
-  const filteredAndSortedCategories = React.useMemo(() => {
+  const filteredAndSortedCategories = useMemo(() => {
     let categories = [...earningOpportunities];
 
     // Filter categories by category search query
@@ -107,18 +124,20 @@ export default function Home() {
             setSearchQuery={setOpportunitySearchQuery}
           />
           <ScrollArea className="h-[calc(100vh-4rem)]">
-            <main className="flex-1 p-4 md:p-6">
-              <div className="space-y-4 mb-8">
-                  <Breadcrumbs path={[{ name: "Home", href: "/" }]} />
-                  <h1 className="text-3xl md:text-4xl font-serif tracking-tight font-bungee">Lead Automation Tools</h1>
-                  <p className="text-lg text-muted-foreground">Explore these popular platforms to automate lead generation and data enrichment.</p>
+            <main className="flex-1">
+              <div className="p-4 md:p-6 space-y-4">
+                <Breadcrumbs path={[{ name: "Home", href: "/" }, { name: "Earnings", href: "/earnings" }]} />
+                <Hero />
               </div>
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-                  {leadAutomationTools.map((tool) => (
-                      <LeadAutomationCard key={tool.id} tool={tool} />
-                  ))}
-              </div>
+              {viewMode === 'grid' ? (
+                filteredAndSortedCategories.map((category) => (
+                  <CategoryCarousel key={category.id} category={category} onOpportunityClick={handleMarkAsVisited} />
+                ))
+              ) : (
+                 filteredAndSortedCategories.map((category) => (
+                  <CategoryList key={category.id} category={category} onOpportunityClick={handleMarkAsVisited} />
+                ))
+              )}
             </main>
           </ScrollArea>
         </SidebarInset>
