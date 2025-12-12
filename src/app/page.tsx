@@ -1,6 +1,5 @@
 
 import { Button } from "@/components/ui/button";
-import { Check } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -9,10 +8,6 @@ export default function Home() {
     <div className="flex flex-col min-h-screen bg-background text-foreground">
       <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
         <div className="container flex h-14 items-center">
-          <div className="mr-4 flex items-center">
-            <MountainIcon className="h-6 w-6 mr-2" />
-            <span className="font-bold">OpportunityHub</span>
-          </div>
           <div className="flex flex-1 items-center justify-end space-x-2">
             <nav className="flex items-center space-x-6 text-sm font-medium">
               <Link
