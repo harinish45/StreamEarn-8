@@ -28,9 +28,9 @@ export function AiToolsPyramid() {
             ))}
           </div>
           <div className="flex items-center w-full my-4">
-            { index < aiToolsPyramid.length -1 && <div className="h-px flex-1 bg-border" />}
+            { index < aiToolsPyramid.length && <div className="h-px flex-1 bg-border" />}
             <p className="text-sm text-muted-foreground px-4 flex-shrink-0">{category.name}</p>
-            { index < aiToolsPyramid.length -1 && <div className="h-px flex-1 bg-border" />}
+            { index < aiToolsPyramid.length && <div className="h-px flex-1 bg-border" />}
           </div>
         </div>
       ))}
