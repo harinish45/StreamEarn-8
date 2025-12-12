@@ -32,7 +32,7 @@ export function OpportunityCard({ opportunity, onClick }: OpportunityCardProps) 
                     className="rounded-md object-contain"
                     data-ai-hint="logo"
                 />
-                <h3 className="font-semibold text-base">{opportunity.title}</h3>
+                <h3 className="font-semibold text-base whitespace-normal">{opportunity.title}</h3>
             </div>
             {opportunity.visited && (
               <Badge variant="secondary" className="bg-primary/20 text-primary-foreground hover:bg-primary/30">
@@ -40,7 +40,7 @@ export function OpportunityCard({ opportunity, onClick }: OpportunityCardProps) 
               </Badge>
             )}
           </div>
-          <p className="text-sm text-muted-foreground line-clamp-2 h-[40px]">{opportunity.description}</p>
+          <p className="text-sm text-muted-foreground line-clamp-2 min-h-[40px] whitespace-normal">{opportunity.description}</p>
         </div>
         <Button variant="default" className="w-full mt-4 bg-primary/80 hover:bg-primary text-primary-foreground">
           Visit Website

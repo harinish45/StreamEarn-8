@@ -223,3 +223,19 @@
     @apply bg-background text-foreground;
   }
 }
+
+@layer utilities {
+  .category-carousel-scrollbar::-webkit-scrollbar {
+    height: 8px;
+  }
+
+  .category-carousel-scrollbar::-webkit-scrollbar-track {
+    background-color: hsl(var(--muted));
+    border-radius: 10px;
+  }
+
+  .category-carousel-scrollbar::-webkit-scrollbar-thumb {
+    background-color: hsl(var(--primary));
+    border-radius: 10px;
+  }
+}

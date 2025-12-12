@@ -1,12 +1,6 @@
 
 import type { EarningCategory } from "@/lib/data";
-import {
-  Carousel,
-  CarouselContent,
-  CarouselItem,
-  CarouselNext,
-  CarouselPrevious,
-} from "@/components/ui/carousel";
+import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { OpportunityCard } from "./opportunity-card";
 import Link from "next/link";
 import { Button } from "./ui/button";
@@ -36,28 +30,19 @@ export function CategoryCarousel({ category, onOpportunityClick }: CategoryCarou
           </Link>
         </Button>
       </div>
-      <Carousel
-        opts={{
-          align: "start",
-          loop: false,
-        }}
-        className="w-full px-12"
-      >
-        <CarouselContent className="-ml-4">
+      <ScrollArea className="w-full whitespace-nowrap px-4 md:px-6 category-carousel-scrollbar">
+        <div className="flex w-max space-x-4 pb-4">
           {category.opportunities.map((opportunity, index) => (
-            <CarouselItem
+            <div
               key={index}
-              className="pl-4 basis-full sm:basis-1/2 md:basis-1/3 lg:basis-1/4 xl:basis-1/5 flex"
+              className="w-[280px] h-full"
             >
-              <div className="p-1 w-full">
-                <OpportunityCard opportunity={opportunity} onClick={onOpportunityClick} />
-              </div>
-            </CarouselItem>
+              <OpportunityCard opportunity={opportunity} onClick={onOpportunityClick} />
+            </div>
           ))}
-        </CarouselContent>
-        <CarouselPrevious className="md:flex" />
-        <CarouselNext className="md:flex" />
-      </Carousel>
+        </div>
+        <ScrollBar orientation="horizontal" />
+      </ScrollArea>
     </section>
   );
 }
