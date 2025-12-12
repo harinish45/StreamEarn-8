@@ -26,7 +26,7 @@ export function CategoryCarousel({ category, onOpportunityClick }: CategoryCarou
     <section id={category.id} className="py-8 md:py-12">
       <div className="flex items-center justify-between mb-6 px-4 md:px-6">
         <div className="flex items-center gap-4">
-          <h2 className="text-xl md:text-2xl font-serif tracking-tight font-bungee">
+          <h2 className="text-xl md:text-2xl font-serif tracking-tight">
             {category.name}
           </h2>
         </div>
@@ -47,16 +47,16 @@ export function CategoryCarousel({ category, onOpportunityClick }: CategoryCarou
           {category.opportunities.map((opportunity, index) => (
             <CarouselItem
               key={index}
-              className="pl-4 basis-full sm:basis-1/2 md:basis-1/3 lg:basis-1/4 xl:basis-1/5"
+              className="pl-4 basis-full sm:basis-1/2 md:basis-1/3 lg:basis-1/4 xl:basis-1/5 flex"
             >
-              <div className="p-1">
+              <div className="p-1 w-full">
                 <OpportunityCard opportunity={opportunity} onClick={onOpportunityClick} />
               </div>
             </CarouselItem>
           ))}
         </CarouselContent>
-        <CarouselPrevious className="ml-16 hidden md:flex" />
-        <CarouselNext className="mr-16 hidden md:flex" />
+        <CarouselPrevious className="ml-16 md:flex" />
+        <CarouselNext className="mr-16 md:flex" />
       </Carousel>
     </section>
   );
