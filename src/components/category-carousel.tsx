@@ -41,7 +41,7 @@ export function CategoryCarousel({ category, onOpportunityClick }: CategoryCarou
           align: "start",
           loop: false,
         }}
-        className="w-full"
+        className="w-full px-12"
       >
         <CarouselContent className="-ml-4">
           {category.opportunities.map((opportunity, index) => (
@@ -55,8 +55,8 @@ export function CategoryCarousel({ category, onOpportunityClick }: CategoryCarou
             </CarouselItem>
           ))}
         </CarouselContent>
-        <CarouselPrevious className="md:flex" />
-        <CarouselNext className="md:flex" />
+        <CarouselPrevious className="hidden md:flex" />
+        <CarouselNext className="hidden md:flex" />
       </Carousel>
     </section>
   );
