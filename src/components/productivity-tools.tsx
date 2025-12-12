@@ -1,0 +1,35 @@
+
+import { productivityTools } from '@/lib/productivity-tools-data';
+import Image from 'next/image';
+
+export function ProductivityTools() {
+  return (
+    <div className="relative w-full overflow-hidden rounded-xl bg-gradient-to-b from-[#0a101d] to-[#0c1222] p-8 shadow-2xl">
+      <Image
+        src="https://picsum.photos/seed/wave-bg/1024/300"
+        alt="Abstract wave background"
+        width={1024}
+        height={300}
+        className="absolute top-0 left-0 w-full h-auto object-cover opacity-30"
+        data-ai-hint="abstract wave"
+      />
+      <div className="relative z-10">
+        <div className="mb-8 text-center">
+          <h2 className="text-4xl font-bold tracking-tight text-white">Productivity</h2>
+          <div className="mt-2 h-1 w-24 bg-[#00A3FF] mx-auto rounded-full" />
+        </div>
+        <ul className="space-y-5 text-white/80">
+          {productivityTools.map((tool) => (
+            <li key={tool.number} className="flex gap-4">
+              <span className="text-lg font-medium text-white/60">{tool.number}/</span>
+              <div>
+                <span className="font-bold text-[#00A3FF]">{tool.name}</span>
+                <span className="text-white/80"> - {tool.description}</span>
+              </div>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </div>
+  );
+}

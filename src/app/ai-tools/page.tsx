@@ -9,6 +9,7 @@ import { GoogleAiEcosystem } from "@/components/google-ai-ecosystem";
 import { IllegalAiTools } from "@/components/illegal-ai-tools";
 import { JobsAndCareers } from "@/components/jobs-and-careers";
 import { FinanceAndMoney } from "@/components/finance-and-money";
+import { ProductivityTools } from "@/components/productivity-tools";
 
 export default function AiToolsPage() {
   return (
@@ -42,6 +43,7 @@ export default function AiToolsPage() {
                     </div>
                 </div>
                <div className="space-y-8">
+                   <ProductivityTools />
                    <JobsAndCareers />
                    <FinanceAndMoney />
                </div>
