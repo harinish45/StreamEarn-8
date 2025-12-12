@@ -42,17 +42,6 @@ export function AppSidebar({ categories, onSortClick, sortOrder, onPinClick, sea
         </div>
       </SidebarHeader>
       <SidebarContent className="p-2">
-        <SidebarMenu>
-             <SidebarMenuItem>
-                 <SidebarMenuButton asChild tooltip="Earnings">
-                    <Link href="/earnings">
-                        <DollarSign />
-                        <span>Earnings</span>
-                    </Link>
-                </SidebarMenuButton>
-            </SidebarMenuItem>
-        </SidebarMenu>
-        <SidebarSeparator />
         <div className="flex items-center justify-end px-2 mb-2">
             <Button variant="ghost" size="sm" onClick={onSortClick}>
                 Sort 
