@@ -63,6 +63,16 @@ export const aiToolsPyramid: AiToolCategory[] = [
       { name: 'ZoomInfo', logo: placeholderLogo('ZoomInfo'), link: 'https://www.zoominfo.com/' },
     ],
   },
+  {
+    name: 'Productivity',
+    tools: [
+      { name: 'RecCloud', logo: placeholderLogo('RecCloud'), link: 'https://www.reccloud.com/' },
+      { name: 'Tidio', logo: placeholderLogo('Tidio'), link: 'https://www.tidio.com/' },
+      { name: 'Zapier', logo: placeholderLogo('Zapier'), link: 'https://zapier.com/' },
+      { name: 'Calendly', logo: placeholderLogo('Calendly'), link: 'https://calendly.com/' },
+      { name: 'PicWish', logo: placeholderLogo('PicWish'), link: 'https://picwish.com/' },
+    ],
+  },
 ];
 
 export const toolSubLabels: Record<string, string> = {
