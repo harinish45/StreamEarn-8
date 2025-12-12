@@ -6,6 +6,7 @@ import { LeadAutomationCard } from "@/components/lead-automation-card";
 import { leadAutomationTools } from "@/lib/lead-automation-data";
 import { AiToolsPyramid } from "@/components/ai-tools-pyramid";
 import { GoogleAiEcosystem } from "@/components/google-ai-ecosystem";
+import { IllegalAiTools } from "@/components/illegal-ai-tools";
 
 export default function AiToolsPage() {
   return (
@@ -24,6 +25,8 @@ export default function AiToolsPage() {
           </div>
 
           <AiToolsPyramid />
+
+          <IllegalAiTools />
 
           <div className="space-y-4 my-16 pt-12 border-t border-border">
               <Breadcrumbs path={[{ name: "AI Tools", href: "/ai-tools" }]} />
