@@ -1,6 +1,6 @@
 
 import type { Opportunity } from "@/lib/data";
-import { ArrowUpRight, Pin } from "lucide-react";
+import { ArrowUpRight, Star } from "lucide-react";
 import { Button } from "./ui/button";
 import { cn } from "@/lib/utils";
 import Image from "next/image";
@@ -41,7 +41,7 @@ export function OpportunityCard({ opportunity, onClick }: OpportunityCardProps) 
         </div>
         <div className="flex justify-between items-center mt-4">
           <Button variant="ghost" size="icon" className="h-8 w-8">
-            <Pin className="h-4 w-4" />
+            <Star className="h-4 w-4" />
           </Button>
           {opportunity.visited && (
             <div className="text-xs font-semibold px-2 py-1 rounded-full bg-secondary text-secondary-foreground">
