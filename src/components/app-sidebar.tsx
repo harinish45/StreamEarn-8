@@ -51,14 +51,6 @@ export function AppSidebar({ categories, onSortClick, sortOrder, onPinClick, sea
                     </Link>
                 </SidebarMenuButton>
             </SidebarMenuItem>
-             <SidebarMenuItem>
-                 <SidebarMenuButton asChild tooltip="AI Tools">
-                    <Link href="/ai-tools">
-                        <Bot />
-                        <span>AI Tools</span>
-                    </Link>
-                </SidebarMenuButton>
-            </SidebarMenuItem>
         </SidebarMenu>
         <SidebarSeparator />
         <div className="flex items-center justify-end px-2 mb-2">
