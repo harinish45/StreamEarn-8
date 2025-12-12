@@ -52,20 +52,6 @@ export default function Home() {
                     <Link href="/ai-tools">Discover AI Tools</Link>
                 </Button>
               </div>
-               <ul className="grid gap-2 py-4">
-                <li className="flex items-center">
-                  <Check className="mr-2 h-4 w-4 text-primary" />
-                  <span>Vetted Earning Categories</span>
-                </li>
-                <li className="flex items-center">
-                  <Check className="mr-2 h-4 w-4 text-primary" />
-                  <span>AI-Powered Tool Suggestions</span>
-                </li>
-                <li className="flex items-center">
-                  <Check className="mr-2 h-4 w-4 text-primary" />
-                  <span>Real-Time Opportunity Updates</span>
-                </li>
-              </ul>
             </div>
             <div className="flex items-center justify-center">
                 <Image
