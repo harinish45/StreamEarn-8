@@ -1,128 +1,117 @@
 
-'use client';
-
-import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar";
-import { AppSidebar } from "@/components/app-sidebar";
-import { Header } from "@/components/header";
-import { EarningCategory, earningOpportunities as initialEarningOpportunities } from "@/lib/data";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import React, from "react";
-import { Breadcrumbs } from "@/components/breadcrumbs";
-import { LeadAutomationCard } from "@/components/lead-automation-card";
-import { leadAutomationTools } from "@/lib/lead-automation-data";
+import { Button } from "@/components/ui/button";
+import { Check } from "lucide-react";
+import Image from "next/image";
+import Link from "next/link";
 
 export default function Home() {
-  const [viewMode, setViewMode] = React.useState<'grid' | 'list'>('grid');
-  const [earningOpportunities, setEarningOpportunities] = React.useState(initialEarningOpportunities);
-  const [sortOrder, setSortOrder] = React.useState<'asc' | 'desc'>('asc');
-  const [categorySearchQuery, setCategorySearchQuery] = React.useState('');
-  const [opportunitySearchQuery, setOpportunitySearchQuery] = React.useState('');
-
-  const handleSortCategories = React.useCallback(() => {
-    setSortOrder(prev => prev === 'asc' ? 'desc' : 'asc');
-  }, []);
-
-  const handlePinCategory = React.useCallback((categoryId: string) => {
-    setEarningOpportunities(prev => {
-      const category = prev.find(c => c.id === categoryId);
-      if (!category) return prev;
-
-      const isPinned = !category.pinned;
-      const updatedCategory = { ...category, pinned: isPinned };
-
-      const otherCategories = prev.filter(c => c.id !== categoryId);
-      
-      const allCategories = [updatedCategory, ...otherCategories];
-
-      const pinned = allCategories.filter(c => c.pinned);
-      const unpinned = allCategories.filter(c => !c.pinned).sort((a, b) => {
-        if (sortOrder === 'asc') {
-          return a.name.localeCompare(b.name);
-        } else {
-          return b.name.localeCompare(a.name);
-        }
-      });
-
-      return [...pinned, ...unpinned];
-    });
-  }, [sortOrder]);
-  
-  const filteredAndSortedCategories = React.useMemo(() => {
-    let categories = [...earningOpportunities];
-
-    // Filter categories by category search query
-    if (categorySearchQuery) {
-      categories = categories.filter(category =>
-        category.name.toLowerCase().includes(categorySearchQuery.toLowerCase())
-      );
-    }
-    
-    // Process opportunities within categories
-    let categoriesWithFilteredOpportunities = categories.map(category => {
-      let opportunities = category.opportunities;
-      // Filter opportunities within categories by opportunity search query
-      if (opportunitySearchQuery) {
-        opportunities = opportunities.filter(op =>
-          op.title.toLowerCase().includes(opportunitySearchQuery.toLowerCase())
-        );
-      }
-      return { ...category, opportunities };
-    }).filter(category => category.opportunities.length > 0);
-    
-    
-    // Separate pinned and unpinned categories
-    const pinned = categoriesWithFilteredOpportunities.filter(c => c.pinned);
-    const unpinned = categoriesWithFilteredOpportunities.filter(c => !c.pinned);
-
-    // Sort unpinned categories
-    unpinned.sort((a, b) => {
-      if (sortOrder === 'asc') {
-        return a.name.localeCompare(b.name);
-      } else {
-        return b.name.localeCompare(a.name);
-      }
-    });
-
-    // Combine pinned and sorted unpinned categories
-    return [...pinned, ...unpinned];
-  }, [earningOpportunities, sortOrder, categorySearchQuery, opportunitySearchQuery]);
-
-
   return (
-    <SidebarProvider>
-      <div className="flex min-h-screen bg-background">
-        <AppSidebar 
-          categories={filteredAndSortedCategories} 
-          onSortClick={handleSortCategories} 
-          sortOrder={sortOrder}
-          onPinClick={handlePinCategory}
-          searchQuery={categorySearchQuery}
-          setSearchQuery={setCategorySearchQuery}
-        />
-        <SidebarInset>
-          <Header 
-            viewMode={viewMode} 
-            setViewMode={setViewMode} 
-            searchQuery={opportunitySearchQuery}
-            setSearchQuery={setOpportunitySearchQuery}
-          />
-          <ScrollArea className="h-[calc(100vh-4rem)]">
-            <main className="flex-1 p-4 md:p-6">
-              <div className="space-y-4 mb-8">
-                  <Breadcrumbs path={[{ name: "Home", href: "/" }]} />
-                  <h1 className="text-3xl md:text-4xl font-serif tracking-tight font-bungee">Lead Automation Tools</h1>
-                  <p className="text-lg text-muted-foreground">Explore these popular platforms to automate lead generation and data enrichment.</p>
-              </div>
+    <div className="flex flex-col min-h-screen bg-background text-foreground">
+      <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+        <div className="container flex h-14 items-center">
+          <div className="mr-4 flex items-center">
+            <MountainIcon className="h-6 w-6 mr-2" />
+            <span className="font-bold">OpportunityHub</span>
+          </div>
+          <div className="flex flex-1 items-center justify-end space-x-2">
+            <nav className="flex items-center space-x-6 text-sm font-medium">
+              <Link
+                href="/earnings"
+                className="text-foreground/60 transition-colors hover:text-foreground/80"
+              >
+                Dashboard
+              </Link>
+            </nav>
+            <div className="hidden items-center space-x-2 md:flex">
+                <Button asChild>
+                    <Link href="/earnings">Enter Dashboard</Link>
+                </Button>
+            </div>
+          </div>
+        </div>
+      </header>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-                  {leadAutomationTools.map((tool) => (
-                      <LeadAutomationCard key={tool.id} tool={tool} />
-                  ))}
+      <main className="flex-1">
+        <div className="container relative py-12 md:py-24 lg:py-32">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
+            <div className="flex flex-col justify-center space-y-6">
+              <div className="inline-block rounded-lg bg-muted px-3 py-1 text-sm">
+                Trusted & Verified
               </div>
-            </main>
-          </ScrollArea>
-        </SidebarInset>
-      </div>
-    </SidebarProvider>
+              <h1 className="text-4xl font-bold tracking-tighter sm:text-5xl xl:text-6xl/none">
+                The Smartest Way to Find Online Opportunities
+              </h1>
+              <p className="max-w-[600px] text-muted-foreground md:text-xl">
+                Our platform combines verified listings, AI-powered insights, and direct connections to help you discover and capitalize on online earning opportunities.
+              </p>
+              <div className="flex flex-col gap-4 sm:flex-row">
+                <Button size="lg" asChild>
+                    <Link href="/earnings">Explore Earning Opportunities</Link>
+                </Button>
+                <Button size="lg" variant="outline" asChild>
+                    <Link href="/ai-tools">Discover AI Tools</Link>
+                </Button>
+              </div>
+               <ul className="grid gap-2 py-4">
+                <li className="flex items-center">
+                  <Check className="mr-2 h-4 w-4 text-primary" />
+                  <span>Vetted Earning Categories</span>
+                </li>
+                <li className="flex items-center">
+                  <Check className="mr-2 h-4 w-4 text-primary" />
+                  <span>AI-Powered Tool Suggestions</span>
+                </li>
+                <li className="flex items-center">
+                  <Check className="mr-2 h-4 w-4 text-primary" />
+                  <span>Real-Time Opportunity Updates</span>
+                </li>
+              </ul>
+            </div>
+            <div className="flex items-center justify-center">
+                <Image
+                    src="https://picsum.photos/seed/main-hero/800/600"
+                    width={800}
+                    height={600}
+                    alt="Hero Image"
+                    className="rounded-xl shadow-2xl"
+                    data-ai-hint="digital landscape"
+                />
+            </div>
+          </div>
+        </div>
+      </main>
+
+       <footer className="border-t">
+          <div className="container flex items-center justify-between py-4 text-sm text-muted-foreground">
+              <div className="flex items-center">
+                <MountainIcon className="h-5 w-5 mr-2" />
+                <p>&copy; 2024 OpportunityHub. All rights reserved.</p>
+              </div>
+              <div className="flex items-center gap-4">
+                  <Link href="#" className="hover:text-foreground">Terms of Service</Link>
+                  <Link href="#" className="hover:text-foreground">Privacy</Link>
+              </div>
+          </div>
+      </footer>
+    </div>
   );
+}
+
+function MountainIcon(props: React.SVGProps<SVGSVGElement>) {
+  return (
+    <svg
+      {...props}
+      xmlns="http://www.w3.org/2000/svg"
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <path d="m8 3 4 8 5-5 5 15H2L8 3z" />
+    </svg>
+  )
 }

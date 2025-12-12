@@ -12,7 +12,7 @@ import {
 } from "@/components/ui/sidebar";
 import { EarningCategory } from "@/lib/data";
 import { Button } from "./ui/button";
-import { Search, LogOut, ArrowDownAZ, ArrowUpAZ, Pin, Home, DollarSign } from "lucide-react";
+import { Search, LogOut, ArrowDownAZ, ArrowUpAZ, Pin, Home, DollarSign, Bot } from "lucide-react";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
 
@@ -56,6 +56,14 @@ export function AppSidebar({ categories, onSortClick, sortOrder, onPinClick, sea
                     <Link href="/earnings">
                         <DollarSign />
                         <span>Earnings</span>
+                    </Link>
+                </SidebarMenuButton>
+            </SidebarMenuItem>
+             <SidebarMenuItem>
+                 <SidebarMenuButton asChild tooltip="AI Tools">
+                    <Link href="/ai-tools">
+                        <Bot />
+                        <span>AI Tools</span>
                     </Link>
                 </SidebarMenuButton>
             </SidebarMenuItem>
