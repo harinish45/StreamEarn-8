@@ -7,7 +7,7 @@ import { leadAutomationTools } from "@/lib/lead-automation-data";
 import { AiToolsPyramid } from "@/components/ai-tools-pyramid";
 import { GoogleAiEcosystem } from "@/components/google-ai-ecosystem";
 import { IllegalAiTools } from "@/components/illegal-ai-tools";
-import { ProductivityTools } from "@/components/productivity-tools";
+import { JobsAndCareers } from "@/components/jobs-and-careers";
 
 export default function AiToolsPage() {
   return (
@@ -41,7 +41,7 @@ export default function AiToolsPage() {
                     </div>
                 </div>
                <div>
-                   <ProductivityTools />
+                   <JobsAndCareers />
                </div>
            </div>
         </main>

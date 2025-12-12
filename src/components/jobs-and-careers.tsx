@@ -1,8 +1,8 @@
 
-import { productivityTools } from '@/lib/productivity-tools-data';
+import { jobsAndCareersTools } from '@/lib/jobs-and-careers-data';
 import Image from 'next/image';
 
-export function ProductivityTools() {
+export function JobsAndCareers() {
   return (
     <div className="relative w-full overflow-hidden rounded-xl bg-gradient-to-b from-[#0a101d] to-[#0c1222] p-8 shadow-2xl">
       <Image
@@ -15,11 +15,11 @@ export function ProductivityTools() {
       />
       <div className="relative z-10">
         <div className="mb-8 text-center">
-          <h2 className="text-4xl font-bold tracking-tight text-white">Productivity</h2>
+          <h2 className="text-4xl font-bold tracking-tight text-white">Jobs & Careers</h2>
           <div className="mt-2 h-1 w-24 bg-[#00A3FF] mx-auto rounded-full" />
         </div>
         <ul className="space-y-5 text-white/80">
-          {productivityTools.map((tool) => (
+          {jobsAndCareersTools.map((tool) => (
             <li key={tool.number} className="flex gap-4">
               <span className="text-lg font-medium text-white/60">{tool.number}/</span>
               <div>
