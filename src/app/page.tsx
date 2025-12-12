@@ -8,7 +8,11 @@ export default function Home() {
     <div className="flex flex-col min-h-screen bg-background text-foreground">
       <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
         <div className="container flex h-14 items-center">
-          <div className="flex flex-1 items-center justify-end space-x-2">
+          <div className="flex flex-1 items-center justify-between">
+            <Link href="/" className="flex items-center space-x-2">
+              <MountainIcon className="h-6 w-6" />
+              <span className="font-bold">OpportunityHub</span>
+            </Link>
             <nav className="flex items-center space-x-6 text-sm font-medium">
               <Link
                 href="/earnings"
@@ -17,11 +21,6 @@ export default function Home() {
                 Dashboard
               </Link>
             </nav>
-            <div className="hidden items-center space-x-2 md:flex">
-                <Button asChild>
-                    <Link href="/earnings">Enter Dashboard</Link>
-                </Button>
-            </div>
           </div>
         </div>
       </header>
@@ -65,7 +64,6 @@ export default function Home() {
        <footer className="border-t">
           <div className="container flex items-center justify-between py-4 text-sm text-muted-foreground">
               <div className="flex items-center">
-                <MountainIcon className="h-5 w-5 mr-2" />
                 <p>&copy; 2024 OpportunityHub. All rights reserved.</p>
               </div>
               <div className="flex items-center gap-4">
@@ -85,7 +83,7 @@ function MountainIcon(props: React.SVGProps<SVGSVGElement>) {
       xmlns="http://www.w3.org/2000/svg"
       width="24"
       height="24"
-      viewBox="0 0 24 24"
+      viewBox="0 0 24"
       fill="none"
       stroke="currentColor"
       strokeWidth="2"
