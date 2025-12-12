@@ -1,5 +1,5 @@
 
-import { aiToolsPyramid, toolSubLabels, type AiTool } from '@/lib/ai-tools-data';
+import { aiToolsPyramid, toolSubLabels, type AiTool } from '@/lib/ai-tools-data.tsx';
 import Link from 'next/link';
 
 interface ToolCardProps {
