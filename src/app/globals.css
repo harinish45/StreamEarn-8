@@ -4,9 +4,9 @@
 
 @layer base {
   :root, .dark {
-    --background: 240 10% 3.9%;
+    --background: 347 15% 10%;
     --foreground: 210 40% 98%;
-    --card: 240 4.8% 10%;
+    --card: 240 4.8% 12%;
     --card-foreground: 210 40% 98%;
     --popover: 240 10% 3.9%;
     --popover-foreground: 210 40% 98%;
@@ -24,7 +24,7 @@
     --input: 217.2 32.6% 17.5%;
     --ring: 347 77% 70%;
     --radius: 0.5rem;
-    --sidebar-background: 240 10% 3.9%;
+    --sidebar-background: 347 15% 10%;
     --sidebar-foreground: 210 40% 98%;
     --sidebar-primary: 347 77% 70%;
     --sidebar-primary-foreground: 347 100% 10%;
