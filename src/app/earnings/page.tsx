@@ -116,7 +116,7 @@ export default function EarningsPage() {
           searchQuery={categorySearchQuery}
           setSearchQuery={setCategorySearchQuery}
         />
-        <SidebarInset className="main-content-gradient">
+        <SidebarInset>
           <Header 
             viewMode={viewMode} 
             setViewMode={setViewMode} 

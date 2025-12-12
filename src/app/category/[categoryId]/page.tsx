@@ -101,7 +101,7 @@ export default function CategoryPage({ params }: { params: { categoryId: string 
           searchQuery={categorySearchQuery}
           setSearchQuery={setCategorySearchQuery}
         />
-        <SidebarInset className="main-content-gradient">
+        <SidebarInset>
           <Header 
             viewMode={viewMode} 
             setViewMode={setViewMode} 

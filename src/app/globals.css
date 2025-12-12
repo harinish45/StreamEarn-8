@@ -4,9 +4,9 @@
 
 @layer base {
   :root, .dark {
-    --background: 347 15% 10%;
+    --background: 240 10% 3.9%;
     --foreground: 210 40% 98%;
-    --card: 240 5% 8%;
+    --card: 240 10% 3.9%;
     --card-foreground: 210 40% 98%;
     --popover: 240 10% 3.9%;
     --popover-foreground: 210 40% 98%;
@@ -24,7 +24,7 @@
     --input: 217.2 32.6% 17.5%;
     --ring: 347 77% 70%;
     --radius: 0.5rem;
-    --sidebar-background: 347 15% 12%;
+    --sidebar-background: 240 10% 3.9%;
     --sidebar-foreground: 210 40% 98%;
     --sidebar-primary: 347 77% 70%;
     --sidebar-primary-foreground: 347 100% 10%;
@@ -238,18 +238,4 @@
     background-color: hsl(var(--primary));
     border-radius: 10px;
   }
-
-  .main-content-gradient::after {
-    content: '';
-    position: absolute;
-    top: 0;
-    right: 0;
-    width: 30%;
-    height: 30%;
-    background: radial-gradient(circle at top right, hsla(var(--primary), 0.05) 0%, transparent 50%);
-    pointer-events: none;
-    z-index: 0;
-  }
 }
-
-    
