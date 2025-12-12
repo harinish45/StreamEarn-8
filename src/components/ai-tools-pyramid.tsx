@@ -1,5 +1,6 @@
 
 import { aiToolsPyramid, toolSubLabels, type AiTool } from '@/lib/ai-tools-data';
+import Link from 'next/link';
 
 interface ToolCardProps {
   tool: AiTool;
@@ -7,13 +8,13 @@ interface ToolCardProps {
 }
 
 const ToolCard = ({ tool, subLabel }: ToolCardProps) => (
-  <div className="flex flex-col items-center gap-2">
-    <div className="w-24 h-24 bg-card border border-border rounded-lg flex items-center justify-center">
+  <Link href={tool.link} target="_blank" rel="noopener noreferrer" className="flex flex-col items-center gap-2 group">
+    <div className="w-24 h-24 bg-card border border-border rounded-lg flex items-center justify-center transition-colors group-hover:border-primary">
       {tool.logo}
     </div>
-    <p className="font-semibold text-sm">{tool.name}</p>
+    <p className="font-semibold text-sm transition-colors group-hover:text-primary">{tool.name}</p>
     {subLabel && <p className="text-xs text-muted-foreground">{subLabel}</p>}
-  </div>
+  </Link>
 );
 
 export function AiToolsPyramid() {

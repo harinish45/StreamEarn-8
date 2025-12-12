@@ -1,10 +1,11 @@
 
 import { productivityTools } from '@/lib/productivity-tools-data';
 import Image from 'next/image';
+import Link from 'next/link';
 
 export function ProductivityTools() {
   return (
-    <div className="relative w-full overflow-hidden rounded-xl bg-gradient-to-b from-[#0a101d] to-[#0c1222] p-8 shadow-2xl">
+    <div className="relative w-full overflow-hidden rounded-xl bg-gradient-to-b from-[#0a101d] to-[#0c1222] p-8 shadow-2xl h-full">
       <Image
         src="https://picsum.photos/seed/wave-bg/1024/300"
         alt="Abstract wave background"
@@ -20,12 +21,14 @@ export function ProductivityTools() {
         </div>
         <ul className="space-y-5 text-white/80">
           {productivityTools.map((tool) => (
-            <li key={tool.number} className="flex gap-4">
-              <span className="text-lg font-medium text-white/60">{tool.number}/</span>
-              <div>
-                <span className="font-bold text-[#00A3FF]">{tool.name}</span>
-                <span className="text-white/80"> - {tool.description}</span>
-              </div>
+            <li key={tool.number}>
+                <Link href={tool.link} target="_blank" rel="noopener noreferrer" className="flex gap-4 group">
+                    <span className="text-lg font-medium text-white/60">{tool.number}/</span>
+                    <div>
+                        <span className="font-bold text-[#00A3FF] transition-colors group-hover:text-white">{tool.name}</span>
+                        <span className="text-white/80"> - {tool.description}</span>
+                    </div>
+                </Link>
             </li>
           ))}
         </ul>

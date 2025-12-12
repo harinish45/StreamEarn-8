@@ -4,6 +4,7 @@ import React from 'react';
 export type AiTool = {
   name: string;
   logo: React.ReactNode;
+  link: string;
 };
 
 export type AiToolCategory = {
@@ -24,41 +25,41 @@ export const aiToolsPyramid: AiToolCategory[] = [
   {
     name: 'Code Editor',
     tools: [
-      { name: 'Cursor', logo: placeholderLogo('Cursor') },
+      { name: 'Cursor', logo: placeholderLogo('Cursor'), link: 'https://cursor.sh/' },
     ],
   },
   {
     name: 'Market Research',
     tools: [
-      { name: 'Perplexity', logo: placeholderLogo('Perplexity') },
-      { name: 'Gemini', logo: placeholderLogo('Gemini') },
+      { name: 'Perplexity', logo: placeholderLogo('Perplexity'), link: 'https://www.perplexity.ai/' },
+      { name: 'Gemini', logo: placeholderLogo('Gemini'), link: 'https://gemini.google.com/' },
     ],
   },
   {
     name: 'Writing Assistant',
     tools: [
-      { name: 'ChatGPT', logo: placeholderLogo('ChatGPT') },
-      { name: 'Claude', logo: placeholderLogo('Claude') },
-      { name: 'Grok', logo: placeholderLogo('Grok') },
+      { name: 'ChatGPT', logo: placeholderLogo('ChatGPT'), link: 'https://chat.openai.com/' },
+      { name: 'Claude', logo: placeholderLogo('Claude'), link: 'https://claude.ai/' },
+      { name: 'Grok', logo: placeholderLogo('Grok'), link: 'https://grok.x.ai/' },
     ],
   },
   {
     name: 'Design Tools',
     tools: [
-      { name: 'Midjourney', logo: placeholderLogo('Midjourney') },
-      { name: 'Recraft', logo: placeholderLogo('Recraft') },
-      { name: 'Figma', logo: placeholderLogo('Figma') },
-      { name: 'Canva', logo: placeholderLogo('Canva') },
+      { name: 'Midjourney', logo: placeholderLogo('Midjourney'), link: 'https://www.midjourney.com/' },
+      { name: 'Recraft', logo: placeholderLogo('Recraft'), link: 'https://www.recraft.ai/' },
+      { name: 'Figma', logo: placeholderLogo('Figma'), link: 'https://www.figma.com/' },
+      { name: 'Canva', logo: placeholderLogo('Canva'), link: 'https://www.canva.com/' },
     ],
   },
   {
     name: 'Productivity',
     tools: [
-      { name: 'RecCloud', logo: placeholderLogo('RecCloud') },
-      { name: 'Tidio', logo: placeholderLogo('Tidio') },
-      { name: 'Zapier', logo: placeholderLogo('Zapier') },
-      { name: 'Calendly', logo: placeholderLogo('Calendly') },
-      { name: 'PicWish', logo: placeholderLogo('PicWish') },
+      { name: 'RecCloud', logo: placeholderLogo('RecCloud'), link: '#' },
+      { name: 'Tidio', logo: placeholderLogo('Tidio'), link: 'https://www.tidio.com/' },
+      { name: 'Zapier', logo: placeholderLogo('Zapier'), link: 'https://zapier.com/' },
+      { name: 'Calendly', logo: placeholderLogo('Calendly'), link: 'https://calendly.com/' },
+      { name: 'PicWish', logo: placeholderLogo('PicWish'), link: 'https://picwish.com/' },
     ],
   },
 ];

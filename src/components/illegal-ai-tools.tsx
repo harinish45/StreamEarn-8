@@ -2,21 +2,29 @@
 import Image from 'next/image';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { illegalAiTools, type AiToolCategory, type AiTool } from '@/lib/illegal-ai-tools-data';
+import Link from 'next/link';
 
 function ToolListItem({ tool }: { tool: AiTool }) {
     return (
-        <li className="flex items-center gap-4 relative pl-8">
-             <div className="absolute left-0 top-1/2 -translate-y-1/2 w-4 h-px bg-muted-foreground"></div>
-             <div className="absolute left-0 top-0 h-full w-px bg-muted-foreground"></div>
-            <Image
-                src={tool.logo}
-                alt={`${tool.name} logo`}
-                width={24}
-                height={24}
-                className="rounded-md object-contain"
-                data-ai-hint="logo"
-            />
-            <span className="text-sm font-medium">{tool.name}</span>
+        <li>
+            <Link 
+                href={tool.link} 
+                target="_blank" 
+                rel="noopener noreferrer" 
+                className="flex items-center gap-4 relative pl-8 group"
+            >
+                <div className="absolute left-0 top-1/2 -translate-y-1/2 w-4 h-px bg-muted-foreground transition-colors group-hover:bg-primary"></div>
+                <div className="absolute left-0 top-0 h-full w-px bg-muted-foreground transition-colors group-hover:bg-primary"></div>
+                <Image
+                    src={tool.logo}
+                    alt={`${tool.name} logo`}
+                    width={24}
+                    height={24}
+                    className="rounded-md object-contain"
+                    data-ai-hint="logo"
+                />
+                <span className="text-sm font-medium transition-colors group-hover:text-primary">{tool.name}</span>
+            </Link>
         </li>
     );
 }
@@ -27,7 +35,7 @@ function ToolList({ category }: { category: AiToolCategory }) {
     <div>
       <h3 className="text-lg font-semibold text-primary mb-4">{category.name}</h3>
       <ul className="space-y-3">
-        {category.tools.map((tool, index) => (
+        {category.tools.map((tool) => (
           <ToolListItem key={tool.name} tool={tool} />
         ))}
       </ul>

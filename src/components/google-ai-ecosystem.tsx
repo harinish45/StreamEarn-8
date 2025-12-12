@@ -1,13 +1,14 @@
 
-import { googleAiTools } from '@/lib/google-ai-ecosystem-data';
+import { googleAiTools, type GoogleAiTool } from '@/lib/google-ai-ecosystem-data';
 import Image from 'next/image';
+import Link from 'next/link';
 
-const ToolCard = ({ tool, side }: { tool: any; side: 'left' | 'right' }) => {
+const ToolCard = ({ tool, side }: { tool: GoogleAiTool; side: 'left' | 'right' }) => {
   return (
-    <div className="relative">
+    <Link href={tool.link} target="_blank" rel="noopener noreferrer" className="relative group">
       <div className={`flex items-center gap-4 ${side === 'left' ? 'flex-row-reverse' : 'flex-row'}`}>
         <div className="flex-1">
-          <div className="relative aspect-[16/9] w-full overflow-hidden rounded-lg border-2 border-primary/20 bg-black">
+          <div className="relative aspect-[16/9] w-full overflow-hidden rounded-lg border-2 border-primary/20 bg-black transition-colors group-hover:border-primary/50">
             <Image
               src={tool.image}
               alt={tool.name}
@@ -25,7 +26,7 @@ const ToolCard = ({ tool, side }: { tool: any; side: 'left' | 'right' }) => {
       <div 
         className={`absolute top-1/2 h-px w-1/4 bg-primary/30 ${side === 'left' ? 'right-1/2 translate-x-1/2' : 'left-1/2 -translate-x-1/2'}`}
       />
-    </div>
+    </Link>
   );
 };
 
