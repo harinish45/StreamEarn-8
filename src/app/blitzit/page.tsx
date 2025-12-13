@@ -1,6 +1,7 @@
+
 'use client';
 
-import React, 'useState } from 'react';
+import React, { useState } from 'react';
 import { TaskManager } from './components/TaskManager';
 import { FocusTimer } from './components/FocusTimer';
 import { ReportsOverview } from './components/ReportsOverview';
