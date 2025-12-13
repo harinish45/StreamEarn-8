@@ -1,4 +1,3 @@
-
 'use client';
 
 import React from 'react';
@@ -14,12 +13,24 @@ export default function BlitzitLayout({
   const { theme } = useTheme();
   
   React.useEffect(() => {
-    // This logic is now handled by the ThemeProvider
-    // document.documentElement.classList.add('blitzit-dark');
-    // return () => {
-    //   document.documentElement.classList.remove('blitzit-dark');
-    // };
-  }, []);
+    // This logic is now handled by the ThemeProvider,
+    // but we can ensure the correct class is on the body for Blitzit specifically
+    const body = document.body;
+    const blitzitThemeClass = 'blitzit-dark'; // Use a specific class for this layout
+    
+    // Fallback to dark if no theme is set for some reason
+    const currentTheme = theme || 'dark';
+    
+    // Clean up other theme classes if any
+    body.classList.remove('light', 'dark', 'spider-man', 'batman', 'iron-man', 'superman', 'hulk');
+    
+    // Add the specific theme class for blitzit
+    body.classList.add(blitzitThemeClass);
+
+    return () => {
+      body.classList.remove(blitzitThemeClass);
+    };
+  }, [theme]);
 
   return (
     <div className="min-h-screen w-full bg-background text-foreground">
@@ -27,7 +38,7 @@ export default function BlitzitLayout({
             <AppSidebar />
             <div className="flex-1 flex flex-col min-w-0">
                 <Header />
-                <main className="flex-1 p-4 md:p-6 lg:p-8 overflow-auto">
+                <main className="flex-1 overflow-auto">
                     {children}
                 </main>
             </div>

@@ -1,4 +1,3 @@
-
 'use client';
 
 import React, { useState, useEffect } from 'react';
@@ -14,26 +13,33 @@ import {
   useSensors,
   type DragEndEvent,
   type DragOverEvent,
-  Announcements,
-  DndMonitor,
 } from '@dnd-kit/core';
-import { arrayMove, sortableKeyboardCoordinates } from '@dnd-kit/sortable';
+import { arrayMove } from '@dnd-kit/sortable';
 import { produce } from 'immer';
 import { TaskDetails } from './components/TaskDetails';
-import { ReportsOverview } from './components/ReportsOverview';
-import { GamificationPanel } from './components/GamificationPanel';
-import { Plus } from 'lucide-react';
-import { Button } from '@/components/ui/button';
 
-// Sample Data
+// Sample Data adapted to the new design
 const sampleTasks: Task[] = [
-    { id: 'task-1', title: 'Design the new landing page', description: 'Create a modern design in Figma.', priority: 'urgent', status: 'do-now', listId: 'work', estimatedTime: 120 },
-    { id: 'task-2', title: 'Develop the authentication flow', description: 'Implement JWT-based authentication.', priority: 'important', status: 'do-now', listId: 'work', estimatedTime: 180 },
-    { id: 'task-3', title: 'Schedule a team meeting', description: 'Coordinate with the team for a sync-up.', priority: 'neither', status: 'do-later', listId: 'work', estimatedTime: 30 },
-    { id: 'task-4', title: 'Fix the bug in the payment gateway', description: 'A critical bug reported by users.', priority: 'urgent', status: 'do-later', listId: 'work', estimatedTime: 90 },
-    { id: 'task-5', title: 'Write the weekly report', description: 'Summarize the progress of the week.', priority: 'important', status: 'tomorrow', listId: 'work', estimatedTime: 60 },
-    { id: 'task-6', title: 'Buy groceries', description: 'Milk, Bread, Eggs.', priority: 'neither', status: 'soon', listId: 'personal', estimatedTime: 45 },
-    { id: 'task-7', title: 'Go to the gym', description: 'Leg day.', priority: 'neither', status: 'soon', listId: 'personal', estimatedTime: 60 },
+    // Today
+    { id: 'task-1', title: 'Marketing brief', description: 'Create a modern design in Figma.', priority: 'important', status: 'do-now', listId: 'work', estimatedTime: 90 },
+
+    // This week
+    { id: 'task-2', title: 'Insta post', description: 'Coordinate with the team for a sync-up.', priority: 'urgent', status: 'tomorrow', listId: 'personal', estimatedTime: 120, recurring: 'weekly' },
+    { id: 'task-3', title: 'Call mum', description: 'A critical bug reported by users.', priority: 'urgent', status: 'tomorrow', listId: 'personal', estimatedTime: 30 },
+    { id: 'task-4', title: 'Fire Jeffry', description: 'Implement JWT-based authentication.', priority: 'important', status: 'tomorrow', listId: 'work', estimatedTime: 5 },
+    { id: 'task-5', title: 'Website update', description: 'Summarize the progress of the week.', priority: 'important', status: 'tomorrow', listId: 'work', estimatedTime: 90 },
+    { id: 'task-6', title: 'Product feedback', description: 'Milk, Bread, Eggs.', priority: 'important', status: 'tomorrow', listId: 'personal', estimatedTime: 60 },
+
+    // Backlog
+    { id: 'task-7', title: 'Core ux brief', description: 'Leg day.', priority: 'neither', status: 'do-later', listId: 'personal', estimatedTime: 80 },
+    { id: 'task-8', title: 'Blitzit documentation p1', description: 'Leg day.', priority: 'neither', status: 'do-later', listId: 'personal', estimatedTime: 90 },
+    { id: 'task-9', title: 'Vertical banners', description: 'Leg day.', priority: 'neither', status: 'do-later', listId: 'personal', estimatedTime: 90 },
+
+    // Scheduled
+    { id: 'task-10', title: 'Sprint 1 handoff doc', description: 'Leg day.', priority: 'neither', status: 'soon', listId: 'personal', estimatedTime: 180, scheduledAt: new Date().getTime() },
+    
+    // Recurring in Backlog (example)
+    { id: 'task-11', title: 'Insta post', description: 'Weekly recurring post', priority: 'urgent', status: 'soon', listId: 'personal', estimatedTime: 120, recurring: 'weekly' }
 ];
 
 
@@ -51,9 +57,7 @@ export default function BlitzitPage() {
 
     const sensors = useSensors(
         useSensor(PointerSensor),
-        useSensor(KeyboardSensor, {
-          coordinateGetter: sortableKeyboardCoordinates,
-        })
+        useSensor(KeyboardSensor)
     );
 
     const handleDragOver = (event: DragOverEvent) => {
@@ -68,11 +72,18 @@ export default function BlitzitPage() {
         const isActiveATask = active.data.current?.type === 'Task';
         const isOverAColumn = over.data.current?.type === 'Column';
 
-        if (isActiveATask && isOverAColumn) {
+        let newStatus: TaskStatus | undefined;
+        if (isOverAColumn) {
+            if (over.id === 'today') newStatus = 'do-now';
+            else if (over.id === 'this-week') newStatus = 'tomorrow';
+            else if (over.id === 'backlog') newStatus = 'do-later';
+        }
+
+        if (isActiveATask && newStatus) {
             setTasks(produce(draft => {
                 const activeTask = draft.find(t => t.id === activeId);
-                if (activeTask && activeTask.status !== overId) {
-                    activeTask.status = overId as TaskStatus;
+                if (activeTask && activeTask.status !== newStatus) {
+                    activeTask.status = newStatus;
                 }
             }));
         }
@@ -144,10 +155,17 @@ export default function BlitzitPage() {
         setSelectedTask(null);
     }
 
-
     if (!isClient) {
-        return null; // or a loading spinner
+      return (
+        <div className="flex gap-6 p-4 md:p-0">
+            {/* Skeleton Loader */}
+            <div className="flex-1 rounded-xl bg-card p-4 h-[70vh]"></div>
+            <div className="flex-1 rounded-xl bg-card p-4 h-[70vh]"></div>
+            <div className="flex-1 rounded-xl bg-card p-4 h-[70vh]"></div>
+        </div>
+      );
     }
+
 
     return (
         <>
@@ -157,17 +175,7 @@ export default function BlitzitPage() {
                 onDragOver={handleDragOver}
                 collisionDetection={closestCenter}
             >
-                <div className="grid grid-cols-1 xl:grid-cols-[1fr,400px] gap-8 items-start">
-                    {/* Main Content */}
-                    <div className="w-full">
-                        <TaskManager tasks={tasks} onTaskClick={handleTaskClick} />
-                    </div>
-                    {/* Right Sidebar */}
-                    <div className="hidden xl:flex flex-col gap-8 sticky top-24">
-                        <ReportsOverview />
-                        <GamificationPanel />
-                    </div>
-                </div>
+                <TaskManager tasks={tasks} onTaskClick={handleTaskClick} />
             </DndContext>
             
             {isFocusing && focusedTask && (
@@ -185,12 +193,6 @@ export default function BlitzitPage() {
                 onSave={handleSaveTask}
                 onDelete={handleDeleteTask}
             />
-            
-            <Button 
-                onClick={handleAddTask}
-                className="fixed bottom-8 right-8 h-16 w-16 rounded-full bg-gradient-to-br from-primary to-secondary text-white shadow-lg hover:scale-110 transition-transform z-40">
-                <Plus className="h-8 w-8" />
-            </Button>
         </>
     );
 }

@@ -23,9 +23,6 @@ const ThemeProviderContext = React.createContext<ThemeProviderState>(initialStat
 
 function getThemeClass(themeName: string | undefined) {
   if (!themeName) return 'dark';
-  if (themeName === 'Light' || themeName === 'Dark') {
-    return themeName.toLowerCase();
-  }
   return themeName.toLowerCase().replace(/\s+/g, '-');
 }
 
@@ -46,8 +43,8 @@ export function ThemeProvider({
     themes.forEach(t => {
       root.classList.remove(getThemeClass(t.name));
     });
-    // also remove generic light/dark and legacy blitzit-dark
-    root.classList.remove('light', 'dark', 'blitzit-dark');
+    // also remove legacy blitzit-dark
+    root.classList.remove('blitzit-dark');
 
     let effectiveTheme = theme;
     if (theme === 'system') {

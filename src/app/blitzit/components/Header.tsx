@@ -1,4 +1,3 @@
-
 'use client';
 
 import { Input } from "@/components/ui/input";
@@ -19,7 +18,7 @@ import { Integrations } from "./Integrations";
 
 export function Header() {
     return (
-        <header className="sticky top-0 z-10 flex h-16 shrink-0 items-center gap-4 border-b border-border bg-background/80 backdrop-blur-sm px-4 md:px-8">
+        <header className="sticky top-0 z-10 flex h-16 shrink-0 items-center gap-4 border-b border-border bg-card px-4 md:px-8">
             <Button variant="ghost" size="icon" className="md:hidden">
                 <Menu className="h-6 w-6" />
             </Button>
@@ -30,7 +29,7 @@ export function Header() {
 
             <div className="relative flex-1 mx-auto max-w-md">
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
-                <Input placeholder="Search tasks..." className="pl-10 bg-card border-transparent focus:border-secondary focus:ring-secondary" />
+                <Input placeholder="Search tasks..." className="pl-10 bg-background border-border focus:border-secondary focus:ring-secondary" />
             </div>
 
             <div className="flex items-center gap-2">

@@ -1,133 +1,252 @@
-
 'use client';
 
 import React from 'react';
 import type { Task, TaskStatus } from '@/types/blitzit';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-import { Edit } from 'lucide-react';
-import { useSortable, SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable';
+import {
+  FireExtinguisher,
+  User,
+  Users,
+  Calendar,
+  Repeat,
+  Plus,
+} from 'lucide-react';
+import { useSortable, SortableContext } from '@dnd-kit/sortable';
 import { useDroppable } from '@dnd-kit/core';
 import { CSS } from '@dnd-kit/utilities';
-import { Badge } from '@/components/ui/badge';
+import { Progress } from '@/components/ui/progress';
 import { motion } from 'framer-motion';
 
 interface TaskCardProps {
-    task: Task;
-    onClick: (task: Task) => void;
+  task: Task;
+  onClick: (task: Task) => void;
+  isToday?: boolean;
 }
 
-function TaskCard({ task, onClick }: TaskCardProps) {
-    const {
-        attributes,
-        listeners,
-        setNodeRef,
-        transform,
-        transition,
-        isDragging
-    } = useSortable({ id: task.id, data: { type: 'Task', task } });
+function TaskPill({ priority }: { priority: Task['priority'] }) {
+  const priorityMap: Record<
+    Task['priority'],
+    { letter: string; color: string }
+  > = {
+    urgent: { letter: 'P', color: 'bg-pink-500' },
+    important: { letter: 'G', color: 'bg-blue-500' },
+    neither: { letter: 'B', color: 'bg-green-500' },
+  };
 
-    const style = {
-        transform: CSS.Transform.toString(transform),
-        transition,
-        opacity: isDragging ? 0.5 : 1,
-    };
-    
-    const priorityColor: Record<Task['priority'], string> = {
-        urgent: 'bg-red-500/20 text-red-400 border-red-500/30',
-        important: 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30',
-        neither: 'bg-blue-500/20 text-blue-400 border-blue-500/30',
-    };
+  const { letter, color } = priorityMap[priority];
 
-    return (
-        <motion.div
-            layout
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.95 }}
-            transition={{ duration: 0.2 }}
-        >
-        <Card
-            ref={setNodeRef}
-            style={style}
-            className="mb-4 bg-card cursor-grab active:cursor-grabbing hover:border-secondary touch-none group"
-            onClick={() => onClick(task)}
-        >
-            <CardContent className="p-4" {...attributes} {...listeners}>
-                <div className="flex justify-between items-start">
-                    <p className="font-semibold text-base text-foreground pr-4">{task.title}</p>
-                    <Badge className={`whitespace-nowrap ${priorityColor[task.priority]}`}>{task.priority}</Badge>
-                </div>
-                {task.description && <p className="text-sm text-muted-foreground mt-1 line-clamp-2">{task.description}</p>}
-                <div className="mt-4 flex justify-between items-center">
-                    <div className="text-xs text-muted-foreground">
-                        {task.estimatedTime ? `${task.estimatedTime} min est.` : ''}
-                    </div>
-                    <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                        <Button variant="ghost" size="icon" className="h-7 w-7 text-muted-foreground hover:text-white" onClick={(e) => {e.stopPropagation(); onClick(task);}}><Edit className="h-4 w-4" /></Button>
-                    </div>
-                </div>
-            </CardContent>
-        </Card>
-        </motion.div>
-    );
+  return (
+    <div
+      className={`flex h-6 w-6 items-center justify-center rounded-full text-xs font-bold text-white ${color}`}
+    >
+      {letter}
+    </div>
+  );
+}
+
+function TaskCard({ task, onClick, isToday = false }: TaskCardProps) {
+  const { attributes, listeners, setNodeRef, transform, transition, isDragging } =
+    useSortable({ id: task.id, data: { type: 'Task', task } });
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    opacity: isDragging ? 0.5 : 1,
+  };
+
+  const formatTime = (minutes: number | undefined) => {
+    if (!minutes) return '0hr 0min';
+    const hours = Math.floor(minutes / 60);
+    const mins = minutes % 60;
+    return `${hours > 0 ? `${hours}hr ` : ''}${mins}min`;
+  };
+
+  const isFireJeffry = task.title === 'Fire Jeffry';
+  
+  const getRecurrenceDay = (status: TaskStatus) => {
+    switch (status) {
+        case 'do-now': return "Tuesdays";
+        case 'do-later': return "Wednesdays";
+        default: return "Fridays";
+    }
+  }
+
+  return (
+    <motion.div
+      layout
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, scale: 0.95 }}
+      transition={{ duration: 0.2 }}
+      ref={setNodeRef}
+      style={style}
+      {...attributes}
+      {...listeners}
+    >
+      <Card
+        className="mb-2 cursor-grab rounded-lg bg-card/50 p-3 shadow-none transition-all hover:bg-card/70 active:cursor-grabbing"
+        onClick={() => onClick(task)}
+      >
+        <CardContent className="p-0">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              {isFireJeffry && (
+                <FireExtinguisher className="h-4 w-4 text-red-500" />
+              )}
+              <p className="font-medium">{task.title}</p>
+            </div>
+            {task.id === 'task-1' ? <Users className="h-5 w-5 text-muted-foreground" /> : <TaskPill priority={task.priority} />}
+          </div>
+          <div className="mt-2 flex items-center justify-between text-xs text-muted-foreground">
+            <span>{formatTime(task.estimatedTime)}</span>
+            {task.recurring && <span>{getRecurrenceDay(task.status)}</span>}
+            {task.scheduledAt && <span>May 27th</span>}
+            <span>00:00</span>
+          </div>
+        </CardContent>
+      </Card>
+    </motion.div>
+  );
 }
 
 interface TaskColumnProps {
-    id: TaskStatus;
-    title: string;
-    tasks: Task[];
-    onTaskClick: (task: Task) => void;
+  id: string;
+  title: string;
+  tasks: Task[];
+  onTaskClick: (task: Task) => void;
+  est: string;
+  done?: number;
+  total?: number;
+  isToday?: boolean;
 }
 
-function TaskColumn({ id, title, tasks, onTaskClick }: TaskColumnProps) {
-    const { setNodeRef } = useDroppable({ id, data: { type: 'Column', id } });
+function TaskColumn({
+  id,
+  title,
+  tasks,
+  onTaskClick,
+  est,
+  done,
+  total,
+  isToday = false,
+}: TaskColumnProps) {
+  const { setNodeRef } = useDroppable({ id, data: { type: 'Column', id } });
 
-    return (
-        <div className="flex-1 min-w-[280px]">
-             <h3 className="font-semibold text-lg mb-4 px-1 text-foreground">{title}</h3>
-            <div ref={setNodeRef} className="bg-background/50 rounded-xl p-2 min-h-[60vh] h-full overflow-y-auto">
-                <SortableContext items={tasks.map(t => t.id)} strategy={verticalListSortingStrategy}>
-                    {tasks.map(task => (
-                       <TaskCard key={task.id} task={task} onClick={onTaskClick} />
-                    ))}
-                </SortableContext>
-            </div>
+  const scheduledTasks = tasks.filter(t => t.scheduledAt);
+  const recurringTasks = tasks.filter(t => t.recurring);
+  const regularTasks = tasks.filter(t => !t.scheduledAt && !t.recurring);
+
+  return (
+    <div
+      className={`flex-1 rounded-xl bg-card p-4 ${
+        isToday ? 'border-2 border-purple-500/50 shadow-lg shadow-purple-500/10' : ''
+      }`}
+    >
+      <div className="mb-4 flex items-center justify-between">
+        <h3 className="text-lg font-bold text-foreground">{title}</h3>
+        <span className="text-sm text-muted-foreground">{est}</span>
+      </div>
+      {(done !== undefined && total !== undefined) && (
+        <div className="mb-4">
+          <Progress value={(done / total) * 100} className="h-1 bg-muted" indicatorClassName="bg-foreground" />
+          <p className="mt-1 text-right text-xs text-muted-foreground">{done}/{total} DONE</p>
         </div>
-    );
-}
+      )}
+      
+      <div ref={setNodeRef} className="min-h-[50vh] space-y-2">
+        <SortableContext items={tasks.map(t => t.id)}>
+          {id === 'backlog' ? (
+            <>
+              {regularTasks.map(task => (
+                <TaskCard key={task.id} task={task} onClick={onTaskClick} />
+              ))}
+              <Button variant="ghost" className="w-full justify-start gap-2 text-muted-foreground hover:text-foreground">
+                <Plus className="h-4 w-4" /> Add Task
+              </Button>
+              {scheduledTasks.length > 0 && (
+                <div className="mt-6">
+                  <h4 className="mb-2 text-sm font-semibold text-muted-foreground">{scheduledTasks.length} Scheduled tasks</h4>
+                  {scheduledTasks.map(task => (
+                     <TaskCard key={task.id} task={task} onClick={onTaskClick} />
+                  ))}
+                </div>
+              )}
+               {recurringTasks.length > 0 && (
+                <div className="mt-6">
+                  <h4 className="mb-2 text-sm font-semibold text-muted-foreground">Recurring tasks</h4>
+                  {recurringTasks.map(task => (
+                     <TaskCard key={task.id} task={task} onClick={onTaskClick} />
+                  ))}
+                </div>
+              )}
+            </>
+          ) : (
+            <>
+             {tasks.map(task => (
+                <TaskCard key={task.id} task={task} onClick={onTaskClick} isToday={isToday} />
+             ))}
+             <Button variant="ghost" className="w-full justify-start gap-2 text-muted-foreground hover:text-foreground">
+                <Plus className="h-4 w-4" /> Add Task
+              </Button>
+            </>
+          )}
+        </SortableContext>
+      </div>
 
+       {isToday && (
+         <div className="mt-6">
+           <Button className="h-12 w-full rounded-xl bg-gradient-to-r from-pink-500 via-purple-500 to-cyan-500 text-lg font-bold text-white transition-all hover:shadow-lg hover:shadow-purple-500/30">
+             ⚡ Blitz now
+           </Button>
+         </div>
+       )}
+    </div>
+  );
+}
 
 interface TaskManagerProps {
-    tasks: Task[];
-    onTaskClick: (task: Task) => void;
+  tasks: Task[];
+  onTaskClick: (task: Task) => void;
 }
 
 export function TaskManager({ tasks, onTaskClick }: TaskManagerProps) {
-    const columns: { id: TaskStatus; title: string }[] = [
-        { id: 'do-now', title: 'Do Now' },
-        { id: 'do-later', title: 'Do Later' },
-        { id: 'tomorrow', title: 'Tomorrow' },
-        { id: 'soon', title: 'Soon' },
-    ];
+  const getTasksByStatus = (status: TaskStatus) =>
+    tasks.filter(t => t.status === status);
 
-    const getTasksByStatus = (status: TaskStatus) => tasks.filter(t => t.status === status);
+  const backlogTasks = tasks.filter(t => t.status === 'do-later' || t.status === 'soon');
+  const thisWeekTasks = tasks.filter(t => t.status === 'tomorrow' || t.title === 'Fire Jeffry');
+  const todayTasks = tasks.filter(t => t.status === 'do-now');
 
-    return (
-        <Card className="bg-transparent border-none shadow-none">
-            <CardContent className="p-0">
-                <div className="flex flex-col md:flex-row gap-6">
-                    {columns.map(col => (
-                        <TaskColumn
-                            key={col.id}
-                            id={col.id}
-                            title={col.title}
-                            tasks={getTasksByStatus(col.id)}
-                            onTaskClick={onTaskClick}
-                        />
-                    ))}
-                </div>
-            </CardContent>
-        </Card>
-    );
+
+  return (
+    <div className="flex gap-6 p-4 md:p-0">
+      <TaskColumn
+        id="backlog"
+        title="Backlog"
+        tasks={backlogTasks}
+        onTaskClick={onTaskClick}
+        est="Est: 9hrs 20min"
+      />
+      <TaskColumn
+        id="this-week"
+        title="This week"
+        tasks={thisWeekTasks}
+        onTaskClick={onTaskClick}
+        est="Est: 5hrs 5min"
+        done={2}
+        total={8}
+      />
+      <TaskColumn
+        id="today"
+        title="Today"
+        tasks={todayTasks}
+        onTaskClick={onTaskClick}
+        est="Est: 1hrs 30min"
+        done={0}
+        total={1}
+        isToday={true}
+      />
+    </div>
+  );
 }
