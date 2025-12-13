@@ -1,6 +1,6 @@
-
 'use client';
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { 
     Activity, 
     Calendar, 
@@ -12,6 +12,7 @@ import {
     Star 
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 
 const navItems = [
     { href: "/blitzit", icon: LayoutDashboard, label: "Dashboard" },
@@ -22,6 +23,8 @@ const navItems = [
 ]
 
 export function AppSidebar() {
+    const pathname = usePathname();
+
     return (
         <aside className="hidden md:flex flex-col w-64 bg-card p-4 border-r border-border">
             <div className="flex items-center gap-2 mb-8 px-2 h-16">
@@ -31,7 +34,15 @@ export function AppSidebar() {
 
             <nav className="flex-1 flex flex-col gap-1">
                 {navItems.map((item) => (
-                     <Button key={item.label} variant="ghost" className="justify-start gap-3 text-muted-foreground hover:text-foreground hover:bg-accent px-3 py-2 h-auto text-base" asChild>
+                     <Button 
+                        key={item.label} 
+                        variant="ghost" 
+                        className={cn(
+                            "justify-start gap-3 text-muted-foreground hover:text-foreground hover:bg-accent px-3 py-2 h-auto text-base",
+                            pathname === item.href && "bg-accent text-foreground"
+                        )}
+                        asChild
+                    >
                         <Link href={item.href}>
                             <item.icon className="h-5 w-5" />
                             <span>{item.label}</span>
@@ -41,7 +52,14 @@ export function AppSidebar() {
             </nav>
 
             <div className="flex flex-col gap-1 border-t border-border pt-4 mt-4">
-                 <Button variant="ghost" className="justify-start gap-3 text-muted-foreground hover:text-foreground hover:bg-accent px-3 py-2 h-auto" asChild>
+                 <Button 
+                    variant="ghost" 
+                    className={cn(
+                        "justify-start gap-3 text-muted-foreground hover:text-foreground hover:bg-accent px-3 py-2 h-auto",
+                        pathname === "/blitzit/settings" && "bg-accent text-foreground"
+                    )} 
+                    asChild
+                >
                     <Link href="/blitzit/settings">
                         <Settings className="h-5 w-5" />
                         <span>Settings</span>
