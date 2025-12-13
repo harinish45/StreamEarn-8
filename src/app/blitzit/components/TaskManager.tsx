@@ -22,11 +22,13 @@ function TaskCard({ task, onClick }: TaskCardProps) {
         setNodeRef,
         transform,
         transition,
-    } = useSortable({ id: task.id });
+        isDragging
+    } = useSortable({ id: task.id, data: { type: 'Task', task } });
 
     const style = {
         transform: CSS.Transform.toString(transform),
         transition,
+        opacity: isDragging ? 0.5 : 1,
     };
     
     const priorityColor = {
@@ -41,7 +43,7 @@ function TaskCard({ task, onClick }: TaskCardProps) {
             style={style}
             {...attributes}
             {...listeners}
-            className="mb-4 bg-card/50 backdrop-blur-sm cursor-grab active:cursor-grabbing hover:border-primary/50"
+            className="mb-4 bg-card/50 backdrop-blur-sm cursor-grab active:cursor-grabbing hover:border-primary/50 touch-none"
             onClick={() => onClick(task)}
         >
             <CardContent className="p-4">
@@ -49,13 +51,13 @@ function TaskCard({ task, onClick }: TaskCardProps) {
                     <p className="font-semibold">{task.title}</p>
                     <Badge className={priorityColor[task.priority]}>{task.priority}</Badge>
                 </div>
-                <p className="text-sm text-muted-foreground mt-1">{task.description}</p>
+                {task.description && <p className="text-sm text-muted-foreground mt-1">{task.description}</p>}
                 <div className="mt-4 flex justify-between items-center">
                     <div className="text-xs text-muted-foreground">
                         {task.estimatedTime ? `${task.estimatedTime} min est.` : ''}
                     </div>
                     <div className="flex gap-1">
-                        <Button variant="ghost" size="icon" className="h-7 w-7"><Edit className="h-4 w-4" /></Button>
+                        <Button variant="ghost" size="icon" className="h-7 w-7" onClick={(e) => {e.stopPropagation(); onClick(task);}}><Edit className="h-4 w-4" /></Button>
                         <Button variant="ghost" size="icon" className="h-7 w-7 text-destructive hover:text-destructive"><Trash2 className="h-4 w-4" /></Button>
                     </div>
                 </div>
@@ -72,7 +74,7 @@ interface TaskColumnProps {
 }
 
 function TaskColumn({ id, title, tasks, onTaskClick }: TaskColumnProps) {
-    const { setNodeRef } = useDroppable({ id });
+    const { setNodeRef } = useDroppable({ id, data: { type: 'Column' } });
 
     return (
         <div ref={setNodeRef} className="bg-background/50 rounded-xl p-4 flex-1">

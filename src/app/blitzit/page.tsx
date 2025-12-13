@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, 'useState } from 'react';
 import { TaskManager } from './components/TaskManager';
 import { FocusTimer } from './components/FocusTimer';
 import { ReportsOverview } from './components/ReportsOverview';
@@ -9,8 +9,18 @@ import { GamificationPanel } from './components/GamificationPanel';
 import { Settings } from './components/Settings';
 import { Integrations } from './components/Integrations';
 import { TaskDetails } from './components/TaskDetails';
-import type { Task } from '@/types/blitzit';
-import { DndContext, type DragEndEvent } from '@dnd-kit/core';
+import type { Task, TaskStatus } from '@/types/blitzit';
+import {
+  DndContext,
+  closestCenter,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  type DragEndEvent,
+  type DragOverEvent,
+} from '@dnd-kit/core';
+import { arrayMove, sortableKeyboardCoordinates } from '@dnd-kit/sortable';
 import { produce } from 'immer';
 
 // Sample Data
@@ -29,29 +39,50 @@ export default function BlitzitPage() {
     const [selectedTask, setSelectedTask] = useState<Task | null>(null);
     const [isDetailsOpen, setIsDetailsOpen] = useState(false);
 
+    const sensors = useSensors(
+        useSensor(PointerSensor),
+        useSensor(KeyboardSensor, {
+          coordinateGetter: sortableKeyboardCoordinates,
+        })
+    );
+
+    const handleDragOver = (event: DragOverEvent) => {
+        const { active, over } = event;
+        if (!over) return;
+    
+        const activeId = active.id;
+        const overId = over.id;
+    
+        if (activeId === overId) return;
+
+        const isActiveATask = active.data.current?.type === 'Task';
+        const isOverAColumn = over.data.current?.type === 'Column';
+
+        if (isActiveATask && isOverAColumn) {
+            setTasks(produce(draft => {
+                const activeTask = draft.find(t => t.id === activeId);
+                if (activeTask) {
+                    activeTask.status = overId as TaskStatus;
+                }
+            }));
+        }
+    };
+
+
     const handleDragEnd = (event: DragEndEvent) => {
         const { active, over } = event;
 
-        if (over && active.id !== over.id) {
-            const activeId = active.id;
-            const overId = over.id;
-            
-            // This is a simplified drag-and-drop logic for UI demonstration.
-            // A full implementation would need to know which column it was dropped into.
-            // For now, we'll just re-order based on an assumption.
-            setTasks((currentTasks) => {
-                 const oldIndex = currentTasks.findIndex((t) => t.id === activeId);
-                 const newIndex = currentTasks.findIndex((t) => t.id === overId);
-                 
-                 // A simple re-ordering for demonstration purposes
-                 if (oldIndex !== -1 && newIndex !== -1) {
-                    return produce(currentTasks, draft => {
-                        const [movedTask] = draft.splice(oldIndex, 1);
-                        draft.splice(newIndex, 0, movedTask);
-                        // In a real app, you'd also update the status based on `over.data.current.droppableId`
-                    });
-                 }
-                 return currentTasks;
+        if (!over) return;
+        if (active.id === over.id) return;
+        
+        const isActiveATask = active.data.current?.type === 'Task';
+        const isOverATask = over.data.current?.type === 'Task';
+
+        if (isActiveATask && isOverATask) {
+             setTasks((currentTasks) => {
+                const oldIndex = currentTasks.findIndex((t) => t.id === active.id);
+                const newIndex = currentTasks.findIndex((t) => t.id === over.id);
+                return arrayMove(currentTasks, oldIndex, newIndex);
             });
         }
     };
@@ -62,7 +93,12 @@ export default function BlitzitPage() {
     };
 
     return (
-        <DndContext onDragEnd={handleDragEnd}>
+        <DndContext 
+            sensors={sensors}
+            onDragEnd={handleDragEnd}
+            onDragOver={handleDragOver}
+            collisionDetection={closestCenter}
+        >
             <div className="flex flex-col min-h-screen bg-background text-foreground">
                 <header className="sticky top-0 z-40 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
                     <div className="container flex h-14 items-center">
