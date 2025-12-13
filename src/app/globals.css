@@ -22,7 +22,7 @@
     --destructive: 0 63% 31%;
     --destructive-foreground: 210 40% 98%;
     --border: 217 33% 27%;
-    --input: 217 3_3% 27%;
+    --input: 217 33% 27%;
     --ring: 349 83% 62%;
     --radius: 0.8rem;
   }
@@ -53,19 +53,19 @@
   .blitzit-dark {
     --background: 225 73% 9%; /* #0F172A */
     --foreground: 220 13% 91%; /* #E2E8F0 */
-    --card: 222 47% 11%; /* #1E293B */
+    --card: 222 47% 13%; /* #1E293B */
     --card-foreground: 220 13% 91%;
     --popover: 224 71% 4%;
     --popover-foreground: 220 13% 91%;
     --primary: 349 100% 67%; /* #FF5E78 */
-    --primary-foreground: 210 40% 98%;
+    --primary-foreground: 220 13% 91%;
     --secondary: 239 84% 67%; /* #6366F1 */
-    --secondary-foreground: 210 40% 98%;
-    --muted: 222 47% 11%;
+    --secondary-foreground: 220 13% 91%;
+    --muted: 222 47% 18%; /* Darker card for hover */
     --muted-foreground: 220 14% 60%; /* #94A3B8 */
     --accent: 222 47% 18%; /* Darker card for hover */
     --accent-foreground: 220 13% 91%;
-    --destructive: 0 63% 31%;
+    --destructive: 0 72% 51%; /* #E53E3E */
     --destructive-foreground: 210 40% 98%;
     --border: 215 28% 25%; /* #475569 */
     --input: 215 28% 25%;

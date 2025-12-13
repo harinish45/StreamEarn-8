@@ -64,7 +64,7 @@ export default function BlitzitPage() {
         if (isActiveATask && isOverAColumn) {
             setTasks(produce(draft => {
                 const activeTask = draft.find(t => t.id === activeId);
-                if (activeTask) {
+                if (activeTask && activeTask.status !== overId) {
                     activeTask.status = overId as TaskStatus;
                 }
             }));
@@ -106,35 +106,35 @@ export default function BlitzitPage() {
     }
 
     const handleAddTask = () => {
-        // Placeholder for adding a new task, could open a creation modal
-        const newTask: Task = {
+        const newTaskTemplate: Task = {
             id: `task-${Date.now()}`,
             title: 'New Task',
-            description: 'A new task to be done.',
+            description: '',
             priority: 'neither',
             status: 'do-now',
             listId: 'work',
-            estimatedTime: 30
         };
-        setTasks(produce(draft => {
-            draft.unshift(newTask);
-        }));
-        handleTaskClick(newTask);
+        setSelectedTask(newTaskTemplate);
+        setIsDetailsOpen(true);
     };
     
-    const handleUpdateTask = (updatedTask: Task) => {
+    const handleSaveTask = (updatedTask: Task) => {
         setTasks(produce(draft => {
             const index = draft.findIndex(t => t.id === updatedTask.id);
             if (index !== -1) {
                 draft[index] = updatedTask;
+            } else {
+                draft.unshift(updatedTask);
             }
         }));
         setIsDetailsOpen(false);
+        setSelectedTask(null);
     }
 
     const handleDeleteTask = (taskId: string) => {
         setTasks(tasks.filter(t => t.id !== taskId));
         setIsDetailsOpen(false);
+        setSelectedTask(null);
     }
 
 
@@ -145,13 +145,13 @@ export default function BlitzitPage() {
             onDragOver={handleDragOver}
             collisionDetection={closestCenter}
         >
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <div className="grid grid-cols-1 xl:grid-cols-[1fr,400px] gap-8 items-start">
                 {/* Main Content */}
-                <div className="lg:col-span-2">
+                <div className="w-full">
                     <TaskManager tasks={tasks} onTaskClick={handleTaskClick} />
                 </div>
                 {/* Right Sidebar */}
-                <div className="space-y-8">
+                <div className="hidden xl:flex flex-col gap-8 sticky top-24">
                     <ReportsOverview />
                     <GamificationPanel />
                 </div>
@@ -163,21 +163,19 @@ export default function BlitzitPage() {
                     onStop={handleStopFocus}
                 />
             )}
-
-            {selectedTask && (
-                <TaskDetails
-                    task={selectedTask}
-                    isOpen={isDetailsOpen}
-                    setIsOpen={setIsDetailsOpen}
-                    onStartFocus={handleStartFocus}
-                    onSave={handleUpdateTask}
-                    onDelete={handleDeleteTask}
-                />
-            )}
+            
+            <TaskDetails
+                task={selectedTask}
+                isOpen={isDetailsOpen}
+                setIsOpen={setIsDetailsOpen}
+                onStartFocus={handleStartFocus}
+                onSave={handleSaveTask}
+                onDelete={handleDeleteTask}
+            />
             
             <Button 
                 onClick={handleAddTask}
-                className="fixed bottom-6 right-6 h-16 w-16 rounded-full bg-gradient-to-br from-[#FF5E78] to-[#6366F1] shadow-lg hover:scale-110 transition-transform">
+                className="fixed bottom-8 right-8 h-16 w-16 rounded-full bg-gradient-to-br from-primary to-secondary text-white shadow-lg hover:scale-110 transition-transform z-40">
                 <Plus className="h-8 w-8" />
             </Button>
         </DndContext>

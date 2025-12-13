@@ -29,7 +29,7 @@ import { cn } from '@/lib/utils';
 import { format } from 'date-fns';
 
 interface TaskDetailsProps {
-  task: Task;
+  task: Task | null;
   isOpen: boolean;
   setIsOpen: (isOpen: boolean) => void;
   onStartFocus: (task: Task) => void;
@@ -38,11 +38,13 @@ interface TaskDetailsProps {
 }
 
 export function TaskDetails({ task, isOpen, setIsOpen, onStartFocus, onSave, onDelete }: TaskDetailsProps) {
-  const [editedTask, setEditedTask] = React.useState<Task>(task);
+  const [editedTask, setEditedTask] = React.useState<Task | null>(task);
 
   React.useEffect(() => {
     setEditedTask(task);
   }, [task]);
+
+  if (!editedTask) return null;
 
   const handleSave = () => {
     onSave(editedTask);
@@ -50,14 +52,24 @@ export function TaskDetails({ task, isOpen, setIsOpen, onStartFocus, onSave, onD
   };
 
   const handleChange = (field: keyof Task, value: any) => {
-    setEditedTask(prev => ({...prev, [field]: value}));
+    setEditedTask(prev => prev ? ({...prev, [field]: value}) : null);
   };
+  
+  const handleStartFocusClick = () => {
+    onStartFocus(editedTask);
+    setIsOpen(false);
+  }
+  
+  const handleDeleteClick = () => {
+      onDelete(editedTask.id);
+      setIsOpen(false);
+  }
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogContent className="sm:max-w-[600px]">
         <DialogHeader>
-          <DialogTitle>Edit Task</DialogTitle>
+          <DialogTitle>Task Details</DialogTitle>
           <DialogDescription>
             Update task details or start a focus session.
           </DialogDescription>
@@ -144,14 +156,14 @@ export function TaskDetails({ task, isOpen, setIsOpen, onStartFocus, onSave, onD
         </div>
         <DialogFooter className="justify-between">
             <div>
-                 <Button variant="destructive" size="icon" onClick={() => onDelete(task.id)}>
-                    <Trash2 className="h-4 w-4" />
+                 <Button variant="ghost" size="icon" onClick={handleDeleteClick}>
+                    <Trash2 className="h-4 w-4 text-destructive" />
                 </Button>
             </div>
             <div className="flex gap-2">
                 <Button variant="secondary" onClick={() => setIsOpen(false)}>Cancel</Button>
                 <Button onClick={handleSave}>Save Changes</Button>
-                <Button onClick={() => onStartFocus(task)} className="bg-gradient-to-r from-primary to-secondary text-white">
+                <Button onClick={handleStartFocusClick} className="bg-gradient-to-r from-primary to-secondary text-white">
                     <PlayCircle className="mr-2 h-4 w-4" />
                     Start Focus
                 </Button>
