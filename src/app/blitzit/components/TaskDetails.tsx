@@ -1,3 +1,4 @@
+
 'use client';
 
 import React from 'react';
@@ -31,16 +32,17 @@ interface TaskDetailsProps {
   task: Task;
   isOpen: boolean;
   setIsOpen: (isOpen: boolean) => void;
+  onStartFocus: (task: Task) => void;
 }
 
-export function TaskDetails({ task, isOpen, setIsOpen }: TaskDetailsProps) {
+export function TaskDetails({ task, isOpen, setIsOpen, onStartFocus }: TaskDetailsProps) {
   const [date, setDate] = React.useState<Date | undefined>(
     task.scheduledAt ? new Date(task.scheduledAt) : undefined
   );
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
-      <DialogContent className="sm:max-w-[600px]">
+      <DialogContent className="sm:max-w-[600px] bg-[#1E293B] border-[#475569] text-[#E2E8F0]">
         <DialogHeader>
           <DialogTitle>{task.title}</DialogTitle>
           <DialogDescription>
@@ -129,7 +131,7 @@ export function TaskDetails({ task, isOpen, setIsOpen }: TaskDetailsProps) {
         <DialogFooter>
             <Button variant="secondary" onClick={() => setIsOpen(false)}>Cancel</Button>
             <Button type="submit">Save Changes</Button>
-            <Button variant="primary" className="bg-green-500 hover:bg-green-600">
+            <Button onClick={() => onStartFocus(task)} className="bg-gradient-to-r from-[#FF5E78] to-[#6366F1] text-white">
                 <PlayCircle className="mr-2 h-4 w-4" />
                 Start Focus
             </Button>

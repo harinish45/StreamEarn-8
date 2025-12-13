@@ -1,9 +1,10 @@
+
 'use client';
 
 import React from 'react';
 import type { Task, TaskStatus } from '@/types/blitzit';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { Plus, Edit, Trash2 } from 'lucide-react';
 import { useSortable, SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable';
 import { useDroppable } from '@dnd-kit/core';
@@ -41,14 +42,12 @@ function TaskCard({ task, onClick }: TaskCardProps) {
         <Card
             ref={setNodeRef}
             style={style}
-            {...attributes}
-            {...listeners}
-            className="mb-4 bg-card/50 backdrop-blur-sm cursor-grab active:cursor-grabbing hover:border-primary/50 touch-none"
+            className="mb-4 bg-[#1E293B] border-[#475569] cursor-grab active:cursor-grabbing hover:border-[#6366F1] touch-none"
             onClick={() => onClick(task)}
         >
-            <CardContent className="p-4">
+            <CardContent className="p-4" {...attributes} {...listeners}>
                 <div className="flex justify-between items-start">
-                    <p className="font-semibold">{task.title}</p>
+                    <p className="font-semibold text-base text-[#E2E8F0]">{task.title}</p>
                     <Badge className={priorityColor[task.priority]}>{task.priority}</Badge>
                 </div>
                 {task.description && <p className="text-sm text-muted-foreground mt-1">{task.description}</p>}
@@ -57,8 +56,8 @@ function TaskCard({ task, onClick }: TaskCardProps) {
                         {task.estimatedTime ? `${task.estimatedTime} min est.` : ''}
                     </div>
                     <div className="flex gap-1">
-                        <Button variant="ghost" size="icon" className="h-7 w-7" onClick={(e) => {e.stopPropagation(); onClick(task);}}><Edit className="h-4 w-4" /></Button>
-                        <Button variant="ghost" size="icon" className="h-7 w-7 text-destructive hover:text-destructive"><Trash2 className="h-4 w-4" /></Button>
+                        <Button variant="ghost" size="icon" className="h-7 w-7 text-muted-foreground hover:text-white" onClick={(e) => {e.stopPropagation(); onClick(task);}}><Edit className="h-4 w-4" /></Button>
+                        <Button variant="ghost" size="icon" className="h-7 w-7 text-muted-foreground hover:text-[#FF5E78]"><Trash2 className="h-4 w-4" /></Button>
                     </div>
                 </div>
             </CardContent>
@@ -74,12 +73,12 @@ interface TaskColumnProps {
 }
 
 function TaskColumn({ id, title, tasks, onTaskClick }: TaskColumnProps) {
-    const { setNodeRef } = useDroppable({ id, data: { type: 'Column' } });
+    const { setNodeRef } = useDroppable({ id, data: { type: 'Column', id } });
 
     return (
-        <div ref={setNodeRef} className="bg-background/50 rounded-xl p-4 flex-1">
-            <h3 className="font-bold text-lg mb-4 px-2">{title}</h3>
-            <div className="space-y-4 h-[60vh] overflow-y-auto pr-2">
+        <div className="bg-[#0F172A]/50 rounded-xl p-4 flex-1">
+            <h3 className="font-bold text-lg mb-4 px-2 text-white">{title}</h3>
+            <div ref={setNodeRef} className="space-y-4 min-h-[60vh] overflow-y-auto pr-2 rounded-lg">
                 <SortableContext items={tasks.map(t => t.id)} strategy={verticalListSortingStrategy}>
                     {tasks.map(task => (
                         <TaskCard key={task.id} task={task} onClick={onTaskClick} />
@@ -108,13 +107,6 @@ export function TaskManager({ tasks, onTaskClick }: TaskManagerProps) {
 
     return (
         <Card className="bg-transparent border-none shadow-none">
-            <CardHeader className="flex flex-row items-center justify-between p-0 mb-6">
-                <CardTitle className="text-2xl">Task Board</CardTitle>
-                <Button>
-                    <Plus className="mr-2 h-4 w-4" />
-                    Add Task
-                </Button>
-            </CardHeader>
             <CardContent className="p-0">
                 <div className="flex flex-col md:flex-row gap-6">
                     {columns.map(col => (

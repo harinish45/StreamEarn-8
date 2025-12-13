@@ -1,7 +1,8 @@
+
 'use client';
 
 import React from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Bar, BarChart, ResponsiveContainer, XAxis, YAxis, Tooltip } from 'recharts';
 
 const sampleData = [
@@ -16,50 +17,39 @@ const sampleData = [
 
 export function ReportsOverview() {
   return (
-    <Card>
+    <Card className="bg-[#1E293B] border-[#475569]">
       <CardHeader>
-        <CardTitle>Weekly Productivity</CardTitle>
+        <CardTitle className="text-lg font-semibold">Weekly Productivity</CardTitle>
+        <CardDescription>Focus hours this week</CardDescription>
       </CardHeader>
       <CardContent>
         <ResponsiveContainer width="100%" height={200}>
           <BarChart data={sampleData}>
             <XAxis
               dataKey="name"
-              stroke="hsl(var(--muted-foreground))"
+              stroke="#94A3B8"
               fontSize={12}
               tickLine={false}
               axisLine={false}
             />
             <YAxis
-              stroke="hsl(var(--muted-foreground))"
+              stroke="#94A3B8"
               fontSize={12}
               tickLine={false}
               axisLine={false}
               tickFormatter={(value) => `${value}h`}
             />
             <Tooltip
-              cursor={{ fill: 'hsl(var(--accent))' }}
-              content={({ active, payload }) => {
-                if (active && payload && payload.length) {
-                  return (
-                    <div className="rounded-lg border bg-background p-2 shadow-sm">
-                      <div className="grid grid-cols-2 gap-2">
-                        <div className="flex flex-col">
-                          <span className="text-[0.70rem] uppercase text-muted-foreground">
-                            Hours
-                          </span>
-                          <span className="font-bold text-muted-foreground">
-                            {payload[0].value}
-                          </span>
-                        </div>
-                      </div>
-                    </div>
-                  );
-                }
-                return null;
+              cursor={{ fill: 'hsla(220, 13%, 40%, 0.5)' }}
+              contentStyle={{
+                background: '#0F172A',
+                borderColor: '#475569',
+                color: '#E2E8F0',
+                borderRadius: '0.5rem',
               }}
+              labelStyle={{ color: '#E2E8F0' }}
             />
-            <Bar dataKey="total" fill="hsl(var(--primary))" radius={[4, 4, 0, 0]} />
+            <Bar dataKey="total" fill="#6366F1" radius={[4, 4, 0, 0]} />
           </BarChart>
         </ResponsiveContainer>
       </CardContent>

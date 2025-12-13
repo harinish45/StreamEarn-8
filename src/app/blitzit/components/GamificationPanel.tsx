@@ -1,56 +1,54 @@
+
 'use client';
 
 import React from 'react';
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Award, Star, TrendingUp } from 'lucide-react';
 import { Progress } from '@/components/ui/progress';
 
 export function GamificationPanel() {
   return (
-    <Popover>
-      <PopoverTrigger asChild>
-        <Button variant="ghost">
-          <Star className="mr-2 h-4 w-4 text-yellow-400" />
-          Level 5
-        </Button>
-      </PopoverTrigger>
-      <PopoverContent className="w-80">
-        <div className="grid gap-4">
-          <div className="space-y-2">
-            <h4 className="font-medium leading-none">Your Progress</h4>
-            <p className="text-sm text-muted-foreground">
-              Keep completing tasks to level up!
-            </p>
-          </div>
-          <div className="grid gap-2">
-            <div className="flex items-center justify-between">
-                <span>Level 5</span>
-                <span className="text-sm text-muted-foreground">Level 6</span>
-            </div>
-            <Progress value={60} className="h-2"/>
-            <p className="text-xs text-muted-foreground text-center">1200 / 2000 XP</p>
-          </div>
-           <div className="flex justify-around text-center">
-                <div>
-                    <p className="font-bold text-lg">12</p>
-                    <p className="text-xs text-muted-foreground">Day Streak</p>
+    <Card className="bg-[#1E293B] border-[#475569]">
+        <CardHeader>
+            <CardTitle className="text-lg font-semibold">Your Progress</CardTitle>
+            <CardDescription>Keep completing tasks to level up!</CardDescription>
+        </CardHeader>
+        <CardContent>
+             <div className="grid gap-4">
+                <div className="grid gap-2">
+                    <div className="flex items-center justify-between font-mono text-sm">
+                        <span>Level 5</span>
+                        <span className="text-muted-foreground">Level 6</span>
+                    </div>
+                    <Progress value={60} className="h-2 bg-[#475569]"/>
+                    <p className="text-xs text-muted-foreground text-center">1200 / 2000 XP</p>
+                </div>
+                <div className="flex justify-around text-center border-t border-b border-[#475569] py-4">
+                        <div>
+                            <p className="font-bold text-2xl text-[#FF5E78]">12</p>
+                            <p className="text-xs text-muted-foreground">Day Streak</p>
+                        </div>
+                        <div>
+                            <p className="font-bold text-2xl text-[#6366F1]">2</p>
+                            <p className="text-xs text-muted-foreground">Week Streak</p>
+                        </div>
                 </div>
                 <div>
-                    <p className="font-bold text-lg">2</p>
-                    <p className="text-xs text-muted-foreground">Week Streak</p>
+                    <h5 className="font-semibold mb-3 text-base">Badges</h5>
+                    <div className="flex gap-4">
+                        <div className="h-12 w-12 bg-muted rounded-lg flex items-center justify-center ring-2 ring-yellow-600/50" title="First Task">
+                            <Award className="h-7 w-7 text-yellow-500"/>
+                        </div>
+                        <div className="h-12 w-12 bg-muted rounded-lg flex items-center justify-center ring-2 ring-green-500/50" title="Week Warrior">
+                            <TrendingUp className="h-7 w-7 text-green-400"/>
+                        </div>
+                        <div className="h-12 w-12 bg-muted rounded-lg flex items-center justify-center ring-2 ring-blue-500/50" title="Focus Master">
+                            <Star className="h-7 w-7 text-blue-400"/>
+                        </div>
+                    </div>
                 </div>
             </div>
-          <div>
-            <h5 className="font-medium mb-2">Badges</h5>
-            <div className="flex gap-2">
-                <div className="h-10 w-10 bg-muted rounded-md flex items-center justify-center" title="First Task"><Award className="h-6 w-6 text-yellow-600"/></div>
-                <div className="h-10 w-10 bg-muted rounded-md flex items-center justify-center" title="Week Warrior"><TrendingUp className="h-6 w-6 text-green-500"/></div>
-                <div className="h-10 w-10 bg-muted rounded-md flex items-center justify-center" title="Focus Master"><Star className="h-6 w-6 text-blue-500"/></div>
-            </div>
-          </div>
-        </div>
-      </PopoverContent>
-    </Popover>
+        </CardContent>
+    </Card>
   );
 }
