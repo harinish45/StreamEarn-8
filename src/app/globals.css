@@ -82,6 +82,9 @@
   body {
     @apply bg-background text-foreground;
   }
+  .blitzit-dark {
+      @apply bg-[#0F172A] text-[#E2E8F0];
+  }
 }
 
 @layer utilities {
