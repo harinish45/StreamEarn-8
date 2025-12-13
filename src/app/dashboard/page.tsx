@@ -1,253 +1,324 @@
 
 'use client';
 
+import React, { useState, useCallback, useMemo } from 'react';
 import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@/components/ui/accordion"
+  DndContext,
+  closestCenter,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  DragEndEvent,
+} from '@dnd-kit/core';
+import {
+  SortableContext,
+  sortableKeyboardCoordinates,
+  verticalListSortingStrategy,
+} from '@dnd-kit/sortable';
+import { produce } from 'immer';
+
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Checkbox } from '@/components/ui/checkbox';
+import {
+  Pencil,
+  Plus,
+  Trash2,
+  X,
+  GripVertical,
+} from 'lucide-react';
+import { useSortable } from '@dnd-kit/sortable';
+import { CSS } from '@dnd-kit/utilities';
+
+// --- Types ---
+type Task = {
+  id: string;
+  text: string;
+  completed: boolean;
+};
+
+type List = {
+  id: string;
+  name: string;
+  tasks: Task[];
+};
+
+// --- Initial Data ---
+const initialLists: List[] = [
+  {
+    id: 'list-1',
+    name: 'Work',
+    tasks: [
+      { id: 'task-1', text: 'Finish report for Q2', completed: false },
+      { id: 'task-2', text: 'Prepare for team meeting', completed: true },
+    ],
+  },
+  {
+    id: 'list-2',
+    name: 'Personal',
+    tasks: [
+      { id: 'task-3', text: 'Buy groceries', completed: false },
+      { id: 'task-4', text: 'Go to the gym', completed: false },
+    ],
+  },
+];
+
+// --- Components ---
+
+function TaskItem({ task, onToggle, onDelete, id }: { task: Task; onToggle: () => void; onDelete: () => void; id: string }) {
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+  } = useSortable({id});
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+  };
+
+  return (
+    <div
+      ref={setNodeRef}
+      style={style}
+      className="flex items-center gap-3 p-3 bg-card border border-border rounded-lg shadow-sm"
+    >
+      <button {...attributes} {...listeners} className="cursor-grab touch-none">
+        <GripVertical className="h-5 w-5 text-muted-foreground" />
+      </button>
+      <Checkbox id={`task-${task.id}`} checked={task.completed} onCheckedChange={onToggle} />
+      <label
+        htmlFor={`task-${task.id}`}
+        className={`flex-1 text-sm ${task.completed ? 'text-muted-foreground line-through' : 'text-foreground'}`}
+      >
+        {task.text}
+      </label>
+      <Button variant="ghost" size="icon" className="h-8 w-8" onClick={onDelete}>
+        <Trash2 className="h-4 w-4" />
+      </Button>
+    </div>
+  );
+}
+
 
 export default function DashboardPage() {
+  const [lists, setLists] = useState<List[]>(initialLists);
+  const [selectedListId, setSelectedListId] = useState<string | null>(initialLists[0]?.id || null);
+  const [newListName, setNewListName] = useState('');
+  const [newTaskText, setNewTaskText] = useState('');
+  const [editingListId, setEditingListId] = useState<string | null>(null);
+  const [editingListName, setEditingListName] = useState('');
+  
+  const sensors = useSensors(
+    useSensor(PointerSensor),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    })
+  );
+
+  const selectedList = useMemo(
+    () => lists.find((list) => list.id === selectedListId),
+    [lists, selectedListId]
+  );
+
+  const handleAddList = () => {
+    if (newListName.trim()) {
+      const newList: List = {
+        id: `list-${Date.now()}`,
+        name: newListName.trim(),
+        tasks: [],
+      };
+      setLists([...lists, newList]);
+      setSelectedListId(newList.id);
+      setNewListName('');
+    }
+  };
+
+  const handleAddTask = () => {
+    if (newTaskText.trim() && selectedListId) {
+      const newTask: Task = {
+        id: `task-${Date.now()}`,
+        text: newTaskText.trim(),
+        completed: false,
+      };
+      setLists(
+        produce((draft) => {
+          const list = draft.find((l) => l.id === selectedListId);
+          if (list) {
+            list.tasks.push(newTask);
+          }
+        })
+      );
+      setNewTaskText('');
+    }
+  };
+
+  const handleToggleTask = (taskId: string) => {
+    setLists(
+      produce((draft) => {
+        const list = draft.find((l) => l.id === selectedListId);
+        if (list) {
+          const task = list.tasks.find((t) => t.id === taskId);
+          if (task) {
+            task.completed = !task.completed;
+          }
+        }
+      })
+    );
+  };
+  
+  const handleDeleteTask = (taskId: string) => {
+     setLists(
+      produce((draft) => {
+        const list = draft.find((l) => l.id === selectedListId);
+        if (list) {
+          list.tasks = list.tasks.filter((t) => t.id !== taskId);
+        }
+      })
+    );
+  };
+
+  const handleDeleteList = (listId: string) => {
+    setLists(lists.filter(l => l.id !== listId));
+    if(selectedListId === listId) {
+        setSelectedListId(lists[0]?.id || null);
+    }
+  };
+  
+  const handleStartEditingList = (list: List) => {
+    setEditingListId(list.id);
+    setEditingListName(list.name);
+  };
+  
+  const handleUpdateList = () => {
+      if(editingListId && editingListName.trim()) {
+          setLists(produce(draft => {
+              const list = draft.find(l => l.id === editingListId);
+              if(list) {
+                  list.name = editingListName.trim();
+              }
+          }));
+          setEditingListId(null);
+          setEditingListName('');
+      }
+  };
+
+  const handleDragEnd = (event: DragEndEvent) => {
+    const {active, over} = event;
+    if (active.id !== over?.id && selectedListId) {
+        setLists(produce(draft => {
+            const list = draft.find(l => l.id === selectedListId);
+            if(list) {
+                const oldIndex = list.tasks.findIndex(t => t.id === active.id);
+                const newIndex = list.tasks.findIndex(t => t.id === over?.id);
+                const [movedTask] = list.tasks.splice(oldIndex, 1);
+                list.tasks.splice(newIndex, 0, movedTask);
+            }
+        }));
+    }
+  };
+
   return (
-    <div className="flex min-h-screen flex-col bg-background text-foreground">
-      <main className="flex-1">
-        <div className="container mx-auto py-12 px-4 md:px-6">
-          <div className="space-y-4 text-center mb-12">
-            <h1 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl">
-              Blitzit Feature Showcase
-            </h1>
-            <p className="max-w-[900px] mx-auto text-muted-foreground md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
-              A complete breakdown of Blitzit&apos;s features, focusing on non-AI functionalities, scheduling, productivity tools, reporting, and integrations.
-            </p>
-          </div>
-
-          <Accordion type="single" collapsible className="w-full">
-            <AccordionItem value="item-1">
-              <AccordionTrigger>1. Task Organization & Categories</AccordionTrigger>
-              <AccordionContent>
-                <ul className="list-disc pl-6 space-y-2">
-                  <li><strong>Task Lists/Collections:</strong> Ability to create multiple lists (Work, Personal, Design, Projects, etc.)</li>
-                  <li><strong>Task Filtering:</strong> Filter tasks by list/category for measuring performance.</li>
-                  <li><strong>Task Search:</strong> Quick search across all tasks.</li>
-                  <li><strong>Recurring Tasks:</strong> Set tasks as one-time or recurring (daily, weekly, monthly, etc.).</li>
-                </ul>
-              </AccordionContent>
-            </AccordionItem>
-
-            <AccordionItem value="item-2">
-              <AccordionTrigger>2. Focus Mode Enhancements</AccordionTrigger>
-              <AccordionContent>
-                <ul className="list-disc pl-6 space-y-2">
-                  <li><strong>Blitz Mode Collapse:</strong> Collapses entire task list into floating timer, showing ONLY current task.</li>
-                  <li><strong>Visual/Sound Cues:</strong> Timer alerts every 10 minutes with lighting & sound effects.</li>
-                  <li><strong>Dopamine Boost:</strong> Celebratory messages/GIFs when task completed on time.</li>
-                  <li><strong>Time Blindness Support:</strong> Locked floating timer that can&apos;t be minimized.</li>
-                  <li><strong>Multiple Timer Modes:</strong> Pomodoro (60+15min), Custom intervals, Free-form timer.</li>
-                  <li><strong>Task Completion Animation:</strong> Satisfying visual feedback when task is marked done.</li>
-                </ul>
-              </AccordionContent>
-            </AccordionItem>
-
-            <AccordionItem value="item-3">
-              <AccordionTrigger>3. Notes & Voice Recording</AccordionTrigger>
-              <AccordionContent>
-                <ul className="list-disc pl-6 space-y-2">
-                  <li><strong>Task Notes:</strong> Attach notes, links, or fleeting thoughts to tasks.</li>
-                  <li><strong>Auto-Open Links:</strong> Automatically open linked content when task is active.</li>
-                  <li><strong>Voice/Meeting Recording:</strong> Record voice notes or meetings directly into task notes.</li>
-                  <li><strong>Note Timestamps:</strong> Timestamp notes for reference.</li>
-                </ul>
-              </AccordionContent>
-            </AccordionItem>
-
-            <AccordionItem value="item-4">
-              <AccordionTrigger>4. Time Tracking & Analytics</AccordionTrigger>
-              <AccordionContent>
-                <ul className="list-disc pl-6 space-y-2">
-                  <li><strong>Estimated Time vs. Actual Time:</strong> Users estimate task duration, app tracks actual time spent.</li>
-                  <li><strong>Overtime Tracking:</strong> Track time spent beyond estimate.</li>
-                  <li><strong>Time Billing Support:</strong> Export time data for client billing.</li>
-                  <li><strong>Session Tracking (BETA):</strong> Organize every session, account for every minute.</li>
-                  <li><strong>Time Allocation by Category:</strong> Breakdown of time spent on Work, Design, Personal, Break.</li>
-                  <li><strong>Punctuality Review:</strong> Reflect on time estimate accuracy.</li>
-                </ul>
-              </AccordionContent>
-            </AccordionItem>
-
-            <AccordionItem value="item-5">
-              <AccordionTrigger>5. Reporting & Insights</AccordionTrigger>
-              <AccordionContent>
-                <ul className="list-disc pl-6 space-y-2">
-                  <li><strong>Reports Overview Dashboard:</strong> Bird&apos;s eye view of productivity & behavior.</li>
-                  <li><strong>Performance Metrics:</strong> Track productivity across all lists.</li>
-                  <li><strong>Deep Time Analysis:</strong> Understand time allocation patterns.</li>
-                  <li><strong>PDF Export:</strong> Download performance reports as PDF.</li>
-                  <li><strong>Weekly/Monthly Summaries:</strong> Aggregated productivity reports.</li>
-                  <li><strong>Custom Date Range Reports:</strong> Analyze productivity for any time period.</li>
-                </ul>
-              </AccordionContent>
-            </AccordionItem>
-
-            <AccordionItem value="item-6">
-              <AccordionTrigger>6. Scheduling Features</AccordionTrigger>
-              <AccordionContent>
-                <ul className="list-disc pl-6 space-y-2">
-                  <li><strong>Recurring Task Management:</strong> Edit/manage recurring instances.</li>
-                  <li><strong>Task Alerts/Reminders:</strong> Instant notifications for upcoming scheduled tasks.</li>
-                  <li><strong>Calendar View:</strong> Visual calendar showing scheduled tasks.</li>
-                  <li><strong>Drag-and-drop Scheduling:</strong> Reschedule tasks by dragging on calendar.</li>
-                  <li><strong>Conflict Detection:</strong> Warn if scheduling conflicts exist.</li>
-                </ul>
-              </AccordionContent>
-            </AccordionItem>
-
-            <AccordionItem value="item-7">
-              <AccordionTrigger>7. Task Prioritization (Eisenhower Matrix)</AccordionTrigger>
-              <AccordionContent>
-                <ul className="list-disc pl-6 space-y-2">
-                  <li><strong>Eisenhower Matrix:</strong> 4-quadrant prioritization: Do Today (Important + Urgent), Schedule (Important), Later Today (Urgent), Backlog (Neither).</li>
-                  <li><strong>Smart Sorting:</strong> Auto-sort tasks by importance & urgency.</li>
-                  <li><strong>Quick Prioritization UI:</strong> Easy buttons to move between quadrants.</li>
-                </ul>
-              </AccordionContent>
-            </AccordionItem>
-
-            <AccordionItem value="item-8">
-              <AccordionTrigger>8. Collaboration Features</AccordionTrigger>
-              <AccordionContent>
-                <ul className="list-disc pl-6 space-y-2">
-                  <li><strong>Share Lists:</strong> Share task lists with team members.</li>
-                  <li><strong>Collaborative Editing:</strong> Work together on lists in real-time.</li>
-                  <li><strong>Permission Levels:</strong> Control who can view/edit/delete tasks.</li>
-                  <li><strong>Activity Log:</strong> See who edited what and when.</li>
-                </ul>
-              </AccordionContent>
-            </AccordionItem>
-
-            <AccordionItem value="item-9">
-              <AccordionTrigger>9. Customization & Accessibility</AccordionTrigger>
-              <AccordionContent>
-                <ul className="list-disc pl-6 space-y-2">
-                  <li><strong>Dark/Light Mode Toggle:</strong> Switch themes or use system settings.</li>
-                  <li><strong>Keyboard Shortcuts:</strong> Quick actions (create task, draft notes, hide/show app).</li>
-                  <li><strong>Custom Colors/Themes:</strong> Allow users to personalize colors.</li>
-                  <li><strong>Font Size Adjustment:</strong> Support for accessibility.</li>
-                  <li><strong>High Contrast Mode:</strong> For visually impaired users.</li>
-                </ul>
-              </AccordionContent>
-            </AccordionItem>
-
-            <AccordionItem value="item-10">
-              <AccordionTrigger>10. Break Time & Wellness</AccordionTrigger>
-              <AccordionContent>
-                <ul className="list-disc pl-6 space-y-2">
-                  <li><strong>Break Reminders:</strong> Suggest break after focused work.</li>
-                  <li><strong>Break Ideas:</strong> Provide rejuvenating suggestions during breaks (65% DONE).</li>
-                  <li><strong>Stretch Exercises:</strong> Short exercise suggestions.</li>
-                  <li><strong>Meditation/Breathing Guides:</strong> Quick mindfulness exercises.</li>
-                  <li><strong>Break Time Tracking:</strong> Track rest periods.</li>
-                </ul>
-              </AccordionContent>
-            </AccordionItem>
-            
-            <AccordionItem value="item-11">
-              <AccordionTrigger>11. Gamification</AccordionTrigger>
-              <AccordionContent>
-                <ul className="list-disc pl-6 space-y-2">
-                  <li><strong>Streak System:</strong> Track Day Streak, Week Streak, Month Streak.</li>
-                  <li><strong>Level/Rank System:</strong> Users level up based on completed tasks.</li>
-                  <li><strong>Achievements/Badges:</strong> Unlock badges for milestones.</li>
-                  <li><strong>Leaderboards:</strong> Optional competitive rankings.</li>
-                  <li><strong>Challenge System:</strong> Set challenges to move up ranks.</li>
-                  <li><strong>Progress Visualization:</strong> Show progress bars/visual feedback.</li>
-                </ul>
-              </AccordionContent>
-            </AccordionItem>
-
-            <AccordionItem value="item-12">
-              <AccordionTrigger>12. Platform Support & Sync</AccordionTrigger>
-              <AccordionContent>
-                <ul className="list-disc pl-6 space-y-2">
-                  <li><strong>Cross-Device Sync:</strong> 100% sync across macOS, Windows, iOS, Android.</li>
-                  <li><strong>Offline Mode:</strong> Work offline and sync when online.</li>
-                  <li><strong>Mobile App (iOS/Android):</strong> Native mobile experience.</li>
-                  <li><strong>Web App PWA:</strong> Progressive web app for browser.</li>
-                </ul>
-              </AccordionContent>
-            </AccordionItem>
-
-             <AccordionItem value="item-13">
-              <AccordionTrigger>13. Integrations</AccordionTrigger>
-              <AccordionContent>
-                <ul className="list-disc pl-6 space-y-2">
-                  <li><strong>Google Calendar Sync:</strong> Two-way sync with Google Calendar.</li>
-                  <li><strong>Notion Integration:</strong> Create/update Notion pages from tasks.</li>
-                  <li><strong>ClickUp Integration:</strong> Sync with ClickUp workspaces.</li>
-                  <li><strong>Figma Comments Sync:</strong> Pull Figma comment tasks (planned).</li>
-                  <li><strong>Trello Integration:</strong> Sync with Trello boards (planned).</li>
-                  <li><strong>Asana Integration:</strong> Sync with Asana projects (planned).</li>
-                  <li><strong>Linear Integration:</strong> Sync with Linear issues (planned).</li>
-                  <li><strong>Webhooks:</strong> Custom integrations (planned).</li>
-                </ul>
-              </AccordionContent>
-            </AccordionItem>
-
-            <AccordionItem value="item-14">
-              <AccordionTrigger>14. Workflow Features</AccordionTrigger>
-              <AccordionContent>
-                <ul className="list-disc pl-6 space-y-2">
-                  <li><strong>Weekly Planning Mode:</strong> Dedicated view for planning week.</li>
-                  <li><strong>Daily Standup:</strong> Quick daily planning ritual.</li>
-                  <li><strong>Win the Day Feature:</strong> End-of-day reflection & celebration.</li>
-                  <li><strong>Momentum Building:</strong> Progressive task completion boost.</li>
-                  <li><strong>Task Templates:</strong> Save & reuse common task setups.</li>
-                </ul>
-              </AccordionContent>
-            </AccordionItem>
-
-            <AccordionItem value="item-15">
-              <AccordionTrigger>15. Task State & Organization</AccordionTrigger>
-              <AccordionContent>
-                <ul className="list-disc pl-6 space-y-2">
-                  <li><strong>Task Statuses:</strong> Do now, Do later, Tomorrow, Soon, Done, Archived.</li>
-                  <li><strong>Drag-and-drop Reordering:</strong> Reorganize task lists easily.</li>
-                  <li><strong>Bulk Actions:</strong> Bulk edit multiple tasks.</li>
-                  <li><strong>Task Subtasks:</strong> Break tasks into smaller subtasks.</li>
-                  <li><strong>Task Dependencies:</strong> Mark task B as dependent on task A.</li>
-                  <li><strong>Task Duplication:</strong> Quick duplicate for similar tasks.</li>
-                </ul>
-              </AccordionContent>
-            </AccordionItem>
-
-            <AccordionItem value="item-16">
-              <AccordionTrigger>16. Notifications & Reminders</AccordionTrigger>
-              <AccordionContent>
-                <ul className="list-disc pl-6 space-y-2">
-                  <li><strong>Desktop Notifications:</strong> Native OS notifications for reminders.</li>
-                  <li><strong>Sound Alerts:</strong> Customizable notification sounds.</li>
-                  <li><strong>Snooze Feature:</strong> Snooze reminders for later.</li>
-                  <li><strong>Quiet Hours:</strong> Disable notifications during specific times.</li>
-                  <li><strong>Smart Reminders:</strong> Suggest optimal reminder times.</li>
-                </ul>
-              </AccordionContent>
-            </AccordionItem>
-
-            <AccordionItem value="item-17">
-              <AccordionTrigger>17. Data & Privacy</AccordionTrigger>
-              <AccordionContent>
-                <ul className="list-disc pl-6 space-y-2">
-                  <li><strong>Data Export:</strong> Export all data in JSON/CSV format.</li>
-                  <li><strong>Backup & Restore:</strong> Automatic cloud backups.</li>
-                  <li><strong>Data Encryption:</strong> End-to-end encryption for sensitive tasks.</li>
-                  <li><strong>GDPR Compliance:</strong> User data controls.</li>
-                  <li><strong>Account Deletion:</strong> Permanent data removal option.</li>
-                </ul>
-              </AccordionContent>
-            </AccordionItem>
-
-          </Accordion>
+    <div className="flex h-screen bg-background text-foreground">
+      {/* Sidebar */}
+      <aside className="w-64 flex flex-col border-r border-border p-4">
+        <h2 className="text-xl font-bold mb-4">My Lists</h2>
+        <div className="flex-1 space-y-2 overflow-y-auto">
+          {lists.map((list) => (
+            <div
+              key={list.id}
+              className={`group flex items-center justify-between p-2 rounded-md cursor-pointer ${selectedListId === list.id ? 'bg-primary/20 text-primary-foreground' : 'hover:bg-accent'}`}
+              onClick={() => setSelectedListId(list.id)}
+            >
+              {editingListId === list.id ? (
+                  <div className="flex-1 flex gap-2">
+                    <Input 
+                        value={editingListName}
+                        onChange={(e) => setEditingListName(e.target.value)}
+                        onKeyDown={(e) => e.key === 'Enter' && handleUpdateList()}
+                        className="h-8"
+                        autoFocus
+                    />
+                    <Button variant="ghost" size="icon" className="h-8 w-8" onClick={handleUpdateList}><Pencil className="h-4 w-4" /></Button>
+                    <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => setEditingListId(null)}><X className="h-4 w-4" /></Button>
+                  </div>
+              ) : (
+                <>
+                    <span className="flex-1 truncate">{list.name}</span>
+                    <div className="flex items-center opacity-0 group-hover:opacity-100 transition-opacity">
+                        <Button variant="ghost" size="icon" className="h-7 w-7" onClick={(e) => {e.stopPropagation(); handleStartEditingList(list);}}>
+                            <Pencil className="h-4 w-4" />
+                        </Button>
+                        <Button variant="ghost" size="icon" className="h-7 w-7 text-destructive hover:text-destructive" onClick={(e) => {e.stopPropagation(); handleDeleteList(list.id);}}>
+                            <Trash2 className="h-4 w-4" />
+                        </Button>
+                    </div>
+                </>
+              )}
+            </div>
+          ))}
         </div>
+        <div className="flex gap-2 mt-4">
+          <Input
+            placeholder="New list name..."
+            value={newListName}
+            onChange={(e) => setNewListName(e.target.value)}
+            onKeyDown={(e) => e.key === 'Enter' && handleAddList()}
+          />
+          <Button onClick={handleAddList} size="icon">
+            <Plus className="h-4 w-4" />
+          </Button>
+        </div>
+      </aside>
+
+      {/* Main Content */}
+      <main className="flex-1 flex flex-col p-6">
+        {selectedList ? (
+          <>
+            <h1 className="text-3xl font-bold mb-6">{selectedList.name}</h1>
+            <div className="flex-1 space-y-4 overflow-y-auto pr-2">
+                <DndContext 
+                    sensors={sensors}
+                    collisionDetection={closestCenter}
+                    onDragEnd={handleDragEnd}
+                >
+                    <SortableContext 
+                        items={selectedList.tasks.map(t => t.id)}
+                        strategy={verticalListSortingStrategy}
+                    >
+                        {selectedList.tasks.map((task) => (
+                            <TaskItem 
+                                key={task.id}
+                                id={task.id}
+                                task={task} 
+                                onToggle={() => handleToggleTask(task.id)}
+                                onDelete={() => handleDeleteTask(task.id)}
+                            />
+                        ))}
+                    </SortableContext>
+                </DndContext>
+            </div>
+            <div className="mt-6 flex gap-2">
+              <Input
+                placeholder="Add a new task..."
+                value={newTaskText}
+                onChange={(e) => setNewTaskText(e.target.value)}
+                onKeyDown={(e) => e.key === 'Enter' && handleAddTask()}
+              />
+              <Button onClick={handleAddTask}>Add Task</Button>
+            </div>
+          </>
+        ) : (
+          <div className="flex-1 flex items-center justify-center">
+            <div className="text-center">
+              <h2 className="text-2xl font-semibold">No list selected</h2>
+              <p className="text-muted-foreground mt-2">Create or select a list to get started.</p>
+            </div>
+          </div>
+        )}
       </main>
     </div>
   );
