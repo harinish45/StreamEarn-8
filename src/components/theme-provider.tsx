@@ -46,8 +46,8 @@ export function ThemeProvider({
     themes.forEach(t => {
       root.classList.remove(getThemeClass(t.name));
     });
-    // also remove generic light/dark
-    root.classList.remove('light', 'dark');
+    // also remove generic light/dark and legacy blitzit-dark
+    root.classList.remove('light', 'dark', 'blitzit-dark');
 
     let effectiveTheme = theme;
     if (theme === 'system') {
