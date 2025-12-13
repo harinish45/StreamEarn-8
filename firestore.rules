@@ -1,3 +1,4 @@
+
 rules_version = '2';
 
 service cloud.firestore {
@@ -9,21 +10,20 @@ service cloud.firestore {
     }
 
     // Rules for user-specific data
-    match /users/{uid} {
-      // Allow users to read and write their own data
+    match /users/{uid}/{document=**} {
       allow read, write: if isOwner(uid);
+    }
+    
+    match /users/{uid}/lists/{listId} {
+      allow read, write: if isOwner(uid);
+    }
+    
+    match /users/{uid}/tasks/{taskId} {
+      allow read, write: if isOwner(uid);
+    }
 
-      match /lists/{listId} {
-        allow read, write: if isOwner(uid);
-      }
-      
-      match /tasks/{taskId} {
-        allow read, write: if isOwner(uid);
-      }
-
-      match /sessions/{sessionId} {
-        allow read, write: if isOwner(uid);
-      }
+    match /users/{uid}/sessions/{sessionId} {
+      allow read, write: if isOwner(uid);
     }
   }
 }

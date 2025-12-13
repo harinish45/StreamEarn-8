@@ -1,3 +1,4 @@
+
 {
   "entities": {
     "Task": {
@@ -38,7 +39,7 @@
         },
         "completedAt": {
           "type": "string",
-  "format": "date-time",
+          "format": "date-time",
           "description": "The timestamp when the task was completed."
         },
         "scheduledAt": {
