@@ -4,7 +4,7 @@
 @tailwind utilities;
 
 @layer base {
-  :root, .dark {
+  :root {
     --background: 222 47% 11%;
     --foreground: 210 40% 98%;
     --card: 222 47% 11%;
@@ -25,31 +25,186 @@
     --input: 217 33% 27%;
     --ring: 349 83% 62%;
     --radius: 0.8rem;
-  }
-  
-  .light {
-    --background: 220 20% 98%;
-    --foreground: 222 47% 11%;
-    --card: 220 20% 100%;
-    --card-foreground: 222 47% 11%;
-    --popover: 220 20% 100%;
-    --popover-foreground: 222 47% 11%;
-    --primary: 349 79% 56%;
-    --primary-foreground: 210 40% 98%;
-    --secondary: 248 52% 53%;
-    --secondary-foreground: 210 40% 98%;
-    --muted: 210 40% 96%;
-    --muted-foreground: 215 16% 47%;
-    --accent: 210 40% 96%;
-    --accent-foreground: 222 47% 11%;
-    --destructive: 0 84% 60%;
-    --destructive-foreground: 210 40% 98%;
-    --border: 214 32% 91%;
-    --input: 214 32% 91%;
-    --ring: 349 79% 56%;
+    --success: 142 76% 36%;
+    --warning: 38 92% 50%;
   }
 
-  /* Blitzit Dark Theme */
+  .light {
+    --background: 0 0% 100%;
+    --foreground: 222 47% 11%;
+    --card: 0 0% 96%;
+    --card-foreground: 222 47% 11%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 222 47% 11%;
+    --primary: 350 82% 60%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 248 52% 53%;
+    --secondary-foreground: 210 40% 98%;
+    --muted: 0 0% 94%;
+    --muted-foreground: 215 16% 47%;
+    --accent: 350 100% 94%;
+    --accent-foreground: 350 82% 60%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 0 0% 87%;
+    --input: 0 0% 80%;
+    --ring: 350 82% 60%;
+    --success: 142 71% 45%;
+    --warning: 45 93% 47%;
+    --urgent: 0 84% 60%;
+  }
+  
+  .dark {
+    --background: 222 47% 11%;
+    --foreground: 210 40% 98%;
+    --card: 222 47% 15%;
+    --card-foreground: 210 40% 98%;
+    --popover: 224 71% 4%;
+    --popover-foreground: 210 40% 98%;
+    --primary: 350 82% 60%;
+    --primary-foreground: 210 40% 98%;
+    --secondary: 239 84% 67%;
+    --secondary-foreground: 210 40% 98%;
+    --muted: 222 47% 18%;
+    --muted-foreground: 220 14% 60%;
+    --accent: 222 47% 18%;
+    --accent-foreground: 210 40% 98%;
+    --destructive: 0 63% 31%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 215 28% 25%;
+    --input: 215 28% 25%;
+    --ring: 350 82% 60%;
+    --success: 142 71% 45%;
+    --warning: 45 93% 47%;
+    --urgent: 0 84% 60%;
+  }
+
+  .spider-man {
+    --background: 222 70% 10%;
+    --foreground: 0 0% 100%;
+    --card: 217 71% 17%;
+    --card-foreground: 0 0% 100%;
+    --popover: 222 70% 10%;
+    --popover-foreground: 0 0% 100%;
+    --primary: 0 84% 60%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 225 73% 41%;
+    --secondary-foreground: 0 0% 100%;
+    --muted: 217 71% 22%;
+    --muted-foreground: 0 0% 90%;
+    --accent: 0 84% 60%;
+    --accent-foreground: 51 100% 62%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 225 73% 41%;
+    --input: 218 64% 24%;
+    --ring: 0 84% 60%;
+    --success: 139 71% 45%;
+    --warning: 43 96% 56%;
+    --urgent: 0 84% 60%;
+  }
+
+  .batman {
+    --background: 0 0% 5%;
+    --foreground: 0 0% 100%;
+    --card: 0 0% 10%;
+    --card-foreground: 0 0% 100%;
+    --popover: 0 0% 5%;
+    --popover-foreground: 0 0% 100%;
+    --primary: 51 100% 50%;
+    --primary-foreground: 0 0% 5%;
+    --secondary: 0 0% 20%;
+    --secondary-foreground: 0 0% 100%;
+    --muted: 0 0% 15%;
+    --muted-foreground: 0 0% 80%;
+    --accent: 51 100% 50%;
+    --accent-foreground: 0 0% 5%;
+    --destructive: 0 100% 64%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 0 0% 20%;
+    --input: 0 0% 10%;
+    --ring: 51 100% 50%;
+    --success: 120 100% 50%;
+    --warning: 51 100% 50%;
+    --urgent: 0 100% 64%;
+  }
+
+  .iron-man {
+    --background: 231 64% 10%;
+    --foreground: 0 0% 100%;
+    --card: 229 45% 14%;
+    --card-foreground: 0 0% 100%;
+    --popover: 231 64% 10%;
+    --popover-foreground: 0 0% 100%;
+    --primary: 0 84% 60%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 33 80% 44%;
+    --secondary-foreground: 0 0% 100%;
+    --muted: 228 35% 18%;
+    --muted-foreground: 216 12% 84%;
+    --accent: 0 84% 60%;
+    --accent-foreground: 33 80% 44%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 33 80% 44%;
+    --input: 225 28% 17%;
+    --ring: 0 84% 60%;
+    --success: 142 71% 45%;
+    --warning: 43 96% 56%;
+    --urgent: 0 84% 60%;
+  }
+
+  .superman {
+    --background: 210 100% 12%;
+    --foreground: 0 0% 100%;
+    --card: 210 100% 22%;
+    --card-foreground: 0 0% 100%;
+    --popover: 210 100% 12%;
+    --popover-foreground: 0 0% 100%;
+    --primary: 348 83% 47%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 212 100% 34%;
+    --secondary-foreground: 0 0% 100%;
+    --muted: 210 100% 17%;
+    --muted-foreground: 0 0% 90%;
+    --accent: 51 100% 50%;
+    --accent-foreground: 210 100% 12%;
+    --destructive: 348 83% 47%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 212 100% 34%;
+    --input: 218 85% 15%;
+    --ring: 51 100% 50%;
+    --success: 51 100% 50%;
+    --warning: 48 100% 50%;
+    --urgent: 348 83% 47%;
+  }
+
+  .hulk {
+    --background: 220 13% 8%;
+    --foreground: 215 14% 83%;
+    --card: 220 13% 11%;
+    --card-foreground: 215 14% 83%;
+    --popover: 220 13% 8%;
+    --popover-foreground: 215 14% 83%;
+    --primary: 128 63% 52%;
+    --primary-foreground: 220 13% 8%;
+    --secondary: 128 43% 36%;
+    --secondary-foreground: 215 14% 83%;
+    --muted: 220 9% 12%;
+    --muted-foreground: 216 12% 57%;
+    --accent: 128 63% 52%;
+    --accent-foreground: 220 13% 8%;
+    --destructive: 0 71% 51%;
+    --destructive-foreground: 215 14% 83%;
+    --border: 216 10% 23%;
+    --input: 220 13% 8%;
+    --ring: 128 63% 52%;
+    --success: 128 63% 52%;
+    --warning: 39 67% 53%;
+    --urgent: 0 71% 51%;
+  }
+
+  /* Blitzit Dark Theme (legacy, merged into .dark) */
   .blitzit-dark {
     --background: 225 73% 9%; /* #0F172A */
     --foreground: 220 13% 91%; /* #E2E8F0 */

@@ -4,17 +4,21 @@
 import React from 'react';
 import { AppSidebar } from "./components/AppSidebar";
 import { Header } from "./components/Header";
+import { useTheme } from '@/components/theme-provider';
 
 export default function BlitzitLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const { theme } = useTheme();
+  
   React.useEffect(() => {
-    document.documentElement.classList.add('blitzit-dark');
-    return () => {
-      document.documentElement.classList.remove('blitzit-dark');
-    };
+    // This logic is now handled by the ThemeProvider
+    // document.documentElement.classList.add('blitzit-dark');
+    // return () => {
+    //   document.documentElement.classList.remove('blitzit-dark');
+    // };
   }, []);
 
   return (

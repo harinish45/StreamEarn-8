@@ -1,7 +1,7 @@
 'use client';
 
 import * as React from 'react';
-import { themes, type Theme } from '@/lib/themes';
+import { themes } from '@/lib/themes';
 
 type ThemeProviderProps = {
   children: React.ReactNode;
@@ -21,11 +21,12 @@ const initialState: ThemeProviderState = {
 
 const ThemeProviderContext = React.createContext<ThemeProviderState>(initialState);
 
-function getThemeClass(themeName: string) {
+function getThemeClass(themeName: string | undefined) {
+  if (!themeName) return 'dark';
   if (themeName === 'Light' || themeName === 'Dark') {
     return themeName.toLowerCase();
   }
-  return themeName.toLowerCase().replace(/\s/g, '-');
+  return themeName.toLowerCase().replace(/\s+/g, '-');
 }
 
 export function ThemeProvider({
@@ -41,12 +42,12 @@ export function ThemeProvider({
   React.useEffect(() => {
     const root = window.document.documentElement;
     
-    // Remove all theme classes
+    // Remove all possible theme classes
     themes.forEach(t => {
       root.classList.remove(getThemeClass(t.name));
     });
+    // also remove generic light/dark
     root.classList.remove('light', 'dark');
-
 
     let effectiveTheme = theme;
     if (theme === 'system') {
