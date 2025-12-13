@@ -17,14 +17,19 @@ export default function FocusPage() {
                 if (prev <= 1) {
                     clearInterval(interval);
                     setIsPaused(true);
+                    // Add sound alert and celebration here
                     return 0;
+                }
+                // Visual/Sound Cue every 10 minutes
+                if ((duration - (prev - 1)) % (10 * 60) === 0) {
+                   // Add visual pulse/sound alert
                 }
                 return prev - 1;
             });
         }, 1000);
 
         return () => clearInterval(interval);
-    }, [isPaused]);
+    }, [isPaused, duration]);
 
     const formatTime = (seconds: number) => {
         const mins = Math.floor(seconds / 60);
