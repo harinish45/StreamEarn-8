@@ -15,7 +15,7 @@ export default function Home() {
             </Link>
             <nav className="flex items-center space-x-6 text-sm font-medium">
               <Link
-                href="/earnings"
+                href="/dashboard"
                 className="text-foreground/60 transition-colors hover:text-foreground/80"
               >
                 Dashboard
@@ -40,7 +40,7 @@ export default function Home() {
               </p>
               <div className="flex flex-col gap-4 sm:flex-row">
                 <Button size="lg" asChild>
-                    <Link href="/earnings">Explore Earning Opportunities</Link>
+                    <Link href="/dashboard">Go to Dashboard</Link>
                 </Button>
                 <Button size="lg" variant="outline" asChild>
                     <Link href="/ai-tools">Discover AI Tools</Link>
