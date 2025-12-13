@@ -1,11 +1,11 @@
 
 'use client';
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Bar, BarChart, ResponsiveContainer, XAxis, YAxis, Tooltip } from 'recharts';
 
-const sampleData = [
+const generateSampleData = () => [
   { name: 'Mon', total: Math.floor(Math.random() * 6) + 1 },
   { name: 'Tue', total: Math.floor(Math.random() * 6) + 1 },
   { name: 'Wed', total: Math.floor(Math.random() * 6) + 1 },
@@ -16,40 +16,49 @@ const sampleData = [
 ];
 
 export function ReportsOverview() {
+  const [data, setData] = useState(generateSampleData());
+
+  useEffect(() => {
+    // This hook ensures the random data is generated on the client-side
+    // avoiding server-client mismatch in hydration.
+    setData(generateSampleData());
+  }, []);
+
+
   return (
-    <Card className="bg-[#1E293B] border-[#475569]">
+    <Card>
       <CardHeader>
-        <CardTitle className="text-lg font-semibold">Weekly Productivity</CardTitle>
+        <CardTitle className="text-lg font-semibold text-foreground">Weekly Productivity</CardTitle>
         <CardDescription>Focus hours this week</CardDescription>
       </CardHeader>
       <CardContent>
         <ResponsiveContainer width="100%" height={200}>
-          <BarChart data={sampleData}>
+          <BarChart data={data}>
             <XAxis
               dataKey="name"
-              stroke="#94A3B8"
+              stroke="hsl(var(--muted-foreground))"
               fontSize={12}
               tickLine={false}
               axisLine={false}
             />
             <YAxis
-              stroke="#94A3B8"
+              stroke="hsl(var(--muted-foreground))"
               fontSize={12}
               tickLine={false}
               axisLine={false}
               tickFormatter={(value) => `${value}h`}
             />
             <Tooltip
-              cursor={{ fill: 'hsla(220, 13%, 40%, 0.5)' }}
+              cursor={{ fill: 'hsla(var(--accent))' }}
               contentStyle={{
-                background: '#0F172A',
-                borderColor: '#475569',
-                color: '#E2E8F0',
-                borderRadius: '0.5rem',
+                background: 'hsl(var(--background))',
+                borderColor: 'hsl(var(--border))',
+                color: 'hsl(var(--foreground))',
+                borderRadius: 'var(--radius)',
               }}
-              labelStyle={{ color: '#E2E8F0' }}
+              labelStyle={{ color: 'hsl(var(--foreground))' }}
             />
-            <Bar dataKey="total" fill="#6366F1" radius={[4, 4, 0, 0]} />
+            <Bar dataKey="total" fill="hsl(var(--secondary))" radius={[4, 4, 0, 0]} />
           </BarChart>
         </ResponsiveContainer>
       </CardContent>

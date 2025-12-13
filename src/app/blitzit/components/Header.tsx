@@ -19,7 +19,7 @@ import { Integrations } from "./Integrations";
 
 export function Header() {
     return (
-        <header className="sticky top-0 z-10 flex h-16 items-center gap-4 border-b border-[#475569] bg-[#0F172A] px-4 md:px-6">
+        <header className="sticky top-0 z-10 flex h-16 items-center gap-4 border-b border-border bg-background/80 backdrop-blur-sm px-4 md:px-6">
             <Button variant="ghost" size="icon" className="md:hidden">
                 <Menu className="h-6 w-6" />
             </Button>
@@ -30,7 +30,7 @@ export function Header() {
 
             <div className="relative flex-1 mx-4 max-w-md">
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
-                <Input placeholder="Search tasks..." className="pl-10 bg-[#1E293B] border-transparent focus:border-[#6366F1] focus:ring-[#6366F1]" />
+                <Input placeholder="Search tasks..." className="pl-10 bg-card border-transparent focus:border-secondary focus:ring-secondary" />
             </div>
 
             <div className="flex items-center gap-4">
@@ -48,13 +48,13 @@ export function Header() {
                             <AvatarFallback>U</AvatarFallback>
                         </Avatar>
                     </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end" className="bg-[#1E293B] border-[#475569] text-[#E2E8F0]">
+                    <DropdownMenuContent align="end">
                         <DropdownMenuLabel>My Account</DropdownMenuLabel>
-                        <DropdownMenuSeparator className="bg-[#475569]" />
+                        <DropdownMenuSeparator />
                         <DropdownMenuItem>Profile</DropdownMenuItem>
                         <DropdownMenuItem>Billing</DropdownMenuItem>
                         <ThemeSwitcher />
-                        <DropdownMenuSeparator className="bg-[#475569]" />
+                        <DropdownMenuSeparator />
                         <DropdownMenuItem>Log out</DropdownMenuItem>
                     </DropdownMenuContent>
                 </DropdownMenu>

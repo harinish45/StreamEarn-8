@@ -105,6 +105,39 @@ export default function BlitzitPage() {
         setFocusedTask(null);
     }
 
+    const handleAddTask = () => {
+        // Placeholder for adding a new task, could open a creation modal
+        const newTask: Task = {
+            id: `task-${Date.now()}`,
+            title: 'New Task',
+            description: 'A new task to be done.',
+            priority: 'neither',
+            status: 'do-now',
+            listId: 'work',
+            estimatedTime: 30
+        };
+        setTasks(produce(draft => {
+            draft.unshift(newTask);
+        }));
+        handleTaskClick(newTask);
+    };
+    
+    const handleUpdateTask = (updatedTask: Task) => {
+        setTasks(produce(draft => {
+            const index = draft.findIndex(t => t.id === updatedTask.id);
+            if (index !== -1) {
+                draft[index] = updatedTask;
+            }
+        }));
+        setIsDetailsOpen(false);
+    }
+
+    const handleDeleteTask = (taskId: string) => {
+        setTasks(tasks.filter(t => t.id !== taskId));
+        setIsDetailsOpen(false);
+    }
+
+
     return (
         <DndContext 
             sensors={sensors}
@@ -112,9 +145,9 @@ export default function BlitzitPage() {
             onDragOver={handleDragOver}
             collisionDetection={closestCenter}
         >
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                 {/* Main Content */}
-                <div className="md:col-span-2">
+                <div className="lg:col-span-2">
                     <TaskManager tasks={tasks} onTaskClick={handleTaskClick} />
                 </div>
                 {/* Right Sidebar */}
@@ -137,10 +170,14 @@ export default function BlitzitPage() {
                     isOpen={isDetailsOpen}
                     setIsOpen={setIsDetailsOpen}
                     onStartFocus={handleStartFocus}
+                    onSave={handleUpdateTask}
+                    onDelete={handleDeleteTask}
                 />
             )}
             
-            <Button className="fixed bottom-6 right-6 h-16 w-16 rounded-full bg-gradient-to-br from-[#FF5E78] to-[#6366F1] shadow-lg hover:scale-110 transition-transform">
+            <Button 
+                onClick={handleAddTask}
+                className="fixed bottom-6 right-6 h-16 w-16 rounded-full bg-gradient-to-br from-[#FF5E78] to-[#6366F1] shadow-lg hover:scale-110 transition-transform">
                 <Plus className="h-8 w-8" />
             </Button>
         </DndContext>
