@@ -11,14 +11,20 @@ export default function Home() {
           <div className="flex flex-1 items-center justify-between">
             <Link href="/" className="flex items-center space-x-2">
               <MountainIcon className="h-6 w-6" />
-              <span className="font-bold">Blitzit</span>
+              <span className="font-bold">OpportunityHub</span>
             </Link>
             <nav className="flex items-center space-x-6 text-sm font-medium">
               <Link
-                href="/dashboard"
+                href="/earnings"
                 className="text-foreground/60 transition-colors hover:text-foreground/80"
               >
-                Dashboard
+                Earnings
+              </Link>
+              <Link
+                href="/ai-tools"
+                className="text-foreground/60 transition-colors hover:text-foreground/80"
+              >
+                AI Tools
               </Link>
             </nav>
           </div>
@@ -30,14 +36,14 @@ export default function Home() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
             <div className="flex flex-col justify-center space-y-6">
               <h1 className="text-4xl font-bold tracking-tighter sm:text-5xl xl:text-6xl/none">
-                Your Productivity Superpower
+                Your Gateway to Online Earning
               </h1>
               <p className="max-w-[600px] text-muted-foreground md:text-xl">
-                Blitzit is a simple to-do list and timer app designed to give you superpowers and sharp focus. Plan, focus, get momentum, and win the day.
+                Discover a world of opportunities. Our platform connects you with the best ways to earn online, from micro-tasks and freelancing to AI-powered ventures.
               </p>
               <div className="flex flex-col gap-4 sm:flex-row">
                 <Button size="lg" asChild>
-                    <Link href="/dashboard">Go to Your Dashboard</Link>
+                    <Link href="/earnings">Explore Earning Opportunities</Link>
                 </Button>
                 <Button size="lg" variant="outline" asChild>
                     <Link href="/ai-tools">Discover AI Tools</Link>
@@ -61,7 +67,7 @@ export default function Home() {
        <footer className="border-t">
           <div className="container flex items-center justify-between py-4 text-sm text-muted-foreground">
               <div className="flex items-center">
-                <p>&copy; 2024 Blitzit. All rights reserved.</p>
+                <p>&copy; 2024 OpportunityHub. All rights reserved.</p>
               </div>
               <div className="flex items-center gap-4">
                   <Link href="#" className="hover:text-foreground">Terms of Service</Link>
