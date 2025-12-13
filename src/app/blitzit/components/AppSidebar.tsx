@@ -41,9 +41,11 @@ export function AppSidebar() {
             </nav>
 
             <div className="flex flex-col gap-1 border-t border-border pt-4 mt-4">
-                 <Button variant="ghost" className="justify-start gap-3 text-muted-foreground hover:text-foreground hover:bg-accent px-3 py-2 h-auto">
-                    <Settings className="h-5 w-5" />
-                    <span>Settings</span>
+                 <Button variant="ghost" className="justify-start gap-3 text-muted-foreground hover:text-foreground hover:bg-accent px-3 py-2 h-auto" asChild>
+                    <Link href="/blitzit/settings">
+                        <Settings className="h-5 w-5" />
+                        <span>Settings</span>
+                    </Link>
                 </Button>
                  <Button variant="ghost" className="justify-start gap-3 text-muted-foreground hover:text-foreground hover:bg-accent px-3 py-2 h-auto">
                     <LifeBuoy className="h-5 w-5" />

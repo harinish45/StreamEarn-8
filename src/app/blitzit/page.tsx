@@ -14,6 +14,8 @@ import {
   useSensors,
   type DragEndEvent,
   type DragOverEvent,
+  Announcements,
+  DndMonitor,
 } from '@dnd-kit/core';
 import { arrayMove, sortableKeyboardCoordinates } from '@dnd-kit/sortable';
 import { produce } from 'immer';
@@ -143,28 +145,30 @@ export default function BlitzitPage() {
     }
 
 
+    if (!isClient) {
+        return null; // or a loading spinner
+    }
+
     return (
         <>
-            {isClient && (
-                <DndContext 
-                    sensors={sensors}
-                    onDragEnd={handleDragEnd}
-                    onDragOver={handleDragOver}
-                    collisionDetection={closestCenter}
-                >
-                    <div className="grid grid-cols-1 xl:grid-cols-[1fr,400px] gap-8 items-start">
-                        {/* Main Content */}
-                        <div className="w-full">
-                            <TaskManager tasks={tasks} onTaskClick={handleTaskClick} />
-                        </div>
-                        {/* Right Sidebar */}
-                        <div className="hidden xl:flex flex-col gap-8 sticky top-24">
-                            <ReportsOverview />
-                            <GamificationPanel />
-                        </div>
+            <DndContext 
+                sensors={sensors}
+                onDragEnd={handleDragEnd}
+                onDragOver={handleDragOver}
+                collisionDetection={closestCenter}
+            >
+                <div className="grid grid-cols-1 xl:grid-cols-[1fr,400px] gap-8 items-start">
+                    {/* Main Content */}
+                    <div className="w-full">
+                        <TaskManager tasks={tasks} onTaskClick={handleTaskClick} />
                     </div>
-                </DndContext>
-            )}
+                    {/* Right Sidebar */}
+                    <div className="hidden xl:flex flex-col gap-8 sticky top-24">
+                        <ReportsOverview />
+                        <GamificationPanel />
+                    </div>
+                </div>
+            </DndContext>
             
             {isFocusing && focusedTask && (
                 <FocusTimer 

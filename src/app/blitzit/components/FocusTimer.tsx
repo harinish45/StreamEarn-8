@@ -28,6 +28,8 @@ export function FocusTimer({ task, onStop }: FocusTimerProps) {
         if (prev <= 1) {
           clearInterval(interval);
           // Handle session end
+          // For now, it just stops at 0
+          setIsPaused(true);
           return 0;
         }
         // Visual/Sound Cue every 10 minutes (for demo, every 10 seconds)
@@ -48,6 +50,11 @@ export function FocusTimer({ task, onStop }: FocusTimerProps) {
     return `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
   };
 
+  const resetTimer = () => {
+    setIsPaused(true);
+    setTimeLeft(duration);
+  }
+
   const progress = ((duration - timeLeft) / duration) * 100;
 
   return (
@@ -60,8 +67,7 @@ export function FocusTimer({ task, onStop }: FocusTimerProps) {
       >
         <Card className="w-80 bg-card border-border shadow-2xl text-foreground">
            <motion.div 
-            animate={{ scale: showAlert ? 1.05 : 1 }}
-            transition={{ duration: 0.2 }}
+            animate={{ scale: showAlert ? 1.05 : 1, transition: { duration: 0.2 } }}
             className="rounded-lg"
             >
           <CardHeader className="flex flex-row items-center justify-between p-4">
@@ -75,9 +81,9 @@ export function FocusTimer({ task, onStop }: FocusTimerProps) {
               <p className="text-5xl font-mono font-bold">{formatTime(timeLeft)}</p>
               <p className="text-sm text-muted-foreground">Pomodoro Session 1</p>
             </div>
-            <Progress value={progress} className="mb-4 h-2 bg-muted/50" indicatorClassName="bg-primary" />
+            <Progress value={progress} className="mb-4 h-2 bg-muted/50" />
             <div className="flex justify-center items-center gap-2">
-              <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-foreground" onClick={() => setTimeLeft(duration)}>
+              <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-foreground" onClick={resetTimer}>
                 <Repeat className="h-5 w-5" />
               </Button>
               <Button 
@@ -99,7 +105,7 @@ export function FocusTimer({ task, onStop }: FocusTimerProps) {
                 </AnimatePresence>
               </Button>
                <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-foreground" disabled>
-                {/* Placeholder for skip */}
+                {/* Placeholder for skip break */}
               </Button>
             </div>
           </CardContent>
