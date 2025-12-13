@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useTheme } from '@/components/theme-provider';
@@ -11,20 +12,13 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { Check } from 'lucide-react';
 
-function getThemeClass(themeName: string) {
-  if (themeName === 'Light' || themeName === 'Dark') {
-    return themeName.toLowerCase();
-  }
-  return themeName.toLowerCase().replace(/\s/g, "-");
-}
-
 export function ThemeSwitcher() {
   const { theme, setTheme } = useTheme();
 
   return (
     <DropdownMenuSub>
       <DropdownMenuSubTrigger>
-        <span>Themes</span>
+        <span>Theme</span>
       </DropdownMenuSubTrigger>
       <DropdownMenuPortal>
         <DropdownMenuSubContent>

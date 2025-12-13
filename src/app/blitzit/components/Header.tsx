@@ -2,10 +2,20 @@
 'use client';
 
 import { Input } from "@/components/ui/input";
-import { Bell, Menu, Search, Settings } from "lucide-react";
+import { Bell, Menu, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ThemeSwitcher } from "@/components/theme-switcher";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { 
+    DropdownMenu, 
+    DropdownMenuContent, 
+    DropdownMenuItem, 
+    DropdownMenuLabel, 
+    DropdownMenuSeparator, 
+    DropdownMenuTrigger 
+} from "@/components/ui/dropdown-menu";
+import { Settings } from "./Settings";
+import { Integrations } from "./Integrations";
 
 export function Header() {
     return (
@@ -24,17 +34,30 @@ export function Header() {
             </div>
 
             <div className="flex items-center gap-4">
-                <ThemeSwitcher />
-                 <Button variant="ghost" size="icon">
+                <Button variant="ghost" size="icon">
                     <Bell className="h-5 w-5" />
                 </Button>
-                 <Button variant="ghost" size="icon">
-                    <Settings className="h-5 w-5" />
-                </Button>
-                <Avatar className="h-9 w-9">
-                    <AvatarImage src="https://picsum.photos/seed/user-avatar/100/100" />
-                    <AvatarFallback>U</AvatarFallback>
-                </Avatar>
+                
+                <Settings />
+                <Integrations />
+
+                <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                         <Avatar className="h-9 w-9 cursor-pointer">
+                            <AvatarImage src="https://picsum.photos/seed/user-avatar/100/100" />
+                            <AvatarFallback>U</AvatarFallback>
+                        </Avatar>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end" className="bg-[#1E293B] border-[#475569] text-[#E2E8F0]">
+                        <DropdownMenuLabel>My Account</DropdownMenuLabel>
+                        <DropdownMenuSeparator className="bg-[#475569]" />
+                        <DropdownMenuItem>Profile</DropdownMenuItem>
+                        <DropdownMenuItem>Billing</DropdownMenuItem>
+                        <ThemeSwitcher />
+                        <DropdownMenuSeparator className="bg-[#475569]" />
+                        <DropdownMenuItem>Log out</DropdownMenuItem>
+                    </DropdownMenuContent>
+                </DropdownMenu>
             </div>
         </header>
     );
