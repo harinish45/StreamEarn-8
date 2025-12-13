@@ -11,7 +11,7 @@ export default function Home() {
           <div className="flex flex-1 items-center justify-between">
             <Link href="/" className="flex items-center space-x-2">
               <MountainIcon className="h-6 w-6" />
-              <span className="font-bold">OpportunityHub</span>
+              <span className="font-bold">StreamEarn</span>
             </Link>
             <nav className="flex items-center space-x-6 text-sm font-medium">
               <Link
@@ -25,6 +25,12 @@ export default function Home() {
                 className="text-foreground/60 transition-colors hover:text-foreground/80"
               >
                 AI Tools
+              </Link>
+              <Link
+                href="/blitzit"
+                className="text-foreground/60 transition-colors hover:text-foreground/80"
+              >
+                Blitzit
               </Link>
             </nav>
           </div>
@@ -49,6 +55,11 @@ export default function Home() {
                     <Link href="/ai-tools">Discover AI Tools</Link>
                 </Button>
               </div>
+               <div className="mt-4">
+                 <Button size="lg" asChild>
+                    <Link href="/blitzit">Blitzit Productivity Suite</Link>
+                 </Button>
+               </div>
             </div>
             <div className="flex items-center justify-center">
                 <Image

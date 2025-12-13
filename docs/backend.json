@@ -1,0 +1,134 @@
+
+{
+  "entities": {
+    "UserProfile": {
+      "title": "User Profile",
+      "description": "Represents a user's public profile information.",
+      "type": "object",
+      "properties": {
+        "displayName": {
+          "type": "string",
+          "description": "The user's display name."
+        },
+        "avatar": {
+          "type": "string",
+          "format": "uri",
+          "description": "URL to the user's avatar image."
+        }
+      }
+    },
+    "UserSettings": {
+      "title": "User Settings",
+      "description": "Represents user-specific application settings.",
+      "type": "object",
+      "properties": {
+        "theme": {
+          "type": "string",
+          "enum": ["light", "dark", "system"]
+        },
+        "language": {
+          "type": "string"
+        },
+        "timezone": {
+          "type": "string"
+        }
+      }
+    },
+    "Task": {
+      "title": "Task",
+      "description": "A single to-do item.",
+      "type": "object",
+      "properties": {
+        "title": { "type": "string" },
+        "description": { "type": "string" },
+        "priority": { "type": "string", "enum": ["urgent", "important", "neither"] },
+        "status": { "type": "string", "enum": ["do-now", "do-later", "tomorrow", "soon", "done", "archived"] },
+        "listId": { "type": "string" },
+        "scheduledAt": { "type": "number" },
+        "estimatedTime": { "type": "number" },
+        "actualTime": { "type": "number" },
+        "notes": { "type": "string" },
+        "tags": { "type": "array", "items": { "type": "string" } },
+        "recurring": { "type": "string", "enum": ["daily", "weekly", "monthly", null] }
+      },
+      "required": ["title", "listId", "priority", "status"]
+    },
+    "TaskList": {
+      "title": "Task List",
+      "description": "A collection of tasks.",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "description": { "type": "string" },
+        "color": { "type": "string" },
+        "createdAt": { "type": "number" }
+      },
+      "required": ["name", "createdAt"]
+    },
+    "FocusSession": {
+      "title": "Focus Session",
+      "description": "Represents a single focus session for a task.",
+      "type": "object",
+      "properties": {
+        "taskId": { "type": "string" },
+        "startTime": { "type": "number" },
+        "endTime": { "type": "number" },
+        "duration": { "type": "number" }
+      },
+      "required": ["taskId", "startTime", "endTime", "duration"]
+    },
+    "Report": {
+      "title": "Report",
+      "description": "A summary of productivity for a given period.",
+      "type": "object",
+      "properties": {
+        "date": { "type": "number" },
+        "tasksCompleted": { "type": "number" },
+        "timeSpent": { "type": "number" }
+      },
+      "required": ["date", "tasksCompleted", "timeSpent"]
+    },
+    "GamificationStats": {
+      "title": "Gamification Stats",
+      "description": "User's gamification progress.",
+      "type": "object",
+      "properties": {
+        "level": { "type": "number" },
+        "totalTasksCompleted": { "type": "number" }
+      }
+    }
+  },
+  "auth": {
+    "providers": ["anonymous"]
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": { "$ref": "#/entities/UserProfile" },
+      "description": "Stores public user profiles."
+    },
+    "/users/{userId}/settings/{settingsId}": {
+        "schema": { "$ref": "#/entities/UserSettings" },
+        "description": "Stores user-specific settings. `settingsId` is a singleton document, e.g., 'main'."
+    },
+    "/users/{userId}/tasks/{taskId}": {
+      "schema": { "$ref": "#/entities/Task" },
+      "description": "Stores individual tasks for a user."
+    },
+    "/users/{userId}/taskLists/{listId}": {
+      "schema": { "$ref": "#/entities/TaskList" },
+      "description": "Stores task lists for a user."
+    },
+    "/users/{userId}/sessions/{sessionId}": {
+      "schema": { "$ref": "#/entities/FocusSession" },
+      "description": "Stores focus session history for a user."
+    },
+    "/users/{userId}/reports/{reportId}": {
+        "schema": { "$ref": "#/entities/Report" },
+        "description": "Stores periodic productivity reports for a user."
+    },
+    "/users/{userId}/gamification/{statsId}": {
+        "schema": { "$ref": "#/entities/GamificationStats" },
+        "description": "Stores gamification stats. `statsId` is a singleton document, e.g., 'main'."
+    }
+  }
+}
