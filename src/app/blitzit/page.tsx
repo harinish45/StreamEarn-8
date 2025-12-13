@@ -1,7 +1,7 @@
 
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { TaskManager } from './components/TaskManager';
 import { FocusTimer } from './components/FocusTimer';
 import type { Task, TaskStatus } from '@/types/blitzit';
@@ -41,6 +41,11 @@ export default function BlitzitPage() {
     const [isDetailsOpen, setIsDetailsOpen] = useState(false);
     const [isFocusing, setIsFocusing] = useState(false);
     const [focusedTask, setFocusedTask] = useState<Task | null>(null);
+    const [isClient, setIsClient] = useState(false);
+
+    useEffect(() => {
+        setIsClient(true);
+    }, []);
 
     const sensors = useSensors(
         useSensor(PointerSensor),
@@ -139,24 +144,28 @@ export default function BlitzitPage() {
 
 
     return (
-        <DndContext 
-            sensors={sensors}
-            onDragEnd={handleDragEnd}
-            onDragOver={handleDragOver}
-            collisionDetection={closestCenter}
-        >
-            <div className="grid grid-cols-1 xl:grid-cols-[1fr,400px] gap-8 items-start">
-                {/* Main Content */}
-                <div className="w-full">
-                    <TaskManager tasks={tasks} onTaskClick={handleTaskClick} />
-                </div>
-                {/* Right Sidebar */}
-                <div className="hidden xl:flex flex-col gap-8 sticky top-24">
-                    <ReportsOverview />
-                    <GamificationPanel />
-                </div>
-            </div>
-
+        <>
+            {isClient && (
+                <DndContext 
+                    sensors={sensors}
+                    onDragEnd={handleDragEnd}
+                    onDragOver={handleDragOver}
+                    collisionDetection={closestCenter}
+                >
+                    <div className="grid grid-cols-1 xl:grid-cols-[1fr,400px] gap-8 items-start">
+                        {/* Main Content */}
+                        <div className="w-full">
+                            <TaskManager tasks={tasks} onTaskClick={handleTaskClick} />
+                        </div>
+                        {/* Right Sidebar */}
+                        <div className="hidden xl:flex flex-col gap-8 sticky top-24">
+                            <ReportsOverview />
+                            <GamificationPanel />
+                        </div>
+                    </div>
+                </DndContext>
+            )}
+            
             {isFocusing && focusedTask && (
                 <FocusTimer 
                     task={focusedTask}
@@ -178,6 +187,6 @@ export default function BlitzitPage() {
                 className="fixed bottom-8 right-8 h-16 w-16 rounded-full bg-gradient-to-br from-primary to-secondary text-white shadow-lg hover:scale-110 transition-transform z-40">
                 <Plus className="h-8 w-8" />
             </Button>
-        </DndContext>
+        </>
     );
 }
