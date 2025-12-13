@@ -1,0 +1,141 @@
+{
+  "entities": {
+    "Task": {
+      "title": "Task",
+      "description": "A single to-do item.",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the task."
+        },
+        "title": {
+          "type": "string",
+          "description": "The title of the task."
+        },
+        "description": {
+          "type": "string",
+          "description": "A detailed description of the task."
+        },
+        "listId": {
+          "type": "string",
+          "description": "The ID of the list this task belongs to."
+        },
+        "status": {
+          "type": "string",
+          "enum": ["pending", "in-progress", "completed"],
+          "description": "The current status of the task."
+        },
+        "priority": {
+          "type": "string",
+          "enum": ["do now", "tomorrow", "soon"],
+          "description": "The priority level of the task."
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "The timestamp when the task was created."
+        },
+        "completedAt": {
+          "type": "string",
+  "format": "date-time",
+          "description": "The timestamp when the task was completed."
+        },
+        "scheduledAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "The timestamp when the task is scheduled."
+        },
+        "repeatRule": {
+            "type": "string",
+            "enum": ["none", "daily", "weekly", "custom"],
+            "description": "The recurrence rule for the task."
+        }
+      },
+      "required": ["title", "listId", "status", "priority", "createdAt"]
+    },
+    "List": {
+      "title": "List",
+      "description": "A list of tasks.",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the list."
+        },
+        "name": {
+          "type": "string",
+          "description": "The name of the list."
+        },
+        "category": {
+            "type": "string",
+            "description": "The category of the list."
+        },
+        "createdAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "The timestamp when the list was created."
+        }
+      },
+      "required": ["name", "createdAt"]
+    },
+    "FocusSession": {
+        "title": "Focus Session",
+        "description": "A record of a focus or break session.",
+        "type": "object",
+        "properties": {
+            "id": {
+                "type": "string",
+                "description": "Unique identifier for the session."
+            },
+            "taskId": {
+                "type": "string",
+                "description": "The ID of the task being focused on."
+            },
+            "startTime": {
+                "type": "string",
+                "format": "date-time",
+                "description": "The start time of the session."
+            },
+            "endTime": {
+                "type": "string",
+                "format": "date-time",
+                "description": "The end time of the session."
+            },
+            "totalSeconds": {
+                "type": "number",
+                "description": "The duration of the session in seconds."
+            },
+            "mode": {
+                "type": "string",
+                "enum": ["focus", "break"],
+                "description": "The mode of the session (focus or break)."
+            }
+        },
+        "required": ["taskId", "startTime", "endTime", "totalSeconds", "mode"]
+    }
+  },
+  "auth": {
+    "providers": ["anonymous"]
+  },
+  "firestore": {
+    "/users/{uid}/lists/{listId}": {
+      "schema": {
+        "$ref": "#/entities/List"
+      },
+      "description": "Stores lists for each user."
+    },
+    "/users/{uid}/tasks/{taskId}": {
+        "schema": {
+            "$ref": "#/entities/Task"
+        },
+        "description": "Stores tasks for each user."
+    },
+    "/users/{uid}/sessions/{sessionId}": {
+        "schema": {
+            "$ref": "#/entities/FocusSession"
+        },
+        "description": "Stores focus sessions for each user."
+    }
+  }
+}
