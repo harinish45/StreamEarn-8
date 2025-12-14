@@ -39,10 +39,12 @@ export function Alerts({ tasks, onUpdateTasks }: AlertsProps) {
 
     const handleUpdate = (newStatus: 'do-now' | 'do-later') => {
         setIsLoading(newStatus);
-        // Simulate network delay for better UX
+        onUpdateTasks(newStatus);
+        // The loading state is mostly for show now, so we'll just reset it.
+        // In a real app, this would be tied to the async operation's lifecycle.
         setTimeout(() => {
-            onUpdateTasks(newStatus);
-        }, 500);
+            setIsLoading(null);
+        }, 300);
     };
 
     const formatTime = (minutes: number | undefined) => {
