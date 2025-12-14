@@ -207,6 +207,7 @@ export default function BlitzitPage() {
                                 onTaskClick={handleTaskClick}
                                 onAddTask={handleAddTask}
                                 onPriorityChange={handlePriorityChange}
+                                onDeleteTask={handleDeleteTask}
                                 status='do-now'
                                 est="Est: 1hrs 30min"
                                 done={0}
@@ -220,6 +221,7 @@ export default function BlitzitPage() {
                         onTaskClick={handleTaskClick} 
                         onAddTask={handleAddTask}
                         onPriorityChange={handlePriorityChange}
+                        onDeleteTask={handleDeleteTask}
                     />
                 </DndContext>
             </div>

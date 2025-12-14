@@ -10,6 +10,7 @@ import {
   Users,
   Plus,
   Mic,
+  Trash2,
 } from 'lucide-react';
 import { useSortable, SortableContext } from '@dnd-kit/sortable';
 import { useDroppable } from '@dnd-kit/core';
@@ -22,10 +23,11 @@ interface TaskCardProps {
   task: Task;
   onClick: (task: Task) => void;
   onPriorityChange: (taskId: string, newPriority: TaskPriority) => void;
+  onDelete: (taskId: string) => void;
 }
 
 
-function TaskCard({ task, onClick, onPriorityChange }: TaskCardProps) {
+function TaskCard({ task, onClick, onPriorityChange, onDelete }: TaskCardProps) {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } =
     useSortable({ id: task.id, data: { type: 'Task', task } });
 
@@ -79,6 +81,11 @@ function TaskCard({ task, onClick, onPriorityChange }: TaskCardProps) {
         audio.play();
     }
   }
+  
+  const handleDeleteClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    onDelete(task.id);
+  }
 
   return (
     <motion.div
@@ -91,7 +98,7 @@ function TaskCard({ task, onClick, onPriorityChange }: TaskCardProps) {
       style={style}
     >
       <div
-        className={`mb-2 cursor-grab rounded-lg p-3 shadow-none transition-all active:cursor-grabbing bg-card/50 hover:bg-card/70`}
+        className={`group relative mb-2 cursor-grab rounded-lg p-3 shadow-none transition-all active:cursor-grabbing bg-card/50 hover:bg-card/70`}
         onClick={handleCardClick}
         {...attributes} 
         {...listeners}
@@ -125,6 +132,9 @@ function TaskCard({ task, onClick, onPriorityChange }: TaskCardProps) {
                 </>
             </CardContent>
         </div>
+         <Button variant="ghost" size="icon" className="absolute top-1/2 right-1 -translate-y-1/2 h-7 w-7 text-muted-foreground opacity-0 group-hover:opacity-100" onClick={handleDeleteClick}>
+            <Trash2 className="h-4 w-4" />
+        </Button>
       </div>
     </motion.div>
   );
@@ -137,6 +147,7 @@ export interface TaskColumnProps {
   onTaskClick: (task: Task) => void;
   onAddTask: (status: TaskStatus) => void;
   onPriorityChange: (taskId: string, newPriority: TaskPriority) => void;
+  onDeleteTask: (taskId: string) => void;
   status: TaskStatus;
   est: string;
   done?: number;
@@ -150,6 +161,7 @@ export function TaskColumn({
   onTaskClick,
   onAddTask,
   onPriorityChange,
+  onDeleteTask,
   status,
   est,
   done,
@@ -181,7 +193,7 @@ export function TaskColumn({
           {id === 'backlog' ? (
             <>
               {regularTasks.map(task => (
-                <TaskCard key={task.id} task={task} onClick={onTaskClick} onPriorityChange={onPriorityChange} />
+                <TaskCard key={task.id} task={task} onClick={onTaskClick} onPriorityChange={onPriorityChange} onDelete={onDeleteTask} />
               ))}
               <Button onClick={() => onAddTask(status)} variant="ghost" className="w-full justify-start gap-2 text-muted-foreground hover:text-foreground">
                 <Plus className="h-4 w-4" /> Add Task
@@ -190,7 +202,7 @@ export function TaskColumn({
                 <div className="mt-6">
                   <h4 className="mb-2 text-sm font-semibold text-muted-foreground">{scheduledTasks.length} Scheduled tasks</h4>
                   {scheduledTasks.map(task => (
-                     <TaskCard key={task.id} task={task} onClick={onTaskClick} onPriorityChange={onPriorityChange} />
+                     <TaskCard key={task.id} task={task} onClick={onTaskClick} onPriorityChange={onPriorityChange} onDelete={onDeleteTask} />
                   ))}
                 </div>
               )}
@@ -198,7 +210,7 @@ export function TaskColumn({
                 <div className="mt-6">
                   <h4 className="mb-2 text-sm font-semibold text-muted-foreground">Recurring tasks</h4>
                   {recurringTasks.map(task => (
-                     <TaskCard key={task.id} task={task} onClick={onTaskClick} onPriorityChange={onPriorityChange} />
+                     <TaskCard key={task.id} task={task} onClick={onTaskClick} onPriorityChange={onPriorityChange} onDelete={onDeleteTask} />
                   ))}
                 </div>
               )}
@@ -206,7 +218,7 @@ export function TaskColumn({
           ) : (
             <>
              {tasks.map(task => (
-                <TaskCard key={task.id} task={task} onClick={onTaskClick} onPriorityChange={onPriorityChange} />
+                <TaskCard key={task.id} task={task} onClick={onTaskClick} onPriorityChange={onPriorityChange} onDelete={onDeleteTask} />
              ))}
              <Button onClick={() => onAddTask(status)} variant="ghost" className="w-full justify-start gap-2 text-muted-foreground hover:text-foreground">
                 <Plus className="h-4 w-4" /> Add Task
@@ -224,9 +236,10 @@ interface TaskManagerProps {
   onTaskClick: (task: Task) => void;
   onAddTask: (status: TaskStatus) => void;
   onPriorityChange: (taskId: string, newPriority: TaskPriority) => void;
+  onDeleteTask: (taskId: string) => void;
 }
 
-export function TaskManager({ tasks, onTaskClick, onAddTask, onPriorityChange }: TaskManagerProps) {
+export function TaskManager({ tasks, onTaskClick, onAddTask, onPriorityChange, onDeleteTask }: TaskManagerProps) {
   const getTasksByStatus = (status: TaskStatus) =>
     tasks.filter(t => t.status === status);
 
@@ -243,6 +256,7 @@ export function TaskManager({ tasks, onTaskClick, onAddTask, onPriorityChange }:
         onTaskClick={onTaskClick}
         onAddTask={onAddTask}
         onPriorityChange={onPriorityChange}
+        onDeleteTask={onDeleteTask}
         status='do-later'
         est="Est: 9hrs 20min"
       />
@@ -253,6 +267,7 @@ export function TaskManager({ tasks, onTaskClick, onAddTask, onPriorityChange }:
         onTaskClick={onTaskClick}
         onAddTask={onAddTask}
         onPriorityChange={onPriorityChange}
+        onDeleteTask={onDeleteTask}
         status='soon'
         est="Est: 5hrs 5min"
         done={2}
@@ -265,6 +280,7 @@ export function TaskManager({ tasks, onTaskClick, onAddTask, onPriorityChange }:
         onTaskClick={onTaskClick}
         onAddTask={onAddTask}
         onPriorityChange={onPriorityChange}
+        onDeleteTask={onDeleteTask}
         status='tomorrow'
         est="Est: 2hrs 30min"
       />
