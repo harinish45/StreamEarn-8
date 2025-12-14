@@ -1,4 +1,3 @@
-
 'use client';
 
 import React from 'react';
@@ -14,11 +13,11 @@ const priorities: TaskPriority[] = ['urgent', 'important', 'neither'];
 
 const priorityMap: Record<
   TaskPriority,
-  { label: string; className: string }
+  { label: string; className: string; dotClassName: string }
 > = {
-  urgent: { label: 'Urgent', className: 'bg-pink-500/20 text-pink-400 border border-pink-500/30' },
-  important: { label: 'Important', className: 'bg-blue-500/20 text-blue-400 border border-blue-500/30' },
-  neither: { label: 'Neither', className: 'bg-green-500/20 text-green-400 border border-green-500/30' },
+  urgent: { label: 'Urgent', className: 'bg-pink-500/20 text-pink-400 border border-pink-500/30', dotClassName: 'bg-pink-400' },
+  important: { label: 'Important', className: 'bg-blue-500/20 text-blue-400 border border-blue-500/30', dotClassName: 'bg-blue-400' },
+  neither: { label: 'Neither', className: 'bg-green-500/20 text-green-400 border border-green-500/30', dotClassName: 'bg-green-400' },
 };
 
 interface PrioritySelectorProps {
@@ -27,15 +26,16 @@ interface PrioritySelectorProps {
 }
 
 export function PrioritySelector({ currentPriority, onPriorityChange }: PrioritySelectorProps) {
-  const { label, className } = priorityMap[currentPriority];
+  const { label, className, dotClassName } = priorityMap[currentPriority];
 
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <div
-          className={`flex h-6 items-center justify-center rounded-full px-2 text-xs font-semibold cursor-pointer transition-colors hover:border-primary/80 ${className}`}
+          className={`flex h-6 items-center justify-center rounded-full px-2 text-xs font-semibold cursor-pointer transition-colors hover:border-primary/80 ${className} gap-2`}
         >
-          {label}
+          <div className={`h-2 w-2 rounded-full ${dotClassName}`}></div>
+          <span>{label}</span>
         </div>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-40">
@@ -46,7 +46,7 @@ export function PrioritySelector({ currentPriority, onPriorityChange }: Priority
             className={priority === currentPriority ? 'bg-accent' : ''}
           >
             <div className='flex items-center gap-2'>
-              <div className={`h-3 w-3 rounded-full ${priorityMap[priority].className.split(' ')[0]}`}></div>
+              <div className={`h-2 w-2 rounded-full ${priorityMap[priority].dotClassName}`}></div>
               <span>{priorityMap[priority].label}</span>
             </div>
           </DropdownMenuItem>
