@@ -12,6 +12,6 @@ export default function CategoryPage({ params }: { params: { categoryId: string 
     notFound();
   }
 
-  // We pass the category and categoryId to the client component
-  return <CategoryClientPage category={category} />;
+  // We pass the categoryId to the client component
+  return <CategoryClientPage categoryId={categoryId} />;
 }

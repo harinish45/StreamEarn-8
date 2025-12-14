@@ -8,8 +8,11 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import React, { useState, useCallback, useMemo } from "react";
 import { OpportunityCard } from "@/components/opportunity-card";
 import { Breadcrumbs } from "@/components/breadcrumbs";
+import { notFound } from "next/navigation";
 
-export function CategoryClientPage({ category }: { category: EarningCategory }) {
+export function CategoryClientPage({ categoryId }: { categoryId: string }) {
+  const category = useMemo(() => earningOpportunities.find(c => c.id === categoryId), [categoryId]);
+
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   const [earningOpportunitiesState, setEarningOpportunitiesState] = useState(earningOpportunities);
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
@@ -76,6 +79,10 @@ export function CategoryClientPage({ category }: { category: EarningCategory }) 
         op.title.toLowerCase().includes(opportunitySearchQuery.toLowerCase())
       );
   }, [category, opportunitySearchQuery])
+
+  if (!category) {
+    notFound();
+  }
 
   return (
     <SidebarProvider>
