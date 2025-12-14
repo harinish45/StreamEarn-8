@@ -1,3 +1,4 @@
+
 'use client';
 
 import React from 'react';
@@ -119,7 +120,7 @@ function TaskCard({ task, onClick }: TaskCardProps) {
   );
 }
 
-interface TaskColumnProps {
+export interface TaskColumnProps {
   id: string;
   title: string;
   tasks: Task[];
@@ -131,7 +132,7 @@ interface TaskColumnProps {
   total?: number;
 }
 
-function TaskColumn({
+export function TaskColumn({
   id,
   title,
   tasks,
@@ -219,8 +220,6 @@ export function TaskManager({ tasks, onTaskClick, onAddTask }: TaskManagerProps)
   const backlogTasks = tasks.filter(t => t.status === 'do-later' || t.status === 'soon');
   const thisWeekTasks = getTasksByStatus('soon');
   const tomorrowTasks = getTasksByStatus('tomorrow');
-  const todayTasks = getTasksByStatus('do-now');
-
 
   return (
     <div className="flex gap-6">
@@ -252,17 +251,6 @@ export function TaskManager({ tasks, onTaskClick, onAddTask }: TaskManagerProps)
         onAddTask={onAddTask}
         status='tomorrow'
         est="Est: 2hrs 30min"
-      />
-      <TaskColumn
-        id="today"
-        title="Today"
-        tasks={todayTasks}
-        onTaskClick={onTaskClick}
-        onAddTask={onAddTask}
-        status='do-now'
-        est="Est: 1hrs 30min"
-        done={0}
-        total={1}
       />
     </div>
   );

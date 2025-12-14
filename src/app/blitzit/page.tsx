@@ -1,7 +1,8 @@
+
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { TaskManager } from './components/TaskManager';
+import { TaskManager, TaskColumn } from './components/TaskManager';
 import type { Task, TaskStatus } from '@/types/blitzit';
 import {
   DndContext,
@@ -145,6 +146,8 @@ export default function BlitzitPage() {
         });
         setIsDetailsOpen(true);
     };
+    
+    const todayTasks = tasks.filter(t => t.status === 'do-now');
 
     if (!isClient) {
       return (
@@ -168,24 +171,39 @@ export default function BlitzitPage() {
     return (
         <>
            <div className="p-8">
-            <div className="grid grid-cols-1 xl:grid-cols-3 gap-6 mb-8">
-                <div className="xl:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <Alerts tasks={tasksDueNow} onUpdateTasks={handleUpdateDueTasks} />
-                    <PomodoroSettings />
-                </div>
-            </div>
-            <DndContext 
-                sensors={sensors}
-                onDragEnd={handleDragEnd}
-                onDragOver={handleDragOver}
-                collisionDetection={closestCenter}
-            >
-                <TaskManager 
-                  tasks={tasks} 
-                  onTaskClick={handleTaskClick} 
-                  onAddTask={handleAddTask}
-                />
-            </DndContext>
+                <DndContext 
+                    sensors={sensors}
+                    onDragEnd={handleDragEnd}
+                    onDragOver={handleDragOver}
+                    collisionDetection={closestCenter}
+                >
+                    <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+                        <div className="lg:col-span-3">
+                             <Alerts tasks={tasksDueNow} onUpdateTasks={handleUpdateDueTasks} />
+                             <div className="mt-8">
+                                <TaskManager 
+                                    tasks={tasks} 
+                                    onTaskClick={handleTaskClick} 
+                                    onAddTask={handleAddTask}
+                                />
+                             </div>
+                        </div>
+                        <div className="space-y-6">
+                            <PomodoroSettings />
+                            <TaskColumn
+                                id="today"
+                                title="Today"
+                                tasks={todayTasks}
+                                onTaskClick={handleTaskClick}
+                                onAddTask={handleAddTask}
+                                status='do-now'
+                                est="Est: 1hrs 30min"
+                                done={0}
+                                total={1}
+                            />
+                        </div>
+                    </div>
+                </DndContext>
             </div>
             
             <TaskDetails
@@ -198,3 +216,4 @@ export default function BlitzitPage() {
         </>
     );
 }
+
