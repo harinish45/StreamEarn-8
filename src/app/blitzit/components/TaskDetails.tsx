@@ -189,17 +189,11 @@ export function TaskDetails({ task, isOpen, setIsOpen, onSave, onDelete }: TaskD
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div className="grid gap-2">
-              <Label htmlFor="priority">Priority</Label>
-              <Select value={editedTask.priority} onValueChange={(value) => handleChange('priority', value)}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Select priority" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="urgent">Urgent</SelectItem>
-                  <SelectItem value="important">Important</SelectItem>
-                  <SelectItem value="neither">Neither</SelectItem>
-                </SelectContent>
-              </Select>
+              <Label>Priority</Label>
+              <PrioritySelector
+                currentPriority={editedTask.priority}
+                onPriorityChange={(p) => handleChange('priority', p)}
+              />
             </div>
             <div className="grid gap-2">
               <Label htmlFor="status">Status</Label>

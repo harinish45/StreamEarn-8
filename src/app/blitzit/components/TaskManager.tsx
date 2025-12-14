@@ -52,8 +52,15 @@ function TaskCard({ task, onClick, onPriorityChange }: TaskCardProps) {
     }
   }
 
-  const handleCardClick = () => {
-    onClick(task);
+  const handleCardClick = (e: React.MouseEvent) => {
+    if (task.audioBlob) {
+        e.stopPropagation();
+        const audioUrl = URL.createObjectURL(task.audioBlob);
+        const audio = new Audio(audioUrl);
+        audio.play();
+    } else {
+        onClick(task);
+    }
   }
 
   const handlePillClick = (e: React.MouseEvent) => {
