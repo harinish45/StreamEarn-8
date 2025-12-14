@@ -3,14 +3,13 @@
 import React, { useState, useEffect } from 'react';
 import type { Task } from '@/types/blitzit';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { AnimatePresence, motion } from 'framer-motion';
 import { Check, Pause, Play, Redo, X } from 'lucide-react';
 
 interface FocusViewProps {
   activeTask: Task;
-  allTasks: Task[];
   onClose: () => void;
+  onComplete: () => void;
 }
 
 const formatTime = (seconds: number) => {
@@ -20,25 +19,30 @@ const formatTime = (seconds: number) => {
   return `${h}:${m}:${s}`;
 };
 
-export function FocusView({ activeTask, allTasks, onClose }: FocusViewProps) {
-  const initialDuration = (activeTask.estimatedTime || 60) * 60; // default to 60 mins
+export function FocusView({ activeTask, onClose, onComplete }: FocusViewProps) {
+  const initialDuration = (activeTask.estimatedTime || 25) * 60; // default to 25 mins
   const [timeLeft, setTimeLeft] = useState(initialDuration);
   const [isRunning, setIsRunning] = useState(true);
 
   useEffect(() => {
-    setTimeLeft((activeTask.estimatedTime || 60) * 60);
+    setTimeLeft((activeTask.estimatedTime || 25) * 60);
     setIsRunning(true);
   }, [activeTask]);
 
   useEffect(() => {
-    if (!isRunning || timeLeft <= 0) return;
+    if (!isRunning || timeLeft <= 0) {
+        if (timeLeft <= 0) {
+            onComplete();
+        }
+        return;
+    }
 
     const timer = setInterval(() => {
       setTimeLeft(prev => prev - 1);
     }, 1000);
 
     return () => clearInterval(timer);
-  }, [isRunning, timeLeft]);
+  }, [isRunning, timeLeft, onComplete]);
   
   const togglePlayPause = () => {
     setIsRunning(!isRunning);
@@ -51,106 +55,73 @@ export function FocusView({ activeTask, allTasks, onClose }: FocusViewProps) {
 
   const progress = (timeLeft / initialDuration) * 100;
   
-  const upNextTasks = allTasks
-    .filter(t => t.status === 'do-now' && t.id !== activeTask.id)
-    .slice(0, 3);
-  
-  const doneTasks = allTasks.filter(t => t.status === 'done').slice(0, 2);
-
   return (
-    <div className="h-full w-full bg-background p-8 flex flex-col items-center justify-center text-foreground relative">
-      <Button
-        variant="ghost"
-        size="icon"
-        onClick={onClose}
-        className="absolute top-8 right-8 text-muted-foreground hover:text-foreground"
-      >
-        <X className="h-6 w-6" />
-      </Button>
-      
-      <motion.div 
-        initial={{ opacity: 0, scale: 0.9 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{ duration: 0.5, delay: 0.1 }}
-        className="w-full max-w-2xl text-center"
-      >
-        <p className="text-xl text-muted-foreground mb-2">Focusing on</p>
-        <h1 className="text-5xl font-bold mb-12">{activeTask.title}</h1>
-
-        <div className="relative mb-12 flex justify-center items-center">
-            <svg className="w-80 h-80 transform -rotate-90">
+    <motion.div 
+        initial={{ opacity: 0, y: 50 }}
+        animate={{ opacity: 1, y: 0 }}
+        exit={{ opacity: 0, y: 50 }}
+        transition={{ duration: 0.3 }}
+        className="fixed bottom-8 right-8 z-50 w-full max-w-sm rounded-2xl bg-card/80 p-6 shadow-2xl backdrop-blur-lg border border-border"
+    >
+        <div className="flex items-start justify-between mb-4">
+            <div>
+                <p className="text-sm text-muted-foreground">Focusing on</p>
+                <h2 className="text-xl font-semibold text-foreground">{activeTask.title}</h2>
+            </div>
+            <Button variant="ghost" size="icon" className="-mr-2 -mt-2" onClick={onClose}>
+                <X className="h-5 w-5"/>
+            </Button>
+        </div>
+        
+        <div className="relative mb-6 flex justify-center items-center">
+            <svg className="w-48 h-48 transform -rotate-90">
                 <circle
-                    cx="160"
-                    cy="160"
-                    r="150"
+                    cx="96"
+                    cy="96"
+                    r="88"
                     strokeWidth="10"
                     className="stroke-muted"
                     fill="transparent"
                 />
                  <motion.circle
-                    cx="160"
-                    cy="160"
-                    r="150"
+                    cx="96"
+                    cy="96"
+                    r="88"
                     strokeWidth="10"
                     className="stroke-primary"
                     fill="transparent"
-                    strokeDasharray={2 * Math.PI * 150}
-                    strokeDashoffset={(2 * Math.PI * 150) * (1 - progress / 100)}
+                    strokeDasharray={2 * Math.PI * 88}
+                    strokeDashoffset={(2 * Math.PI * 88) * (1 - progress / 100)}
                     transition={{ duration: 1, ease: 'linear' }}
                     strokeLinecap="round"
                 />
             </svg>
              <div className="absolute flex flex-col items-center">
-                <span className="text-7xl font-mono tracking-tighter">{formatTime(timeLeft)}</span>
+                <span className="text-5xl font-mono tracking-tighter">{formatTime(timeLeft)}</span>
             </div>
         </div>
-
-         <div className="flex justify-center gap-4">
-          <Button variant="outline" size="lg" className="rounded-full h-16 w-16" onClick={resetTimer}>
-              <Redo className="h-8 w-8" />
+        
+        <div className="flex justify-center gap-4">
+          <Button variant="outline" size="icon" className="rounded-full h-12 w-12" onClick={resetTimer}>
+              <Redo className="h-6 w-6" />
           </Button>
-          <Button size="lg" className="rounded-full h-16 w-16" onClick={togglePlayPause}>
+          <Button size="lg" className="rounded-full h-14 w-14" onClick={togglePlayPause}>
             <AnimatePresence mode="wait">
               {isRunning ? (
                 <motion.div key="pause" initial={{ opacity: 0, scale: 0.5 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.5 }}>
-                  <Pause className="h-8 w-8" />
+                  <Pause className="h-7 w-7" />
                 </motion.div>
               ) : (
                 <motion.div key="play" initial={{ opacity: 0, scale: 0.5 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.5 }}>
-                  <Play className="h-8 w-8" />
+                  <Play className="h-7 w-7" />
                 </motion.div>
               )}
             </AnimatePresence>
           </Button>
-          <Button variant="secondary" size="lg" className="rounded-full h-16 w-16 bg-green-500 hover:bg-green-600 text-white">
-              <Check className="h-8 w-8" />
+          <Button variant="secondary" size="icon" className="rounded-full h-12 w-12 bg-green-500 hover:bg-green-600 text-white" onClick={onComplete}>
+              <Check className="h-6 w-6" />
           </Button>
         </div>
-      </motion.div>
-      
-      <div className="absolute bottom-8 w-full max-w-6xl mx-auto flex justify-between gap-8">
-        <div className="w-1/3">
-            <h3 className="font-semibold mb-3">Up Next</h3>
-            <div className="space-y-2">
-                {upNextTasks.map(task => (
-                    <Card key={task.id} className="p-3 bg-card/50">
-                        <p className="font-medium truncate">{task.title}</p>
-                    </Card>
-                ))}
-            </div>
-        </div>
-         <div className="w-1/3">
-            <h3 className="font-semibold mb-3">Done</h3>
-            <div className="space-y-2">
-                 {doneTasks.map(task => (
-                    <Card key={task.id} className="p-3 bg-card/50">
-                        <p className="font-medium truncate line-through text-muted-foreground">{task.title}</p>
-                    </Card>
-                ))}
-            </div>
-        </div>
-      </div>
-
-    </div>
+    </motion.div>
   );
 }
