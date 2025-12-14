@@ -19,9 +19,9 @@ const buttonVariants = cva(
         ghost: "hover:bg-accent hover:text-accent-foreground",
         link: "text-primary underline-offset-4 hover:underline",
         gradient:
-          "bg-gradient-to-r from-purple-500 to-blue-500 text-white hover:from-purple-600 hover:to-blue-600 shadow-lg transform hover:scale-105 transition-transform duration-300",
+          "bg-gradient-to-r from-purple-500 to-blue-500 text-white shadow-lg transition-all duration-300 ease-in-out hover:from-purple-600 hover:to-blue-600 hover:shadow-xl hover:scale-105",
         gradientOutline:
-          "relative bg-transparent text-foreground border-none p-0 overflow-hidden group hover:shadow-lg transition-all duration-300",
+          "relative bg-card text-foreground p-0 overflow-hidden group hover:shadow-lg transition-all duration-300 rounded-md",
       },
       size: {
         default: "h-10 px-4 py-2",
@@ -49,12 +49,11 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
     
     if (variant === "gradientOutline") {
       const buttonContent = (
-        <>
-          <div className="absolute inset-0 bg-gradient-to-r from-purple-500 to-blue-500 opacity-0 group-hover:opacity-100 transition-opacity duration-300 animate-pulse"/>
-          <span className="relative z-10 w-full h-full flex items-center justify-center bg-background rounded-md px-8">
-            {props.children}
-          </span>
-        </>
+        <span className="relative z-10 flex h-full w-full items-center justify-center bg-background px-8 rounded-md transition-colors group-hover:bg-background/90">
+          <span className="absolute -left-1.5 top-0 h-full w-4 bg-purple-500 rounded-l-md blur-sm group-hover:bg-purple-600 transition-colors" />
+          <span className="absolute -right-1.5 top-0 h-full w-4 bg-blue-500 rounded-r-md blur-sm group-hover:bg-blue-600 transition-colors" />
+          {props.children}
+        </span>
       );
 
       if (asChild) {
@@ -65,7 +64,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
             {...props}
           >
            {/* We need to wrap the children of Slot with a span to make it a single child */}
-            <span>{buttonContent}</span>
+            <>{buttonContent}</>
           </Slot>
         )
       }
