@@ -18,6 +18,10 @@ const buttonVariants = cva(
           "bg-secondary text-secondary-foreground hover:bg-secondary/80",
         ghost: "hover:bg-accent hover:text-accent-foreground",
         link: "text-primary underline-offset-4 hover:underline",
+        gradient:
+          "bg-gradient-to-r from-purple-500 to-blue-500 text-white hover:from-purple-600 hover:to-blue-600 shadow-lg transform hover:scale-105 transition-transform duration-300",
+        gradientOutline:
+          "relative bg-transparent text-foreground border-none p-0 overflow-hidden group hover:shadow-lg transition-all duration-300",
       },
       size: {
         default: "h-10 px-4 py-2",
@@ -42,6 +46,41 @@ export interface ButtonProps
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
   ({ className, variant, size, asChild = false, ...props }, ref) => {
     const Comp = asChild ? Slot : "button"
+    
+    if (variant === "gradientOutline") {
+      const buttonContent = (
+        <>
+          <div className="absolute inset-0 bg-gradient-to-r from-purple-500 to-blue-500 opacity-0 group-hover:opacity-100 transition-opacity duration-300 animate-pulse"/>
+          <span className="relative z-10 w-full h-full flex items-center justify-center bg-background rounded-md px-8">
+            {props.children}
+          </span>
+        </>
+      );
+
+      if (asChild) {
+        return (
+          <Slot
+            className={cn(buttonVariants({ variant, size, className }))}
+            ref={ref}
+            {...props}
+          >
+           {/* We need to wrap the children of Slot with a span to make it a single child */}
+            <span>{buttonContent}</span>
+          </Slot>
+        )
+      }
+
+      return (
+        <Comp
+          className={cn(buttonVariants({ variant, size, className }))}
+          ref={ref}
+          {...props}
+        >
+          {buttonContent}
+        </Comp>
+      )
+    }
+
     return (
       <Comp
         className={cn(buttonVariants({ variant, size, className }))}

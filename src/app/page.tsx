@@ -48,15 +48,15 @@ export default function Home() {
                 Discover a world of opportunities. Our platform connects you with the best ways to earn online, from micro-tasks and freelancing to AI-powered ventures.
               </p>
               <div className="flex flex-col gap-4 sm:flex-row">
-                <Button size="lg" asChild>
+                <Button size="lg" variant="gradient" asChild>
                     <Link href="/earnings">Explore Earning Opportunities</Link>
                 </Button>
-                <Button size="lg" variant="outline" asChild>
+                <Button size="lg" variant="gradientOutline" asChild>
                     <Link href="/ai-tools">Discover AI Tools</Link>
                 </Button>
               </div>
                <div className="mt-4">
-                 <Button size="lg" asChild>
+                 <Button size="lg" variant="gradient" asChild>
                     <Link href="/blitzit">Blitzit Productivity Suite</Link>
                  </Button>
                </div>
