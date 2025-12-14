@@ -1,4 +1,3 @@
-
 'use client';
 
 import React, { useState, useEffect } from 'react';
@@ -19,40 +18,32 @@ import { produce } from 'immer';
 import { TaskDetails } from './components/TaskDetails';
 import { PomodoroSettings } from './components/PomodoroSettings';
 import { Alerts } from './components/Alerts';
+import { useFocus } from './context/FocusProvider';
 
-// Sample Data adapted to the new design
 const sampleTasks: Task[] = [
-    // Today
     { id: 'task-1', title: 'Marketing brief', description: 'Create a modern design in Figma.', priority: 'important', status: 'do-now', listId: 'work', estimatedTime: 90 },
-
-    // This week
     { id: 'task-2', title: 'Insta post', description: 'Coordinate with the team for a sync-up.', priority: 'urgent', status: 'tomorrow', listId: 'personal', estimatedTime: 120, recurring: 'weekly' },
     { id: 'task-3', title: 'Call mum', description: 'A critical bug reported by users.', priority: 'urgent', status: 'tomorrow', listId: 'personal', estimatedTime: 30 },
     { id: 'task-4', title: 'Fire Jeffry', description: 'Implement JWT-based authentication.', priority: 'important', status: 'tomorrow', listId: 'work', estimatedTime: 5 },
     { id: 'task-5', title: 'Website update', description: 'Summarize the progress of the week.', priority: 'important', status: 'tomorrow', listId: 'work', estimatedTime: 90 },
     { id: 'task-6', title: 'Product feedback', description: 'Milk, Bread, Eggs.', priority: 'important', status: 'tomorrow', listId: 'personal', estimatedTime: 60 },
-
-    // Backlog
     { id: 'task-7', title: 'Core ux brief', description: 'Leg day.', priority: 'neither', status: 'do-later', listId: 'personal', estimatedTime: 80 },
     { id: 'task-8', title: 'Blitzit documentation p1', description: 'Leg day.', priority: 'neither', status: 'do-later', listId: 'personal', estimatedTime: 90 },
     { id: 'task-9', title: 'Vertical banners', description: 'Leg day.', priority: 'neither', status: 'do-later', listId: 'personal', estimatedTime: 90 },
-
-    // Scheduled
     { id: 'task-10', title: 'Sprint 1 handoff doc', description: 'Leg day.', priority: 'neither', status: 'soon', listId: 'personal', estimatedTime: 180, scheduledAt: new Date().getTime() },
-    
-    // Recurring in Backlog (example)
     { id: 'task-11', title: 'Insta post', description: 'Weekly recurring post', priority: 'urgent', status: 'soon', listId: 'personal', estimatedTime: 120, recurring: 'weekly' }
 ];
 
-
-export default function BlitzitPage({ onStartFocus = () => {} }: { onStartFocus?: (task: Task, allTasks: Task[]) => void }) {
+export default function BlitzitPage() {
     const [tasks, setTasks] = useState<Task[]>(sampleTasks);
     const [selectedTask, setSelectedTask] = useState<Task | null>(null);
     const [isDetailsOpen, setIsDetailsOpen] = useState(false);
     const [isClient, setIsClient] = useState(false);
+    const { startFocus } = useFocus();
 
     useEffect(() => {
         setIsClient(true);
+        // This is where you would fetch tasks from a database
     }, []);
 
     const sensors = useSensors(
@@ -89,19 +80,18 @@ export default function BlitzitPage({ onStartFocus = () => {} }: { onStartFocus?
         }
     };
 
-
     const handleDragEnd = (event: DragEndEvent) => {
         const { active, over } = event;
-
-        if (!over) return;
+        if (!over || active.id === over.id) return;
         
         const isActiveATask = active.data.current?.type === 'Task';
         const isOverATask = over.data.current?.type === 'Task';
 
-        if (isActiveATask && isOverATask && active.id !== over.id) {
+        if (isActiveATask && isOverATask) {
              setTasks((currentTasks) => {
                 const oldIndex = currentTasks.findIndex((t) => t.id === active.id);
                 const newIndex = currentTasks.findIndex((t) => t.id === over.id);
+                if (oldIndex === -1 || newIndex === -1) return currentTasks;
                 return arrayMove(currentTasks, oldIndex, newIndex);
             });
         }
@@ -112,25 +102,13 @@ export default function BlitzitPage({ onStartFocus = () => {} }: { onStartFocus?
         setIsDetailsOpen(true);
     };
     
-    const handleAddTask = () => {
-        const newTaskTemplate: Task = {
-            id: `task-${Date.now()}`,
-            title: 'New Task',
-            description: '',
-            priority: 'neither',
-            status: 'do-now',
-            listId: 'work',
-        };
-        setSelectedTask(newTaskTemplate);
-        setIsDetailsOpen(true);
-    };
-    
     const handleSaveTask = (updatedTask: Task) => {
         setTasks(produce(draft => {
             const index = draft.findIndex(t => t.id === updatedTask.id);
             if (index !== -1) {
                 draft[index] = updatedTask;
             } else {
+                // This is a new task
                 draft.unshift(updatedTask);
             }
         }));
@@ -145,7 +123,7 @@ export default function BlitzitPage({ onStartFocus = () => {} }: { onStartFocus?
     }
     
     const handleStartFocus = (task: Task) => {
-        onStartFocus(task, tasks);
+        startFocus(task, tasks);
     }
 
     if (!isClient) {
@@ -165,7 +143,6 @@ export default function BlitzitPage({ onStartFocus = () => {} }: { onStartFocus?
         </div>
       );
     }
-
 
     return (
         <>

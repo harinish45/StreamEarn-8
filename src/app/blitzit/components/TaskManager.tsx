@@ -7,8 +7,6 @@ import { Card, CardContent } from '@/components/ui/card';
 import {
   FireExtinguisher,
   Users,
-  Calendar,
-  Repeat,
   Plus,
   PlayCircle,
 } from 'lucide-react';
@@ -89,30 +87,30 @@ function TaskCard({ task, onClick, onStartFocus }: TaskCardProps) {
       <Card
         className={`mb-2 cursor-grab rounded-lg p-3 shadow-none transition-all active:cursor-grabbing bg-card/50 hover:bg-card/70`}
         onClick={handleCardClick}
-        {...attributes}
-        {...listeners}
       >
-        <CardContent className="p-0">
-            <>
-                <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                    {isFireJeffry && (
-                        <FireExtinguisher className="h-4 w-4 text-red-500" />
-                    )}
-                    <p className="font-medium">{task.title}</p>
+        <div className="flex items-start" {...attributes} {...listeners}>
+            <CardContent className="p-0 flex-1">
+                <>
+                    <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                        {isFireJeffry && (
+                            <FireExtinguisher className="h-4 w-4 text-red-500" />
+                        )}
+                        <p className="font-medium">{task.title}</p>
+                        </div>
+                        {task.id === 'task-1' ? <Users className="h-5 w-5 text-muted-foreground" /> : <TaskPill priority={task.priority} />}
                     </div>
-                    {task.id === 'task-1' ? <Users className="h-5 w-5 text-muted-foreground" /> : <TaskPill priority={task.priority} />}
-                </div>
-                <div className="mt-2 flex items-center justify-between text-xs text-muted-foreground">
-                    <span>{formatTime(task.estimatedTime)}</span>
-                    {task.recurring && <span>{getRecurrenceDay(task.status)}</span>}
-                    {task.scheduledAt && <span>May 27th</span>}
-                    <Button variant="ghost" size="icon" className="h-6 w-6" onClick={(e) => { e.stopPropagation(); onStartFocus(task); }}>
-                        <PlayCircle className="h-5 w-5 text-primary" />
-                    </Button>
-                </div>
-            </>
-        </CardContent>
+                    <div className="mt-2 flex items-center justify-between text-xs text-muted-foreground">
+                        <span>{formatTime(task.estimatedTime)}</span>
+                        {task.recurring && <span>{getRecurrenceDay(task.status)}</span>}
+                        {task.scheduledAt && <span>May 27th</span>}
+                    </div>
+                </>
+            </CardContent>
+            <Button variant="ghost" size="icon" className="h-6 w-6 ml-2" onClick={(e) => { e.stopPropagation(); onStartFocus(task); }}>
+                <PlayCircle className="h-5 w-5 text-primary" />
+            </Button>
+        </div>
       </Card>
     </motion.div>
   );
