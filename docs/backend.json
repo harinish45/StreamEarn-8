@@ -77,17 +77,6 @@
       },
       "required": ["taskId", "startTime", "endTime", "duration"]
     },
-    "Report": {
-      "title": "Report",
-      "description": "A summary of productivity for a given period.",
-      "type": "object",
-      "properties": {
-        "date": { "type": "number" },
-        "tasksCompleted": { "type": "number" },
-        "timeSpent": { "type": "number" }
-      },
-      "required": ["date", "tasksCompleted", "timeSpent"]
-    },
     "GamificationStats": {
       "title": "Gamification Stats",
       "description": "User's gamification progress.",
@@ -121,10 +110,6 @@
     "/users/{userId}/sessions/{sessionId}": {
       "schema": { "$ref": "#/entities/FocusSession" },
       "description": "Stores focus session history for a user."
-    },
-    "/users/{userId}/reports/{reportId}": {
-        "schema": { "$ref": "#/entities/Report" },
-        "description": "Stores periodic productivity reports for a user."
     },
     "/users/{userId}/gamification/{statsId}": {
         "schema": { "$ref": "#/entities/GamificationStats" },

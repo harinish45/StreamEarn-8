@@ -14,7 +14,6 @@ import { cn } from "@/lib/utils";
 
 const navItems = [
     { href: "/blitzit", icon: LayoutDashboard, label: "Dashboard" },
-    { href: "/blitzit/reports", icon: Activity, label: "Reports" },
 ]
 
 export function AppSidebar() {
