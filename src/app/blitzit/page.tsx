@@ -102,8 +102,14 @@ export default function BlitzitPage() {
     };
 
     const handleTaskClick = (task: Task) => {
-        setSelectedTask(task);
-        setIsDetailsOpen(true);
+        if (task.audioBlob) {
+            const audioUrl = URL.createObjectURL(task.audioBlob);
+            const audio = new Audio(audioUrl);
+            audio.play();
+        } else {
+            setSelectedTask(task);
+            setIsDetailsOpen(true);
+        }
     };
     
     const handleSaveTask = (updatedTask: Task) => {
