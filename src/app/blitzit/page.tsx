@@ -177,19 +177,15 @@ export default function BlitzitPage() {
                     onDragOver={handleDragOver}
                     collisionDetection={closestCenter}
                 >
-                    <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-                        <div className="lg:col-span-3">
-                             <Alerts tasks={tasksDueNow} onUpdateTasks={handleUpdateDueTasks} />
-                             <div className="mt-8">
-                                <TaskManager 
-                                    tasks={tasks} 
-                                    onTaskClick={handleTaskClick} 
-                                    onAddTask={handleAddTask}
-                                />
-                             </div>
+                    <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+                        <div className="lg:col-span-1">
+                            <Alerts tasks={tasksDueNow} onUpdateTasks={handleUpdateDueTasks} />
                         </div>
-                        <div className="space-y-6">
-                            <TaskColumn
+                         <div className="lg:col-span-1">
+                            <PomodoroSettings />
+                        </div>
+                        <div className="lg:col-span-1">
+                             <TaskColumn
                                 id="today"
                                 title="Today"
                                 tasks={todayTasks}
@@ -200,9 +196,14 @@ export default function BlitzitPage() {
                                 done={0}
                                 total={1}
                             />
-                            <PomodoroSettings />
                         </div>
                     </div>
+                    
+                    <TaskManager 
+                        tasks={tasks} 
+                        onTaskClick={handleTaskClick} 
+                        onAddTask={handleAddTask}
+                    />
                 </DndContext>
             </div>
             
