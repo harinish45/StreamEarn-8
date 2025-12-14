@@ -113,8 +113,11 @@ function TaskCard({ task, onClick, onPriorityChange, onDelete }: TaskCardProps) 
                         )}
                         <p className="font-medium">{task.title}</p>
                         </div>
-                        <div onClick={handlePillClick}>
+                        <div className="flex items-center gap-1" onClick={handlePillClick}>
                           {task.id === 'task-1' ? <Users className="h-5 w-5 text-muted-foreground" /> : <PrioritySelector currentPriority={task.priority} onPriorityChange={handlePriorityChange} />}
+                           <Button variant="ghost" size="icon" className="h-6 w-6 text-muted-foreground opacity-0 group-hover:opacity-100" onClick={handleDeleteClick}>
+                              <Trash2 className="h-4 w-4" />
+                          </Button>
                         </div>
                     </div>
                     <div className="mt-2 flex items-center justify-between text-xs text-muted-foreground">
@@ -132,9 +135,6 @@ function TaskCard({ task, onClick, onPriorityChange, onDelete }: TaskCardProps) 
                 </>
             </CardContent>
         </div>
-         <Button variant="ghost" size="icon" className="absolute top-1/2 right-1 -translate-y-1/2 h-7 w-7 text-muted-foreground opacity-0 group-hover:opacity-100" onClick={handleDeleteClick}>
-            <Trash2 className="h-4 w-4" />
-        </Button>
       </div>
     </motion.div>
   );
