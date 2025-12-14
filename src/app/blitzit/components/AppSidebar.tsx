@@ -60,14 +60,6 @@ export function AppSidebar() {
                         <span>Settings</span>
                     </Link>
                 </Button>
-                 <Button variant="ghost" className="justify-start gap-3 text-muted-foreground hover:text-foreground hover:bg-accent px-3 py-2 h-auto">
-                    <LifeBuoy className="h-5 w-5" />
-                    <span>Help & Support</span>
-                </Button>
-                 <Button variant="ghost" className="justify-start gap-3 text-muted-foreground hover:text-foreground hover:bg-accent px-3 py-2 h-auto">
-                    <LogOut className="h-5 w-5" />
-                    <span>Logout</span>
-                </Button>
             </div>
         </aside>
     );

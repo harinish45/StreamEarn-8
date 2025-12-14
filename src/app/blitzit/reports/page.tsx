@@ -50,10 +50,6 @@ export default function ReportsPage() {
                             <SelectItem value="last-month">Last Month</SelectItem>
                         </SelectContent>
                     </Select>
-                    <Button variant="outline">
-                        <FileDown className="mr-2 h-4 w-4" />
-                        Export PDF
-                    </Button>
                 </div>
             </header>
 
