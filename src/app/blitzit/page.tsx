@@ -24,9 +24,9 @@ const sampleTasks: Task[] = [
     { id: 'task-1', title: 'Marketing brief', description: 'Create a modern design in Figma.', priority: 'important', status: 'do-now', listId: 'work', estimatedTime: 90 },
     { id: 'task-2', title: 'Insta post', description: 'Coordinate with the team for a sync-up.', priority: 'urgent', status: 'tomorrow', listId: 'personal', estimatedTime: 120, recurring: 'weekly' },
     { id: 'task-3', title: 'Call mum', description: 'A critical bug reported by users.', priority: 'urgent', status: 'tomorrow', listId: 'personal', estimatedTime: 30 },
-    { id: 'task-4', title: 'Fire Jeffry', description: 'Implement JWT-based authentication.', priority: 'important', status: 'tomorrow', listId: 'work', estimatedTime: 5 },
-    { id: 'task-5', title: 'Website update', description: 'Summarize the progress of the week.', priority: 'important', status: 'tomorrow', listId: 'work', estimatedTime: 90 },
-    { id: 'task-6', title: 'Product feedback', description: 'Milk, Bread, Eggs.', priority: 'important', status: 'tomorrow', listId: 'personal', estimatedTime: 60 },
+    { id: 'task-4', title: 'Fire Jeffry', description: 'Implement JWT-based authentication.', priority: 'important', status: 'do-later', listId: 'work', estimatedTime: 5 },
+    { id: 'task-5', title: 'Website update', description: 'Summarize the progress of the week.', priority: 'important', status: 'do-later', listId: 'work', estimatedTime: 90 },
+    { id: 'task-6', title: 'Product feedback', description: 'Milk, Bread, Eggs.', priority: 'important', status: 'do-later', listId: 'personal', estimatedTime: 60 },
     { id: 'task-7', title: 'Core ux brief', description: 'Leg day.', priority: 'neither', status: 'do-later', listId: 'personal', estimatedTime: 80 },
     { id: 'task-8', title: 'Blitzit documentation p1', description: 'Leg day.', priority: 'neither', status: 'do-later', listId: 'personal', estimatedTime: 90 },
     { id: 'task-9', title: 'Vertical banners', description: 'Leg day.', priority: 'neither', status: 'do-later', listId: 'personal', estimatedTime: 90 },
@@ -68,7 +68,8 @@ export default function BlitzitPage() {
         let newStatus: TaskStatus | undefined;
         if (isOverAColumn) {
             if (over.id === 'today') newStatus = 'do-now';
-            else if (over.id === 'this-week') newStatus = 'tomorrow';
+            else if (over.id === 'tomorrow') newStatus = 'tomorrow';
+            else if (over.id === 'this-week') newStatus = 'soon';
             else if (over.id === 'backlog') newStatus = 'do-later';
         }
 
@@ -134,6 +135,17 @@ export default function BlitzitPage() {
         }));
     };
 
+    const handleAddTask = (status: TaskStatus) => {
+        setSelectedTask({
+            id: `task-${Date.now()}`,
+            title: '',
+            status: status,
+            priority: 'neither',
+            listId: 'personal'
+        });
+        setIsDetailsOpen(true);
+    };
+
     if (!isClient) {
       return (
         <div className="p-8">
@@ -147,6 +159,7 @@ export default function BlitzitPage() {
                 <div className="flex-1 rounded-xl bg-card p-4 h-[70vh] animate-pulse"></div>
                 <div className="flex-1 rounded-xl bg-card p-4 h-[70vh] animate-pulse"></div>
                 <div className="flex-1 rounded-xl bg-card p-4 h-[70vh] animate-pulse"></div>
+                 <div className="flex-1 rounded-xl bg-card p-4 h-[70vh] animate-pulse"></div>
             </div>
         </div>
       );
@@ -170,6 +183,7 @@ export default function BlitzitPage() {
                 <TaskManager 
                   tasks={tasks} 
                   onTaskClick={handleTaskClick} 
+                  onAddTask={handleAddTask}
                 />
             </DndContext>
             </div>

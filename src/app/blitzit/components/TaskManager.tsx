@@ -20,7 +20,7 @@ interface TaskCardProps {
   onClick: (task: Task) => void;
 }
 
-function TaskPill({ priority }: { priority: Task['priority'] }) {
+function TaskPill({ priority, onClick }: { priority: Task['priority'], onClick: (e: React.MouseEvent) => void }) {
   const priorityMap: Record<
     Task['priority'],
     { label: string; className: string }
@@ -34,7 +34,8 @@ function TaskPill({ priority }: { priority: Task['priority'] }) {
 
   return (
     <div
-      className={`flex h-6 items-center justify-center rounded-full px-2 text-xs font-semibold ${className}`}
+      onClick={onClick}
+      className={`flex h-6 items-center justify-center rounded-full px-2 text-xs font-semibold cursor-pointer transition-colors hover:border-primary/80 ${className}`}
     >
       {label}
     </div>
@@ -72,6 +73,11 @@ function TaskCard({ task, onClick }: TaskCardProps) {
     onClick(task);
   }
 
+  const handlePillClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    onClick(task);
+  }
+
   return (
     <motion.div
       layout
@@ -82,7 +88,7 @@ function TaskCard({ task, onClick }: TaskCardProps) {
       ref={setNodeRef}
       style={style}
     >
-      <Card
+      <div
         className={`mb-2 cursor-grab rounded-lg p-3 shadow-none transition-all active:cursor-grabbing bg-card/50 hover:bg-card/70`}
         onClick={handleCardClick}
         {...attributes} 
@@ -98,7 +104,7 @@ function TaskCard({ task, onClick }: TaskCardProps) {
                         )}
                         <p className="font-medium">{task.title}</p>
                         </div>
-                        {task.id === 'task-1' ? <Users className="h-5 w-5 text-muted-foreground" /> : <TaskPill priority={task.priority} />}
+                        {task.id === 'task-1' ? <Users className="h-5 w-5 text-muted-foreground" /> : <TaskPill priority={task.priority} onClick={handlePillClick} />}
                     </div>
                     <div className="mt-2 flex items-center justify-between text-xs text-muted-foreground">
                         <span>{formatTime(task.estimatedTime)}</span>
@@ -108,7 +114,7 @@ function TaskCard({ task, onClick }: TaskCardProps) {
                 </>
             </CardContent>
         </div>
-      </Card>
+      </div>
     </motion.div>
   );
 }
@@ -118,6 +124,8 @@ interface TaskColumnProps {
   title: string;
   tasks: Task[];
   onTaskClick: (task: Task) => void;
+  onAddTask: (status: TaskStatus) => void;
+  status: TaskStatus;
   est: string;
   done?: number;
   total?: number;
@@ -128,6 +136,8 @@ function TaskColumn({
   title,
   tasks,
   onTaskClick,
+  onAddTask,
+  status,
   est,
   done,
   total,
@@ -160,7 +170,7 @@ function TaskColumn({
               {regularTasks.map(task => (
                 <TaskCard key={task.id} task={task} onClick={onTaskClick} />
               ))}
-              <Button variant="ghost" className="w-full justify-start gap-2 text-muted-foreground hover:text-foreground">
+              <Button onClick={() => onAddTask(status)} variant="ghost" className="w-full justify-start gap-2 text-muted-foreground hover:text-foreground">
                 <Plus className="h-4 w-4" /> Add Task
               </Button>
               {scheduledTasks.length > 0 && (
@@ -185,7 +195,7 @@ function TaskColumn({
              {tasks.map(task => (
                 <TaskCard key={task.id} task={task} onClick={onTaskClick} />
              ))}
-             <Button variant="ghost" className="w-full justify-start gap-2 text-muted-foreground hover:text-foreground">
+             <Button onClick={() => onAddTask(status)} variant="ghost" className="w-full justify-start gap-2 text-muted-foreground hover:text-foreground">
                 <Plus className="h-4 w-4" /> Add Task
               </Button>
             </>
@@ -199,15 +209,17 @@ function TaskColumn({
 interface TaskManagerProps {
   tasks: Task[];
   onTaskClick: (task: Task) => void;
+  onAddTask: (status: TaskStatus) => void;
 }
 
-export function TaskManager({ tasks, onTaskClick }: TaskManagerProps) {
+export function TaskManager({ tasks, onTaskClick, onAddTask }: TaskManagerProps) {
   const getTasksByStatus = (status: TaskStatus) =>
     tasks.filter(t => t.status === status);
 
   const backlogTasks = tasks.filter(t => t.status === 'do-later' || t.status === 'soon');
-  const thisWeekTasks = tasks.filter(t => t.status === 'tomorrow' || t.title === 'Fire Jeffry');
-  const todayTasks = tasks.filter(t => t.status === 'do-now');
+  const thisWeekTasks = getTasksByStatus('soon');
+  const tomorrowTasks = getTasksByStatus('tomorrow');
+  const todayTasks = getTasksByStatus('do-now');
 
 
   return (
@@ -217,6 +229,8 @@ export function TaskManager({ tasks, onTaskClick }: TaskManagerProps) {
         title="Backlog"
         tasks={backlogTasks}
         onTaskClick={onTaskClick}
+        onAddTask={onAddTask}
+        status='do-later'
         est="Est: 9hrs 20min"
       />
       <TaskColumn
@@ -224,15 +238,28 @@ export function TaskManager({ tasks, onTaskClick }: TaskManagerProps) {
         title="This week"
         tasks={thisWeekTasks}
         onTaskClick={onTaskClick}
+        onAddTask={onAddTask}
+        status='soon'
         est="Est: 5hrs 5min"
         done={2}
         total={8}
+      />
+      <TaskColumn
+        id="tomorrow"
+        title="Tomorrow"
+        tasks={tomorrowTasks}
+        onTaskClick={onTaskClick}
+        onAddTask={onAddTask}
+        status='tomorrow'
+        est="Est: 2hrs 30min"
       />
       <TaskColumn
         id="today"
         title="Today"
         tasks={todayTasks}
         onTaskClick={onTaskClick}
+        onAddTask={onAddTask}
+        status='do-now'
         est="Est: 1hrs 30min"
         done={0}
         total={1}
