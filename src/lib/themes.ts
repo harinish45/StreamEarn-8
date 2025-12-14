@@ -10,6 +10,9 @@ export const themes: Theme[] = [
         name: 'Dark',
     },
     {
+        name: 'Matrix',
+    },
+    {
         name: 'Spider-Man',
     },
     {

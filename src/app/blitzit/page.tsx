@@ -3,7 +3,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { TaskManager, TaskColumn } from './components/TaskManager';
-import type { Task, TaskStatus } from '@/types/blitzit';
+import type { Task, TaskStatus, TaskPriority } from '@/types/blitzit';
 import {
   DndContext,
   closestCenter,
@@ -146,6 +146,15 @@ export default function BlitzitPage() {
         });
         setIsDetailsOpen(true);
     };
+
+    const handlePriorityChange = (taskId: string, newPriority: TaskPriority) => {
+        setTasks(produce(draft => {
+            const task = draft.find(t => t.id === taskId);
+            if (task) {
+                task.priority = newPriority;
+            }
+        }));
+    };
     
     const todayTasks = tasks.filter(t => t.status === 'do-now');
 
@@ -191,6 +200,7 @@ export default function BlitzitPage() {
                                 tasks={todayTasks}
                                 onTaskClick={handleTaskClick}
                                 onAddTask={handleAddTask}
+                                onPriorityChange={handlePriorityChange}
                                 status='do-now'
                                 est="Est: 1hrs 30min"
                                 done={0}
@@ -203,6 +213,7 @@ export default function BlitzitPage() {
                         tasks={tasks} 
                         onTaskClick={handleTaskClick} 
                         onAddTask={handleAddTask}
+                        onPriorityChange={handlePriorityChange}
                     />
                 </DndContext>
             </div>
