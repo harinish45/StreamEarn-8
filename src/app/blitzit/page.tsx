@@ -189,7 +189,6 @@ export default function BlitzitPage() {
                              </div>
                         </div>
                         <div className="space-y-6">
-                            <PomodoroSettings />
                             <TaskColumn
                                 id="today"
                                 title="Today"
@@ -201,6 +200,7 @@ export default function BlitzitPage() {
                                 done={0}
                                 total={1}
                             />
+                            <PomodoroSettings />
                         </div>
                     </div>
                 </DndContext>
@@ -216,4 +216,3 @@ export default function BlitzitPage() {
         </>
     );
 }
-
