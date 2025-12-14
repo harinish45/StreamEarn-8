@@ -6,7 +6,6 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import {
   FireExtinguisher,
-  User,
   Users,
   Calendar,
   Repeat,
@@ -22,6 +21,8 @@ interface TaskCardProps {
   task: Task;
   onClick: (task: Task) => void;
   isToday?: boolean;
+  isActive: boolean;
+  onStartFocus: (task: Task) => void;
 }
 
 function TaskPill({ priority }: { priority: Task['priority'] }) {
@@ -45,7 +46,7 @@ function TaskPill({ priority }: { priority: Task['priority'] }) {
   );
 }
 
-function TaskCard({ task, onClick, isToday = false }: TaskCardProps) {
+function TaskCard({ task, onClick, isToday = false, isActive, onStartFocus }: TaskCardProps) {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } =
     useSortable({ id: task.id, data: { type: 'Task', task } });
 
@@ -72,6 +73,11 @@ function TaskCard({ task, onClick, isToday = false }: TaskCardProps) {
     }
   }
 
+  const handleCardClick = () => {
+    if (isActive) return;
+    onClick(task);
+  }
+
   return (
     <motion.div
       layout
@@ -81,29 +87,42 @@ function TaskCard({ task, onClick, isToday = false }: TaskCardProps) {
       transition={{ duration: 0.2 }}
       ref={setNodeRef}
       style={style}
-      {...attributes}
-      {...listeners}
     >
       <Card
-        className="mb-2 cursor-grab rounded-lg bg-card/50 p-3 shadow-none transition-all hover:bg-card/70 active:cursor-grabbing"
-        onClick={() => onClick(task)}
+        className={`mb-2 cursor-grab rounded-lg p-3 shadow-none transition-all active:cursor-grabbing ${
+            isActive 
+            ? 'border-2 border-primary bg-card/80' 
+            : 'bg-card/50 hover:bg-card/70'
+        }`}
+        onClick={handleCardClick}
+        {...attributes}
+        {...listeners}
       >
         <CardContent className="p-0">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              {isFireJeffry && (
-                <FireExtinguisher className="h-4 w-4 text-red-500" />
-              )}
-              <p className="font-medium">{task.title}</p>
+          {isActive ? (
+             <div className="flex items-center justify-between">
+                <p className="font-medium text-lg">{task.title}</p>
+                <p className="font-mono text-lg font-bold">01:30:00</p>
             </div>
-            {task.id === 'task-1' ? <Users className="h-5 w-5 text-muted-foreground" /> : <TaskPill priority={task.priority} />}
-          </div>
-          <div className="mt-2 flex items-center justify-between text-xs text-muted-foreground">
-            <span>{formatTime(task.estimatedTime)}</span>
-            {task.recurring && <span>{getRecurrenceDay(task.status)}</span>}
-            {task.scheduledAt && <span>May 27th</span>}
-            <span>00:00</span>
-          </div>
+          ) : (
+            <>
+                <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                    {isFireJeffry && (
+                        <FireExtinguisher className="h-4 w-4 text-red-500" />
+                    )}
+                    <p className="font-medium">{task.title}</p>
+                    </div>
+                    {task.id === 'task-1' ? <Users className="h-5 w-5 text-muted-foreground" /> : <TaskPill priority={task.priority} />}
+                </div>
+                <div className="mt-2 flex items-center justify-between text-xs text-muted-foreground">
+                    <span>{formatTime(task.estimatedTime)}</span>
+                    {task.recurring && <span>{getRecurrenceDay(task.status)}</span>}
+                    {task.scheduledAt && <span>May 27th</span>}
+                    <button onClick={(e) => { e.stopPropagation(); onStartFocus(task); }}>00:00</button>
+                </div>
+            </>
+          )}
         </CardContent>
       </Card>
     </motion.div>
@@ -115,6 +134,8 @@ interface TaskColumnProps {
   title: string;
   tasks: Task[];
   onTaskClick: (task: Task) => void;
+  onStartFocus: (task: Task) => void;
+  activeTaskId: string | null;
   est: string;
   done?: number;
   total?: number;
@@ -126,6 +147,8 @@ function TaskColumn({
   title,
   tasks,
   onTaskClick,
+  onStartFocus,
+  activeTaskId,
   est,
   done,
   total,
@@ -159,7 +182,7 @@ function TaskColumn({
           {id === 'backlog' ? (
             <>
               {regularTasks.map(task => (
-                <TaskCard key={task.id} task={task} onClick={onTaskClick} />
+                <TaskCard key={task.id} task={task} onClick={onTaskClick} isActive={task.id === activeTaskId} onStartFocus={onStartFocus}/>
               ))}
               <Button variant="ghost" className="w-full justify-start gap-2 text-muted-foreground hover:text-foreground">
                 <Plus className="h-4 w-4" /> Add Task
@@ -168,7 +191,7 @@ function TaskColumn({
                 <div className="mt-6">
                   <h4 className="mb-2 text-sm font-semibold text-muted-foreground">{scheduledTasks.length} Scheduled tasks</h4>
                   {scheduledTasks.map(task => (
-                     <TaskCard key={task.id} task={task} onClick={onTaskClick} />
+                     <TaskCard key={task.id} task={task} onClick={onTaskClick} isActive={task.id === activeTaskId} onStartFocus={onStartFocus} />
                   ))}
                 </div>
               )}
@@ -176,7 +199,7 @@ function TaskColumn({
                 <div className="mt-6">
                   <h4 className="mb-2 text-sm font-semibold text-muted-foreground">Recurring tasks</h4>
                   {recurringTasks.map(task => (
-                     <TaskCard key={task.id} task={task} onClick={onTaskClick} />
+                     <TaskCard key={task.id} task={task} onClick={onTaskClick} isActive={task.id === activeTaskId} onStartFocus={onStartFocus}/>
                   ))}
                 </div>
               )}
@@ -184,7 +207,7 @@ function TaskColumn({
           ) : (
             <>
              {tasks.map(task => (
-                <TaskCard key={task.id} task={task} onClick={onTaskClick} isToday={isToday} />
+                <TaskCard key={task.id} task={task} onClick={onTaskClick} isToday={isToday} isActive={task.id === activeTaskId} onStartFocus={onStartFocus} />
              ))}
              <Button variant="ghost" className="w-full justify-start gap-2 text-muted-foreground hover:text-foreground">
                 <Plus className="h-4 w-4" /> Add Task
@@ -208,9 +231,11 @@ function TaskColumn({
 interface TaskManagerProps {
   tasks: Task[];
   onTaskClick: (task: Task) => void;
+  onStartFocus: (task: Task) => void;
+  activeTaskId: string | null;
 }
 
-export function TaskManager({ tasks, onTaskClick }: TaskManagerProps) {
+export function TaskManager({ tasks, onTaskClick, onStartFocus, activeTaskId }: TaskManagerProps) {
   const getTasksByStatus = (status: TaskStatus) =>
     tasks.filter(t => t.status === status);
 
@@ -226,6 +251,8 @@ export function TaskManager({ tasks, onTaskClick }: TaskManagerProps) {
         title="Backlog"
         tasks={backlogTasks}
         onTaskClick={onTaskClick}
+        onStartFocus={onStartFocus}
+        activeTaskId={activeTaskId}
         est="Est: 9hrs 20min"
       />
       <TaskColumn
@@ -233,6 +260,8 @@ export function TaskManager({ tasks, onTaskClick }: TaskManagerProps) {
         title="This week"
         tasks={thisWeekTasks}
         onTaskClick={onTaskClick}
+        onStartFocus={onStartFocus}
+        activeTaskId={activeTaskId}
         est="Est: 5hrs 5min"
         done={2}
         total={8}
@@ -242,6 +271,8 @@ export function TaskManager({ tasks, onTaskClick }: TaskManagerProps) {
         title="Today"
         tasks={todayTasks}
         onTaskClick={onTaskClick}
+        onStartFocus={onStartFocus}
+        activeTaskId={activeTaskId}
         est="Est: 1hrs 30min"
         done={0}
         total={1}

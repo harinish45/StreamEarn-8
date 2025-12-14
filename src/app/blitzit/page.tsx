@@ -2,7 +2,6 @@
 
 import React, { useState, useEffect } from 'react';
 import { TaskManager } from './components/TaskManager';
-import { FocusTimer } from './components/FocusTimer';
 import type { Task, TaskStatus } from '@/types/blitzit';
 import {
   DndContext,
@@ -47,8 +46,7 @@ export default function BlitzitPage() {
     const [tasks, setTasks] = useState<Task[]>(sampleTasks);
     const [selectedTask, setSelectedTask] = useState<Task | null>(null);
     const [isDetailsOpen, setIsDetailsOpen] = useState(false);
-    const [isFocusing, setIsFocusing] = useState(false);
-    const [focusedTask, setFocusedTask] = useState<Task | null>(null);
+    const [activeFocusTask, setActiveFocusTask] = useState<string | null>(null);
     const [isClient, setIsClient] = useState(false);
 
     useEffect(() => {
@@ -113,14 +111,12 @@ export default function BlitzitPage() {
     };
 
     const handleStartFocus = (task: Task) => {
-        setFocusedTask(task);
-        setIsFocusing(true);
+        setActiveFocusTask(task.id);
         setIsDetailsOpen(false);
     }
     
     const handleStopFocus = () => {
-        setIsFocusing(false);
-        setFocusedTask(null);
+        setActiveFocusTask(null);
     }
 
     const handleAddTask = () => {
@@ -175,15 +171,13 @@ export default function BlitzitPage() {
                 onDragOver={handleDragOver}
                 collisionDetection={closestCenter}
             >
-                <TaskManager tasks={tasks} onTaskClick={handleTaskClick} />
-            </DndContext>
-            
-            {isFocusing && focusedTask && (
-                <FocusTimer 
-                    task={focusedTask}
-                    onStop={handleStopFocus}
+                <TaskManager 
+                  tasks={tasks} 
+                  onTaskClick={handleTaskClick} 
+                  onStartFocus={handleStartFocus}
+                  activeTaskId={activeFocusTask}
                 />
-            )}
+            </DndContext>
             
             <TaskDetails
                 task={selectedTask}
