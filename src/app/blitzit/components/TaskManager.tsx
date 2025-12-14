@@ -1,3 +1,4 @@
+
 'use client';
 
 import React from 'react';
@@ -10,6 +11,7 @@ import {
   Calendar,
   Repeat,
   Plus,
+  PlayCircle,
 } from 'lucide-react';
 import { useSortable, SortableContext } from '@dnd-kit/sortable';
 import { useDroppable } from '@dnd-kit/core';
@@ -20,8 +22,6 @@ import { motion } from 'framer-motion';
 interface TaskCardProps {
   task: Task;
   onClick: (task: Task) => void;
-  isToday?: boolean;
-  isActive: boolean;
   onStartFocus: (task: Task) => void;
 }
 
@@ -46,7 +46,7 @@ function TaskPill({ priority }: { priority: Task['priority'] }) {
   );
 }
 
-function TaskCard({ task, onClick, isToday = false, isActive, onStartFocus }: TaskCardProps) {
+function TaskCard({ task, onClick, onStartFocus }: TaskCardProps) {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } =
     useSortable({ id: task.id, data: { type: 'Task', task } });
 
@@ -74,7 +74,6 @@ function TaskCard({ task, onClick, isToday = false, isActive, onStartFocus }: Ta
   }
 
   const handleCardClick = () => {
-    if (isActive) return;
     onClick(task);
   }
 
@@ -89,22 +88,12 @@ function TaskCard({ task, onClick, isToday = false, isActive, onStartFocus }: Ta
       style={style}
     >
       <Card
-        className={`mb-2 cursor-grab rounded-lg p-3 shadow-none transition-all active:cursor-grabbing ${
-            isActive 
-            ? 'border-2 border-primary bg-card/80' 
-            : 'bg-card/50 hover:bg-card/70'
-        }`}
+        className={`mb-2 cursor-grab rounded-lg p-3 shadow-none transition-all active:cursor-grabbing bg-card/50 hover:bg-card/70`}
         onClick={handleCardClick}
         {...attributes}
         {...listeners}
       >
         <CardContent className="p-0">
-          {isActive ? (
-             <div className="flex items-center justify-between">
-                <p className="font-medium text-lg">{task.title}</p>
-                <p className="font-mono text-lg font-bold">01:30:00</p>
-            </div>
-          ) : (
             <>
                 <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
@@ -119,10 +108,11 @@ function TaskCard({ task, onClick, isToday = false, isActive, onStartFocus }: Ta
                     <span>{formatTime(task.estimatedTime)}</span>
                     {task.recurring && <span>{getRecurrenceDay(task.status)}</span>}
                     {task.scheduledAt && <span>May 27th</span>}
-                    <button onClick={(e) => { e.stopPropagation(); onStartFocus(task); }}>00:00</button>
+                    <Button variant="ghost" size="icon" className="h-6 w-6" onClick={(e) => { e.stopPropagation(); onStartFocus(task); }}>
+                        <PlayCircle className="h-5 w-5 text-primary" />
+                    </Button>
                 </div>
             </>
-          )}
         </CardContent>
       </Card>
     </motion.div>
@@ -135,7 +125,6 @@ interface TaskColumnProps {
   tasks: Task[];
   onTaskClick: (task: Task) => void;
   onStartFocus: (task: Task) => void;
-  activeTaskId: string | null;
   est: string;
   done?: number;
   total?: number;
@@ -148,7 +137,6 @@ function TaskColumn({
   tasks,
   onTaskClick,
   onStartFocus,
-  activeTaskId,
   est,
   done,
   total,
@@ -182,7 +170,7 @@ function TaskColumn({
           {id === 'backlog' ? (
             <>
               {regularTasks.map(task => (
-                <TaskCard key={task.id} task={task} onClick={onTaskClick} isActive={task.id === activeTaskId} onStartFocus={onStartFocus}/>
+                <TaskCard key={task.id} task={task} onClick={onTaskClick} onStartFocus={onStartFocus}/>
               ))}
               <Button variant="ghost" className="w-full justify-start gap-2 text-muted-foreground hover:text-foreground">
                 <Plus className="h-4 w-4" /> Add Task
@@ -191,7 +179,7 @@ function TaskColumn({
                 <div className="mt-6">
                   <h4 className="mb-2 text-sm font-semibold text-muted-foreground">{scheduledTasks.length} Scheduled tasks</h4>
                   {scheduledTasks.map(task => (
-                     <TaskCard key={task.id} task={task} onClick={onTaskClick} isActive={task.id === activeTaskId} onStartFocus={onStartFocus} />
+                     <TaskCard key={task.id} task={task} onClick={onTaskClick} onStartFocus={onStartFocus} />
                   ))}
                 </div>
               )}
@@ -199,7 +187,7 @@ function TaskColumn({
                 <div className="mt-6">
                   <h4 className="mb-2 text-sm font-semibold text-muted-foreground">Recurring tasks</h4>
                   {recurringTasks.map(task => (
-                     <TaskCard key={task.id} task={task} onClick={onTaskClick} isActive={task.id === activeTaskId} onStartFocus={onStartFocus}/>
+                     <TaskCard key={task.id} task={task} onClick={onTaskClick} onStartFocus={onStartFocus}/>
                   ))}
                 </div>
               )}
@@ -207,7 +195,7 @@ function TaskColumn({
           ) : (
             <>
              {tasks.map(task => (
-                <TaskCard key={task.id} task={task} onClick={onTaskClick} isToday={isToday} isActive={task.id === activeTaskId} onStartFocus={onStartFocus} />
+                <TaskCard key={task.id} task={task} onClick={onTaskClick} onStartFocus={onStartFocus} />
              ))}
              <Button variant="ghost" className="w-full justify-start gap-2 text-muted-foreground hover:text-foreground">
                 <Plus className="h-4 w-4" /> Add Task
@@ -235,7 +223,7 @@ interface TaskManagerProps {
   activeTaskId: string | null;
 }
 
-export function TaskManager({ tasks, onTaskClick, onStartFocus, activeTaskId }: TaskManagerProps) {
+export function TaskManager({ tasks, onTaskClick, onStartFocus }: TaskManagerProps) {
   const getTasksByStatus = (status: TaskStatus) =>
     tasks.filter(t => t.status === status);
 
@@ -245,14 +233,13 @@ export function TaskManager({ tasks, onTaskClick, onStartFocus, activeTaskId }: 
 
 
   return (
-    <div className="flex gap-6 p-4 md:p-0">
+    <div className="flex gap-6">
       <TaskColumn
         id="backlog"
         title="Backlog"
         tasks={backlogTasks}
         onTaskClick={onTaskClick}
         onStartFocus={onStartFocus}
-        activeTaskId={activeTaskId}
         est="Est: 9hrs 20min"
       />
       <TaskColumn
@@ -261,7 +248,6 @@ export function TaskManager({ tasks, onTaskClick, onStartFocus, activeTaskId }: 
         tasks={thisWeekTasks}
         onTaskClick={onTaskClick}
         onStartFocus={onStartFocus}
-        activeTaskId={activeTaskId}
         est="Est: 5hrs 5min"
         done={2}
         total={8}
@@ -272,7 +258,6 @@ export function TaskManager({ tasks, onTaskClick, onStartFocus, activeTaskId }: 
         tasks={todayTasks}
         onTaskClick={onTaskClick}
         onStartFocus={onStartFocus}
-        activeTaskId={activeTaskId}
         est="Est: 1hrs 30min"
         done={0}
         total={1}

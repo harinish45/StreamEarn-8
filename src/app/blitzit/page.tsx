@@ -1,3 +1,4 @@
+
 'use client';
 
 import React, { useState, useEffect } from 'react';
@@ -42,11 +43,10 @@ const sampleTasks: Task[] = [
 ];
 
 
-export default function BlitzitPage() {
+export default function BlitzitPage({ onStartFocus }: { onStartFocus: (task: Task) => void }) {
     const [tasks, setTasks] = useState<Task[]>(sampleTasks);
     const [selectedTask, setSelectedTask] = useState<Task | null>(null);
     const [isDetailsOpen, setIsDetailsOpen] = useState(false);
-    const [activeFocusTask, setActiveFocusTask] = useState<string | null>(null);
     const [isClient, setIsClient] = useState(false);
 
     useEffect(() => {
@@ -109,16 +109,7 @@ export default function BlitzitPage() {
         setSelectedTask(task);
         setIsDetailsOpen(true);
     };
-
-    const handleStartFocus = (task: Task) => {
-        setActiveFocusTask(task.id);
-        setIsDetailsOpen(false);
-    }
     
-    const handleStopFocus = () => {
-        setActiveFocusTask(null);
-    }
-
     const handleAddTask = () => {
         const newTaskTemplate: Task = {
             id: `task-${Date.now()}`,
@@ -165,6 +156,7 @@ export default function BlitzitPage() {
 
     return (
         <>
+           <div className="p-8">
             <DndContext 
                 sensors={sensors}
                 onDragEnd={handleDragEnd}
@@ -174,16 +166,17 @@ export default function BlitzitPage() {
                 <TaskManager 
                   tasks={tasks} 
                   onTaskClick={handleTaskClick} 
-                  onStartFocus={handleStartFocus}
-                  activeTaskId={activeFocusTask}
+                  onStartFocus={onStartFocus}
+                  activeTaskId={null} // This is now managed by the layout
                 />
             </DndContext>
+            </div>
             
             <TaskDetails
                 task={selectedTask}
                 isOpen={isDetailsOpen}
                 setIsOpen={setIsDetailsOpen}
-                onStartFocus={handleStartFocus}
+                onStartFocus={onStartFocus}
                 onSave={handleSaveTask}
                 onDelete={handleDeleteTask}
             />
