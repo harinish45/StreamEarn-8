@@ -1,7 +1,7 @@
 
 'use client';
 
-import React, { useState, useCallback, useMemo } from 'react';
+import React, { useState, useCallback, useMemo, useEffect } from 'react';
 import {
   DndContext,
   closestCenter,
@@ -30,6 +30,7 @@ import {
 } from 'lucide-react';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
+import { Skeleton } from '@/components/ui/skeleton';
 
 // --- Types ---
 type Task = {
@@ -105,12 +106,17 @@ function TaskItem({ task, onToggle, onDelete, id }: { task: Task; onToggle: () =
 
 
 export default function DashboardPage() {
+  const [isClient, setIsClient] = useState(false);
   const [lists, setLists] = useState<List[]>(initialLists);
   const [selectedListId, setSelectedListId] = useState<string | null>(initialLists[0]?.id || null);
   const [newListName, setNewListName] = useState('');
   const [newTaskText, setNewTaskText] = useState('');
   const [editingListId, setEditingListId] = useState<string | null>(null);
   const [editingListName, setEditingListName] = useState('');
+  
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
   
   const sensors = useSensors(
     useSensor(PointerSensor),
@@ -221,6 +227,45 @@ export default function DashboardPage() {
     }
   };
 
+  const SidebarSkeleton = () => (
+    <aside className="w-64 flex flex-col border-r border-border p-4">
+      <Skeleton className="h-8 w-2/4 mb-4" />
+      <div className="flex-1 space-y-2 overflow-y-auto">
+        <Skeleton className="h-8 w-full" />
+        <Skeleton className="h-8 w-full" />
+        <Skeleton className="h-8 w-full" />
+      </div>
+      <div className="flex gap-2 mt-4">
+        <Skeleton className="h-10 flex-1" />
+        <Skeleton className="h-10 w-10" />
+      </div>
+    </aside>
+  );
+
+  const MainContentSkeleton = () => (
+     <main className="flex-1 flex flex-col p-6">
+        <Skeleton className="h-10 w-1/3 mb-6" />
+        <div className="flex-1 space-y-4 overflow-y-auto pr-2">
+            <Skeleton className="h-14 w-full" />
+            <Skeleton className="h-14 w-full" />
+            <Skeleton className="h-14 w-full" />
+        </div>
+        <div className="mt-6 flex gap-2">
+            <Skeleton className="h-10 flex-1" />
+            <Skeleton className="h-10 w-24" />
+        </div>
+     </main>
+  );
+
+  if (!isClient) {
+    return (
+        <div className="flex h-screen bg-background text-foreground">
+            <SidebarSkeleton />
+            <MainContentSkeleton />
+        </div>
+    );
+  }
+
   return (
     <div className="flex h-screen bg-background text-foreground">
       {/* Sidebar */}
@@ -230,7 +275,7 @@ export default function DashboardPage() {
           {lists.map((list) => (
             <div
               key={list.id}
-              className={`group flex items-center justify-between p-2 rounded-md cursor-pointer ${selectedListId === list.id ? 'bg-primary/20 text-primary-foreground' : 'hover:bg-accent'}`}
+              className={`group flex items-center justify-between p-2 rounded-md cursor-pointer ${selectedListId === list.id ? 'bg-primary/20 text-primary' : 'hover:bg-accent'}`}
               onClick={() => setSelectedListId(list.id)}
             >
               {editingListId === list.id ? (
@@ -323,3 +368,4 @@ export default function DashboardPage() {
     </div>
   );
 }
+
