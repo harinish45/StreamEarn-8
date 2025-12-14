@@ -15,6 +15,7 @@ import { Settings as SettingsIcon } from 'lucide-react';
 import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { ThemeSwitcher } from '@/components/theme-switcher';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 
 export function Settings() {
   return (
@@ -34,7 +35,14 @@ export function Settings() {
         <div className="grid gap-6 py-6">
           <div>
             <Label className="mb-3 block">Theme</Label>
-            <ThemeSwitcher />
+             <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                    <Button variant="outline">Select Theme</Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent>
+                    <ThemeSwitcher />
+                </DropdownMenuContent>
+            </DropdownMenu>
           </div>
           <div>
              <Label className="mb-3 block">Pomodoro Presets</Label>
