@@ -1,3 +1,4 @@
+
 'use client';
 
 import React, { useState, useEffect } from 'react';
@@ -44,7 +45,7 @@ const sampleTasks: Task[] = [
 ];
 
 
-export default function BlitzitPage({ onStartFocus }: { onStartFocus: (task: Task, allTasks: Task[]) => void }) {
+export default function BlitzitPage({ onStartFocus = () => {} }: { onStartFocus?: (task: Task, allTasks: Task[]) => void }) {
     const [tasks, setTasks] = useState<Task[]>(sampleTasks);
     const [selectedTask, setSelectedTask] = useState<Task | null>(null);
     const [isDetailsOpen, setIsDetailsOpen] = useState(false);
