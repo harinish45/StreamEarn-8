@@ -8,11 +8,7 @@ export default function Home() {
     <div className="flex flex-col min-h-screen bg-background text-foreground">
       <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
         <div className="container flex h-14 items-center">
-          <div className="flex flex-1 items-center justify-between">
-            <Link href="/" className="flex items-center space-x-2">
-              <MountainIcon className="h-6 w-6" />
-              <span className="font-bold">StreamEarn</span>
-            </Link>
+          <div className="flex flex-1 items-center justify-end">
             <nav className="flex items-center space-x-6 text-sm font-medium">
               <Link
                 href="/earnings"
@@ -47,19 +43,17 @@ export default function Home() {
               <p className="max-w-[600px] text-muted-foreground md:text-xl">
                 Discover a world of opportunities. Our platform connects you with the best ways to earn online, from micro-tasks and freelancing to AI-powered ventures.
               </p>
-              <div className="flex flex-col gap-4 sm:flex-row">
+              <div className="flex flex-col gap-4 sm:flex-row flex-wrap">
                 <Button size="lg" variant="gradient" asChild>
                     <Link href="/earnings">Explore Earning Opportunities</Link>
                 </Button>
                 <Button size="lg" variant="gradientOutline" asChild>
                     <Link href="/ai-tools">Discover AI Tools</Link>
                 </Button>
-              </div>
-               <div className="mt-4">
-                 <Button size="lg" variant="gradient" asChild>
+                <Button size="lg" variant="gradient" asChild>
                     <Link href="/blitzit">Blitzit Productivity Suite</Link>
-                 </Button>
-               </div>
+                </Button>
+              </div>
             </div>
             <div className="flex items-center justify-center">
                 <Image
