@@ -1,7 +1,5 @@
 'use client';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { ReportsOverview } from '../components/ReportsOverview';
-import { GamificationPanel } from '../components/GamificationPanel';
 import { Bar, BarChart, Pie, PieChart, ResponsiveContainer, Tooltip, XAxis, YAxis, Cell } from 'recharts';
 import { Button } from '@/components/ui/button';
 import { FileDown } from 'lucide-react';
@@ -20,6 +18,17 @@ const categoryData = [
     { name: 'Design', value: 300, fill: 'hsl(var(--warning))' },
     { name: 'Break', value: 200, fill: 'hsl(var(--success))' },
 ];
+
+const dailyData = [
+  { name: 'Mon', tasks: 5, hours: 2.5 },
+  { name: 'Tue', tasks: 8, hours: 4 },
+  { name: 'Wed', tasks: 3, hours: 1.5 },
+  { name: 'Thu', tasks: 6, hours: 3 },
+  { name: 'Fri', tasks: 7, hours: 3.5 },
+  { name: 'Sat', tasks: 4, hours: 2 },
+  { name: 'Sun', tasks: 2, hours: 1 },
+];
+
 
 export default function ReportsPage() {
     return (
@@ -92,8 +101,33 @@ export default function ReportsPage() {
             </div>
             
             <div className="grid gap-6 lg:grid-cols-3">
-                <div className="lg:col-span-2 grid gap-6">
-                    <ReportsOverview />
+                <div className="lg:col-span-3 grid gap-6">
+                     <Card>
+                        <CardHeader>
+                            <CardTitle className="text-lg font-semibold text-foreground">Weekly Productivity</CardTitle>
+                            <CardDescription>Tasks completed and focus hours per day.</CardDescription>
+                        </CardHeader>
+                        <CardContent>
+                            <ResponsiveContainer width="100%" height={300}>
+                                <BarChart data={dailyData}>
+                                    <XAxis dataKey="name" stroke="hsl(var(--muted-foreground))" fontSize={12} tickLine={false} axisLine={false} />
+                                    <YAxis yAxisId="left" stroke="hsl(var(--muted-foreground))" fontSize={12} tickLine={false} axisLine={false} />
+                                    <YAxis yAxisId="right" orientation="right" stroke="hsl(var(--muted-foreground))" fontSize={12} tickLine={false} axisLine={false} />
+                                    <Tooltip
+                                        cursor={{ fill: 'hsla(var(--accent))' }}
+                                        contentStyle={{
+                                            background: 'hsl(var(--background))',
+                                            borderColor: 'hsl(var(--border))',
+                                            color: 'hsl(var(--foreground))',
+                                            borderRadius: 'var(--radius)',
+                                        }}
+                                    />
+                                    <Bar yAxisId="left" dataKey="tasks" fill="hsl(var(--primary))" name="Tasks" radius={[4, 4, 0, 0]} />
+                                    <Bar yAxisId="right" dataKey="hours" fill="hsl(var(--secondary))" name="Hours" radius={[4, 4, 0, 0]} />
+                                </BarChart>
+                            </ResponsiveContainer>
+                        </CardContent>
+                    </Card>
                     <Card>
                         <CardHeader>
                             <CardTitle className="text-lg font-semibold text-foreground">Time by Category</CardTitle>
@@ -120,9 +154,6 @@ export default function ReportsPage() {
                             </ResponsiveContainer>
                         </CardContent>
                     </Card>
-                </div>
-                <div className="space-y-6">
-                     <GamificationPanel />
                 </div>
             </div>
         </div>
