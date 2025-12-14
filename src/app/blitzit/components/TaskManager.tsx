@@ -63,6 +63,15 @@ function TaskCard({ task, onClick, onPriorityChange }: TaskCardProps) {
   const handlePriorityChange = (newPriority: TaskPriority) => {
     onPriorityChange(task.id, newPriority);
   };
+  
+  const handlePlayAudio = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (task.audioBlob) {
+        const audioUrl = URL.createObjectURL(task.audioBlob);
+        const audio = new Audio(audioUrl);
+        audio.play();
+    }
+  }
 
   return (
     <motion.div
@@ -96,7 +105,11 @@ function TaskCard({ task, onClick, onPriorityChange }: TaskCardProps) {
                     </div>
                     <div className="mt-2 flex items-center justify-between text-xs text-muted-foreground">
                         <div className="flex items-center gap-2">
-                            {task.audioBlob && <Mic className="h-3 w-3" />}
+                            {task.audioBlob && (
+                                <button onClick={handlePlayAudio} className="hover:text-primary">
+                                    <Mic className="h-3 w-3" />
+                                </button>
+                            )}
                             <span>{formatTime(task.estimatedTime)}</span>
                         </div>
                         {task.recurring && <span>{getRecurrenceDay(task.status)}</span>}
