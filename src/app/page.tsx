@@ -11,6 +11,12 @@ export default function Home() {
           <div className="flex flex-1 items-center justify-end">
             <nav className="flex items-center space-x-6 text-sm font-medium">
               <Link
+                href="/dashboard"
+                className="text-foreground/60 transition-colors hover:text-foreground/80"
+              >
+                Dashboard
+              </Link>
+              <Link
                 href="/earnings"
                 className="text-foreground/60 transition-colors hover:text-foreground/80"
               >
