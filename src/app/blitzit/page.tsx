@@ -16,8 +16,6 @@ import {
 import { arrayMove } from '@dnd-kit/sortable';
 import { produce } from 'immer';
 import { TaskDetails } from './components/TaskDetails';
-import { GamificationPanel } from './components/GamificationPanel';
-import { ReportsOverview } from './components/ReportsOverview';
 import { PomodoroSettings } from './components/PomodoroSettings';
 import { Alerts } from './components/Alerts';
 
@@ -171,10 +169,6 @@ export default function BlitzitPage({ onStartFocus }: { onStartFocus: (task: Tas
                 <div className="xl:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-6">
                     <Alerts />
                     <PomodoroSettings />
-                </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-1 gap-6">
-                    <GamificationPanel />
-                    <ReportsOverview />
                 </div>
             </div>
             <DndContext 
