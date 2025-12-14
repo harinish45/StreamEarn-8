@@ -1,6 +1,7 @@
 'use client';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { ReportsOverview } from '../components/ReportsOverview';
+import { GamificationPanel } from '../components/GamificationPanel';
 import { Bar, BarChart, Pie, PieChart, ResponsiveContainer, Tooltip, XAxis, YAxis, Cell } from 'recharts';
 import { Button } from '@/components/ui/button';
 import { FileDown } from 'lucide-react';
@@ -22,7 +23,7 @@ const categoryData = [
 
 export default function ReportsPage() {
     return (
-        <div className="space-y-6">
+        <div className="p-8 space-y-6">
             <header className="flex justify-between items-center">
                 <div>
                     <h1 className="text-3xl font-bold">Reports</h1>
@@ -90,34 +91,39 @@ export default function ReportsPage() {
                 </Card>
             </div>
             
-            <div className="grid gap-6 lg:grid-cols-2">
-                <ReportsOverview />
-                <Card>
-                    <CardHeader>
-                        <CardTitle className="text-lg font-semibold text-foreground">Time by Category</CardTitle>
-                        <CardDescription>How you've allocated your focus time.</CardDescription>
-                    </CardHeader>
-                    <CardContent>
-                        <ResponsiveContainer width="100%" height={200}>
-                            <PieChart>
-                                <Pie data={categoryData} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={80} label>
-                                     {categoryData.map((entry, index) => (
-                                        <Cell key={`cell-${index}`} fill={entry.fill} />
-                                    ))}
-                                </Pie>
-                                <Tooltip
-                                    cursor={{ fill: 'hsla(var(--accent))' }}
-                                    contentStyle={{
-                                        background: 'hsl(var(--background))',
-                                        borderColor: 'hsl(var(--border))',
-                                        color: 'hsl(var(--foreground))',
-                                        borderRadius: 'var(--radius)',
-                                    }}
-                                />
-                            </PieChart>
-                        </ResponsiveContainer>
-                    </CardContent>
-                </Card>
+            <div className="grid gap-6 lg:grid-cols-3">
+                <div className="lg:col-span-2 grid gap-6">
+                    <ReportsOverview />
+                    <Card>
+                        <CardHeader>
+                            <CardTitle className="text-lg font-semibold text-foreground">Time by Category</CardTitle>
+                            <CardDescription>How you've allocated your focus time.</CardDescription>
+                        </CardHeader>
+                        <CardContent>
+                            <ResponsiveContainer width="100%" height={200}>
+                                <PieChart>
+                                    <Pie data={categoryData} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={80} label>
+                                        {categoryData.map((entry, index) => (
+                                            <Cell key={`cell-${index}`} fill={entry.fill} />
+                                        ))}
+                                    </Pie>
+                                    <Tooltip
+                                        cursor={{ fill: 'hsla(var(--accent))' }}
+                                        contentStyle={{
+                                            background: 'hsl(var(--background))',
+                                            borderColor: 'hsl(var(--border))',
+                                            color: 'hsl(var(--foreground))',
+                                            borderRadius: 'var(--radius)',
+                                        }}
+                                    />
+                                </PieChart>
+                            </ResponsiveContainer>
+                        </CardContent>
+                    </Card>
+                </div>
+                <div className="space-y-6">
+                     <GamificationPanel />
+                </div>
             </div>
         </div>
     );
