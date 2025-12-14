@@ -1,28 +1,30 @@
 'use client';
 
+import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import type { Task } from '@/types/blitzit';
 import { format } from 'date-fns';
 import { motion, AnimatePresence } from 'framer-motion';
+import { Loader2 } from 'lucide-react';
 
 function TaskPill({ priority }: { priority: Task['priority'] }) {
   const priorityMap: Record<
     Task['priority'],
-    { letter: string; color: string }
+    { label: string; className: string }
   > = {
-    urgent: { letter: 'P', color: 'bg-pink-500' },
-    important: { letter: 'G', color: 'bg-blue-500' },
-    neither: { letter: 'B', color: 'bg-green-500' },
+    urgent: { label: 'Urgent', className: 'bg-pink-500/20 text-pink-400 border border-pink-500/30' },
+    important: { label: 'Important', className: 'bg-blue-500/20 text-blue-400 border border-blue-500/30' },
+    neither: { label: 'Neither', className: 'bg-green-500/20 text-green-400 border border-green-500/30' },
   };
 
-  const { letter, color } = priorityMap[priority];
+  const { label, className } = priorityMap[priority];
 
   return (
     <div
-      className={`flex h-5 w-5 items-center justify-center rounded-full text-xs font-bold text-white ${color}`}
+      className={`flex h-6 items-center justify-center rounded-full px-2 text-xs font-semibold ${className}`}
     >
-      {letter}
+      {label}
     </div>
   );
 }
@@ -33,7 +35,16 @@ interface AlertsProps {
 }
 
 export function Alerts({ tasks, onUpdateTasks }: AlertsProps) {
-    
+    const [isLoading, setIsLoading] = useState<'do-now' | 'do-later' | null>(null);
+
+    const handleUpdate = (newStatus: 'do-now' | 'do-later') => {
+        setIsLoading(newStatus);
+        // Simulate network delay for better UX
+        setTimeout(() => {
+            onUpdateTasks(newStatus);
+        }, 500);
+    };
+
     const formatTime = (minutes: number | undefined) => {
         if (!minutes) return '';
         const hours = Math.floor(minutes / 60);
@@ -50,7 +61,8 @@ export function Alerts({ tasks, onUpdateTasks }: AlertsProps) {
         <AnimatePresence>
         {tasks.length > 0 && (
             <motion.div
-                initial={{ opacity: 1, height: 'auto' }}
+                initial={{ opacity: 0, y: -20 }}
+                animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, height: 0 }}
                 transition={{ duration: 0.3 }}
             >
@@ -75,8 +87,12 @@ export function Alerts({ tasks, onUpdateTasks }: AlertsProps) {
                             ))}
                         </div>
                         <div className="mt-6 flex gap-4">
-                            <Button className="flex-1" variant="default" onClick={() => onUpdateTasks('do-now')}>Do now</Button>
-                            <Button className="flex-1" variant="secondary" onClick={() => onUpdateTasks('do-later')}>Do later</Button>
+                            <Button className="flex-1" variant="default" onClick={() => handleUpdate('do-now')} disabled={!!isLoading}>
+                                {isLoading === 'do-now' ? <Loader2 className="h-4 w-4 animate-spin" /> : 'Do now'}
+                            </Button>
+                            <Button className="flex-1" variant="secondary" onClick={() => handleUpdate('do-later')} disabled={!!isLoading}>
+                                {isLoading === 'do-later' ? <Loader2 className="h-4 w-4 animate-spin" /> : 'Do later'}
+                            </Button>
                         </div>
                     </CardContent>
                 </Card>

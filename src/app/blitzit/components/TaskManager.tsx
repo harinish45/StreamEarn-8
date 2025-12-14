@@ -23,20 +23,20 @@ interface TaskCardProps {
 function TaskPill({ priority }: { priority: Task['priority'] }) {
   const priorityMap: Record<
     Task['priority'],
-    { letter: string; color: string }
+    { label: string; className: string }
   > = {
-    urgent: { letter: 'P', color: 'bg-pink-500' },
-    important: { letter: 'G', color: 'bg-blue-500' },
-    neither: { letter: 'B', color: 'bg-green-500' },
+    urgent: { label: 'Urgent', className: 'bg-pink-500/20 text-pink-400 border border-pink-500/30' },
+    important: { label: 'Important', className: 'bg-blue-500/20 text-blue-400 border border-blue-500/30' },
+    neither: { label: 'Neither', className: 'bg-green-500/20 text-green-400 border border-green-500/30' },
   };
 
-  const { letter, color } = priorityMap[priority];
+  const { label, className } = priorityMap[priority];
 
   return (
     <div
-      className={`flex h-6 w-6 items-center justify-center rounded-full text-xs font-bold text-white ${color}`}
+      className={`flex h-6 items-center justify-center rounded-full px-2 text-xs font-semibold ${className}`}
     >
-      {letter}
+      {label}
     </div>
   );
 }
