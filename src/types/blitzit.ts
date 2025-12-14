@@ -28,6 +28,7 @@ export interface Task {
   tags?: string[];
   recurring?: 'daily' | 'weekly' | 'monthly' | null;
   subtasks?: Subtask[];
+  audioBlob?: Blob;
 }
 
 export interface Subtask {

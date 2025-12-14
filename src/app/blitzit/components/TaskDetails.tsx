@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import type { Task } from '@/types/blitzit';
 import {
   Dialog,
@@ -21,11 +21,13 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { Calendar as CalendarIcon, Mic, Trash2 } from 'lucide-react';
+import { Calendar as CalendarIcon, Mic, Pause, Play, Square, Trash2 } from 'lucide-react';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Calendar } from '@/components/ui/calendar';
 import { cn } from '@/lib/utils';
 import { format } from 'date-fns';
+import { useToast } from '@/hooks/use-toast';
+import { PrioritySelector } from './PrioritySelector';
 
 interface TaskDetailsProps {
   task: Task | null;
@@ -36,16 +38,61 @@ interface TaskDetailsProps {
 }
 
 export function TaskDetails({ task, isOpen, setIsOpen, onSave, onDelete }: TaskDetailsProps) {
-  const [editedTask, setEditedTask] = React.useState<Task | null>(task);
+  const [editedTask, setEditedTask] = useState<Task | null>(task);
+  const { toast } = useToast();
 
-  React.useEffect(() => {
+  // Voice note state
+  const [isRecording, setIsRecording] = useState(false);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [audioBlob, setAudioBlob] = useState<Blob | null>(null);
+  const [audioUrl, setAudioUrl] = useState<string | null>(null);
+  const [duration, setDuration] = useState(0);
+  const [currentTime, setCurrentTime] = useState(0);
+  const mediaRecorderRef = useRef<MediaRecorder | null>(null);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+  const timerIntervalRef = useRef<NodeJS.Timeout | null>(null);
+
+  useEffect(() => {
     setEditedTask(task);
+    if (task?.audioBlob) {
+        setAudioBlob(task.audioBlob);
+        setAudioUrl(URL.createObjectURL(task.audioBlob));
+    } else {
+        setAudioBlob(null);
+        setAudioUrl(null);
+    }
   }, [task]);
+  
+   useEffect(() => {
+    if (audioUrl && audioRef.current) {
+      audioRef.current.src = audioUrl;
+      audioRef.current.onloadedmetadata = () => {
+        setDuration(audioRef.current!.duration);
+      };
+      audioRef.current.onended = () => {
+        setIsPlaying(false);
+        setCurrentTime(0);
+      };
+      audioRef.current.ontimeupdate = () => {
+          setCurrentTime(audioRef.current!.currentTime);
+      };
+    }
+
+    return () => {
+        if (timerIntervalRef.current) {
+            clearInterval(timerIntervalRef.current);
+        }
+    }
+  }, [audioUrl]);
 
   if (!editedTask) return null;
 
   const handleSave = () => {
-    onSave(editedTask);
+    const taskToSave = {...editedTask};
+    if (audioBlob) {
+        taskToSave.audioBlob = audioBlob;
+    }
+    onSave(taskToSave);
     setIsOpen(false);
   };
 
@@ -56,6 +103,74 @@ export function TaskDetails({ task, isOpen, setIsOpen, onSave, onDelete }: TaskD
   const handleDeleteClick = () => {
       onDelete(editedTask.id);
       setIsOpen(false);
+  }
+
+  const startRecording = async () => {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      const mediaRecorder = new MediaRecorder(stream);
+      mediaRecorderRef.current = mediaRecorder;
+      const audioChunks: BlobPart[] = [];
+      mediaRecorder.ondataavailable = (event) => {
+        audioChunks.push(event.data);
+      };
+      mediaRecorder.onstop = () => {
+        const blob = new Blob(audioChunks, { type: 'audio/webm' });
+        setAudioBlob(blob);
+        setAudioUrl(URL.createObjectURL(blob));
+        stream.getTracks().forEach(track => track.stop());
+      };
+      mediaRecorder.start();
+      setIsRecording(true);
+      setCurrentTime(0);
+      setDuration(0);
+      timerIntervalRef.current = setInterval(() => {
+          setDuration(prev => prev + 1);
+      }, 1000);
+    } catch (err) {
+      console.error("Failed to start recording", err);
+      toast({
+          variant: "destructive",
+          title: "Microphone Access Denied",
+          description: "Please enable microphone access in your browser settings to record voice notes."
+      })
+    }
+  };
+
+  const stopRecording = () => {
+    if (mediaRecorderRef.current) {
+      mediaRecorderRef.current.stop();
+      setIsRecording(false);
+      if(timerIntervalRef.current) clearInterval(timerIntervalRef.current);
+    }
+  };
+
+  const togglePlay = () => {
+    if (audioRef.current) {
+      if (isPlaying) {
+        audioRef.current.pause();
+      } else {
+        audioRef.current.play();
+      }
+      setIsPlaying(!isPlaying);
+    }
+  };
+
+  const formatTime = (timeInSeconds: number) => {
+      const minutes = Math.floor(timeInSeconds / 60);
+      const seconds = Math.floor(timeInSeconds % 60);
+      return `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+  }
+
+  const deleteAudio = () => {
+      setAudioBlob(null);
+      setAudioUrl(null);
+      setDuration(0);
+      setCurrentTime(0);
+      if (audioRef.current) {
+          audioRef.current.src = '';
+      }
+      setEditedTask(prev => prev ? ({...prev, audioBlob: undefined }) : null);
   }
 
   return (
@@ -141,10 +256,28 @@ export function TaskDetails({ task, isOpen, setIsOpen, onSave, onDelete }: TaskD
            <div className="grid gap-2">
                 <Label>Voice Notes</Label>
                 <div className="flex items-center gap-2 p-2 rounded-lg bg-muted">
-                    <Button variant="ghost" size="icon"><Mic className="h-5 w-5"/></Button>
-                    <div className="w-full h-1 bg-background rounded-full" />
-                    <span className="text-xs text-muted-foreground">00:00</span>
+                    {!audioUrl && !isRecording && (
+                        <Button variant="ghost" size="icon" onClick={startRecording}><Mic className="h-5 w-5"/></Button>
+                    )}
+                    {isRecording && (
+                        <Button variant="ghost" size="icon" onClick={stopRecording} className="text-red-500"><Square className="h-5 w-5"/></Button>
+                    )}
+                    {audioUrl && !isRecording && (
+                        <Button variant="ghost" size="icon" onClick={togglePlay}>
+                            {isPlaying ? <Pause className="h-5 w-5"/> : <Play className="h-5 w-5"/>}
+                        </Button>
+                    )}
+                    <div className="w-full h-2 bg-background rounded-full relative">
+                        <div className="absolute h-full bg-primary rounded-full" style={{ width: `${(currentTime / (duration || 1)) * 100}%`}}></div>
+                    </div>
+                    <span className="text-xs text-muted-foreground">{formatTime(isRecording ? duration : (duration || 0) - currentTime)}</span>
+                     {audioUrl && !isRecording && (
+                        <Button variant="ghost" size="icon" onClick={deleteAudio} className="text-destructive">
+                            <Trash2 className="h-4 w-4" />
+                        </Button>
+                    )}
                 </div>
+                <audio ref={audioRef} className="hidden" />
            </div>
         </div>
         <DialogFooter className="justify-between">
