@@ -9,6 +9,7 @@ import {
   FireExtinguisher,
   Users,
   Plus,
+  Mic,
 } from 'lucide-react';
 import { useSortable, SortableContext } from '@dnd-kit/sortable';
 import { useDroppable } from '@dnd-kit/core';
@@ -94,7 +95,10 @@ function TaskCard({ task, onClick, onPriorityChange }: TaskCardProps) {
                         </div>
                     </div>
                     <div className="mt-2 flex items-center justify-between text-xs text-muted-foreground">
-                        <span>{formatTime(task.estimatedTime)}</span>
+                        <div className="flex items-center gap-2">
+                            {task.audioBlob && <Mic className="h-3 w-3" />}
+                            <span>{formatTime(task.estimatedTime)}</span>
+                        </div>
                         {task.recurring && <span>{getRecurrenceDay(task.status)}</span>}
                         {task.scheduledAt && <span>May 27th</span>}
                     </div>
