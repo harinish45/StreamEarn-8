@@ -3,29 +3,31 @@
 import React, { useState } from 'react';
 import { AppSidebar } from "./components/AppSidebar";
 import { Header } from "./components/Header";
-import { useTheme } from '@/components/theme-provider';
 import type { Task } from '@/types/blitzit';
-import { FocusSidebar } from './components/FocusTimer';
+import { FocusView } from './components/FocusView';
 
 export default function BlitzitLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const { theme } = useTheme();
   const [activeFocusTask, setActiveFocusTask] = useState<Task | null>(null);
+  const [isFocusMode, setIsFocusMode] = useState(false);
+  const [allTasks, setAllTasks] = useState<Task[]>([]);
 
-  const handleStartFocus = (task: Task) => {
+  const handleStartFocus = (task: Task, tasks: Task[]) => {
     setActiveFocusTask(task);
+    setAllTasks(tasks);
+    setIsFocusMode(true);
   };
   
   const handleStopFocus = () => {
     setActiveFocusTask(null);
+    setIsFocusMode(false);
   };
   
-  // We need to pass the start focus handler down to the children
   const childrenWithProps = React.Children.map(children, child => {
-    if (React.isValidElement(child)) {
+    if (React.isValidElement(child) && child.type.name === 'BlitzitPage') {
       // @ts-ignore
       return React.cloneElement(child, { onStartFocus: handleStartFocus });
     }
@@ -39,10 +41,17 @@ export default function BlitzitLayout({
             <div className="flex-1 flex flex-col min-w-0">
                 <Header />
                 <main className="flex-1 overflow-auto">
-                    {childrenWithProps}
+                    {isFocusMode && activeFocusTask ? (
+                      <FocusView 
+                        activeTask={activeFocusTask} 
+                        allTasks={allTasks}
+                        onClose={handleStopFocus} 
+                      />
+                    ) : (
+                      childrenWithProps
+                    )}
                 </main>
             </div>
-            {activeFocusTask && <FocusSidebar activeTask={activeFocusTask} onClose={handleStopFocus} />}
         </div>
     </div>
   );

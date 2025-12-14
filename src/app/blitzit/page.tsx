@@ -44,7 +44,7 @@ const sampleTasks: Task[] = [
 ];
 
 
-export default function BlitzitPage({ onStartFocus }: { onStartFocus: (task: Task) => void }) {
+export default function BlitzitPage({ onStartFocus }: { onStartFocus: (task: Task, allTasks: Task[]) => void }) {
     const [tasks, setTasks] = useState<Task[]>(sampleTasks);
     const [selectedTask, setSelectedTask] = useState<Task | null>(null);
     const [isDetailsOpen, setIsDetailsOpen] = useState(false);
@@ -142,6 +142,10 @@ export default function BlitzitPage({ onStartFocus }: { onStartFocus: (task: Tas
         setIsDetailsOpen(false);
         setSelectedTask(null);
     }
+    
+    const handleStartFocus = (task: Task) => {
+        onStartFocus(task, tasks);
+    }
 
     if (!isClient) {
       return (
@@ -180,7 +184,7 @@ export default function BlitzitPage({ onStartFocus }: { onStartFocus: (task: Tas
                 <TaskManager 
                   tasks={tasks} 
                   onTaskClick={handleTaskClick} 
-                  onStartFocus={onStartFocus}
+                  onStartFocus={handleStartFocus}
                 />
             </DndContext>
             </div>
@@ -189,7 +193,7 @@ export default function BlitzitPage({ onStartFocus }: { onStartFocus: (task: Tas
                 task={selectedTask}
                 isOpen={isDetailsOpen}
                 setIsOpen={setIsDetailsOpen}
-                onStartFocus={onStartFocus}
+                onStartFocus={handleStartFocus}
                 onSave={handleSaveTask}
                 onDelete={handleDeleteTask}
             />
