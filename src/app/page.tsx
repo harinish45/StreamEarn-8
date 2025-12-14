@@ -20,6 +20,18 @@ export default function Home() {
               >
                 Dashboard
               </Link>
+              <Link
+                href="/earnings"
+                className="text-foreground/60 transition-colors hover:text-foreground/80"
+              >
+                Earnings
+              </Link>
+              <Link
+                href="/ai-tools"
+                className="text-foreground/60 transition-colors hover:text-foreground/80"
+              >
+                AI Tools
+              </Link>
             </nav>
           </div>
         </div>
@@ -29,21 +41,21 @@ export default function Home() {
         <div className="container relative py-12 md:py-24 lg:py-32">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
             <div className="flex flex-col justify-center space-y-6">
-              <div className="inline-block rounded-lg bg-muted px-3 py-1 text-sm">
-                Trusted & Verified
-              </div>
               <h1 className="text-4xl font-bold tracking-tighter sm:text-5xl xl:text-6xl/none">
-                The Smartest Way to Find Online Opportunities
+                Your Gateway to Online Earning
               </h1>
               <p className="max-w-[600px] text-muted-foreground md:text-xl">
-                Our platform combines verified listings, AI-powered insights, and direct connections to help you discover and capitalize on online earning opportunities.
+                Discover a world of opportunities. Our platform connects you with the best ways to earn online, from micro-tasks and freelancing to AI-powered ventures.
               </p>
-              <div className="flex flex-col gap-4 sm:flex-row">
-                <Button size="lg" asChild>
-                    <Link href="/dashboard">Go to Dashboard</Link>
+              <div className="flex flex-col gap-4 sm:flex-row flex-wrap">
+                <Button size="lg" variant="gradient-purple" asChild>
+                  <Link href="/earnings">Explore Earning Opportunities</Link>
                 </Button>
-                <Button size="lg" variant="outline" asChild>
-                    <Link href="/ai-tools">Discover AI Tools</Link>
+                <Button size="lg" variant="gradient-blue" asChild>
+                  <Link href="/ai-tools">Discover AI Tools</Link>
+                </Button>
+                <Button size="lg" variant="gradient-green" asChild>
+                    <Link href="/dashboard">Productivity Suite</Link>
                 </Button>
               </div>
             </div>
