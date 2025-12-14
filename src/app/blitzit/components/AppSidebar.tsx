@@ -8,7 +8,6 @@ import {
     LifeBuoy, 
     LogOut, 
     Settings, 
-    Share2, 
     Star 
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -16,10 +15,8 @@ import { cn } from "@/lib/utils";
 
 const navItems = [
     { href: "/blitzit", icon: LayoutDashboard, label: "Dashboard" },
-    { href: "/blitzit/focus", icon: Star, label: "Focus Mode" },
     { href: "/blitzit/calendar", icon: Calendar, label: "Calendar" },
     { href: "/blitzit/reports", icon: Activity, label: "Reports" },
-    { href: "/blitzit/integrations", icon: Share2, label: "Integrations" },
 ]
 
 export function AppSidebar() {

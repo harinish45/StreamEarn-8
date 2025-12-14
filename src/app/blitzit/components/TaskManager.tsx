@@ -8,7 +8,6 @@ import {
   FireExtinguisher,
   Users,
   Plus,
-  PlayCircle,
 } from 'lucide-react';
 import { useSortable, SortableContext } from '@dnd-kit/sortable';
 import { useDroppable } from '@dnd-kit/core';
@@ -19,7 +18,6 @@ import { motion } from 'framer-motion';
 interface TaskCardProps {
   task: Task;
   onClick: (task: Task) => void;
-  onStartFocus: (task: Task) => void;
 }
 
 function TaskPill({ priority }: { priority: Task['priority'] }) {
@@ -43,7 +41,7 @@ function TaskPill({ priority }: { priority: Task['priority'] }) {
   );
 }
 
-function TaskCard({ task, onClick, onStartFocus }: TaskCardProps) {
+function TaskCard({ task, onClick }: TaskCardProps) {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } =
     useSortable({ id: task.id, data: { type: 'Task', task } });
 
@@ -87,8 +85,10 @@ function TaskCard({ task, onClick, onStartFocus }: TaskCardProps) {
       <Card
         className={`mb-2 cursor-grab rounded-lg p-3 shadow-none transition-all active:cursor-grabbing bg-card/50 hover:bg-card/70`}
         onClick={handleCardClick}
+        {...attributes} 
+        {...listeners}
       >
-        <div className="flex items-start" {...attributes} {...listeners}>
+        <div className="flex items-start">
             <CardContent className="p-0 flex-1">
                 <>
                     <div className="flex items-center justify-between">
@@ -107,9 +107,6 @@ function TaskCard({ task, onClick, onStartFocus }: TaskCardProps) {
                     </div>
                 </>
             </CardContent>
-            <Button variant="ghost" size="icon" className="h-6 w-6 ml-2" onClick={(e) => { e.stopPropagation(); onStartFocus(task); }}>
-                <PlayCircle className="h-5 w-5 text-primary" />
-            </Button>
         </div>
       </Card>
     </motion.div>
@@ -121,11 +118,9 @@ interface TaskColumnProps {
   title: string;
   tasks: Task[];
   onTaskClick: (task: Task) => void;
-  onStartFocus: (task: Task) => void;
   est: string;
   done?: number;
   total?: number;
-  isToday?: boolean;
 }
 
 function TaskColumn({
@@ -133,11 +128,9 @@ function TaskColumn({
   title,
   tasks,
   onTaskClick,
-  onStartFocus,
   est,
   done,
   total,
-  isToday = false,
 }: TaskColumnProps) {
   const { setNodeRef } = useDroppable({ id, data: { type: 'Column', id } });
 
@@ -145,17 +138,9 @@ function TaskColumn({
   const recurringTasks = tasks.filter(t => t.recurring);
   const regularTasks = tasks.filter(t => !t.scheduledAt && !t.recurring);
 
-  const handleBlitzNow = () => {
-    if (tasks.length > 0) {
-      onStartFocus(tasks[0]);
-    }
-  };
-
   return (
     <div
-      className={`flex-1 rounded-xl bg-card p-4 ${
-        isToday ? 'border-2 border-purple-500/50 shadow-lg shadow-purple-500/10' : ''
-      }`}
+      className={`flex-1 rounded-xl bg-card p-4`}
     >
       <div className="mb-4 flex items-center justify-between">
         <h3 className="text-lg font-bold text-foreground">{title}</h3>
@@ -173,7 +158,7 @@ function TaskColumn({
           {id === 'backlog' ? (
             <>
               {regularTasks.map(task => (
-                <TaskCard key={task.id} task={task} onClick={onTaskClick} onStartFocus={onStartFocus}/>
+                <TaskCard key={task.id} task={task} onClick={onTaskClick} />
               ))}
               <Button variant="ghost" className="w-full justify-start gap-2 text-muted-foreground hover:text-foreground">
                 <Plus className="h-4 w-4" /> Add Task
@@ -182,7 +167,7 @@ function TaskColumn({
                 <div className="mt-6">
                   <h4 className="mb-2 text-sm font-semibold text-muted-foreground">{scheduledTasks.length} Scheduled tasks</h4>
                   {scheduledTasks.map(task => (
-                     <TaskCard key={task.id} task={task} onClick={onTaskClick} onStartFocus={onStartFocus} />
+                     <TaskCard key={task.id} task={task} onClick={onTaskClick} />
                   ))}
                 </div>
               )}
@@ -190,7 +175,7 @@ function TaskColumn({
                 <div className="mt-6">
                   <h4 className="mb-2 text-sm font-semibold text-muted-foreground">Recurring tasks</h4>
                   {recurringTasks.map(task => (
-                     <TaskCard key={task.id} task={task} onClick={onTaskClick} onStartFocus={onStartFocus}/>
+                     <TaskCard key={task.id} task={task} onClick={onTaskClick}/>
                   ))}
                 </div>
               )}
@@ -198,7 +183,7 @@ function TaskColumn({
           ) : (
             <>
              {tasks.map(task => (
-                <TaskCard key={task.id} task={task} onClick={onTaskClick} onStartFocus={onStartFocus} />
+                <TaskCard key={task.id} task={task} onClick={onTaskClick} />
              ))}
              <Button variant="ghost" className="w-full justify-start gap-2 text-muted-foreground hover:text-foreground">
                 <Plus className="h-4 w-4" /> Add Task
@@ -207,14 +192,6 @@ function TaskColumn({
           )}
         </SortableContext>
       </div>
-
-       {isToday && (
-         <div className="mt-6">
-           <Button onClick={handleBlitzNow} className="h-12 w-full rounded-xl bg-gradient-to-r from-pink-500 via-purple-500 to-cyan-500 text-lg font-bold text-white transition-all hover:shadow-lg hover:shadow-purple-500/30">
-             ⚡ Blitz now
-           </Button>
-         </div>
-       )}
     </div>
   );
 }
@@ -222,10 +199,9 @@ function TaskColumn({
 interface TaskManagerProps {
   tasks: Task[];
   onTaskClick: (task: Task) => void;
-  onStartFocus: (task: Task) => void;
 }
 
-export function TaskManager({ tasks, onTaskClick, onStartFocus }: TaskManagerProps) {
+export function TaskManager({ tasks, onTaskClick }: TaskManagerProps) {
   const getTasksByStatus = (status: TaskStatus) =>
     tasks.filter(t => t.status === status);
 
@@ -241,7 +217,6 @@ export function TaskManager({ tasks, onTaskClick, onStartFocus }: TaskManagerPro
         title="Backlog"
         tasks={backlogTasks}
         onTaskClick={onTaskClick}
-        onStartFocus={onStartFocus}
         est="Est: 9hrs 20min"
       />
       <TaskColumn
@@ -249,7 +224,6 @@ export function TaskManager({ tasks, onTaskClick, onStartFocus }: TaskManagerPro
         title="This week"
         tasks={thisWeekTasks}
         onTaskClick={onTaskClick}
-        onStartFocus={onStartFocus}
         est="Est: 5hrs 5min"
         done={2}
         total={8}
@@ -259,11 +233,9 @@ export function TaskManager({ tasks, onTaskClick, onStartFocus }: TaskManagerPro
         title="Today"
         tasks={todayTasks}
         onTaskClick={onTaskClick}
-        onStartFocus={onStartFocus}
         est="Est: 1hrs 30min"
         done={0}
         total={1}
-        isToday={true}
       />
     </div>
   );

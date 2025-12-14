@@ -1,4 +1,3 @@
-
 'use client';
 
 import React from 'react';
@@ -22,7 +21,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { Calendar as CalendarIcon, Mic, PlayCircle, Trash2 } from 'lucide-react';
+import { Calendar as CalendarIcon, Mic, Trash2 } from 'lucide-react';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Calendar } from '@/components/ui/calendar';
 import { cn } from '@/lib/utils';
@@ -32,12 +31,11 @@ interface TaskDetailsProps {
   task: Task | null;
   isOpen: boolean;
   setIsOpen: (isOpen: boolean) => void;
-  onStartFocus: (task: Task) => void;
   onSave: (task: Task) => void;
   onDelete: (taskId: string) => void;
 }
 
-export function TaskDetails({ task, isOpen, setIsOpen, onStartFocus, onSave, onDelete }: TaskDetailsProps) {
+export function TaskDetails({ task, isOpen, setIsOpen, onSave, onDelete }: TaskDetailsProps) {
   const [editedTask, setEditedTask] = React.useState<Task | null>(task);
 
   React.useEffect(() => {
@@ -55,11 +53,6 @@ export function TaskDetails({ task, isOpen, setIsOpen, onStartFocus, onSave, onD
     setEditedTask(prev => prev ? ({...prev, [field]: value}) : null);
   };
   
-  const handleStartFocusClick = () => {
-    onStartFocus(editedTask);
-    setIsOpen(false);
-  }
-  
   const handleDeleteClick = () => {
       onDelete(editedTask.id);
       setIsOpen(false);
@@ -71,7 +64,7 @@ export function TaskDetails({ task, isOpen, setIsOpen, onStartFocus, onSave, onD
         <DialogHeader>
           <DialogTitle>Task Details</DialogTitle>
           <DialogDescription>
-            Update task details or start a focus session.
+            Update task details.
           </DialogDescription>
         </DialogHeader>
         <div className="grid gap-6 py-4 max-h-[70vh] overflow-y-auto pr-4">
@@ -163,10 +156,6 @@ export function TaskDetails({ task, isOpen, setIsOpen, onStartFocus, onSave, onD
             <div className="flex gap-2">
                 <Button variant="secondary" onClick={() => setIsOpen(false)}>Cancel</Button>
                 <Button onClick={handleSave}>Save Changes</Button>
-                <Button onClick={handleStartFocusClick} className="bg-gradient-to-r from-primary to-secondary text-white">
-                    <PlayCircle className="mr-2 h-4 w-4" />
-                    Start Focus
-                </Button>
             </div>
         </DialogFooter>
       </DialogContent>

@@ -18,7 +18,6 @@ import { produce } from 'immer';
 import { TaskDetails } from './components/TaskDetails';
 import { PomodoroSettings } from './components/PomodoroSettings';
 import { Alerts } from './components/Alerts';
-import { useFocus } from './context/FocusProvider';
 
 const sampleTasks: Task[] = [
     { id: 'task-1', title: 'Marketing brief', description: 'Create a modern design in Figma.', priority: 'important', status: 'do-now', listId: 'work', estimatedTime: 90 },
@@ -39,7 +38,6 @@ export default function BlitzitPage() {
     const [selectedTask, setSelectedTask] = useState<Task | null>(null);
     const [isDetailsOpen, setIsDetailsOpen] = useState(false);
     const [isClient, setIsClient] = useState(false);
-    const { startFocus } = useFocus();
 
     useEffect(() => {
         setIsClient(true);
@@ -121,10 +119,6 @@ export default function BlitzitPage() {
         setIsDetailsOpen(false);
         setSelectedTask(null);
     }
-    
-    const handleStartFocus = (task: Task) => {
-        startFocus(task, tasks);
-    }
 
     if (!isClient) {
       return (
@@ -162,7 +156,6 @@ export default function BlitzitPage() {
                 <TaskManager 
                   tasks={tasks} 
                   onTaskClick={handleTaskClick} 
-                  onStartFocus={handleStartFocus}
                 />
             </DndContext>
             </div>
@@ -171,7 +164,6 @@ export default function BlitzitPage() {
                 task={selectedTask}
                 isOpen={isDetailsOpen}
                 setIsOpen={setIsDetailsOpen}
-                onStartFocus={handleStartFocus}
                 onSave={handleSaveTask}
                 onDelete={handleDeleteTask}
             />

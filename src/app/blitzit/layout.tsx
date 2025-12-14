@@ -4,7 +4,6 @@ import React from 'react';
 import { AppSidebar } from "./components/AppSidebar";
 import { Header } from "./components/Header";
 import { Toaster } from '@/components/ui/toaster';
-import { FocusProvider } from './context/FocusProvider';
 
 export default function BlitzitLayout({
   children,
@@ -12,7 +11,6 @@ export default function BlitzitLayout({
   children: React.ReactNode;
 }) {
   return (
-    <FocusProvider>
       <div className="min-h-screen w-full bg-background text-foreground">
           <div className="flex">
               <AppSidebar />
@@ -25,6 +23,5 @@ export default function BlitzitLayout({
           </div>
           <Toaster />
       </div>
-    </FocusProvider>
   );
 }

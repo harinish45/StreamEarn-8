@@ -14,7 +14,6 @@ import {
     DropdownMenuTrigger 
 } from "@/components/ui/dropdown-menu";
 import { Settings } from "./Settings";
-import { Integrations } from "./Integrations";
 
 export function Header() {
     return (
@@ -38,7 +37,6 @@ export function Header() {
                 </Button>
                 
                 <Settings />
-                <Integrations />
 
                 <DropdownMenu>
                     <DropdownMenuTrigger asChild>
