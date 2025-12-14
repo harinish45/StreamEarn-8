@@ -21,11 +21,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { Calendar as CalendarIcon, Mic, Pause, Play, Square, Trash2 } from 'lucide-react';
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { Calendar } from '@/components/ui/calendar';
-import { cn } from '@/lib/utils';
-import { format } from 'date-fns';
+import { Mic, Pause, Play, Square, Trash2 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { PrioritySelector } from './PrioritySelector';
 
@@ -222,32 +218,7 @@ export function TaskDetails({ task, isOpen, setIsOpen, onSave, onDelete }: TaskD
               </Select>
             </div>
           </div>
-           <div className="grid grid-cols-2 gap-4">
-                <div className="grid gap-2">
-                    <Label>Schedule Date</Label>
-                     <Popover>
-                        <PopoverTrigger asChild>
-                        <Button
-                            variant={"outline"}
-                            className={cn(
-                            "justify-start text-left font-normal",
-                            !editedTask.scheduledAt && "text-muted-foreground"
-                            )}
-                        >
-                            <CalendarIcon className="mr-2 h-4 w-4" />
-                            {editedTask.scheduledAt ? format(new Date(editedTask.scheduledAt), "PPP") : <span>Pick a date</span>}
-                        </Button>
-                        </PopoverTrigger>
-                        <PopoverContent className="w-auto p-0">
-                        <Calendar
-                            mode="single"
-                            selected={editedTask.scheduledAt ? new Date(editedTask.scheduledAt) : undefined}
-                            onSelect={(date) => handleChange('scheduledAt', date?.getTime())}
-                            initialFocus
-                        />
-                        </PopoverContent>
-                    </Popover>
-                </div>
+           <div className="grid grid-cols-1 gap-4">
                  <div className="grid gap-2">
                     <Label htmlFor="estimatedTime">Estimated Time (min)</Label>
                     <Input id="estimatedTime" type="number" value={editedTask.estimatedTime || ''} onChange={(e) => handleChange('estimatedTime', parseInt(e.target.value) || 0)} />
