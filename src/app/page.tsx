@@ -47,7 +47,7 @@ export default function Home() {
                 <Button size="lg" variant="gradient" asChild>
                     <Link href="/earnings">Explore Earning Opportunities</Link>
                 </Button>
-                <Button size="lg" variant="gradientOutline" asChild>
+                <Button size="lg" variant="gradient" asChild>
                     <Link href="/ai-tools">Discover AI Tools</Link>
                 </Button>
                 <Button size="lg" variant="gradient" asChild>
