@@ -17,6 +17,10 @@ import {
 import { arrayMove } from '@dnd-kit/sortable';
 import { produce } from 'immer';
 import { TaskDetails } from './components/TaskDetails';
+import { GamificationPanel } from './components/GamificationPanel';
+import { ReportsOverview } from './components/ReportsOverview';
+import { PomodoroSettings } from './components/PomodoroSettings';
+import { Alerts } from './components/Alerts';
 
 // Sample Data adapted to the new design
 const sampleTasks: Task[] = [
@@ -144,11 +148,18 @@ export default function BlitzitPage({ onStartFocus }: { onStartFocus: (task: Tas
 
     if (!isClient) {
       return (
-        <div className="flex gap-6 p-4 md:p-0">
-            {/* Skeleton Loader */}
-            <div className="flex-1 rounded-xl bg-card p-4 h-[70vh]"></div>
-            <div className="flex-1 rounded-xl bg-card p-4 h-[70vh]"></div>
-            <div className="flex-1 rounded-xl bg-card p-4 h-[70vh]"></div>
+        <div className="p-8">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
+                <div className="lg:col-span-2">
+                    <div className="h-48 bg-card rounded-xl animate-pulse"></div>
+                </div>
+                <div className="h-48 bg-card rounded-xl animate-pulse"></div>
+            </div>
+            <div className="flex gap-6">
+                <div className="flex-1 rounded-xl bg-card p-4 h-[70vh] animate-pulse"></div>
+                <div className="flex-1 rounded-xl bg-card p-4 h-[70vh] animate-pulse"></div>
+                <div className="flex-1 rounded-xl bg-card p-4 h-[70vh] animate-pulse"></div>
+            </div>
         </div>
       );
     }
@@ -157,6 +168,16 @@ export default function BlitzitPage({ onStartFocus }: { onStartFocus: (task: Tas
     return (
         <>
            <div className="p-8">
+            <div className="grid grid-cols-1 xl:grid-cols-3 gap-6 mb-8">
+                <div className="xl:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <Alerts />
+                    <PomodoroSettings />
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-1 gap-6">
+                    <GamificationPanel />
+                    <ReportsOverview />
+                </div>
+            </div>
             <DndContext 
                 sensors={sensors}
                 onDragEnd={handleDragEnd}
