@@ -1,4 +1,5 @@
 import { MongoClient } from "mongodb";
+import { attachDatabasePool } from "@vercel/functions";
 
 if (!process.env.MONGODB_URI) {
   throw new Error('Invalid/Missing environment variable: "MONGODB_URI"');
@@ -23,6 +24,7 @@ if (process.env.NODE_ENV === "development") {
 } else {
   // In production mode, it's best to not use a global variable.
   client = new MongoClient(uri, options);
+  attachDatabasePool(client);
 }
 
 // Export a module-scoped MongoClient. By doing this in a
