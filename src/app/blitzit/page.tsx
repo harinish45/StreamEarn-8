@@ -18,6 +18,7 @@ import { produce } from 'immer';
 import { TaskDetails } from './components/TaskDetails';
 import { PomodoroSettings } from './components/PomodoroSettings';
 import { Alerts } from './components/Alerts';
+import { isToday } from 'date-fns';
 
 const sampleTasks: Task[] = [
     { id: 'task-1', title: 'Marketing brief', description: 'Create a modern design in Figma.', priority: 'important', status: 'do-now', listId: 'work', estimatedTime: 90 },
@@ -30,7 +31,8 @@ const sampleTasks: Task[] = [
     { id: 'task-8', title: 'Blitzit documentation p1', description: 'Leg day.', priority: 'neither', status: 'do-later', listId: 'personal', estimatedTime: 90 },
     { id: 'task-9', title: 'Vertical banners', description: 'Leg day.', priority: 'neither', status: 'do-later', listId: 'personal', estimatedTime: 90 },
     { id: 'task-10', title: 'Sprint 1 handoff doc', description: 'Leg day.', priority: 'neither', status: 'soon', listId: 'personal', estimatedTime: 180, scheduledAt: new Date().getTime() },
-    { id: 'task-11', title: 'Insta post', description: 'Weekly recurring post', priority: 'urgent', status: 'soon', listId: 'personal', estimatedTime: 120, recurring: 'weekly' }
+    { id: 'task-11', title: 'Insta post', description: 'Weekly recurring post', priority: 'urgent', status: 'soon', listId: 'personal', estimatedTime: 120, recurring: 'weekly' },
+    { id: 'task-12', title: 'Accounts', description: 'Accounts task', priority: 'urgent', status: 'soon', listId: 'work', estimatedTime: 90, scheduledAt: new Date().getTime() }
 ];
 
 export default function BlitzitPage() {
@@ -41,13 +43,15 @@ export default function BlitzitPage() {
 
     useEffect(() => {
         setIsClient(true);
-        // This is where you would fetch tasks from a database
     }, []);
 
     const sensors = useSensors(
         useSensor(PointerSensor),
         useSensor(KeyboardSensor)
     );
+    
+    const tasksDueNow = tasks.filter(task => task.scheduledAt && isToday(new Date(task.scheduledAt)) && task.status !== 'do-now' && task.status !== 'done');
+
 
     const handleDragOver = (event: DragOverEvent) => {
         const { active, over } = event;
@@ -106,7 +110,6 @@ export default function BlitzitPage() {
             if (index !== -1) {
                 draft[index] = updatedTask;
             } else {
-                // This is a new task
                 draft.unshift(updatedTask);
             }
         }));
@@ -119,6 +122,17 @@ export default function BlitzitPage() {
         setIsDetailsOpen(false);
         setSelectedTask(null);
     }
+
+    const handleUpdateDueTasks = (newStatus: 'do-now' | 'do-later') => {
+        setTasks(produce(draft => {
+            tasksDueNow.forEach(dueTask => {
+                const taskInDraft = draft.find(t => t.id === dueTask.id);
+                if (taskInDraft) {
+                    taskInDraft.status = newStatus;
+                }
+            });
+        }));
+    };
 
     if (!isClient) {
       return (
@@ -143,7 +157,7 @@ export default function BlitzitPage() {
            <div className="p-8">
             <div className="grid grid-cols-1 xl:grid-cols-3 gap-6 mb-8">
                 <div className="xl:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <Alerts />
+                    <Alerts tasks={tasksDueNow} onUpdateTasks={handleUpdateDueTasks} />
                     <PomodoroSettings />
                 </div>
             </div>
