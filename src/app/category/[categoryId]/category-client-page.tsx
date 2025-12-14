@@ -104,7 +104,7 @@ export function CategoryClientPage({ categoryId }: { categoryId: string }) {
           />
           <ScrollArea className="h-[calc(100vh-4rem)]">
             <main className="flex-1 p-4 md:p-6">
-                <div className="space-y-4 mb-8">
+                <div className="space-y-4 mb-6">
                     <Breadcrumbs path={[{ name: "Earnings", href: "/earnings" }, { name: category.name, href: `/category/${category.id}` }]} />
                     <h1 className="text-3xl md:text-4xl font-serif tracking-tight">{category.name}</h1>
                     <p className="text-lg text-muted-foreground">{category.description}</p>
