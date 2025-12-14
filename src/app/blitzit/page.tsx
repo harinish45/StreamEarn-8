@@ -167,7 +167,6 @@ export default function BlitzitPage({ onStartFocus }: { onStartFocus: (task: Tas
                   tasks={tasks} 
                   onTaskClick={handleTaskClick} 
                   onStartFocus={onStartFocus}
-                  activeTaskId={null} // This is now managed by the layout
                 />
             </DndContext>
             </div>

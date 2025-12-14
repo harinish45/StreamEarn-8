@@ -148,6 +148,12 @@ function TaskColumn({
   const recurringTasks = tasks.filter(t => t.recurring);
   const regularTasks = tasks.filter(t => !t.scheduledAt && !t.recurring);
 
+  const handleBlitzNow = () => {
+    if (tasks.length > 0) {
+      onStartFocus(tasks[0]);
+    }
+  };
+
   return (
     <div
       className={`flex-1 rounded-xl bg-card p-4 ${
@@ -207,7 +213,7 @@ function TaskColumn({
 
        {isToday && (
          <div className="mt-6">
-           <Button className="h-12 w-full rounded-xl bg-gradient-to-r from-pink-500 via-purple-500 to-cyan-500 text-lg font-bold text-white transition-all hover:shadow-lg hover:shadow-purple-500/30">
+           <Button onClick={handleBlitzNow} className="h-12 w-full rounded-xl bg-gradient-to-r from-pink-500 via-purple-500 to-cyan-500 text-lg font-bold text-white transition-all hover:shadow-lg hover:shadow-purple-500/30">
              ⚡ Blitz now
            </Button>
          </div>
@@ -220,7 +226,6 @@ interface TaskManagerProps {
   tasks: Task[];
   onTaskClick: (task: Task) => void;
   onStartFocus: (task: Task) => void;
-  activeTaskId: string | null;
 }
 
 export function TaskManager({ tasks, onTaskClick, onStartFocus }: TaskManagerProps) {
