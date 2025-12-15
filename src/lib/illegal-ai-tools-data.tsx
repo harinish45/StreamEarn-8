@@ -44,9 +44,9 @@ export const illegalAiTools: AiToolCategory[] = [
   {
     name: 'Vibe design tools',
     tools: [
-      { name: 'Nano Banana', logo: createLogo('Nano Banana'), link: '#' },
+      { name: 'Nano Banana', logo: createLogo('Nano Banana'), link: 'https://gemini.google/overview/image-generation/' },
       { name: 'Seedream', logo: createLogo('Seedream'), link: 'https://seedream.cc' },
-      { name: 'Lovart', logo: createLogo('Lovart'), link: '#' },
+      { name: 'Lovart', logo: createLogo('Lovart'), link: 'https://lovart.me' },
       { name: 'Picsart', logo: createLogo('Picsart'), link: 'https://picsart.com' },
       { name: 'VSCO', logo: createLogo('VSCO'), link: 'https://vsco.co' },
       { name: 'ChatGPT', logo: createLogo('ChatGPT-design'), link: 'https://chatgpt.com' },
@@ -57,12 +57,12 @@ export const illegalAiTools: AiToolCategory[] = [
     name: 'Vibe marketing tools',
     tools: [
       { name: 'Notebooks', logo: createLogo('Notebooks'), link: 'https://notebooklm.google.com/' },
-      { name: 'Poppy AI', logo: createLogo('Poppy AI'), link: 'https://www.poppy-ai.com/' },
-      { name: 'Gamma', logo: createLogo('Gamma'), link: 'https://gamma.app/' },
-      { name: 'Freepik', logo: createLogo('Freepik'), link: 'https://www.freepik.com/' },
-      { name: 'Higgsfield', logo: createLogo('Higgsfield'), link: 'https://www.higgsfield.ai/' },
-      { name: 'Reka', logo: createLogo('Reka'), link: 'https://reka.ai/' },
-      { name: 'MiniMax', logo: createLogo('MiniMax'), link: 'https://www.minimax.com/' },
+      { name: 'Poppy AI', logo: createLogo('Poppy AI'), link: 'https://getpoppyai.com' },
+      { name: 'Gamma', logo: createLogo('Gamma'), link: 'https://gamma.com.ai' },
+      { name: 'Freepik', logo: createLogo('Freepik'), link: 'https://www.freepik.com' },
+      { name: 'Higgsfield', logo: createLogo('Higgsfield'), link: 'https://higgsfield.ai' },
+      { name: 'Reka', logo: createLogo('Reka'), link: 'https://reka.ai' },
+      { name: 'MiniMax', logo: createLogo('MiniMax'), link: 'https://www.minimax.ai' },
     ],
   },
   {
