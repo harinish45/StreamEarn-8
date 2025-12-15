@@ -55,14 +55,7 @@ function TaskCard({ task, onClick, onPriorityChange, onDelete }: TaskCardProps) 
   }
 
   const handleCardClick = (e: React.MouseEvent) => {
-    if (task.audioBlob) {
-        e.stopPropagation();
-        const audioUrl = URL.createObjectURL(task.audioBlob);
-        const audio = new Audio(audioUrl);
-        audio.play();
-    } else {
-        onClick(task);
-    }
+    onClick(task);
   }
 
   const handlePillClick = (e: React.MouseEvent) => {
@@ -183,7 +176,7 @@ export function TaskColumn({
       </div>
       {(done !== undefined && total !== undefined) && (
         <div className="mb-4">
-          <Progress value={(done / total) * 100} className="h-1 bg-muted" indicatorClassName="bg-foreground" />
+          <Progress value={(done / (total || 1)) * 100} className="h-1 bg-muted" indicatorClassName="bg-foreground" />
           <p className="mt-1 text-right text-xs text-muted-foreground">{done}/{total} DONE</p>
         </div>
       )}

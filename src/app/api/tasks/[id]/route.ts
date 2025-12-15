@@ -1,3 +1,4 @@
+
 import { NextResponse } from 'next/server';
 import { connectToDatabase } from '@/lib/mongodb';
 import { ObjectId } from 'mongodb';
@@ -13,6 +14,7 @@ const taskUpdateSchema = z.object({
   scheduledAt: z.number().optional().nullable(),
   estimatedTime: z.number().optional().nullable(),
   recurring: z.enum(['daily', 'weekly', 'monthly']).nullable().optional(),
+  audioBlob: z.any().optional(), // Allow audioBlob to be part of the update
 }).partial();
 
 
@@ -25,7 +27,9 @@ export async function PUT(request: Request, { params }: { params: { id: string }
 
   try {
     const body = await request.json();
-    const validation = taskUpdateSchema.safeParse(body);
+    // Exclude audioBlob from schema validation as it's not a standard JSON type
+    const { audioBlob, ...taskData } = body;
+    const validation = taskUpdateSchema.safeParse(taskData);
 
     if (!validation.success) {
       return NextResponse.json(validation.error.errors, { status: 400 });

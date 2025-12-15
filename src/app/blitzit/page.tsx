@@ -28,12 +28,11 @@ export default function BlitzitPage() {
     const [tasks, setTasks] = useState<TaskType[]>([]);
     const [selectedTask, setSelectedTask] = useState<TaskType | null>(null);
     const [isDetailsOpen, setIsDetailsOpen] = useState(false);
-    const [isClient, setIsClient] = useState(false);
     const [isLoading, setIsLoading] = useState(true);
     const { toast } = useToast();
 
     useEffect(() => {
-        setIsClient(true);
+        setIsLoading(true);
         fetch('/api/tasks')
             .then(res => {
                 if (!res.ok) {
@@ -42,13 +41,12 @@ export default function BlitzitPage() {
                 return res.json();
             })
             .then(data => {
-                // The API now returns data in the correct format, so we can use it directly
                 if (Array.isArray(data)) {
                     setTasks(data);
                 } else {
-                    throw new Error('Fetched data is not an array');
+                    console.error("Fetched data is not an array:", data);
+                    setTasks([]);
                 }
-                setIsLoading(false);
             })
             .catch(err => {
                 console.error("Failed to fetch tasks", err);
@@ -57,6 +55,8 @@ export default function BlitzitPage() {
                     title: "Failed to load tasks",
                     description: "Could not fetch tasks from the database. Please try again later."
                 })
+            })
+            .finally(() => {
                 setIsLoading(false);
             });
     }, [toast]);
@@ -110,10 +110,7 @@ export default function BlitzitPage() {
                 const newIndex = currentTasks.findIndex((t) => t.id === over.id);
                 if (oldIndex === -1 || newIndex === -1) return currentTasks;
                 
-                const newOrderedTasks = arrayMove(currentTasks, oldIndex, newIndex);
-                // Here you might want to update the order in the database for all tasks
-                // This can be an expensive operation. For now, we only update client-side for smooth UX.
-                return newOrderedTasks;
+                return arrayMove(currentTasks, oldIndex, newIndex);
             });
         }
     };
@@ -150,7 +147,7 @@ export default function BlitzitPage() {
             setTasks(produce(draft => {
                 const taskIndex = draft.findIndex(t => t.id === taskId);
                 if (taskIndex !== -1) {
-                    draft[taskIndex] = fromDb(updatedTask);
+                    draft[taskIndex] = updatedTask;
                 }
             }));
         } catch (error) {
@@ -165,16 +162,14 @@ export default function BlitzitPage() {
     }
     
     const handleSaveTask = async (taskToSave: TaskType) => {
-        const isNew = !taskToSave._id;
+        const isNew = taskToSave.id.startsWith('new-');
         
         if (isNew) {
-            // Remove frontend-only ID before sending to backend
-            const { id, _id, ...taskData } = taskToSave;
+            const { id, ...taskData } = taskToSave;
             const payload = {
                 title: taskData.title || 'New Task',
                 status: taskData.status || 'do-later',
                 priority: taskData.priority || 'neither',
-                listId: taskData.listId || 'personal',
                 description: taskData.description,
                 estimatedTime: taskData.estimatedTime,
             };
@@ -193,17 +188,19 @@ export default function BlitzitPage() {
                 }
                 const newTask = await response.json();
                 
-                // Add the newly created task (with a real ID from DB) to the state
                 setTasks(produce(draft => {
-                    // Remove temp task if it exists
-                    const tempIndex = draft.findIndex(t => t.id.startsWith('new-'));
-                    if (tempIndex > -1) draft.splice(tempIndex, 1);
-                    draft.push(newTask);
+                    const tempIndex = draft.findIndex(t => t.id === taskToSave.id);
+                    if (tempIndex > -1) {
+                        draft[tempIndex] = newTask;
+                    } else {
+                        draft.push(newTask);
+                    }
                 }));
 
             } catch (error) {
                 console.error(error);
                 toast({ variant: 'destructive', title: 'Error: Failed to create task.' });
+                 setTasks(current => current.filter(t => t.id !== taskToSave.id));
             }
 
         } else {
@@ -216,7 +213,6 @@ export default function BlitzitPage() {
 
     const handleDeleteTask = async (taskId: string) => {
         const originalTasks = tasks;
-        // Optimistic update
         setTasks(tasks.filter(t => t.id !== taskId));
         
         if (selectedTask?.id === taskId) {
@@ -231,7 +227,7 @@ export default function BlitzitPage() {
             if (!response.ok) throw new Error('Failed to delete task');
         } catch (error) {
             console.error(error);
-            setTasks(originalTasks); // Rollback
+            setTasks(originalTasks);
             toast({ variant: 'destructive', title: 'Failed to delete task.' });
         }
     }
@@ -243,14 +239,17 @@ export default function BlitzitPage() {
     };
 
     const handleAddTask = (status: TaskStatus) => {
-        // Create a minimal, valid task object for the modal
-        setSelectedTask({
+        const tempTask: TaskType = {
             id: `new-${Date.now()}`,
             title: '',
             status: status,
             priority: 'neither',
             listId: 'personal',
-        });
+        };
+        setTasks(produce(draft => {
+            draft.push(tempTask);
+        }));
+        setSelectedTask(tempTask);
         setIsDetailsOpen(true);
     };
 
@@ -261,8 +260,7 @@ export default function BlitzitPage() {
     const todayTasks = tasks.filter(t => t.status === 'do-now');
     const doneTodayCount = tasks.filter(t => t.status === 'done' && t.updatedAt && isToday(new Date(t.updatedAt))).length;
 
-
-    if (isLoading || !isClient) {
+    if (isLoading) {
       return (
         <div className="p-8">
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
