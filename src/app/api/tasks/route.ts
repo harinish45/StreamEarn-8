@@ -3,6 +3,7 @@ import { NextResponse } from 'next/server';
 import { connectToDatabase } from '@/lib/mongodb';
 import { ObjectId } from 'mongodb';
 import { z } from 'zod';
+import { fromDb } from '@/lib/utils';
 
 const taskSchema = z.object({
   title: z.string().min(1, 'Title is required'),
@@ -50,7 +51,7 @@ export async function POST(request: Request) {
       return NextResponse.json({ message: 'Failed to retrieve created task' }, { status: 500 });
     }
 
-    return NextResponse.json(newDoc, { status: 201 });
+    return NextResponse.json(fromDb(newDoc), { status: 201 });
   } catch (error) {
     console.error('Failed to create task:', error);
     const errorMessage = error instanceof Error ? error.message : 'Unknown error';

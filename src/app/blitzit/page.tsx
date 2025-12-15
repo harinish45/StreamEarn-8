@@ -168,29 +168,23 @@ export default function BlitzitPage() {
         const originalTasks = tasks;
 
         if (isNew) {
-            const { id, ...taskData } = taskToSave;
+            const { id, _id, ...taskData } = taskToSave;
             const payload = {
                 title: taskData.title || 'New Task',
-                priority: taskData.priority || 'neither',
                 status: taskData.status || 'do-later',
+                priority: taskData.priority || 'neither',
                 listId: taskData.listId || 'personal',
-                ...taskData
+                description: taskData.description,
+                estimatedTime: taskData.estimatedTime
             };
             
-            // Optimistic update
-            const tempId = `new-${Date.now()}`;
-            const optimisticNewTask: TaskType = {
-                id: tempId,
-                ...payload
-            };
-            setTasks(produce(draft => { draft.unshift(optimisticNewTask); }));
-
             try {
                 const response = await fetch('/api/tasks', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(payload),
                 });
+
                 if (!response.ok) {
                     const errorData = await response.json();
                     console.error("Server error:", errorData.message || errorData);
@@ -198,23 +192,20 @@ export default function BlitzitPage() {
                 }
                 const newTask = await response.json();
 
-                // Replace placeholder with real task from DB
                 setTasks(produce(draft => {
-                    const index = draft.findIndex(t => t.id === tempId);
-                    if (index !== -1) {
-                        draft[index] = fromDb(newTask);
-                    } else {
-                        draft.push(fromDb(newTask));
-                    }
+                    draft.push(newTask);
                 }));
+
             } catch (error) {
                 console.error(error);
-                setTasks(originalTasks); // Rollback
+                setTasks(originalTasks);
                 toast({ variant: 'destructive', title: 'Failed to create task.' });
             }
+
         } else {
             handleUpdateTask(taskToSave.id, taskToSave);
         }
+
         setIsDetailsOpen(false);
         setSelectedTask(null);
     }
@@ -253,7 +244,7 @@ export default function BlitzitPage() {
             title: '',
             status: status,
             priority: 'neither',
-            listId: 'personal' // Ensure this default is set
+            listId: 'personal',
         });
         setIsDetailsOpen(true);
     };
@@ -263,7 +254,8 @@ export default function BlitzitPage() {
     };
     
     const todayTasks = tasks.filter(t => t.status === 'do-now');
-    const doneTodayCount = todayTasks.filter(t => t.status === 'done').length;
+    const doneTodayCount = tasks.filter(t => t.status === 'done' && isToday(new Date(t.updatedAt || t.createdAt || Date.now()))).length;
+
 
     if (isLoading || !isClient) {
       return (
