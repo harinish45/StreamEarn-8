@@ -18,13 +18,13 @@ export const illegalAiTools: AiToolCategory[] = [
   {
     name: 'Viral marketing tools',
     tools: [
-      { name: 'ViralSky', logo: createLogo('ViralSky'), link: 'https://viralsky.io/' },
-      { name: 'ThreadMaster', logo: createLogo('ThreadMaster'), link: 'https://threadmaster.app/' },
+      { name: 'ViralSky', logo: createLogo('ViralSky'), link: 'https://viralsky.ai' },
+      { name: 'ThreadMaster', logo: createLogo('ThreadMaster'), link: 'https://threadmaster.ai' },
       { name: 'VibeFluencer', logo: createLogo('VibeFluencer'), link: '#' },
-      { name: 'VidIQ', logo: createLogo('VidIQ'), link: 'https://vidiq.com/' },
-      { name: 'Ocoya', logo: createLogo('Ocoya'), link: 'https://www.ocoya.com/' },
-      { name: 'AdCreative', logo: createLogo('AdCreative'), link: 'https://www.adcreative.ai/' },
-      { name: 'Freedom Threads', logo: createLogo('Freedom Threads'), link: '#' },
+      { name: 'VidIQ', logo: createLogo('VidIQ'), link: 'https://vidiq.com' },
+      { name: 'Ocoya', logo: createLogo('Ocoya'), link: 'https://ocoya.com' },
+      { name: 'AdCreative', logo: createLogo('AdCreative'), link: 'https://www.adcreative.ai' },
+      { name: 'Freedom Threads', logo: createLogo('Freedom Threads'), link: 'https://freedomthreads.ai' },
     ],
   },
   {
