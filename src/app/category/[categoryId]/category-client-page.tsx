@@ -1,87 +1,148 @@
+
 'use client';
 
 import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/app-sidebar";
 import { Header } from "@/components/header";
-import { earningOpportunities, type EarningCategory } from "@/lib/data";
+import { type EarningCategory } from "@/lib/data";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import React, { useState, useCallback, useMemo } from "react";
+import React, { useState, useCallback, useMemo, useEffect } from "react";
 import { OpportunityCard } from "@/components/opportunity-card";
 import { Breadcrumbs } from "@/components/breadcrumbs";
 import { notFound } from "next/navigation";
+import { useToast } from "@/hooks/use-toast";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export function CategoryClientPage({ categoryId }: { categoryId: string }) {
-  const category = useMemo(() => earningOpportunities.find(c => c.id === categoryId), [categoryId]);
-
+  const [allCategories, setAllCategories] = useState<EarningCategory[]>([]);
+  const [category, setCategory] = useState<EarningCategory | null>(null);
+  
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
-  const [earningOpportunitiesState, setEarningOpportunitiesState] = useState(earningOpportunities);
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
   const [categorySearchQuery, setCategorySearchQuery] = useState('');
   const [opportunitySearchQuery, setOpportunitySearchQuery] = useState('');
+  const [isLoading, setIsLoading] = useState(true);
+  const { toast } = useToast();
+
+  useEffect(() => {
+    setIsLoading(true);
+    fetch('/api/earnings')
+      .then(res => res.json())
+      .then(data => {
+        setAllCategories(data);
+        const currentCategory = data.find((c: EarningCategory) => c.id === categoryId);
+        if (currentCategory) {
+          setCategory(currentCategory);
+        } else {
+          notFound();
+        }
+        setIsLoading(false);
+      })
+      .catch(err => {
+        console.error("Failed to fetch data", err);
+        toast({ variant: "destructive", title: "Failed to load data" });
+        setIsLoading(false);
+      });
+  }, [categoryId, toast]);
+
+  const updateCategory = async (catId: string, updates: Partial<EarningCategory>) => {
+    try {
+      const response = await fetch(`/api/earnings/${catId}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(updates),
+      });
+      if (!response.ok) throw new Error('Failed to update category');
+      const updatedCategory = await response.json();
+      setAllCategories(prev => prev.map(c => c.id === catId ? updatedCategory : c));
+      if (catId === categoryId) {
+        setCategory(updatedCategory);
+      }
+    } catch (error) {
+      console.error(error);
+      toast({ variant: "destructive", title: "Update failed" });
+    }
+  };
+  
+  const updateOpportunity = async (catId: string, opportunityId: string, updates: { visited: boolean }) => {
+    try {
+      const response = await fetch(`/api/earnings/${catId}?opportunityId=${opportunityId}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(updates),
+      });
+      if (!response.ok) throw new Error('Failed to update opportunity');
+      const updatedCategory = await response.json();
+      setAllCategories(prev => prev.map(c => c.id === catId ? updatedCategory : c));
+      if (catId === categoryId) {
+        setCategory(updatedCategory);
+      }
+    } catch (error) {
+      console.error(error);
+      toast({ variant: "destructive", title: "Update failed" });
+    }
+  };
 
   const handleSortCategories = useCallback(() => {
     setSortOrder(prev => prev === 'asc' ? 'desc' : 'asc');
   }, []);
 
   const handlePinCategory = useCallback((catId: string) => {
-    setEarningOpportunitiesState(prev => {
-      const cat = prev.find(c => c.id === catId);
-      if (!cat) return prev;
+    const cat = allCategories.find(c => c.id === catId);
+    if (!cat) return;
+    updateCategory(catId, { pinned: !cat.pinned });
+  }, [allCategories]);
 
-      const isPinned = !cat.pinned;
-      const updatedCategory = { ...cat, pinned: isPinned };
-
-      const otherCategories = prev.filter(c => c.id !== catId);
-      const allCategories = [updatedCategory, ...otherCategories];
-
-      const pinned = allCategories.filter(c => c.pinned);
-      const unpinned = allCategories.filter(c => !c.pinned).sort((a, b) => {
-        if (sortOrder === 'asc') return a.name.localeCompare(b.name);
-        return b.name.localeCompare(a.name);
-      });
-
-      return [...pinned, ...unpinned];
-    });
-  }, [sortOrder]);
-
-  const handleMarkAsVisited = useCallback((opportunityId: string) => {
-    setEarningOpportunitiesState(prev => prev.map(cat => ({
-      ...cat,
-      opportunities: cat.opportunities.map(op =>
-        op.id === opportunityId ? { ...op, visited: true } : op
-      ),
-    })));
+  const handleMarkAsVisited = useCallback((catId: string, opportunityId: string) => {
+    updateOpportunity(catId, opportunityId, { visited: true });
   }, []);
 
   const filteredSidebarCategories = useMemo(() => {
-    let categories = [...earningOpportunitiesState];
+    let categories = [...allCategories];
     if (categorySearchQuery) {
-      categories = categories.filter(category =>
-        category.name.toLowerCase().includes(categorySearchQuery.toLowerCase())
-      );
+      categories = categories.filter(c => c.name.toLowerCase().includes(categorySearchQuery.toLowerCase()));
     }
     
     const pinned = categories.filter(c => c.pinned);
     const unpinned = categories.filter(c => !c.pinned);
-    unpinned.sort((a, b) => {
-      if (sortOrder === 'asc') return a.name.localeCompare(b.name);
-      return b.name.localeCompare(a.name);
-    });
+    unpinned.sort((a, b) => sortOrder === 'asc' ? a.name.localeCompare(b.name) : b.name.localeCompare(a.name));
 
     return [...pinned, ...unpinned];
-  }, [earningOpportunitiesState, sortOrder, categorySearchQuery]);
+  }, [allCategories, sortOrder, categorySearchQuery]);
   
   const filteredOpportunities = useMemo(() => {
-      if (!category) return [];
-      if (!opportunitySearchQuery) return category.opportunities;
+    if (!category) return [];
+    let opportunities = category.opportunities;
+    if (opportunitySearchQuery) {
+      opportunities = opportunities.filter(op => op.title.toLowerCase().includes(opportunitySearchQuery.toLowerCase()));
+    }
+    const currentCategoryState = allCategories.find(c => c.id === categoryId);
+    return currentCategoryState ? currentCategoryState.opportunities.filter(op => opportunities.some(fop => fop.id === op.id)) : [];
+  }, [category, opportunitySearchQuery, allCategories, categoryId]);
 
-      return category.opportunities.filter(op =>
-        op.title.toLowerCase().includes(opportunitySearchQuery.toLowerCase())
-      );
-  }, [category, opportunitySearchQuery])
+  if (isLoading) {
+    return (
+      <SidebarProvider>
+         <div className="flex min-h-screen bg-background">
+            <aside className="w-64 flex-shrink-0 border-r p-4 hidden md:block"><Skeleton className="h-full w-full" /></aside>
+            <SidebarInset>
+              <header className="h-16 border-b p-4"><Skeleton className="h-full w-full" /></header>
+              <main className="p-6 space-y-6">
+                <Skeleton className="h-10 w-1/3" />
+                <Skeleton className="h-6 w-2/3" />
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
+                  {[...Array(5)].map((_, i) => <Skeleton key={i} className="h-48 w-full rounded-lg" />)}
+                </div>
+              </main>
+            </SidebarInset>
+         </div>
+      </SidebarProvider>
+    );
+  }
 
   if (!category) {
-    notFound();
+    // notFound() is a server-side utility. In client component, you can render a friendly "not found" message.
+    return <div>Category not found.</div>;
   }
 
   return (
@@ -112,7 +173,7 @@ export function CategoryClientPage({ categoryId }: { categoryId: string }) {
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
                     {filteredOpportunities.map((opportunity) => (
-                        <OpportunityCard key={opportunity.id} opportunity={opportunity} onClick={handleMarkAsVisited} />
+                        <OpportunityCard key={opportunity.id} opportunity={opportunity} categoryId={category.id} onClick={handleMarkAsVisited} />
                     ))}
                 </div>
             </main>

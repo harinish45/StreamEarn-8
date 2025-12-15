@@ -5,63 +5,84 @@ import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/app-sidebar";
 import { Header } from "@/components/header";
 import { Hero } from "@/components/hero";
-import { EarningCategory, earningOpportunities as initialEarningOpportunities } from "@/lib/data";
+import { type EarningCategory } from "@/lib/data";
 import { CategoryCarousel } from "@/components/category-carousel";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import React, { useState, useCallback, useMemo } from "react";
+import React, { useState, useCallback, useMemo, useEffect } from "react";
 import { CategoryList } from "@/components/category-list";
 import { Breadcrumbs } from "@/components/breadcrumbs";
+import { useToast } from "@/hooks/use-toast";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export default function EarningsPage() {
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
-  const [earningOpportunities, setEarningOpportunities] = useState(initialEarningOpportunities);
+  const [earningOpportunities, setEarningOpportunities] = useState<EarningCategory[]>([]);
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
   const [categorySearchQuery, setCategorySearchQuery] = useState('');
   const [opportunitySearchQuery, setOpportunitySearchQuery] = useState('');
+  const [isLoading, setIsLoading] = useState(true);
+  const { toast } = useToast();
+
+  useEffect(() => {
+    setIsLoading(true);
+    fetch('/api/earnings')
+      .then(res => res.json())
+      .then(data => {
+        setEarningOpportunities(data);
+        setIsLoading(false);
+      })
+      .catch(err => {
+        console.error("Failed to fetch earning opportunities", err);
+        toast({ variant: "destructive", title: "Failed to load data" });
+        setIsLoading(false);
+      });
+  }, [toast]);
+  
+  const updateCategory = async (categoryId: string, updates: Partial<EarningCategory>) => {
+      try {
+        const response = await fetch(`/api/earnings/${categoryId}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(updates),
+        });
+        if (!response.ok) throw new Error('Failed to update category');
+        const updatedCategory = await response.json();
+        setEarningOpportunities(prev => prev.map(c => c.id === categoryId ? updatedCategory : c));
+      } catch (error) {
+        console.error(error);
+        toast({ variant: "destructive", title: "Update failed" });
+      }
+  };
+  
+  const updateOpportunity = async (categoryId: string, opportunityId: string, updates: { visited: boolean }) => {
+      try {
+        const response = await fetch(`/api/earnings/${categoryId}?opportunityId=${opportunityId}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(updates),
+        });
+        if (!response.ok) throw new Error('Failed to update opportunity');
+        const updatedCategory = await response.json();
+        setEarningOpportunities(prev => prev.map(c => c.id === categoryId ? updatedCategory : c));
+      } catch (error) {
+        console.error(error);
+        toast({ variant: "destructive", title: "Update failed" });
+      }
+  };
+
 
   const handleSortCategories = useCallback(() => {
     setSortOrder(prev => prev === 'asc' ? 'desc' : 'asc');
   }, []);
 
   const handlePinCategory = useCallback((categoryId: string) => {
-    setEarningOpportunities(prev => {
-      const category = prev.find(c => c.id === categoryId);
-      if (!category) return prev;
+    const category = earningOpportunities.find(c => c.id === categoryId);
+    if (!category) return;
+    updateCategory(categoryId, { pinned: !category.pinned });
+  }, [earningOpportunities]);
 
-      const isPinned = !category.pinned;
-      const updatedCategory = { ...category, pinned: isPinned };
-
-      const otherCategories = prev.filter(c => c.id !== categoryId);
-      
-      const allCategories = [updatedCategory, ...otherCategories];
-
-      const pinned = allCategories.filter(c => c.pinned);
-      const unpinned = allCategories.filter(c => !c.pinned).sort((a, b) => {
-        if (sortOrder === 'asc') {
-          return a.name.localeCompare(b.name);
-        } else {
-          return b.name.localeCompare(a.name);
-        }
-      });
-
-      return [...pinned, ...unpinned];
-    });
-  }, [sortOrder]);
-
-  const handleMarkAsVisited = useCallback((opportunityId: string) => {
-    setEarningOpportunities(prev => {
-      return prev.map(category => {
-        return {
-          ...category,
-          opportunities: category.opportunities.map(op => {
-            if (op.id === opportunityId) {
-              return { ...op, visited: true };
-            }
-            return op;
-          })
-        };
-      });
-    });
+  const handleMarkAsVisited = useCallback((categoryId: string, opportunityId: string) => {
+    updateOpportunity(categoryId, opportunityId, { visited: true });
   }, []);
   
   const filteredAndSortedCategories = useMemo(() => {
@@ -104,6 +125,28 @@ export default function EarningsPage() {
     return [...pinned, ...unpinned];
   }, [earningOpportunities, sortOrder, categorySearchQuery, opportunitySearchQuery]);
 
+  const LoadingSkeleton = () => (
+    <div className="p-4 md:p-6 space-y-8">
+      <Skeleton className="h-[40vh] w-full rounded-xl" />
+      <div className="space-y-4">
+        <Skeleton className="h-8 w-1/4" />
+        <div className="flex space-x-4">
+          <Skeleton className="h-48 w-72 rounded-lg" />
+          <Skeleton className="h-48 w-72 rounded-lg" />
+          <Skeleton className="h-48 w-72 rounded-lg" />
+          <Skeleton className="h-48 w-72 rounded-lg" />
+        </div>
+      </div>
+       <div className="space-y-4">
+        <Skeleton className="h-8 w-1/4" />
+        <div className="flex space-x-4">
+          <Skeleton className="h-48 w-72 rounded-lg" />
+          <Skeleton className="h-48 w-72 rounded-lg" />
+        </div>
+      </div>
+    </div>
+  );
+
 
   return (
     <SidebarProvider>
@@ -125,18 +168,22 @@ export default function EarningsPage() {
           />
           <ScrollArea className="h-[calc(100vh-4rem)]">
             <main className="flex-1">
-              <div className="p-4 md:p-6 space-y-4">
-                <Breadcrumbs path={[{ name: "Earnings", href: "/earnings" }]} />
-                <Hero />
-              </div>
-              {viewMode === 'grid' ? (
-                filteredAndSortedCategories.map((category) => (
-                  <CategoryCarousel key={category.id} category={category} onOpportunityClick={handleMarkAsVisited} />
-                ))
-              ) : (
-                 filteredAndSortedCategories.map((category) => (
-                  <CategoryList key={category.id} category={category} onOpportunityClick={handleMarkAsVisited} />
-                ))
+              {isLoading ? <LoadingSkeleton /> : (
+                <>
+                  <div className="p-4 md:p-6 space-y-4">
+                    <Breadcrumbs path={[{ name: "Earnings", href: "/earnings" }]} />
+                    <Hero />
+                  </div>
+                  {viewMode === 'grid' ? (
+                    filteredAndSortedCategories.map((category) => (
+                      <CategoryCarousel key={category.id} category={category} onOpportunityClick={handleMarkAsVisited} />
+                    ))
+                  ) : (
+                    filteredAndSortedCategories.map((category) => (
+                      <CategoryList key={category.id} category={category} onOpportunityClick={handleMarkAsVisited} />
+                    ))
+                  )}
+                </>
               )}
             </main>
           </ScrollArea>

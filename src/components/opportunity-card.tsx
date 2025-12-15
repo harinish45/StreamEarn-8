@@ -8,16 +8,17 @@ import { Badge } from "./ui/badge";
 
 interface OpportunityCardProps {
   opportunity: Opportunity;
-  onClick: (opportunityId: string) => void;
+  categoryId: string;
+  onClick: (categoryId: string, opportunityId: string) => void;
 }
 
-export function OpportunityCard({ opportunity, onClick }: OpportunityCardProps) {
+export function OpportunityCard({ opportunity, categoryId, onClick }: OpportunityCardProps) {
   return (
     <Link 
       href={opportunity.link}
       target="_blank"
       rel="noopener noreferrer"
-      onClick={() => onClick(opportunity.id)}
+      onClick={() => onClick(categoryId, opportunity.id)}
       className="group relative block h-full w-full"
     >
       <div className="flex flex-col justify-between h-full w-full overflow-hidden rounded-lg border border-border bg-card p-4 shadow-sm transition-all hover:shadow-lg hover:border-primary/50">
@@ -35,8 +36,8 @@ export function OpportunityCard({ opportunity, onClick }: OpportunityCardProps) 
                 <h3 className="font-semibold text-base whitespace-normal">{opportunity.title}</h3>
             </div>
             {opportunity.visited && (
-              <Badge variant="secondary" className="bg-primary/20 text-primary-foreground hover:bg-primary/30">
-                Recently Seen
+              <Badge variant="secondary" className="bg-primary/20 text-primary-foreground hover:bg-primary/30 text-xs">
+                Seen
               </Badge>
             )}
           </div>

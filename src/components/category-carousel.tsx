@@ -8,7 +8,7 @@ import { ArrowRight } from "lucide-react";
 
 interface CategoryCarouselProps {
   category: EarningCategory;
-  onOpportunityClick: (opportunityId: string) => void;
+  onOpportunityClick: (categoryId: string, opportunityId: string) => void;
 }
 
 export function CategoryCarousel({ category, onOpportunityClick }: CategoryCarouselProps) {
@@ -37,7 +37,7 @@ export function CategoryCarousel({ category, onOpportunityClick }: CategoryCarou
               key={index}
               className="w-[280px] h-full"
             >
-              <OpportunityCard opportunity={opportunity} onClick={onOpportunityClick} />
+              <OpportunityCard opportunity={opportunity} categoryId={category.id} onClick={onOpportunityClick} />
             </div>
           ))}
         </div>
