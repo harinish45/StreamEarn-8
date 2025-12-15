@@ -15,7 +15,8 @@ export type TaskStatus = 'do-now' | 'do-later' | 'tomorrow' | 'soon' | 'done' | 
 export type TaskPriority = 'urgent' | 'important' | 'neither';
 
 export interface Task {
-  id: string;
+  id: string; // Changed from _id for frontend consistency
+  _id?: string; // Keep original for reference if needed
   title: string;
   description?: string;
   priority: TaskPriority;
@@ -29,6 +30,9 @@ export interface Task {
   recurring?: 'daily' | 'weekly' | 'monthly' | null;
   subtasks?: Subtask[];
   audioBlob?: Blob;
+  createdAt?: Date;
+  updatedAt?: Date;
+  order?: number;
 }
 
 export interface Subtask {

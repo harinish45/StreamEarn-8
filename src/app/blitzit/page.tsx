@@ -3,7 +3,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { TaskManager, TaskColumn } from './components/TaskManager';
-import type { Task, TaskStatus, TaskPriority } from '@/types/blitzit';
+import type { Task as TaskType, TaskStatus, TaskPriority } from '@/types/blitzit';
 import {
   DndContext,
   closestCenter,
@@ -20,31 +20,41 @@ import { TaskDetails } from './components/TaskDetails';
 import { PomodoroSettings } from './components/PomodoroSettings';
 import { Alerts } from './components/Alerts';
 import { isToday } from 'date-fns';
+import { useToast } from '@/hooks/use-toast';
 
-const sampleTasks: Task[] = [
-    { id: 'task-1', title: 'Marketing brief', description: 'Create a modern design in Figma.', priority: 'important', status: 'do-now', listId: 'work', estimatedTime: 90 },
-    { id: 'task-2', title: 'Insta post', description: 'Coordinate with the team for a sync-up.', priority: 'urgent', status: 'tomorrow', listId: 'personal', estimatedTime: 120, recurring: 'weekly' },
-    { id: 'task-3', title: 'Call mum', description: 'A critical bug reported by users.', priority: 'urgent', status: 'tomorrow', listId: 'personal', estimatedTime: 30 },
-    { id: 'task-4', title: 'Fire Jeffry', description: 'Implement JWT-based authentication.', priority: 'important', status: 'do-later', listId: 'work', estimatedTime: 5 },
-    { id: 'task-5', title: 'Website update', description: 'Summarize the progress of the week.', priority: 'important', status: 'do-later', listId: 'work', estimatedTime: 90 },
-    { id: 'task-6', title: 'Product feedback', description: 'Milk, Bread, Eggs.', priority: 'important', status: 'do-later', listId: 'personal', estimatedTime: 60 },
-    { id: 'task-7', title: 'Core ux brief', description: 'Leg day.', priority: 'neither', status: 'do-later', listId: 'personal', estimatedTime: 80 },
-    { id: 'task-8', title: 'Blitzit documentation p1', description: 'Leg day.', priority: 'neither', status: 'do-later', listId: 'personal', estimatedTime: 90 },
-    { id: 'task-9', title: 'Vertical banners', description: 'Leg day.', priority: 'neither', status: 'do-later', listId: 'personal', estimatedTime: 90 },
-    { id: 'task-10', title: 'Sprint 1 handoff doc', description: 'Leg day.', priority: 'neither', status: 'soon', listId: 'personal', estimatedTime: 180, scheduledAt: new Date().getTime() },
-    { id: 'task-11', title: 'Insta post', description: 'Weekly recurring post', priority: 'urgent', status: 'soon', listId: 'personal', estimatedTime: 120, recurring: 'weekly' },
-    { id: 'task-12', title: 'Accounts', description: 'Accounts task', priority: 'urgent', status: 'soon', listId: 'work', estimatedTime: 90, scheduledAt: new Date().getTime() }
-];
+// Convert DB tasks (with _id) to frontend tasks (with id)
+const fromDb = (task: any): TaskType => {
+  const { _id, ...rest } = task;
+  return { ...rest, id: _id.toString() };
+};
+
 
 export default function BlitzitPage() {
-    const [tasks, setTasks] = useState<Task[]>(sampleTasks);
-    const [selectedTask, setSelectedTask] = useState<Task | null>(null);
+    const [tasks, setTasks] = useState<TaskType[]>([]);
+    const [selectedTask, setSelectedTask] = useState<TaskType | null>(null);
     const [isDetailsOpen, setIsDetailsOpen] = useState(false);
     const [isClient, setIsClient] = useState(false);
+    const [isLoading, setIsLoading] = useState(true);
+    const { toast } = useToast();
 
     useEffect(() => {
         setIsClient(true);
-    }, []);
+        fetch('/api/tasks')
+            .then(res => res.json())
+            .then(data => {
+                setTasks(data.map(fromDb));
+                setIsLoading(false);
+            })
+            .catch(err => {
+                console.error("Failed to fetch tasks", err);
+                toast({
+                    variant: "destructive",
+                    title: "Failed to load tasks",
+                    description: "Could not fetch tasks from the database. Please try again later."
+                })
+                setIsLoading(false);
+            });
+    }, [toast]);
 
     const sensors = useSensors(
         useSensor(PointerSensor),
@@ -53,13 +63,12 @@ export default function BlitzitPage() {
     
     const tasksDueNow = tasks.filter(task => task.scheduledAt && isToday(new Date(task.scheduledAt)) && task.status !== 'do-now' && task.status !== 'done');
 
-
     const handleDragOver = (event: DragOverEvent) => {
         const { active, over } = event;
         if (!over) return;
     
-        const activeId = active.id;
-        const overId = over.id;
+        const activeId = active.id.toString();
+        const overId = over.id.toString();
     
         if (activeId === overId) return;
 
@@ -75,12 +84,10 @@ export default function BlitzitPage() {
         }
 
         if (isActiveATask && newStatus) {
-            setTasks(produce(draft => {
-                const activeTask = draft.find(t => t.id === activeId);
-                if (activeTask && activeTask.status !== newStatus) {
-                    activeTask.status = newStatus;
-                }
-            }));
+            const activeTask = tasks.find(t => t.id === activeId);
+            if (activeTask && activeTask.status !== newStatus) {
+                handleUpdateTask(activeId, { status: newStatus });
+            }
         }
     };
 
@@ -98,10 +105,11 @@ export default function BlitzitPage() {
                 if (oldIndex === -1 || newIndex === -1) return currentTasks;
                 return arrayMove(currentTasks, oldIndex, newIndex);
             });
+            // Here you might want to update the order in the database
         }
     };
 
-    const handleTaskClick = (task: Task) => {
+    const handleTaskClick = (task: TaskType) => {
         if (task.audioBlob) {
             const audioUrl = URL.createObjectURL(task.audioBlob);
             const audio = new Audio(audioUrl);
@@ -111,40 +119,106 @@ export default function BlitzitPage() {
             setIsDetailsOpen(true);
         }
     };
-    
-    const handleSaveTask = (updatedTask: Task) => {
+
+    const handleUpdateTask = async (taskId: string, updates: Partial<TaskType>) => {
+        // Optimistic update
+        const originalTasks = tasks;
         setTasks(produce(draft => {
-            const index = draft.findIndex(t => t.id === updatedTask.id);
-            if (index !== -1) {
-                draft[index] = updatedTask;
-            } else {
-                draft.unshift(updatedTask);
+            const task = draft.find(t => t.id === taskId);
+            if (task) {
+                Object.assign(task, updates);
             }
         }));
+
+        try {
+            const response = await fetch(`/api/tasks/${taskId}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(updates),
+            });
+            if (!response.ok) throw new Error('Failed to update task');
+            const updatedTask = await response.json();
+            setTasks(produce(draft => {
+                const task = draft.find(t => t.id === updatedTask._id);
+                if (task) {
+                    Object.assign(task, fromDb(updatedTask));
+                }
+            }));
+        } catch (error) {
+            console.error(error);
+            setTasks(originalTasks); // Rollback
+            toast({
+                variant: "destructive",
+                title: "Update failed",
+                description: `Could not update task.`,
+            });
+        }
+    }
+    
+    const handleSaveTask = async (taskToSave: TaskType) => {
+        const isNew = !tasks.some(t => t.id === taskToSave.id);
+        const originalTasks = tasks;
+
+        if (isNew) {
+            // Optimistic update
+            setTasks(produce(draft => { draft.unshift(taskToSave); }));
+
+            try {
+                const response = await fetch('/api/tasks', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(taskToSave),
+                });
+                if (!response.ok) throw new Error('Failed to create task');
+                const newTask = await response.json();
+
+                // Replace placeholder with real task from DB
+                setTasks(produce(draft => {
+                    const index = draft.findIndex(t => t.id === taskToSave.id);
+                    if (index !== -1) {
+                        draft[index] = fromDb(newTask);
+                    }
+                }));
+            } catch (error) {
+                console.error(error);
+                setTasks(originalTasks); // Rollback
+                toast({ variant: 'destructive', title: 'Failed to create task.' });
+            }
+        } else {
+            handleUpdateTask(taskToSave.id, taskToSave);
+        }
         setIsDetailsOpen(false);
         setSelectedTask(null);
     }
 
-    const handleDeleteTask = (taskId: string) => {
+    const handleDeleteTask = async (taskId: string) => {
+        const originalTasks = tasks;
+        // Optimistic update
         setTasks(tasks.filter(t => t.id !== taskId));
         setIsDetailsOpen(false);
         setSelectedTask(null);
+
+        try {
+            const response = await fetch(`/api/tasks/${taskId}`, {
+                method: 'DELETE',
+            });
+            if (!response.ok) throw new Error('Failed to delete task');
+        } catch (error) {
+            console.error(error);
+            setTasks(originalTasks); // Rollback
+            toast({ variant: 'destructive', title: 'Failed to delete task.' });
+        }
     }
 
     const handleUpdateDueTasks = (newStatus: 'do-now' | 'do-later') => {
-        setTasks(produce(draft => {
-            tasksDueNow.forEach(dueTask => {
-                const taskInDraft = draft.find(t => t.id === dueTask.id);
-                if (taskInDraft) {
-                    taskInDraft.status = newStatus;
-                }
-            });
-        }));
+        tasksDueNow.forEach(dueTask => {
+            handleUpdateTask(dueTask.id, { status: newStatus });
+        });
     };
 
     const handleAddTask = (status: TaskStatus) => {
         setSelectedTask({
-            id: `task-${Date.now()}`,
+            id: `new-${Date.now()}`,
             title: '',
             status: status,
             priority: 'neither',
@@ -154,24 +228,24 @@ export default function BlitzitPage() {
     };
 
     const handlePriorityChange = (taskId: string, newPriority: TaskPriority) => {
-        setTasks(produce(draft => {
-            const task = draft.find(t => t.id === taskId);
-            if (task) {
-                task.priority = newPriority;
-            }
-        }));
+        handleUpdateTask(taskId, { priority: newPriority });
     };
     
     const todayTasks = tasks.filter(t => t.status === 'do-now');
 
-    if (!isClient) {
+    if (isLoading || !isClient) {
       return (
         <div className="p-8">
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
-                <div className="lg:col-span-2">
+                <div className="lg:col-span-1">
                     <div className="h-48 bg-card rounded-xl animate-pulse"></div>
                 </div>
-                <div className="h-48 bg-card rounded-xl animate-pulse"></div>
+                 <div className="lg:col-span-1">
+                    <div className="h-48 bg-card rounded-xl animate-pulse"></div>
+                </div>
+                <div className="lg:col-span-1">
+                     <div className="h-48 bg-card rounded-xl animate-pulse"></div>
+                </div>
             </div>
             <div className="flex gap-6">
                 <div className="flex-1 rounded-xl bg-card p-4 h-[70vh] animate-pulse"></div>
