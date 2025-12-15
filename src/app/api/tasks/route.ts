@@ -5,15 +5,15 @@ import { z } from 'zod';
 
 const taskSchema = z.object({
   title: z.string().min(1, 'Title is required'),
-  description: z.string().optional(),
+  description: z.string().optional().nullable(),
   priority: z.enum(['urgent', 'important', 'neither']),
   status: z.enum(['do-now', 'do-later', 'tomorrow', 'soon', 'done', 'archived']),
   listId: z.string(),
-  scheduledAt: z.number().optional(),
-  estimatedTime: z.number().optional(),
-  actualTime: z.number().optional(),
-  notes: z.string().optional(),
-  tags: z.array(z.string()).optional(),
+  scheduledAt: z.number().optional().nullable(),
+  estimatedTime: z.number().optional().nullable(),
+  actualTime: z.number().optional().nullable(),
+  notes: z.string().optional().nullable(),
+  tags: z.array(z.string()).optional().nullable(),
   recurring: z.enum(['daily', 'weekly', 'monthly']).nullable().optional(),
 });
 
@@ -34,7 +34,7 @@ export async function POST(request: Request) {
     const validation = taskSchema.safeParse(body);
 
     if (!validation.success) {
-      return NextResponse.json(validation.error.errors, { status: 400 });
+      return NextResponse.json({ message: 'Validation failed', errors: validation.error.errors }, { status: 400 });
     }
 
     const { db } = await connectToDatabase();
@@ -44,13 +44,15 @@ export async function POST(request: Request) {
       updatedAt: new Date(),
     });
     
-    // The inserted document is available in result.ops[0] for mongodb driver v3
-    // For v4+, we need to fetch it separately if we want to return it.
     const newDoc = await db.collection('tasks').findOne({_id: result.insertedId});
+    if (!newDoc) {
+      return NextResponse.json({ message: 'Failed to retrieve created task' }, { status: 500 });
+    }
 
     return NextResponse.json(newDoc, { status: 201 });
   } catch (error) {
     console.error('Failed to create task:', error);
-    return NextResponse.json({ message: 'Failed to create task' }, { status: 500 });
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+    return NextResponse.json({ message: 'Failed to create task', error: errorMessage }, { status: 500 });
   }
 }

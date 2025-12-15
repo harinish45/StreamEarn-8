@@ -35,9 +35,18 @@ export default function BlitzitPage() {
     useEffect(() => {
         setIsClient(true);
         fetch('/api/tasks')
-            .then(res => res.json())
+            .then(res => {
+                if (!res.ok) {
+                    throw new Error('Failed to fetch tasks');
+                }
+                return res.json();
+            })
             .then(data => {
-                setTasks(data.map(fromDb));
+                if (Array.isArray(data)) {
+                    setTasks(data.map(fromDb));
+                } else {
+                    throw new Error('Fetched data is not an array');
+                }
                 setIsLoading(false);
             })
             .catch(err => {
@@ -155,38 +164,46 @@ export default function BlitzitPage() {
     }
     
     const handleSaveTask = async (taskToSave: TaskType) => {
-        const isNew = taskToSave.id.startsWith('new-');
+        const isNew = !taskToSave._id;
         const originalTasks = tasks;
 
         if (isNew) {
-            // Optimistic update
-            const newTaskWithDefaults = {
-                ...taskToSave,
-                title: taskToSave.title || 'New Task',
-                priority: taskToSave.priority || 'neither',
-                status: taskToSave.status || 'do-later',
-                listId: taskToSave.listId || 'personal',
+            const { id, ...taskData } = taskToSave;
+            const payload = {
+                title: taskData.title || 'New Task',
+                priority: taskData.priority || 'neither',
+                status: taskData.status || 'do-later',
+                listId: taskData.listId || 'personal',
+                ...taskData
             };
-            setTasks(produce(draft => { draft.unshift(newTaskWithDefaults); }));
             
-            const { id, ...taskData } = newTaskWithDefaults;
+            // Optimistic update
+            const tempId = `new-${Date.now()}`;
+            const optimisticNewTask: TaskType = {
+                id: tempId,
+                ...payload
+            };
+            setTasks(produce(draft => { draft.unshift(optimisticNewTask); }));
 
             try {
                 const response = await fetch('/api/tasks', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(taskData),
+                    body: JSON.stringify(payload),
                 });
-                if (!response.ok) throw new Error('Failed to create task');
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    console.error("Server error:", errorData.message || errorData);
+                    throw new Error('Failed to create task');
+                }
                 const newTask = await response.json();
 
                 // Replace placeholder with real task from DB
                 setTasks(produce(draft => {
-                    const index = draft.findIndex(t => t.id === taskToSave.id);
+                    const index = draft.findIndex(t => t.id === tempId);
                     if (index !== -1) {
                         draft[index] = fromDb(newTask);
                     } else {
-                        // if optimistic wasn't found, just add it.
                         draft.push(fromDb(newTask));
                     }
                 }));
