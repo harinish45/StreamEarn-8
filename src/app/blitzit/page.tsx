@@ -21,13 +21,8 @@ import { PomodoroSettings } from './components/PomodoroSettings';
 import { Alerts } from './components/Alerts';
 import { isToday } from 'date-fns';
 import { useToast } from '@/hooks/use-toast';
-
-// Convert DB tasks (with _id) to frontend tasks (with id)
-const fromDb = (task: any): TaskType => {
-  const { _id, ...rest } = task;
-  return { ...rest, id: _id.toString() };
-};
-
+import { fromDb } from '@/lib/utils';
+import { Skeleton } from '@/components/ui/skeleton';
 
 export default function BlitzitPage() {
     const [tasks, setTasks] = useState<TaskType[]>([]);
@@ -77,10 +72,11 @@ export default function BlitzitPage() {
 
         let newStatus: TaskStatus | undefined;
         if (isOverAColumn) {
-            if (over.id === 'today') newStatus = 'do-now';
-            else if (over.id === 'tomorrow') newStatus = 'tomorrow';
-            else if (over.id === 'this-week') newStatus = 'soon';
-            else if (over.id === 'backlog') newStatus = 'do-later';
+            const columnId = over.id;
+            if (columnId === 'today') newStatus = 'do-now';
+            else if (columnId === 'tomorrow') newStatus = 'tomorrow';
+            else if (columnId === 'this-week') newStatus = 'soon';
+            else if (columnId === 'backlog') newStatus = 'do-later';
         }
 
         if (isActiveATask && newStatus) {
@@ -103,9 +99,12 @@ export default function BlitzitPage() {
                 const oldIndex = currentTasks.findIndex((t) => t.id === active.id);
                 const newIndex = currentTasks.findIndex((t) => t.id === over.id);
                 if (oldIndex === -1 || newIndex === -1) return currentTasks;
-                return arrayMove(currentTasks, oldIndex, newIndex);
+                
+                const newOrderedTasks = arrayMove(currentTasks, oldIndex, newIndex);
+                // Here you might want to update the order in the database for all tasks
+                // This can be an expensive operation. For now, we only update client-side for smooth UX.
+                return newOrderedTasks;
             });
-            // Here you might want to update the order in the database
         }
     };
 
@@ -139,9 +138,9 @@ export default function BlitzitPage() {
             if (!response.ok) throw new Error('Failed to update task');
             const updatedTask = await response.json();
             setTasks(produce(draft => {
-                const task = draft.find(t => t.id === updatedTask._id);
-                if (task) {
-                    Object.assign(task, fromDb(updatedTask));
+                const taskIndex = draft.findIndex(t => t.id === taskId);
+                if (taskIndex !== -1) {
+                    draft[taskIndex] = fromDb(updatedTask);
                 }
             }));
         } catch (error) {
@@ -156,18 +155,27 @@ export default function BlitzitPage() {
     }
     
     const handleSaveTask = async (taskToSave: TaskType) => {
-        const isNew = !tasks.some(t => t.id === taskToSave.id);
+        const isNew = taskToSave.id.startsWith('new-');
         const originalTasks = tasks;
 
         if (isNew) {
             // Optimistic update
-            setTasks(produce(draft => { draft.unshift(taskToSave); }));
+            const newTaskWithDefaults = {
+                ...taskToSave,
+                title: taskToSave.title || 'New Task',
+                priority: taskToSave.priority || 'neither',
+                status: taskToSave.status || 'do-later',
+                listId: taskToSave.listId || 'personal',
+            };
+            setTasks(produce(draft => { draft.unshift(newTaskWithDefaults); }));
+            
+            const { id, ...taskData } = newTaskWithDefaults;
 
             try {
                 const response = await fetch('/api/tasks', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(taskToSave),
+                    body: JSON.stringify(taskData),
                 });
                 if (!response.ok) throw new Error('Failed to create task');
                 const newTask = await response.json();
@@ -177,6 +185,9 @@ export default function BlitzitPage() {
                     const index = draft.findIndex(t => t.id === taskToSave.id);
                     if (index !== -1) {
                         draft[index] = fromDb(newTask);
+                    } else {
+                        // if optimistic wasn't found, just add it.
+                        draft.push(fromDb(newTask));
                     }
                 }));
             } catch (error) {
@@ -195,8 +206,11 @@ export default function BlitzitPage() {
         const originalTasks = tasks;
         // Optimistic update
         setTasks(tasks.filter(t => t.id !== taskId));
-        setIsDetailsOpen(false);
-        setSelectedTask(null);
+        
+        if (selectedTask?.id === taskId) {
+          setIsDetailsOpen(false);
+          setSelectedTask(null);
+        }
 
         try {
             const response = await fetch(`/api/tasks/${taskId}`, {
@@ -232,26 +246,26 @@ export default function BlitzitPage() {
     };
     
     const todayTasks = tasks.filter(t => t.status === 'do-now');
+    const doneTodayCount = todayTasks.filter(t => t.status === 'done').length;
 
     if (isLoading || !isClient) {
       return (
         <div className="p-8">
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
                 <div className="lg:col-span-1">
-                    <div className="h-48 bg-card rounded-xl animate-pulse"></div>
+                    <Skeleton className="h-48 bg-card rounded-xl" />
                 </div>
                  <div className="lg:col-span-1">
-                    <div className="h-48 bg-card rounded-xl animate-pulse"></div>
+                    <Skeleton className="h-48 bg-card rounded-xl" />
                 </div>
                 <div className="lg:col-span-1">
-                     <div className="h-48 bg-card rounded-xl animate-pulse"></div>
+                     <Skeleton className="h-48 bg-card rounded-xl" />
                 </div>
             </div>
             <div className="flex gap-6">
-                <div className="flex-1 rounded-xl bg-card p-4 h-[70vh] animate-pulse"></div>
-                <div className="flex-1 rounded-xl bg-card p-4 h-[70vh] animate-pulse"></div>
-                <div className="flex-1 rounded-xl bg-card p-4 h-[70vh] animate-pulse"></div>
-                 <div className="flex-1 rounded-xl bg-card p-4 h-[70vh] animate-pulse"></div>
+                <Skeleton className="flex-1 rounded-xl bg-card p-4 h-[70vh]" />
+                <Skeleton className="flex-1 rounded-xl bg-card p-4 h-[70vh]" />
+                <Skeleton className="flex-1 rounded-xl bg-card p-4 h-[70vh]" />
             </div>
         </div>
       );
@@ -284,8 +298,8 @@ export default function BlitzitPage() {
                                 onDeleteTask={handleDeleteTask}
                                 status='do-now'
                                 est="Est: 1hrs 30min"
-                                done={0}
-                                total={1}
+                                done={doneTodayCount}
+                                total={todayTasks.length}
                             />
                         </div>
                     </div>

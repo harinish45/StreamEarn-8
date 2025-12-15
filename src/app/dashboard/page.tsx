@@ -15,6 +15,7 @@ import {
   SortableContext,
   sortableKeyboardCoordinates,
   verticalListSortingStrategy,
+  arrayMove,
 } from '@dnd-kit/sortable';
 import { produce } from 'immer';
 import { Button } from '@/components/ui/button';
@@ -96,7 +97,7 @@ export default function DashboardPage() {
       .then(res => res.json())
       .then(data => {
         setLists(data);
-        if (data.length > 0) {
+        if (data.length > 0 && !selectedListId) {
           setSelectedListId(data[0]._id);
         }
         setIsLoading(false);
@@ -106,7 +107,7 @@ export default function DashboardPage() {
         toast({ variant: "destructive", title: "Failed to load lists" });
         setIsLoading(false);
       });
-  }, [toast]);
+  }, [toast, selectedListId]);
   
   const sensors = useSensors(
     useSensor(PointerSensor),
@@ -120,7 +121,7 @@ export default function DashboardPage() {
     [lists, selectedListId]
   );
   
-  const updateListInDb = async (listId: string, updatedList: Partial<List>) => {
+  const updateListInDb = useCallback(async (listId: string, updatedList: Partial<Omit<List, '_id'>>) => {
     try {
         const response = await fetch(`/api/lists/${listId}`, {
             method: 'PUT',
@@ -129,31 +130,35 @@ export default function DashboardPage() {
         });
         if (!response.ok) throw new Error('Failed to update list');
         const data = await response.json();
-        setLists(lists.map(l => l._id === listId ? data : l));
+        setLists(currentLists => currentLists.map(l => l._id === listId ? data : l));
     } catch (error) {
         toast({ variant: "destructive", title: "Failed to update list" });
         console.error(error);
-        // Here you would rollback the optimistic update if you had one
+        // Consider rolling back optimistic updates here if you have them.
     }
-  };
+  }, [toast]);
 
 
   const handleAddList = async () => {
     if (newListName.trim()) {
-      const optimisticNewList = {
+      const optimisticNewList: List = {
         _id: `temp-${Date.now()}`,
         name: newListName.trim(),
         tasks: [],
       };
+      
+      const prevLists = lists;
       setLists([...lists, optimisticNewList]);
       setSelectedListId(optimisticNewList._id);
+      setNewListName('');
 
       try {
         const response = await fetch('/api/lists', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ name: newListName.trim() }),
+          body: JSON.stringify({ name: newListName.trim(), tasks: [] }),
         });
+
         if (!response.ok) throw new Error('Failed to add list');
         const newList = await response.json();
         
@@ -165,23 +170,22 @@ export default function DashboardPage() {
 
       } catch (error) {
         toast({ variant: "destructive", title: "Failed to add list" });
-        setLists(lists.filter(l => l._id !== optimisticNewList._id));
-      } finally {
-        setNewListName('');
+        setLists(prevLists);
       }
     }
   };
 
   const handleAddTask = async () => {
-    if (newTaskText.trim() && selectedListId) {
+    if (newTaskText.trim() && selectedListId && selectedList) {
       const newTask: Task = {
         id: `task-${Date.now()}`,
         text: newTaskText.trim(),
         completed: false,
       };
 
-      const updatedTasks = [...(selectedList?.tasks || []), newTask];
-
+      const updatedTasks = [...selectedList.tasks, newTask];
+      
+      const prevLists = lists;
       setLists(
         produce((draft) => {
           const list = draft.find((l) => l._id === selectedListId);
@@ -192,7 +196,11 @@ export default function DashboardPage() {
       );
       setNewTaskText('');
 
-      await updateListInDb(selectedListId, { tasks: updatedTasks });
+      try {
+        await updateListInDb(selectedListId, { tasks: updatedTasks });
+      } catch {
+        setLists(prevLists);
+      }
     }
   };
 
@@ -222,7 +230,8 @@ export default function DashboardPage() {
     const originalLists = lists;
     setLists(lists.filter(l => l._id !== listId));
     if(selectedListId === listId) {
-        setSelectedListId(lists[0]?._id || null);
+        const remainingLists = originalLists.filter(l => l._id !== listId);
+        setSelectedListId(remainingLists[0]?._id || null);
     }
     try {
       const response = await fetch(`/api/lists/${listId}`, { method: 'DELETE' });
@@ -251,11 +260,10 @@ export default function DashboardPage() {
     if (active.id !== over?.id && selectedListId && selectedList) {
         const oldIndex = selectedList.tasks.findIndex(t => t.id === active.id);
         const newIndex = selectedList.tasks.findIndex(t => t.id === over?.id);
+
+        if (oldIndex === -1 || newIndex === -1) return;
         
-        const newTasks = produce(selectedList.tasks, draft => {
-            const [movedTask] = draft.splice(oldIndex, 1);
-            draft.splice(newIndex, 0, movedTask);
-        });
+        const newTasks = arrayMove(selectedList.tasks, oldIndex, newIndex);
 
         setLists(lists.map(l => l._id === selectedListId ? { ...l, tasks: newTasks } : l));
         updateListInDb(selectedListId, { tasks: newTasks });

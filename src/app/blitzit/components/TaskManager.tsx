@@ -243,7 +243,7 @@ export function TaskManager({ tasks, onTaskClick, onAddTask, onPriorityChange, o
   const getTasksByStatus = (status: TaskStatus) =>
     tasks.filter(t => t.status === status);
 
-  const backlogTasks = tasks.filter(t => t.status === 'do-later' || t.status === 'soon');
+  const backlogTasks = getTasksByStatus('do-later');
   const thisWeekTasks = getTasksByStatus('soon');
   const tomorrowTasks = getTasksByStatus('tomorrow');
 

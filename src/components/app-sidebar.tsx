@@ -12,9 +12,11 @@ import {
 } from "@/components/ui/sidebar";
 import { EarningCategory } from "@/lib/data";
 import { Button } from "./ui/button";
-import { Search, LogOut, ArrowDownAZ, ArrowUpAZ, Pin, DollarSign, Bot } from "lucide-react";
+import { Search, LogOut, ArrowDownAZ, ArrowUpAZ, Pin } from "lucide-react";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
+
 
 interface AppSidebarProps {
     categories: EarningCategory[];
@@ -26,6 +28,7 @@ interface AppSidebarProps {
 }
 
 export function AppSidebar({ categories, onSortClick, sortOrder, onPinClick, searchQuery, setSearchQuery }: AppSidebarProps) {
+  const pathname = usePathname();
   const sidebarCategories = categories.filter(c => c.id !== 'home' && c.id !== 'recently-watched');
 
   return (
@@ -49,24 +52,27 @@ export function AppSidebar({ categories, onSortClick, sortOrder, onPinClick, sea
             </Button>
         </div>
         <SidebarMenu>
-          {sidebarCategories.map((category) => (
-            <SidebarMenuItem key={category.id} className="group/menu-item">
-              <SidebarMenuButton asChild tooltip={category.name}>
-                <Link href={`/category/${category.id}`}>
-                  <category.icon />
-                  <span>{category.name}</span>
-                </Link>
-              </SidebarMenuButton>
-               <Button
-                variant="ghost"
-                size="icon"
-                className="absolute right-2 top-1/2 -translate-y-1/2 h-7 w-7 opacity-0 group-hover/menu-item:opacity-100"
-                onClick={() => onPinClick(category.id)}
-              >
-                <Pin className={cn("h-4 w-4", category.pinned && "fill-current text-foreground")} />
-              </Button>
-            </SidebarMenuItem>
-          ))}
+          {sidebarCategories.map((category) => {
+            const isActive = pathname === `/category/${category.id}`;
+            return (
+                <SidebarMenuItem key={category.id} className="group/menu-item">
+                <SidebarMenuButton asChild tooltip={category.name} isActive={isActive}>
+                    <Link href={`/category/${category.id}`}>
+                    <category.icon />
+                    <span>{category.name}</span>
+                    </Link>
+                </SidebarMenuButton>
+                <Button
+                    variant="ghost"
+                    size="icon"
+                    className="absolute right-2 top-1/2 -translate-y-1/2 h-7 w-7 opacity-0 group-hover/menu-item:opacity-100"
+                    onClick={() => onPinClick(category.id)}
+                >
+                    <Pin className={cn("h-4 w-4", category.pinned && "fill-current text-foreground")} />
+                </Button>
+                </SidebarMenuItem>
+            )
+          })}
         </SidebarMenu>
       </SidebarContent>
       <SidebarSeparator />

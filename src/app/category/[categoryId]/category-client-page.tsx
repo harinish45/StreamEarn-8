@@ -9,11 +9,14 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import React, { useState, useCallback, useMemo, useEffect } from "react";
 import { OpportunityCard } from "@/components/opportunity-card";
 import { Breadcrumbs } from "@/components/breadcrumbs";
-import { notFound } from "next/navigation";
+import { notFound, usePathname } from "next/navigation";
 import { useToast } from "@/hooks/use-toast";
 import { Skeleton } from "@/components/ui/skeleton";
 
-export function CategoryClientPage({ categoryId }: { categoryId: string }) {
+export function CategoryClientPage({ initialCategoryId }: { initialCategoryId: string }) {
+  const pathname = usePathname();
+  const categoryId = pathname.split('/').pop() || initialCategoryId;
+
   const [allCategories, setAllCategories] = useState<EarningCategory[]>([]);
   const [category, setCategory] = useState<EarningCategory | null>(null);
   
@@ -33,8 +36,6 @@ export function CategoryClientPage({ categoryId }: { categoryId: string }) {
         const currentCategory = data.find((c: EarningCategory) => c.id === categoryId);
         if (currentCategory) {
           setCategory(currentCategory);
-        } else {
-          notFound();
         }
         setIsLoading(false);
       })
@@ -44,6 +45,19 @@ export function CategoryClientPage({ categoryId }: { categoryId: string }) {
         setIsLoading(false);
       });
   }, [categoryId, toast]);
+
+  useEffect(() => {
+    if (allCategories.length > 0) {
+      const currentCategory = allCategories.find((c: EarningCategory) => c.id === categoryId);
+      if (currentCategory) {
+        setCategory(currentCategory);
+      } else {
+        // Don't call notFound() on client side, just show a message or handle appropriately
+        console.warn(`Category with id ${categoryId} not found.`);
+        setCategory(null);
+      }
+    }
+  }, [categoryId, allCategories]);
 
   const updateCategory = async (catId: string, updates: Partial<EarningCategory>) => {
     try {
@@ -141,8 +155,11 @@ export function CategoryClientPage({ categoryId }: { categoryId: string }) {
   }
 
   if (!category) {
-    // notFound() is a server-side utility. In client component, you can render a friendly "not found" message.
-    return <div>Category not found.</div>;
+    return (
+       <div className="flex items-center justify-center h-screen text-muted-foreground">
+        Category not found.
+      </div>
+    );
   }
 
   return (
