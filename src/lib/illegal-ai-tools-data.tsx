@@ -30,12 +30,12 @@ export const illegalAiTools: AiToolCategory[] = [
   {
     name: 'Vibe coding tools',
     tools: [
-      { name: 'Emergent', logo: createLogo('Emergent'), link: 'https://emergent.org/' },
+      { name: 'Emergent', logo: createLogo('Emergent'), link: 'https://www.emergent.fyi/' },
       { name: 'Firebase Studio', logo: createLogo('Firebase Studio'), link: 'https://studio.firebase.google.com/' },
-      { name: 'Rocket', logo: createLogo('Rocket'), link: '#' },
+      { name: 'Rocket', logo: createLogo('Rocket'), link: 'https://rocketdev.com/' },
       { name: 'Lovable', logo: createLogo('Lovable'), link: 'https://lovable.dev/' },
       { name: 'Bolt', logo: createLogo('Bolt'), link: 'https://www.bolt.com/' },
-      { name: 'CREAO', logo: createLogo('CREAO'), link: '#' },
+      { name: 'CREAO', logo: createLogo('CREAO'), link: 'https://creao.ai/' },
       { name: 'MGX', logo: createLogo('MGX'), link: '#' },
       { name: 'Replit', logo: createLogo('Replit'), link: 'https://replit.com/' },
       { name: 'Base44', logo: createLogo('Base44'), link: '#' },
@@ -45,8 +45,8 @@ export const illegalAiTools: AiToolCategory[] = [
     name: 'Vibe design tools',
     tools: [
       { name: 'Nano Banana', logo: createLogo('Nano Banana'), link: 'https://deepmind.google/discover/blog/generating-and-editing-images-with-multimodal-large-language-models/' },
-      { name: 'Seedream', logo: createLogo('Seedream'), link: '#' },
-      { name: 'Lovart', logo: createLogo('Lovart'), link: '#' },
+      { name: 'Seedream', logo: createLogo('Seedream'), link: 'https://seedream.com/' },
+      { name: 'Lovart', logo: createLogo('Lovart'), link: 'https://lovart.ai/' },
       { name: 'Picsart', logo: createLogo('Picsart'), link: 'https://picsart.com/' },
       { name: 'VSCO', logo: createLogo('VSCO'), link: 'https://vsco.co/' },
       { name: 'ChatGPT', logo: createLogo('ChatGPT-design'), link: 'https://chat.openai.com/' },
@@ -56,8 +56,8 @@ export const illegalAiTools: AiToolCategory[] = [
   {
     name: 'Vibe marketing tools',
     tools: [
-      { name: 'Notebooks', logo: createLogo('Notebooks'), link: '#' },
-      { name: 'Poppy AI', logo: createLogo('Poppy AI'), link: '#' },
+      { name: 'Notebooks', logo: createLogo('Notebooks'), link: 'https://notebooklm.google.com/' },
+      { name: 'Poppy AI', logo: createLogo('Poppy AI'), link: 'https://www.poppy-ai.com/' },
       { name: 'Gamma', logo: createLogo('Gamma'), link: 'https://gamma.app/' },
       { name: 'Freepik', logo: createLogo('Freepik'), link: 'https://www.freepik.com/' },
       { name: 'Higgsfield', logo: createLogo('Higgsfield'), link: 'https://www.higgsfield.ai/' },
@@ -68,7 +68,7 @@ export const illegalAiTools: AiToolCategory[] = [
   {
     name: 'AI image & video tools',
     tools: [
-      { name: 'AIVideo', logo: createLogo('AIVideo'), link: '#' },
+      { name: 'AIVideo', logo: createLogo('AIVideo'), link: 'https://aivideo.com/' },
       { name: 'ImagineArt', logo: createLogo('ImagineArt'), link: '#' },
       { name: 'Syllaby', logo: createLogo('Syllaby'), link: 'https://www.syllaby.io/' },
       { name: 'HeyGen', logo: createLogo('HeyGen'), link: 'https://www.heygen.com/' },
