@@ -1,4 +1,5 @@
 
+'use client';
 import type { Opportunity } from "@/lib/data";
 import { ArrowUpRight } from "lucide-react";
 import { Button } from "./ui/button";
@@ -9,16 +10,28 @@ import { Badge } from "./ui/badge";
 interface OpportunityCardProps {
   opportunity: Opportunity;
   categoryId: string;
-  onClick: (categoryId: string, opportunityId: string) => void;
 }
 
-export function OpportunityCard({ opportunity, categoryId, onClick }: OpportunityCardProps) {
+export function OpportunityCard({ opportunity, categoryId }: OpportunityCardProps) {
+    const handleClick = async () => {
+        try {
+            await fetch(`/api/earnings/${categoryId}?opportunityId=${opportunity.id}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ visited: true }),
+            });
+            // The UI will update on next page load/revalidation
+        } catch (error) {
+            console.error('Failed to mark as visited:', error);
+        }
+    };
+  
   return (
     <Link 
       href={opportunity.link}
       target="_blank"
       rel="noopener noreferrer"
-      onClick={() => onClick(categoryId, opportunity.id)}
+      onClick={handleClick}
       className="group relative block h-full w-full"
     >
       <div className="flex flex-col justify-between h-full w-full overflow-hidden rounded-lg border border-border bg-card p-4 shadow-sm transition-all hover:shadow-lg hover:border-primary/50">

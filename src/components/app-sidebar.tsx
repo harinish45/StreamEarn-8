@@ -1,4 +1,5 @@
 
+'use client';
 import {
   Sidebar,
   SidebarHeader,
@@ -16,20 +17,54 @@ import { Search, LogOut, ArrowDownAZ, ArrowUpAZ, Pin } from "lucide-react";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useState, useMemo } from 'react';
 
 
 interface AppSidebarProps {
     categories: EarningCategory[];
-    onSortClick: () => void;
-    sortOrder: 'asc' | 'desc';
-    onPinClick: (categoryId: string) => void;
-    searchQuery: string;
-    setSearchQuery: (query: string) => void;
 }
 
-export function AppSidebar({ categories, onSortClick, sortOrder, onPinClick, searchQuery, setSearchQuery }: AppSidebarProps) {
+export function AppSidebar({ categories }: AppSidebarProps) {
   const pathname = usePathname();
-  const sidebarCategories = categories.filter(c => c.id !== 'home' && c.id !== 'recently-watched');
+  const [searchQuery, setSearchQuery] = useState('');
+  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
+
+  const onSortClick = () => setSortOrder(prev => prev === 'asc' ? 'desc' : 'asc');
+
+  const onPinClick = async (categoryId: string) => {
+    const category = categories.find(c => c.id === categoryId);
+    if (!category) return;
+
+    try {
+        const response = await fetch(`/api/earnings/${categoryId}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ pinned: !category.pinned }),
+        });
+        if (!response.ok) throw new Error('Failed to update pin status');
+        // Re-fetch or re-validate data to update UI. For now, simple alert.
+        alert('Pin status updated! Please refresh to see changes.');
+    } catch (error) {
+        console.error("Failed to pin category", error);
+        alert('Failed to update pin status.');
+    }
+  };
+  
+  const filteredCategories = useMemo(() => {
+    let sidebarCategories = categories.filter(c => c.id !== 'home' && c.id !== 'recently-watched');
+
+    if (searchQuery) {
+        sidebarCategories = sidebarCategories.filter(c => c.name.toLowerCase().includes(searchQuery.toLowerCase()));
+    }
+    
+    const pinned = sidebarCategories.filter(c => c.pinned);
+    const unpinned = sidebarCategories.filter(c => !c.pinned);
+    
+    unpinned.sort((a, b) => sortOrder === 'asc' ? a.name.localeCompare(b.name) : b.name.localeCompare(a.name));
+
+    return [...pinned, ...unpinned];
+  }, [categories, searchQuery, sortOrder]);
+
 
   return (
     <Sidebar>
@@ -52,7 +87,7 @@ export function AppSidebar({ categories, onSortClick, sortOrder, onPinClick, sea
             </Button>
         </div>
         <SidebarMenu>
-          {sidebarCategories.map((category) => {
+          {filteredCategories.map((category) => {
             const isActive = pathname === `/category/${category.id}`;
             return (
                 <SidebarMenuItem key={category.id} className="group/menu-item">

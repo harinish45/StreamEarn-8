@@ -2,6 +2,8 @@
 import { NextResponse } from 'next/server';
 import { connectToDatabase } from '@/lib/mongodb';
 import { z } from 'zod';
+import { fromDb } from '@/lib/utils';
+import { ObjectId } from 'mongodb';
 
 const categoryUpdateSchema = z.object({
   pinned: z.boolean().optional(),
@@ -23,7 +25,7 @@ export async function GET(request: Request, { params }: { params: { categoryId: 
             return NextResponse.json({ message: 'Category not found' }, { status: 404 });
         }
 
-        return NextResponse.json(category);
+        return NextResponse.json(fromDb(category));
     } catch (error) {
         console.error(`Failed to fetch category ${categoryId}:`, error);
         return NextResponse.json({ message: 'Failed to fetch category' }, { status: 500 });
@@ -53,7 +55,7 @@ export async function PUT(request: Request, { params }: { params: { categoryId: 
       );
       
       if (result.matchedCount === 0) {
-        return NextResponse.json({ message: 'Opportunity or Category not found' }, { status: 404 });
+        return NextResponse.json({ message: 'Opportunity or Category not found' }, { status: 444 });
       }
 
     } else {
@@ -74,7 +76,7 @@ export async function PUT(request: Request, { params }: { params: { categoryId: 
     }
     
     const updatedCategory = await db.collection('earning_opportunities').findOne({ id: categoryId });
-    return NextResponse.json(updatedCategory);
+    return NextResponse.json(fromDb(updatedCategory));
 
   } catch (error) {
     console.error(`Failed to update category ${categoryId}:`, error);

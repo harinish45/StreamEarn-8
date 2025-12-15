@@ -7,10 +7,9 @@ import { ArrowRight } from "lucide-react";
 
 interface CategoryListProps {
   category: EarningCategory;
-  onOpportunityClick: (categoryId: string, opportunityId: string) => void;
 }
 
-export function CategoryList({ category, onOpportunityClick }: CategoryListProps) {
+export function CategoryList({ category }: CategoryListProps) {
   if (category.opportunities.length === 0) {
     return null;
   }
@@ -31,7 +30,7 @@ export function CategoryList({ category, onOpportunityClick }: CategoryListProps
       </div>
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6 px-4 md:px-6">
           {category.opportunities.map((opportunity, index) => (
-            <OpportunityCard key={index} opportunity={opportunity} categoryId={category.id} onClick={onOpportunityClick} />
+            <OpportunityCard key={index} opportunity={opportunity} categoryId={category.id} />
           ))}
       </div>
     </section>
