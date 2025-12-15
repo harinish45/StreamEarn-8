@@ -85,7 +85,7 @@ export const illegalAiTools: AiToolCategory[] = [
       { name: 'Cursor', logo: createLogo('Cursor-assist'), link: 'https://cursor.com' },
       { name: 'Kilo Code', logo: createLogo('Kilo Code'), link: 'https://kilo.ai' },
       { name: 'Github Copilot', logo: createLogo('Github Copilot'), link: 'https://github.com/features/copilot' },
-      { name: 'Kiro', logo: createLogo('Kiro'), link: 'https://kiroai.ai' },
+      { name: 'Kiro', logo: createLogo('Kiro'), link: 'https://kiro.dev' },
       { name: 'Tabnine', logo: createLogo('Tabnine'), link: 'https://www.tabnine.com/' },
       { name: 'Devin', logo: createLogo('Devin'), link: 'https://www.cognition.ai/blog/introducing-devin' },
       { name: 'Aider', logo: createLogo('Aider'), link: 'https://aider.chat' },
