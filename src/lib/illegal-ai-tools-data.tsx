@@ -18,7 +18,7 @@ export const illegalAiTools: AiToolCategory[] = [
   {
     name: 'Viral marketing tools',
     tools: [
-      { name: 'ViralSky', logo: createLogo('ViralSky'), link: '#' },
+      { name: 'ViralSky', logo: createLogo('ViralSky'), link: 'https://viralsky.io/' },
       { name: 'ThreadMaster', logo: createLogo('ThreadMaster'), link: '#' },
       { name: 'VibeFluencer', logo: createLogo('VibeFluencer'), link: '#' },
       { name: 'VidIQ', logo: createLogo('VidIQ'), link: 'https://vidiq.com/' },
@@ -44,7 +44,7 @@ export const illegalAiTools: AiToolCategory[] = [
   {
     name: 'Vibe design tools',
     tools: [
-      { name: 'Nano Banana', logo: createLogo('Nano Banana'), link: '#' },
+      { name: 'Nano Banana', logo: createLogo('Nano Banana'), link: 'https://deepmind.google/discover/blog/generating-and-editing-images-with-multimodal-large-language-models/' },
       { name: 'Seedream', logo: createLogo('Seedream'), link: '#' },
       { name: 'Lovart', logo: createLogo('Lovart'), link: '#' },
       { name: 'Picsart', logo: createLogo('Picsart'), link: 'https://picsart.com/' },
@@ -60,9 +60,9 @@ export const illegalAiTools: AiToolCategory[] = [
       { name: 'Poppy AI', logo: createLogo('Poppy AI'), link: '#' },
       { name: 'Gamma', logo: createLogo('Gamma'), link: 'https://gamma.app/' },
       { name: 'Freepik', logo: createLogo('Freepik'), link: 'https://www.freepik.com/' },
-      { name: 'Higgsfield', logo: createLogo('Higgsfield'), link: '#' },
+      { name: 'Higgsfield', logo: createLogo('Higgsfield'), link: 'https://www.higgsfield.ai/' },
       { name: 'Reka', logo: createLogo('Reka'), link: 'https://reka.ai/' },
-      { name: 'MiniMax', logo: createLogo('MiniMax'), link: '#' },
+      { name: 'MiniMax', logo: createLogo('MiniMax'), link: 'https://www.minimax.com/' },
     ],
   },
   {
@@ -86,14 +86,14 @@ export const illegalAiTools: AiToolCategory[] = [
       { name: 'Kiro', logo: createLogo('Kiro'), link: '#' },
       { name: 'Tabnine', logo: createLogo('Tabnine'), link: 'https://www.tabnine.com/' },
       { name: 'Devin', logo: createLogo('Devin'), link: '#' },
-      { name: 'Aider', logo: createLogo('Aider'), link: '#' },
+      { name: 'Aider', logo: createLogo('Aider'), link: 'https://github.com/paul-gauthier/aider' },
     ],
   },
   {
     name: 'Automation tools',
     tools: [
       { name: 'BooSend', logo: createLogo('BooSend'), link: '#' },
-      { name: 'Manus', logo: createLogo('Manus'), link: '#' },
+      { name: 'Manus', logo: createLogo('Manus'), link: 'https://manus.co/' },
       { name: 'ChatGPT Tasks', logo: createLogo('ChatGPT Tasks'), link: '#' },
       { name: 'N8N', logo: createLogo('N8N'), link: 'https://n8n.io/' },
       { name: 'Make', logo: createLogo('Make'), link: 'https://www.make.com/' },
