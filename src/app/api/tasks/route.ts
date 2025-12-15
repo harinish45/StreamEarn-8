@@ -1,6 +1,6 @@
 
 import { NextResponse } from 'next/server';
-import { connectToDatabase } from '@/lib/mongodb';
+import { connectToDatabase } from '../../../lib/mongodb';
 import { ObjectId } from 'mongodb';
 import { z } from 'zod';
 import { fromDb } from '@/lib/utils';
