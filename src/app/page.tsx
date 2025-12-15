@@ -63,12 +63,12 @@ export default function Home() {
             </div>
             <div className="flex items-center justify-center">
                 <Image
-                    src="https://picsum.photos/seed/main-hero/800/600"
+                    src="https://picsum.photos/seed/einstein/800/600"
                     width={800}
                     height={600}
-                    alt="Hero Image"
+                    alt="Photo of a famous personality"
                     className="rounded-xl shadow-2xl"
-                    data-ai-hint="digital landscape"
+                    data-ai-hint="albert einstein"
                 />
             </div>
           </div>
