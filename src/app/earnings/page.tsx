@@ -3,19 +3,16 @@ import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/app-sidebar";
 import { Header } from "@/components/header";
 import { Hero } from "@/components/hero";
-import { type EarningCategory } from "@/lib/data";
+import { earningOpportunities, type EarningCategory } from "@/lib/data";
 import { CategoryCarousel } from "@/components/category-carousel";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import React from "react";
 import { CategoryList } from "@/components/category-list";
 import { Breadcrumbs } from "@/components/breadcrumbs";
-import { connectToDatabase } from '@/lib/mongodb';
-import { fromDb } from "@/lib/utils";
 
 async function getEarningOpportunities() {
-  const { db } = await connectToDatabase();
-  const categories = await db.collection('earning_opportunities').find({}).toArray();
-  return categories.map(fromDb);
+  // Mocking data fetch since DB is removed
+  return earningOpportunities;
 }
 
 export default async function EarningsPage() {

@@ -35,10 +35,32 @@ type Task = {
 };
 
 type List = {
-  _id: string;
+  id: string; // Changed from _id
   name: string;
   tasks: Task[];
 };
+
+// --- Mock Data ---
+const initialLists: List[] = [
+  {
+    id: 'list-1',
+    name: 'Shopping List',
+    tasks: [
+      { id: 'task-1-1', text: 'Milk', completed: false },
+      { id: 'task-1-2', text: 'Bread', completed: true },
+      { id: 'task-1-3', text: 'Eggs', completed: false },
+    ],
+  },
+  {
+    id: 'list-2',
+    name: 'Work Todos',
+    tasks: [
+      { id: 'task-2-1', text: 'Finish report', completed: false },
+      { id: 'task-2-2', text: 'Email team', completed: false },
+    ],
+  },
+];
+
 
 // --- Components ---
 
@@ -93,21 +115,15 @@ export default function DashboardPage() {
   
   useEffect(() => {
     setIsClient(true);
-    fetch('/api/lists')
-      .then(res => res.json())
-      .then(data => {
-        setLists(data);
-        if (data.length > 0 && !selectedListId) {
-          setSelectedListId(data[0]._id);
-        }
-        setIsLoading(false);
-      })
-      .catch(err => {
-        console.error("Failed to fetch lists", err);
-        toast({ variant: "destructive", title: "Failed to load lists" });
-        setIsLoading(false);
-      });
-  }, [toast, selectedListId]);
+    // Simulate fetching data
+    setTimeout(() => {
+      setLists(initialLists);
+      if (initialLists.length > 0 && !selectedListId) {
+        setSelectedListId(initialLists[0].id);
+      }
+      setIsLoading(false);
+    }, 500);
+  }, [selectedListId]);
   
   const sensors = useSensors(
     useSensor(PointerSensor),
@@ -117,61 +133,27 @@ export default function DashboardPage() {
   );
 
   const selectedList = useMemo(
-    () => lists.find((list) => list._id === selectedListId),
+    () => lists.find((list) => list.id === selectedListId),
     [lists, selectedListId]
   );
   
-  const updateListInDb = useCallback(async (listId: string, updatedList: Partial<Omit<List, '_id'>>) => {
-    try {
-        const response = await fetch(`/api/lists/${listId}`, {
-            method: 'PUT',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(updatedList)
-        });
-        if (!response.ok) throw new Error('Failed to update list');
-        const data = await response.json();
-        setLists(currentLists => currentLists.map(l => l._id === listId ? data : l));
-    } catch (error) {
-        toast({ variant: "destructive", title: "Failed to update list" });
-        console.error(error);
-        // Consider rolling back optimistic updates here if you have them.
-    }
+  const updateList = useCallback((listId: string, updatedList: Partial<Omit<List, 'id'>>) => {
+     setLists(currentLists => currentLists.map(l => l.id === listId ? { ...l, ...updatedList } : l));
+     toast({title: 'List updated (local only)'});
   }, [toast]);
 
 
   const handleAddList = async () => {
     if (newListName.trim()) {
-      const optimisticNewList: List = {
-        _id: `temp-${Date.now()}`,
+      const newList: List = {
+        id: `list-${Date.now()}`,
         name: newListName.trim(),
         tasks: [],
       };
-      
-      const prevLists = lists;
-      setLists([...lists, optimisticNewList]);
-      setSelectedListId(optimisticNewList._id);
+      setLists([...lists, newList]);
+      setSelectedListId(newList.id);
       setNewListName('');
-
-      try {
-        const response = await fetch('/api/lists', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ name: newListName.trim(), tasks: [] }),
-        });
-
-        if (!response.ok) throw new Error('Failed to add list');
-        const newList = await response.json();
-        
-        setLists(currentLists => {
-          const newLists = currentLists.map(l => l._id === optimisticNewList._id ? newList : l);
-          return newLists;
-        });
-        setSelectedListId(newList._id);
-
-      } catch (error) {
-        toast({ variant: "destructive", title: "Failed to add list" });
-        setLists(prevLists);
-      }
+      toast({title: 'List added (local only)'});
     }
   };
 
@@ -185,22 +167,16 @@ export default function DashboardPage() {
 
       const updatedTasks = [...selectedList.tasks, newTask];
       
-      const prevLists = lists;
       setLists(
         produce((draft) => {
-          const list = draft.find((l) => l._id === selectedListId);
+          const list = draft.find((l) => l.id === selectedListId);
           if (list) {
             list.tasks.push(newTask);
           }
         })
       );
       setNewTaskText('');
-
-      try {
-        await updateListInDb(selectedListId, { tasks: updatedTasks });
-      } catch {
-        setLists(prevLists);
-      }
+      toast({title: 'Task added (local only)'});
     }
   };
 
@@ -214,42 +190,36 @@ export default function DashboardPage() {
         }
     });
 
-    setLists(lists.map(l => l._id === selectedListId ? { ...l, tasks: updatedTasks } : l));
-    updateListInDb(selectedListId, { tasks: updatedTasks });
+    setLists(lists.map(l => l.id === selectedListId ? { ...l, tasks: updatedTasks } : l));
+    updateList(selectedListId, { tasks: updatedTasks });
   };
   
   const handleDeleteTask = (taskId: string) => {
     if (!selectedList) return;
 
     const updatedTasks = selectedList.tasks.filter((t) => t.id !== taskId);
-    setLists(lists.map(l => l._id === selectedListId ? { ...l, tasks: updatedTasks } : l));
-    updateListInDb(selectedListId, { tasks: updatedTasks });
+    setLists(lists.map(l => l.id === selectedListId ? { ...l, tasks: updatedTasks } : l));
+    updateList(selectedListId, { tasks: updatedTasks });
   };
 
   const handleDeleteList = async (listId: string) => {
     const originalLists = lists;
-    setLists(lists.filter(l => l._id !== listId));
+    setLists(lists.filter(l => l.id !== listId));
     if(selectedListId === listId) {
-        const remainingLists = originalLists.filter(l => l._id !== listId);
-        setSelectedListId(remainingLists[0]?._id || null);
+        const remainingLists = originalLists.filter(l => l.id !== listId);
+        setSelectedListId(remainingLists[0]?.id || null);
     }
-    try {
-      const response = await fetch(`/api/lists/${listId}`, { method: 'DELETE' });
-      if (!response.ok) throw new Error('Failed to delete list');
-    } catch (error) {
-      toast({ variant: "destructive", title: "Failed to delete list" });
-      setLists(originalLists);
-    }
+    toast({title: 'List deleted (local only)'});
   };
   
   const handleStartEditingList = (list: List) => {
-    setEditingListId(list._id);
+    setEditingListId(list.id);
     setEditingListName(list.name);
   };
   
   const handleUpdateList = () => {
       if(editingListId && editingListName.trim()) {
-          updateListInDb(editingListId, { name: editingListName.trim() });
+          updateList(editingListId, { name: editingListName.trim() });
           setEditingListId(null);
           setEditingListName('');
       }
@@ -265,8 +235,8 @@ export default function DashboardPage() {
         
         const newTasks = arrayMove(selectedList.tasks, oldIndex, newIndex);
 
-        setLists(lists.map(l => l._id === selectedListId ? { ...l, tasks: newTasks } : l));
-        updateListInDb(selectedListId, { tasks: newTasks });
+        setLists(lists.map(l => l.id === selectedListId ? { ...l, tasks: newTasks } : l));
+        updateList(selectedListId, { tasks: newTasks });
     }
   };
 
@@ -317,11 +287,11 @@ export default function DashboardPage() {
         <div className="flex-1 space-y-2 overflow-y-auto">
           {lists.map((list) => (
             <div
-              key={list._id}
-              className={`group flex items-center justify-between p-2 rounded-md cursor-pointer ${selectedListId === list._id ? 'bg-primary/20 text-primary' : 'hover:bg-accent'}`}
-              onClick={() => setSelectedListId(list._id)}
+              key={list.id}
+              className={`group flex items-center justify-between p-2 rounded-md cursor-pointer ${selectedListId === list.id ? 'bg-primary/20 text-primary' : 'hover:bg-accent'}`}
+              onClick={() => setSelectedListId(list.id)}
             >
-              {editingListId === list._id ? (
+              {editingListId === list.id ? (
                   <div className="flex-1 flex gap-2">
                     <Input 
                         value={editingListName}
@@ -340,7 +310,7 @@ export default function DashboardPage() {
                         <Button variant="ghost" size="icon" className="h-7 w-7" onClick={(e) => {e.stopPropagation(); handleStartEditingList(list);}}>
                             <Pencil className="h-4 w-4" />
                         </Button>
-                        <Button variant="ghost" size="icon" className="h-7 w-7 text-destructive hover:text-destructive" onClick={(e) => {e.stopPropagation(); handleDeleteList(list._id);}}>
+                        <Button variant="ghost" size="icon" className="h-7 w-7 text-destructive hover:text-destructive" onClick={(e) => {e.stopPropagation(); handleDeleteList(list.id);}}>
                             <Trash2 className="h-4 w-4" />
                         </Button>
                     </div>

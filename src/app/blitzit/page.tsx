@@ -24,6 +24,75 @@ import { useToast } from '@/hooks/use-toast';
 import { fromDb } from '@/lib/utils';
 import { Skeleton } from '@/components/ui/skeleton';
 
+// Mock data, as we removed the database
+const initialTasks: TaskType[] = [
+    {
+      id: 'task-1',
+      title: 'Finalize Q3 budget report',
+      description: 'Review all department submissions and consolidate into the final report for the board meeting.',
+      priority: 'urgent',
+      status: 'soon',
+      listId: 'work',
+      estimatedTime: 120, // 2 hours
+      recurring: 'monthly',
+    },
+    {
+      id: 'task-2',
+      title: 'Draft marketing email for new feature',
+      description: 'Write copy for the upcoming email campaign announcing the new AI-powered analytics dashboard.',
+      priority: 'important',
+      status: 'do-now',
+      listId: 'work',
+      estimatedTime: 45,
+    },
+    {
+      id: 'task-3',
+      title: 'Schedule dentist appointment',
+      description: 'Call Dr. Smith\'s office to schedule a routine check-up and cleaning.',
+      priority: 'neither',
+      status: 'do-later',
+      listId: 'personal',
+    },
+    {
+      id: 'task-4',
+      title: 'Buy groceries for the week',
+      description: 'Milk, eggs, bread, chicken, and vegetables.',
+      priority: 'important',
+      status: 'do-later',
+      listId: 'personal',
+      estimatedTime: 60,
+    },
+     {
+      id: 'task-5',
+      title: 'Prepare presentation for client meeting',
+      description: 'Create slides for the project kickoff with Acme Corp.',
+      priority: 'urgent',
+      status: 'tomorrow',
+      listId: 'work',
+      estimatedTime: 90,
+      scheduledAt: new Date(Date.now() + 24 * 60 * 60 * 1000).getTime(), // Tomorrow
+    },
+    {
+      id: 'task-6',
+      title: 'Pay monthly bills',
+      description: 'Rent, utilities, and credit card.',
+      priority: 'urgent',
+      status: 'do-later',
+      listId: 'personal',
+      recurring: 'monthly'
+    },
+    {
+      id: 'task-7',
+      title: 'Research summer vacation destinations',
+      description: 'Look into options for a one-week trip in July. Focus on beach locations.',
+      priority: 'neither',
+      status: 'soon',
+      listId: 'personal',
+      estimatedTime: 75,
+    },
+];
+
+
 export default function BlitzitPage() {
     const [tasks, setTasks] = useState<TaskType[]>([]);
     const [selectedTask, setSelectedTask] = useState<TaskType | null>(null);
@@ -33,33 +102,12 @@ export default function BlitzitPage() {
 
     useEffect(() => {
         setIsLoading(true);
-        fetch('/api/tasks')
-            .then(res => {
-                if (!res.ok) {
-                    throw new Error('Failed to fetch tasks');
-                }
-                return res.json();
-            })
-            .then(data => {
-                if (Array.isArray(data)) {
-                    setTasks(data);
-                } else {
-                    console.error("Fetched data is not an array:", data);
-                    setTasks([]);
-                }
-            })
-            .catch(err => {
-                console.error("Failed to fetch tasks", err);
-                toast({
-                    variant: "destructive",
-                    title: "Failed to load tasks",
-                    description: "Could not fetch tasks from the database. Please try again later."
-                })
-            })
-            .finally(() => {
-                setIsLoading(false);
-            });
-    }, [toast]);
+        // Simulate fetching data
+        setTimeout(() => {
+            setTasks(initialTasks);
+            setIsLoading(false);
+        }, 500);
+    }, []);
 
     const sensors = useSensors(
         useSensor(PointerSensor),
@@ -127,38 +175,13 @@ export default function BlitzitPage() {
     };
 
     const handleUpdateTask = async (taskId: string, updates: Partial<TaskType>) => {
-        // Optimistic update
-        const originalTasks = tasks;
         setTasks(produce(draft => {
             const task = draft.find(t => t.id === taskId);
             if (task) {
                 Object.assign(task, updates);
             }
         }));
-
-        try {
-            const response = await fetch(`/api/tasks/${taskId}`, {
-                method: 'PUT',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(updates),
-            });
-            if (!response.ok) throw new Error('Failed to update task');
-            const updatedTask = await response.json();
-            setTasks(produce(draft => {
-                const taskIndex = draft.findIndex(t => t.id === taskId);
-                if (taskIndex !== -1) {
-                    draft[taskIndex] = updatedTask;
-                }
-            }));
-        } catch (error) {
-            console.error(error);
-            setTasks(originalTasks); // Rollback
-            toast({
-                variant: "destructive",
-                title: "Update failed",
-                description: `Could not update task.`,
-            });
-        }
+        toast({ title: "Task updated (local only)" });
     }
     
     const handleSaveTask = async (taskToSave: TaskType) => {
@@ -166,43 +189,25 @@ export default function BlitzitPage() {
         
         if (isNew) {
             const { id, ...taskData } = taskToSave;
-            const payload = {
+            const newTask: TaskType = {
+                id: `task-${Date.now()}`, // permanent ID
                 title: taskData.title || 'New Task',
                 status: taskData.status || 'do-later',
                 priority: taskData.priority || 'neither',
                 description: taskData.description,
                 estimatedTime: taskData.estimatedTime,
+                listId: 'personal',
             };
-            
-            try {
-                const response = await fetch('/api/tasks', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload),
-                });
-
-                if (!response.ok) {
-                    const errorData = await response.json();
-                    console.error("Server error:", errorData.message || errorData);
-                    throw new Error('Failed to create task');
-                }
-                const newTask = await response.json();
                 
-                setTasks(produce(draft => {
-                    const tempIndex = draft.findIndex(t => t.id === taskToSave.id);
-                    if (tempIndex > -1) {
-                        draft[tempIndex] = newTask;
-                    } else {
-                        draft.push(newTask);
-                    }
-                }));
-
-            } catch (error) {
-                console.error(error);
-                toast({ variant: 'destructive', title: 'Error: Failed to create task.' });
-                 setTasks(current => current.filter(t => t.id !== taskToSave.id));
-            }
-
+            setTasks(produce(draft => {
+                const tempIndex = draft.findIndex(t => t.id === taskToSave.id);
+                if (tempIndex > -1) {
+                    draft[tempIndex] = newTask;
+                } else {
+                    draft.push(newTask);
+                }
+            }));
+            toast({ title: "Task created (local only)" });
         } else {
             handleUpdateTask(taskToSave.id, taskToSave);
         }
@@ -212,24 +217,13 @@ export default function BlitzitPage() {
     }
 
     const handleDeleteTask = async (taskId: string) => {
-        const originalTasks = tasks;
         setTasks(tasks.filter(t => t.id !== taskId));
         
         if (selectedTask?.id === taskId) {
           setIsDetailsOpen(false);
           setSelectedTask(null);
         }
-
-        try {
-            const response = await fetch(`/api/tasks/${taskId}`, {
-                method: 'DELETE',
-            });
-            if (!response.ok) throw new Error('Failed to delete task');
-        } catch (error) {
-            console.error(error);
-            setTasks(originalTasks);
-            toast({ variant: 'destructive', title: 'Failed to delete task.' });
-        }
+        toast({ title: "Task deleted (local only)" });
     }
 
     const handleUpdateDueTasks = (newStatus: 'do-now' | 'do-later') => {

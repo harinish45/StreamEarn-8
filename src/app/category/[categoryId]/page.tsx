@@ -1,30 +1,26 @@
 
 import React from 'react';
-import { connectToDatabase } from '@/lib/mongodb';
 import { notFound } from 'next/navigation';
 import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/app-sidebar";
 import { Header } from "@/components/header";
-import { type EarningCategory } from "@/lib/data";
+import { earningOpportunities, type EarningCategory } from "@/lib/data";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { OpportunityCard } from "@/components/opportunity-card";
 import { Breadcrumbs } from "@/components/breadcrumbs";
-import { fromDb } from '@/lib/utils';
-import { ObjectId } from 'mongodb';
 
 
 async function getCategoryData(categoryId: string) {
-  const { db } = await connectToDatabase();
-  const allCategories = await db.collection('earning_opportunities').find({}).toArray();
+  const allCategories = earningOpportunities;
   const currentCategory = allCategories.find((c) => c.id === categoryId);
 
   if (!currentCategory) {
-    return { allCategories: allCategories.map(fromDb), category: null };
+    return { allCategories, category: null };
   }
 
   return {
-    allCategories: allCategories.map(fromDb),
-    category: fromDb(currentCategory),
+    allCategories,
+    category: currentCategory,
   };
 }
 

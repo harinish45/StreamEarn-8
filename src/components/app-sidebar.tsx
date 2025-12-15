@@ -24,30 +24,24 @@ interface AppSidebarProps {
     categories: EarningCategory[];
 }
 
-export function AppSidebar({ categories }: AppSidebarProps) {
+export function AppSidebar({ categories: initialCategories }: AppSidebarProps) {
   const pathname = usePathname();
+  const [categories, setCategories] = useState(initialCategories);
   const [searchQuery, setSearchQuery] = useState('');
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
 
   const onSortClick = () => setSortOrder(prev => prev === 'asc' ? 'desc' : 'asc');
 
   const onPinClick = async (categoryId: string) => {
-    const category = categories.find(c => c.id === categoryId);
-    if (!category) return;
+    setCategories(prevCategories => {
+        const category = prevCategories.find(c => c.id === categoryId);
+        if (!category) return prevCategories;
 
-    try {
-        const response = await fetch(`/api/earnings/${categoryId}`, {
-            method: 'PUT',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ pinned: !category.pinned }),
-        });
-        if (!response.ok) throw new Error('Failed to update pin status');
-        // Re-fetch or re-validate data to update UI. For now, simple alert.
-        alert('Pin status updated! Please refresh to see changes.');
-    } catch (error) {
-        console.error("Failed to pin category", error);
-        alert('Failed to update pin status.');
-    }
+        const updatedCategory = { ...category, pinned: !category.pinned };
+        
+        return prevCategories.map(c => c.id === categoryId ? updatedCategory : c);
+    });
+    // In a real app, you would also persist this change to a backend/local storage.
   };
   
   const filteredCategories = useMemo(() => {

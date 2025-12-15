@@ -6,24 +6,23 @@ import { Button } from "./ui/button";
 import Image from "next/image";
 import Link from "next/link";
 import { Badge } from "./ui/badge";
+import { useState } from "react";
 
 interface OpportunityCardProps {
   opportunity: Opportunity;
   categoryId: string;
 }
 
-export function OpportunityCard({ opportunity, categoryId }: OpportunityCardProps) {
-    const handleClick = async () => {
-        try {
-            await fetch(`/api/earnings/${categoryId}?opportunityId=${opportunity.id}`, {
-                method: 'PUT',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ visited: true }),
-            });
-            // The UI will update on next page load/revalidation
-        } catch (error) {
-            console.error('Failed to mark as visited:', error);
+export function OpportunityCard({ opportunity: initialOpportunity, categoryId }: OpportunityCardProps) {
+    const [opportunity, setOpportunity] = useState(initialOpportunity);
+
+    const handleClick = () => {
+        // Optimistically update the UI
+        if (!opportunity.visited) {
+            setOpportunity(prev => ({...prev, visited: true}));
         }
+        // In a real app, you might persist this to local storage or a backend
+        // Since we removed the backend, this state is temporary.
     };
   
   return (
