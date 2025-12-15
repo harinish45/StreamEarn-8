@@ -44,13 +44,13 @@ export const illegalAiTools: AiToolCategory[] = [
   {
     name: 'Vibe design tools',
     tools: [
-      { name: 'Nano Banana', logo: createLogo('Nano Banana'), link: 'https://deepmind.google/discover/blog/generating-and-editing-images-with-multimodal-large-language-models/' },
-      { name: 'Seedream', logo: createLogo('Seedream'), link: 'https://seedream.com/' },
-      { name: 'Lovart', logo: createLogo('Lovart'), link: 'https://lovart.ai/' },
-      { name: 'Picsart', logo: createLogo('Picsart'), link: 'https://picsart.com/' },
-      { name: 'VSCO', logo: createLogo('VSCO'), link: 'https://vsco.co/' },
-      { name: 'ChatGPT', logo: createLogo('ChatGPT-design'), link: 'https://chat.openai.com/' },
-      { name: 'Canva', logo: createLogo('Canva-design'), link: 'https://www.canva.com/' },
+      { name: 'Nano Banana', logo: createLogo('Nano Banana'), link: '#' },
+      { name: 'Seedream', logo: createLogo('Seedream'), link: 'https://seedream.cc' },
+      { name: 'Lovart', logo: createLogo('Lovart'), link: '#' },
+      { name: 'Picsart', logo: createLogo('Picsart'), link: 'https://picsart.com' },
+      { name: 'VSCO', logo: createLogo('VSCO'), link: 'https://vsco.co' },
+      { name: 'ChatGPT', logo: createLogo('ChatGPT-design'), link: 'https://chatgpt.com' },
+      { name: 'Canva', logo: createLogo('Canva-design'), link: 'https://www.canva.com' },
     ],
   },
   {
@@ -94,9 +94,9 @@ export const illegalAiTools: AiToolCategory[] = [
   {
     name: 'Automation tools',
     tools: [
-      { name: 'BooSend', logo: createLogo('BooSend'), link: '#' },
-      { name: 'Manus', logo: createLogo('Manus'), link: 'https://manus.co/' },
-      { name: 'ChatGPT Tasks', logo: createLogo('ChatGPT Tasks'), link: '#' },
+      { name: 'BooSend', logo: createLogo('BooSend'), link: 'https://boosend.ai' },
+      { name: 'Manus', logo: createLogo('Manus'), link: 'https://www.manusai.io' },
+      { name: 'ChatGPT Tasks', logo: createLogo('ChatGPT Tasks'), link: 'https://chatgpt.com' },
       { name: 'N8N', logo: createLogo('N8N'), link: 'https://n8n.io/' },
       { name: 'Make', logo: createLogo('Make'), link: 'https://www.make.com/' },
       { name: 'Zapier', logo: createLogo('Zapier-auto'), link: 'https://zapier.com/' },
@@ -106,13 +106,13 @@ export const illegalAiTools: AiToolCategory[] = [
   {
     name: 'Health tools',
     tools: [
-      { name: 'Foodient', logo: createLogo('Foodient'), link: '#' },
-      { name: 'ChatGPT', logo: createLogo('ChatGPT-health'), link: 'https://chat.openai.com/' },
-      { name: 'Cal AI', logo: createLogo('Cal AI'), link: '#' },
+      { name: 'Foodient', logo: createLogo('Foodient'), link: 'https://apps.apple.com/app/foodient/id6749853669' },
+      { name: 'ChatGPT', logo: createLogo('ChatGPT-health'), link: 'https://chatgpt.com' },
+      { name: 'Cal AI', logo: createLogo('Cal AI'), link: 'https://www.calai.app' },
       { name: 'Calm', logo: createLogo('Calm'), link: 'https://www.calm.com/' },
       { name: 'Flo', logo: createLogo('Flo'), link: 'https://flo.health/' },
       { name: 'Fitbod', logo: createLogo('Fitbod'), link: 'https://fitbod.me/' },
-      { name: 'Runna', logo: createLogo('Runna'), link: 'https://www.runna.com/' },
+      { name: 'Runna', logo: createLogo('Runna'), link: 'https://runna.com' },
     ],
   },
 ];
