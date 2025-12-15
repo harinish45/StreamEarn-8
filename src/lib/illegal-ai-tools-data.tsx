@@ -20,7 +20,7 @@ export const illegalAiTools: AiToolCategory[] = [
     tools: [
       { name: 'ViralSky', logo: createLogo('ViralSky'), link: 'https://viralsky.ai' },
       { name: 'ThreadMaster', logo: createLogo('ThreadMaster'), link: 'https://threadmaster.ai' },
-      { name: 'VibeFluencer', logo: createLogo('VibeFluencer'), link: '#' },
+      { name: 'VibeFluencer', logo: createLogo('VibeFluencer'), link: 'https://www.vibefluencer.io' },
       { name: 'VidIQ', logo: createLogo('VidIQ'), link: 'https://vidiq.com' },
       { name: 'Ocoya', logo: createLogo('Ocoya'), link: 'https://ocoya.com' },
       { name: 'AdCreative', logo: createLogo('AdCreative'), link: 'https://www.adcreative.ai' },
