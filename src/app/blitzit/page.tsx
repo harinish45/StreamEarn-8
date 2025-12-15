@@ -42,8 +42,9 @@ export default function BlitzitPage() {
                 return res.json();
             })
             .then(data => {
+                // The API now returns data in the correct format, so we can use it directly
                 if (Array.isArray(data)) {
-                    setTasks(data.map(fromDb));
+                    setTasks(data);
                 } else {
                     throw new Error('Fetched data is not an array');
                 }
@@ -165,9 +166,9 @@ export default function BlitzitPage() {
     
     const handleSaveTask = async (taskToSave: TaskType) => {
         const isNew = !taskToSave._id;
-        const originalTasks = tasks;
-
+        
         if (isNew) {
+            // Remove frontend-only ID before sending to backend
             const { id, _id, ...taskData } = taskToSave;
             const payload = {
                 title: taskData.title || 'New Task',
@@ -175,7 +176,7 @@ export default function BlitzitPage() {
                 priority: taskData.priority || 'neither',
                 listId: taskData.listId || 'personal',
                 description: taskData.description,
-                estimatedTime: taskData.estimatedTime
+                estimatedTime: taskData.estimatedTime,
             };
             
             try {
@@ -191,15 +192,15 @@ export default function BlitzitPage() {
                     throw new Error('Failed to create task');
                 }
                 const newTask = await response.json();
-
+                
+                // Add the newly created task (with a real ID from DB) to the state
                 setTasks(produce(draft => {
                     draft.push(newTask);
                 }));
 
             } catch (error) {
                 console.error(error);
-                setTasks(originalTasks);
-                toast({ variant: 'destructive', title: 'Failed to create task.' });
+                toast({ variant: 'destructive', title: 'Error: Failed to create task.' });
             }
 
         } else {
@@ -239,6 +240,7 @@ export default function BlitzitPage() {
     };
 
     const handleAddTask = (status: TaskStatus) => {
+        // Create a minimal, valid task object for the modal
         setSelectedTask({
             id: `new-${Date.now()}`,
             title: '',
@@ -254,7 +256,7 @@ export default function BlitzitPage() {
     };
     
     const todayTasks = tasks.filter(t => t.status === 'do-now');
-    const doneTodayCount = tasks.filter(t => t.status === 'done' && isToday(new Date(t.updatedAt || t.createdAt || Date.now()))).length;
+    const doneTodayCount = tasks.filter(t => t.status === 'done' && t.updatedAt && isToday(new Date(t.updatedAt))).length;
 
 
     if (isLoading || !isClient) {
@@ -308,7 +310,7 @@ export default function BlitzitPage() {
                                 status='do-now'
                                 est="Est: 1hrs 30min"
                                 done={doneTodayCount}
-                                total={todayTasks.length}
+                                total={todayTasks.length + doneTodayCount}
                             />
                         </div>
                     </div>

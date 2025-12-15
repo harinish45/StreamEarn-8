@@ -30,8 +30,8 @@ export interface Task {
   recurring?: 'daily' | 'weekly' | 'monthly' | null;
   subtasks?: Subtask[];
   audioBlob?: Blob;
-  createdAt?: Date;
-  updatedAt?: Date;
+  createdAt?: string; // Should be string to be serializable
+  updatedAt?: string; // Should be string to be serializable
   order?: number;
 }
 

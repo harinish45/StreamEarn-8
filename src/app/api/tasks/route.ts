@@ -23,7 +23,8 @@ export async function GET() {
   try {
     const { db } = await connectToDatabase();
     const tasks = await db.collection('tasks').find({}).toArray();
-    return NextResponse.json(tasks);
+    // Use .map and fromDb to ensure all tasks are in the correct format before sending
+    return NextResponse.json(tasks.map(fromDb));
   } catch (error) {
     console.error('Failed to fetch tasks:', error);
     return NextResponse.json({ message: 'Failed to fetch tasks' }, { status: 500 });
@@ -51,6 +52,7 @@ export async function POST(request: Request) {
       return NextResponse.json({ message: 'Failed to retrieve created task' }, { status: 500 });
     }
 
+    // Use fromDb to convert the MongoDB document to a frontend-friendly object
     return NextResponse.json(fromDb(newDoc), { status: 201 });
   } catch (error) {
     console.error('Failed to create task:', error);
