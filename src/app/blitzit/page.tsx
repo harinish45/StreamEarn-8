@@ -195,6 +195,9 @@ export default function BlitzitPage() {
                 
                 // Add the newly created task (with a real ID from DB) to the state
                 setTasks(produce(draft => {
+                    // Remove temp task if it exists
+                    const tempIndex = draft.findIndex(t => t.id.startsWith('new-'));
+                    if (tempIndex > -1) draft.splice(tempIndex, 1);
                     draft.push(newTask);
                 }));
 

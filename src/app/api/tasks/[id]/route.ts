@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { connectToDatabase } from '@/lib/mongodb';
 import { ObjectId } from 'mongodb';
 import { z } from 'zod';
+import { fromDb } from '@/lib/utils';
 
 const taskUpdateSchema = z.object({
   title: z.string().min(1, 'Title is required').optional(),
@@ -41,7 +42,7 @@ export async function PUT(request: Request, { params }: { params: { id: string }
       return NextResponse.json({ message: 'Task not found' }, { status: 404 });
     }
 
-    return NextResponse.json(result);
+    return NextResponse.json(fromDb(result));
   } catch (error) {
     console.error(`Failed to update task ${id}:`, error);
     return NextResponse.json({ message: 'Failed to update task' }, { status: 500 });
