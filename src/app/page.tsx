@@ -66,8 +66,8 @@ export default function Home() {
                     src="https://picsum.photos/seed/einstein/800/600"
                     width={800}
                     height={600}
-                    alt="Photo of a famous personality"
-                    className="rounded-xl shadow-2xl"
+                    alt="Photo of Albert Einstein"
+                    className="rounded-xl shadow-2xl object-cover"
                     data-ai-hint="albert einstein"
                 />
             </div>
