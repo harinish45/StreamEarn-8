@@ -30,15 +30,15 @@ export const illegalAiTools: AiToolCategory[] = [
   {
     name: 'Vibe coding tools',
     tools: [
-      { name: 'Emergent', logo: createLogo('Emergent'), link: 'https://www.emergent.fyi/' },
+      { name: 'Emergent', logo: createLogo('Emergent'), link: 'https://emergent.sh' },
       { name: 'Firebase Studio', logo: createLogo('Firebase Studio'), link: 'https://studio.firebase.google.com/' },
-      { name: 'Rocket', logo: createLogo('Rocket'), link: 'https://rocketdev.com/' },
+      { name: 'Rocket', logo: createLogo('Rocket'), link: 'https://www.rocket.new' },
       { name: 'Lovable', logo: createLogo('Lovable'), link: 'https://lovable.dev/' },
       { name: 'Bolt', logo: createLogo('Bolt'), link: 'https://www.bolt.com/' },
-      { name: 'CREAO', logo: createLogo('CREAO'), link: 'https://creao.ai/' },
-      { name: 'MGX', logo: createLogo('MGX'), link: '#' },
+      { name: 'CREAO', logo: createLogo('CREAO'), link: 'https://creao.ai' },
+      { name: 'MGX', logo: createLogo('MGX'), link: 'https://mgx.dev' },
       { name: 'Replit', logo: createLogo('Replit'), link: 'https://replit.com/' },
-      { name: 'Base44', logo: createLogo('Base44'), link: '#' },
+      { name: 'Base44', logo: createLogo('Base44'), link: 'https://base44.com' },
     ],
   },
   {
