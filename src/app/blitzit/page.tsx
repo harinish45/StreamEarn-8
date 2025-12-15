@@ -253,7 +253,7 @@ export default function BlitzitPage() {
             title: '',
             status: status,
             priority: 'neither',
-            listId: 'personal'
+            listId: 'personal' // Ensure this default is set
         });
         setIsDetailsOpen(true);
     };

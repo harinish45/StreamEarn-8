@@ -1,3 +1,4 @@
+
 import { NextResponse } from 'next/server';
 import { connectToDatabase } from '@/lib/mongodb';
 import { ObjectId } from 'mongodb';
@@ -6,9 +7,9 @@ import { z } from 'zod';
 const taskSchema = z.object({
   title: z.string().min(1, 'Title is required'),
   description: z.string().optional().nullable(),
-  priority: z.enum(['urgent', 'important', 'neither']),
-  status: z.enum(['do-now', 'do-later', 'tomorrow', 'soon', 'done', 'archived']),
-  listId: z.string(),
+  priority: z.enum(['urgent', 'important', 'neither']).optional(),
+  status: z.enum(['do-now', 'do-later', 'tomorrow', 'soon', 'done', 'archived']).optional(),
+  listId: z.string().optional(),
   scheduledAt: z.number().optional().nullable(),
   estimatedTime: z.number().optional().nullable(),
   actualTime: z.number().optional().nullable(),
@@ -20,7 +21,7 @@ const taskSchema = z.object({
 export async function GET() {
   try {
     const { db } = await connectToDatabase();
-    const tasks = await db.collection('tasks').find({}).sort({ order: 1 }).toArray();
+    const tasks = await db.collection('tasks').find({}).toArray();
     return NextResponse.json(tasks);
   } catch (error) {
     console.error('Failed to fetch tasks:', error);
