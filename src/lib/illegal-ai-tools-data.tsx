@@ -19,7 +19,7 @@ export const illegalAiTools: AiToolCategory[] = [
     name: 'Viral marketing tools',
     tools: [
       { name: 'ViralSky', logo: createLogo('ViralSky'), link: 'https://viralsky.io/' },
-      { name: 'ThreadMaster', logo: createLogo('ThreadMaster'), link: '#' },
+      { name: 'ThreadMaster', logo: createLogo('ThreadMaster'), link: 'https://threadmaster.app/' },
       { name: 'VibeFluencer', logo: createLogo('VibeFluencer'), link: '#' },
       { name: 'VidIQ', logo: createLogo('VidIQ'), link: 'https://vidiq.com/' },
       { name: 'Ocoya', logo: createLogo('Ocoya'), link: 'https://www.ocoya.com/' },
@@ -30,11 +30,11 @@ export const illegalAiTools: AiToolCategory[] = [
   {
     name: 'Vibe coding tools',
     tools: [
-      { name: 'Emergent', logo: createLogo('Emergent'), link: '#' },
+      { name: 'Emergent', logo: createLogo('Emergent'), link: 'https://emergent.org/' },
       { name: 'Firebase Studio', logo: createLogo('Firebase Studio'), link: 'https://studio.firebase.google.com/' },
       { name: 'Rocket', logo: createLogo('Rocket'), link: '#' },
       { name: 'Lovable', logo: createLogo('Lovable'), link: 'https://lovable.dev/' },
-      { name: 'Bolt', logo: createLogo('Bolt'), link: '#' },
+      { name: 'Bolt', logo: createLogo('Bolt'), link: 'https://www.bolt.com/' },
       { name: 'CREAO', logo: createLogo('CREAO'), link: '#' },
       { name: 'MGX', logo: createLogo('MGX'), link: '#' },
       { name: 'Replit', logo: createLogo('Replit'), link: 'https://replit.com/' },
