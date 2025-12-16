@@ -39,6 +39,10 @@ export const illegalAiTools: AiToolCategory[] = [
       { name: 'MGX', logo: createLogo('MGX'), link: 'https://mgx.dev' },
       { name: 'Replit', logo: createLogo('Replit'), link: 'https://replit.com/' },
       { name: 'Base44', logo: createLogo('Base44'), link: 'https://base44.com' },
+      { name: 'Groq', logo: createLogo('Groq'), link: 'https://groq.com/' },
+      { name: 'Open Router', logo: createLogo('Open Router'), link: 'https://openrouter.ai/' },
+      { name: 'DeepSeek', logo: createLogo('DeepSeek'), link: 'https://www.deepseek.com/' },
+      { name: 'AIMLAPI', logo: createLogo('AIMLAPI'), link: 'https://www.aimlapi.com/' },
     ],
   },
   {
