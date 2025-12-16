@@ -8,6 +8,13 @@ export default function Home() {
     <div className="flex flex-col min-h-screen bg-background text-foreground">
       <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
         <div className="container flex h-14 items-center">
+          <div className="mr-4 hidden md:flex">
+            <Link href="/" className="mr-6 flex items-center space-x-2">
+              <span className="hidden font-bold sm:inline-block">
+                OpportunityHub
+              </span>
+            </Link>
+          </div>
           <div className="flex flex-1 items-center justify-end">
             <nav className="flex items-center space-x-6 text-sm font-medium">
               <Link
@@ -37,7 +44,7 @@ export default function Home() {
         <div className="container relative py-12 md:py-24 lg:py-32">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
             <div className="flex flex-col justify-center space-y-6">
-              <h1 className="text-4xl font-bold tracking-tighter sm:text-5xl xl:text-6xl/none">
+              <h1 className="text-4xl font-serif tracking-tighter sm:text-5xl xl:text-6xl/none">
                 Your Gateway to Online Earning
               </h1>
               <p className="max-w-[600px] text-muted-foreground md:text-xl">
@@ -54,12 +61,12 @@ export default function Home() {
             </div>
             <div className="flex items-center justify-center">
                 <Image
-                    src="https://picsum.photos/seed/business/800/600"
+                    src="https://picsum.photos/seed/future/800/600"
                     width={800}
                     height={600}
                     alt="Abstract business image"
                     className="rounded-xl shadow-2xl object-cover"
-                    data-ai-hint="business abstract"
+                    data-ai-hint="futuristic abstract"
                 />
             </div>
           </div>
@@ -67,13 +74,11 @@ export default function Home() {
       </main>
 
        <footer className="border-t">
-          <div className="container flex items-center justify-between py-4 text-sm text-muted-foreground">
-              <div className="flex items-center">
-                <p>&copy; 2024 OpportunityHub. All rights reserved.</p>
-              </div>
-              <div className="flex items-center gap-4">
+          <div className="container flex flex-col md:flex-row items-center justify-between py-4 text-sm text-muted-foreground">
+              <p>&copy; 2024 OpportunityHub. All rights reserved.</p>
+              <div className="flex items-center gap-4 mt-2 md:mt-0">
                   <Link href="#" className="hover:text-foreground">Terms of Service</Link>
-                  <Link href="#" className="hovertext-foreground">Privacy</Link>
+                  <Link href="#" className="hover:text-foreground">Privacy</Link>
               </div>
           </div>
       </footer>
