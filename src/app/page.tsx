@@ -44,10 +44,10 @@ export default function Home() {
                 Discover a world of opportunities. Our platform connects you with the best ways to earn online, from micro-tasks and freelancing to AI-powered ventures.
               </p>
               <div className="flex flex-col gap-4 sm:flex-row flex-wrap">
-                <Button size="lg" variant="gradientOutline" asChild>
+                <Button size="lg" variant="gradientOutline" className="animate-breathing-glow" asChild>
                     <Link href="/earnings">Explore Earning Opportunities</Link>
                 </Button>
-                <Button size="lg" variant="gradientOutline" asChild>
+                <Button size="lg" variant="gradientOutline" className="animate-breathing-glow" asChild>
                     <Link href="/ai-tools">Discover AI Tools</Link>
                 </Button>
               </div>
@@ -73,29 +73,10 @@ export default function Home() {
               </div>
               <div className="flex items-center gap-4">
                   <Link href="#" className="hover:text-foreground">Terms of Service</Link>
-                  <Link href="#" className="hover:text-foreground">Privacy</Link>
+                  <Link href="#" className="hovertext-foreground">Privacy</Link>
               </div>
           </div>
       </footer>
     </div>
   );
-}
-
-function MountainIcon(props: React.SVGProps<SVGSVGElement>) {
-  return (
-    <svg
-      {...props}
-      xmlns="http://www.w3.org/2000/svg"
-      width="24"
-      height="24"
-      viewBox="0 0 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <path d="m8 3 4 8 5-5 5 15H2L8 3z" />
-    </svg>
-  )
 }
