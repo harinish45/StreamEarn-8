@@ -24,7 +24,8 @@ const ToolCard = ({ tool, side }: { tool: GoogleAiTool; side: 'left' | 'right' }
         </div>
       </div>
       <div 
-        className={`absolute top-1/2 h-px w-1/4 bg-primary/30 ${side === 'left' ? 'right-1/2 translate-x-1/2' : 'left-1/2 -translate-x-1/2'}`}
+        className={`absolute top-1/2 h-px w-1/4 bg-primary/30 animate-breathing-glow ${side === 'left' ? 'right-1/2 translate-x-1/2' : 'left-1/2 -translate-x-1/2'}`}
+        style={{ animationDelay: `${Math.random() * 2}s` }}
       />
     </Link>
   );
