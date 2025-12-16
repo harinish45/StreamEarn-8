@@ -18,9 +18,6 @@ async function getEarningOpportunities() {
 export default async function EarningsPage() {
   const earningOpportunities: EarningCategory[] = await getEarningOpportunities();
 
-  // This will be a server component, so we pass initial state down
-  // to client components if needed, or handle actions via server actions.
-  // For now, view mode and search can be client-side state in Header/Sidebar if complex.
   const viewMode = 'grid'; // Default view mode
 
   const sortedCategories = [...earningOpportunities].sort((a, b) => {
@@ -36,12 +33,7 @@ export default async function EarningsPage() {
           categories={sortedCategories}
         />
         <SidebarInset>
-          <Header 
-            viewMode={viewMode} 
-            setViewMode={() => {}} // State management would be client-side
-            searchQuery=""
-            setSearchQuery={() => {}}
-          />
+          <Header />
           <ScrollArea className="h-[calc(100vh-4rem)]">
             <main className="flex-1">
               <div className="p-4 md:p-6 space-y-4">

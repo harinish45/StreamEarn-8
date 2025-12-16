@@ -10,12 +10,14 @@ import { FinanceAndMoney } from "@/components/finance-and-money";
 import { ProductivityTools } from "@/components/productivity-tools";
 import { Input } from '@/components/ui/input';
 import { Search } from 'lucide-react';
+import { Header } from '@/components/header';
 
 export default function AiToolsPage() {
   const [searchQuery, setSearchQuery] = useState('');
 
   return (
     <div className="flex min-h-screen flex-col bg-background">
+      <Header searchQuery={searchQuery} setSearchQuery={setSearchQuery} />
       <div className="mx-auto w-full max-w-7xl px-4 py-8 md:px-6 md:py-12">
         <main className="flex-1 space-y-16">
           <div className="space-y-4 text-center">

@@ -1,3 +1,6 @@
+
+'use client';
+
 import { Search, Bell, List, Grid } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -13,37 +16,56 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { cn } from "@/lib/utils";
 import { ThemeSwitcher } from "./theme-switcher";
+import React, { useState } from 'react';
 
 interface HeaderProps {
-    viewMode: 'grid' | 'list';
-    setViewMode: (mode: 'grid' | 'list') => void;
-    searchQuery: string;
-    setSearchQuery: (query: string) => void;
+    viewMode?: 'grid' | 'list';
+    setViewMode?: (mode: 'grid' | 'list') => void;
+    searchQuery?: string;
+    setSearchQuery?: (query: string) => void;
 }
 
-export function Header({ viewMode, setViewMode, searchQuery, setSearchQuery }: HeaderProps) {
+export function Header({ 
+  viewMode: controlledViewMode, 
+  setViewMode: controlledSetViewMode, 
+  searchQuery: controlledSearchQuery, 
+  setSearchQuery: controlledSetSearchQuery 
+}: HeaderProps) {
+  const [internalViewMode, setInternalViewMode] = useState<'grid' | 'list'>('grid');
+  const [internalSearchQuery, setInternalSearchQuery] = useState('');
+
+  const viewMode = controlledViewMode !== undefined ? controlledViewMode : internalViewMode;
+  const setViewMode = controlledSetViewMode !== undefined ? controlledSetViewMode : setInternalViewMode;
+  
+  const searchQuery = controlledSearchQuery !== undefined ? controlledSearchQuery : internalSearchQuery;
+  const setSearchQuery = controlledSetSearchQuery !== undefined ? controlledSetSearchQuery : setInternalSearchQuery;
+
+  const showViewModeSwitcher = !!(controlledViewMode && controlledSetViewMode);
+
   return (
     <header className="sticky top-0 z-20 flex h-16 items-center gap-4 border-b bg-background/80 px-4 backdrop-blur-sm md:px-6">
       <div className="md:hidden">
         <SidebarTrigger />
       </div>
       <div className="flex flex-1 items-center gap-4">
-        <div className="hidden items-center gap-2 md:flex">
-          <div className="flex items-center gap-1 rounded-md bg-secondary p-1">
-            <Button variant="ghost" size="icon" className={cn("h-8 w-8", viewMode === 'grid' && "bg-background shadow")} onClick={() => setViewMode('grid')}>
-              <Grid className="h-4 w-4" />
-            </Button>
-            <Button variant="ghost" size="icon" className={cn("h-8 w-8", viewMode === 'list' && "bg-background shadow")} onClick={() => setViewMode('list')}>
-              <List className="h-4 w-4" />
-            </Button>
+        {showViewModeSwitcher && (
+          <div className="hidden items-center gap-2 md:flex">
+            <div className="flex items-center gap-1 rounded-md bg-secondary p-1">
+              <Button variant="ghost" size="icon" className={cn("h-8 w-8", viewMode === 'grid' && "bg-background shadow")} onClick={() => setViewMode('grid')}>
+                <Grid className="h-4 w-4" />
+              </Button>
+              <Button variant="ghost" size="icon" className={cn("h-8 w-8", viewMode === 'list' && "bg-background shadow")} onClick={() => setViewMode('list')}>
+                <List className="h-4 w-4" />
+              </Button>
+            </div>
           </div>
-        </div>
+        )}
       </div>
       <div className="flex items-center gap-2 md:gap-4">
         <div className="relative hidden md:block">
           <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
           <Input
-            placeholder="Search opportunities..."
+            placeholder="Search..."
             className="w-48 bg-secondary pl-8 md:w-64"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
