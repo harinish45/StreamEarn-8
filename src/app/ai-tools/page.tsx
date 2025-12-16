@@ -7,8 +7,9 @@ import { AiToolsContent } from "@/components/ai-tools-content";
 import { productivityTools, type ProductivityTool } from '@/lib/productivity-tools-data';
 import { jobsAndCareersTools, type JobsAndCareersTool } from '@/lib/jobs-and-careers-data';
 import { financeAndMoneyTools, type FinanceAndMoneyTool } from '@/lib/finance-and-money-data';
-import { illegalAiTools, aiToolsPyramid, type AiToolCategory } from '@/lib/illegal-ai-tools-data';
+import { illegalAiTools, type AiToolCategory } from '@/lib/illegal-ai-tools-data';
 import { googleAiTools, type GoogleAiTool } from '@/lib/google-ai-ecosystem-data';
+import { aiToolsPyramid } from '@/lib/ai-tools-data';
 
 async function getPageData() {
   const categories: EarningCategory[] = earningOpportunities;
