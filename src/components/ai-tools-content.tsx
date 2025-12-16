@@ -10,8 +10,6 @@ import { FinanceAndMoney } from "@/components/finance-and-money";
 import { ProductivityTools } from "@/components/productivity-tools";
 import { Input } from '@/components/ui/input';
 import { Search } from 'lucide-react';
-import { Header } from '@/components/header';
-import { SidebarInset } from '@/components/ui/sidebar';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import type { ProductivityTool } from '@/lib/productivity-tools-data';
 import type { JobsAndCareersTool } from '@/lib/jobs-and-careers-data';
@@ -40,47 +38,44 @@ export function AiToolsContent({
   const [searchQuery, setSearchQuery] = useState('');
 
   return (
-    <SidebarInset>
-      <Header />
-      <ScrollArea className="h-[calc(100vh-4rem)]">
-        <div className="mx-auto w-full max-w-7xl px-4 py-8 md:px-6 md:py-12">
-          <main className="flex-1 space-y-16">
-            <div className="space-y-4 text-center">
-                <h1 className="text-4xl md:text-5xl font-serif tracking-tight">INSIDE GOOGLE'S AI ECOSYSTEM</h1>
-                <p className="text-lg text-muted-foreground">THE TOOLS REDEFINING CREATIVITY IN 2025</p>
-            </div>
-            
-            <div className="relative mx-auto w-full max-w-xl">
-              <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
-              <Input
-                placeholder="Search for AI tools..."
-                className="w-full rounded-full bg-card py-6 pl-12 pr-4 text-lg shadow-lg focus-visible:ring-primary"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-              />
-            </div>
-
-            <GoogleAiEcosystem searchQuery={searchQuery} googleAiTools={googleAiTools} />
-
-            <IllegalAiTools 
-              searchQuery={searchQuery} 
-              illegalAiTools={illegalAiTools} 
-              aiToolsPyramid={aiToolsPyramid} 
+    <ScrollArea className="flex-1 h-[calc(100vh-4rem)]">
+      <div className="mx-auto w-full max-w-7xl px-4 py-8 md:px-6 md:py-12">
+        <main className="flex-1 space-y-16">
+          <div className="space-y-4 text-center">
+              <h1 className="text-4xl md:text-5xl font-serif tracking-tight">INSIDE GOOGLE'S AI ECOSYSTEM</h1>
+              <p className="text-lg text-muted-foreground">THE TOOLS REDEFINING CREATIVITY IN 2025</p>
+          </div>
+          
+          <div className="relative mx-auto w-full max-w-xl">
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+            <Input
+              placeholder="Search for AI tools..."
+              className="w-full rounded-full bg-card py-6 pl-12 pr-4 text-lg shadow-lg focus-visible:ring-primary"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
             />
+          </div>
 
-             <div className="space-y-8 pt-12 border-t border-border">
-                <div className="space-y-4">
-                    <Breadcrumbs path={[{ name: "AI Tools", href: "/ai-tools" }]} />
-                </div>
-               <div className="grid grid-cols-1 md:grid-cols-3 gap-8 pt-8">
-                   <ProductivityTools searchQuery={searchQuery} productivityTools={productivityTools} />
-                   <JobsAndCareers searchQuery={searchQuery} jobsAndCareersTools={jobsAndCareersTools} />
-                   <FinanceAndMoney searchQuery={searchQuery} financeAndMoneyTools={financeAndMoneyTools} />
-               </div>
+          <GoogleAiEcosystem searchQuery={searchQuery} googleAiTools={googleAiTools} />
+
+          <IllegalAiTools 
+            searchQuery={searchQuery} 
+            illegalAiTools={illegalAiTools} 
+            aiToolsPyramid={aiToolsPyramid} 
+          />
+
+           <div className="space-y-8 pt-12 border-t border-border">
+              <div className="space-y-4">
+                  <Breadcrumbs path={[{ name: "AI Tools", href: "/ai-tools" }]} />
+              </div>
+             <div className="grid grid-cols-1 md:grid-cols-3 gap-8 pt-8">
+                 <ProductivityTools searchQuery={searchQuery} productivityTools={productivityTools} />
+                 <JobsAndCareers searchQuery={searchQuery} jobsAndCareersTools={jobsAndCareersTools} />
+                 <FinanceAndMoney searchQuery={searchQuery} financeAndMoneyTools={financeAndMoneyTools} />
              </div>
-          </main>
-        </div>
-      </ScrollArea>
-    </SidebarInset>
+           </div>
+        </main>
+      </div>
+    </ScrollArea>
   );
 }
