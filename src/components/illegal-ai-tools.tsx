@@ -66,32 +66,36 @@ export function IllegalAiTools({ searchQuery, illegalAiTools, aiToolsPyramid }: 
   const shouldShowIllegalTools = filteredIllegalCategories.length > 0;
   const shouldShowSoloFounderTools = filteredSoloFounderCategories.length > 0;
 
+  if (!shouldShowIllegalTools && !shouldShowSoloFounderTools) {
+    return null;
+  }
+
   return (
     <div className="bg-black py-16 px-4 md:px-6">
         <div className="mx-auto max-w-6xl space-y-12">
-            <div className="text-center space-y-4">
-                <div className="inline-block bg-primary/20 border border-primary/50 rounded-lg px-6 py-2">
-                    <h2 className="text-2xl md:text-3xl font-bold text-primary tracking-tight">AI TOOLS THAT FEEL ILLEGAL TO KNOW FOR 2026</h2>
-                </div>
-                {shouldShowIllegalTools && 
+            {shouldShowIllegalTools && (
+                <div className="text-center space-y-4">
+                    <div className="inline-block bg-primary/20 border border-primary/50 rounded-lg px-6 py-2">
+                        <h2 className="text-2xl md:text-3xl font-bold text-primary tracking-tight">AI TOOLS THAT FEEL ILLEGAL TO KNOW FOR 2026</h2>
+                    </div>
                     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8 pt-8">
                         {filteredIllegalCategories.map(category => (
                             <ToolList key={category.name} category={category} />
                         ))}
                     </div>
-                }
-            </div>
+                </div>
+            )}
             
-            <div className="text-center space-y-4 pt-8">
-                <p className="text-xl font-serif text-white">15 AI tools every solo founder needs to know about</p>
-                {shouldShowSoloFounderTools && 
+            {shouldShowSoloFounderTools && (
+                <div className="text-center space-y-4 pt-8">
+                    <p className="text-xl font-serif text-white">15 AI tools every solo founder needs to know about</p>
                     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8 pt-8">
                         {filteredSoloFounderCategories.map(category => (
                             <ToolList key={category.name} category={category} />
                         ))}
                     </div>
-                }
-            </div>
+                </div>
+            )}
         </div>
     </div>
   );
