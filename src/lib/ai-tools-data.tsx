@@ -1,5 +1,6 @@
 
 import React from 'react';
+import Image from 'next/image';
 
 export type AiTool = {
   name: string;
@@ -13,10 +14,12 @@ export type AiToolCategory = {
 };
 
 const placeholderLogo = (seed: string) => (
-  <img
+  <Image
     src={`https://picsum.photos/seed/${seed}/48/48`}
     alt={`${seed} logo`}
-    className="h-10 w-10 rounded-full object-cover"
+    width={48}
+    height={48}
+    className="rounded-md object-cover"
     data-ai-hint="logo"
   />
 );
