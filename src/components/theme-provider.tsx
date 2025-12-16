@@ -33,14 +33,12 @@ export function ThemeProvider({
   storageKey = 'theme',
   ...props
 }: ThemeProviderProps) {
-  const [theme, setTheme] = React.useState(defaultTheme);
-
-  React.useEffect(() => {
-    const storedTheme = localStorage.getItem(storageKey);
-    if (storedTheme) {
-      setTheme(storedTheme);
+  const [theme, setTheme] = React.useState(() => {
+    if (typeof window === 'undefined') {
+      return defaultTheme;
     }
-  }, [storageKey]);
+    return localStorage.getItem(storageKey) || defaultTheme;
+  });
 
   React.useEffect(() => {
     const body = window.document.body;
