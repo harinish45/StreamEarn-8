@@ -3,7 +3,6 @@
 
 import { useState } from 'react';
 import { Breadcrumbs } from "@/components/breadcrumbs";
-import { AiToolsPyramid } from "@/components/ai-tools-pyramid";
 import { GoogleAiEcosystem } from "@/components/google-ai-ecosystem";
 import { IllegalAiTools } from "@/components/illegal-ai-tools";
 import { JobsAndCareers } from "@/components/jobs-and-careers";
