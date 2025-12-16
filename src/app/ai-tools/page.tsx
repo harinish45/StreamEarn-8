@@ -36,12 +36,6 @@ export default function AiToolsPage() {
 
           <GoogleAiEcosystem searchQuery={searchQuery} />
 
-          <div className="space-y-4 pt-12 border-t border-border text-center">
-            <h2 className="text-4xl md:text-5xl font-serif tracking-tight">15 AI tools every solo founder needs to know about</h2>
-          </div>
-
-          <AiToolsPyramid searchQuery={searchQuery} />
-
           <IllegalAiTools searchQuery={searchQuery} />
 
            <div className="space-y-8 pt-12 border-t border-border">

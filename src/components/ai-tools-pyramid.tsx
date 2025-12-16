@@ -9,10 +9,10 @@ interface ToolCardProps {
 
 const ToolCard = ({ tool, subLabel }: ToolCardProps) => (
   <Link href={tool.link} target="_blank" rel="noopener noreferrer" className="flex flex-col items-center gap-2 group">
-    <div className="w-16 h-16 bg-card border border-border rounded-lg flex items-center justify-center transition-colors group-hover:border-primary">
+    <div className="w-12 h-12 bg-card border border-border rounded-lg flex items-center justify-center transition-colors group-hover:border-primary">
       {tool.logo}
     </div>
-    <p className="font-semibold text-xs transition-colors group-hover:text-primary">{tool.name}</p>
+    <p className="font-semibold text-xs transition-colors group-hover:text-primary text-white">{tool.name}</p>
     {subLabel && <p className="text-[10px] text-muted-foreground">{subLabel}</p>}
   </Link>
 );
@@ -32,7 +32,7 @@ export function AiToolsPyramid({ searchQuery }: { searchQuery: string }) {
     <div className="flex flex-col items-center gap-4">
       {filteredCategories.map((category, index) => (
         <div key={category.name} className="w-full flex flex-col items-center">
-          <div className="flex justify-center flex-wrap gap-4 items-start">
+          <div className="flex justify-center flex-wrap gap-3 items-start">
             {category.tools.map((tool) => (
               <ToolCard key={tool.name} tool={tool} subLabel={toolSubLabels[tool.name]} />
             ))}
