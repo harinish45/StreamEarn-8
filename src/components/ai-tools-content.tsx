@@ -19,12 +19,12 @@ import type { AiToolCategory as AiToolsPyramidCategory } from '@/lib/ai-tools-da
 import type { GoogleAiTool } from '@/lib/google-ai-ecosystem-data';
 
 interface AiToolsContentProps {
-  productivityTools: ProductivityTool[];
-  jobsAndCareersTools: JobsAndCareersTool[];
-  financeAndMoneyTools: FinanceAndMoneyTool[];
-  illegalAiTools: IllegalAiToolCategory[];
-  aiToolsPyramid: AiToolsPyramidCategory[];
-  googleAiTools: GoogleAiTool[];
+  productivityTools?: ProductivityTool[];
+  jobsAndCareersTools?: JobsAndCareersTool[];
+  financeAndMoneyTools?: FinanceAndMoneyTool[];
+  illegalAiTools?: IllegalAiToolCategory[];
+  aiToolsPyramid?: AiToolsPyramidCategory[];
+  googleAiTools?: GoogleAiTool[];
 }
 
 export function AiToolsContent({
@@ -42,7 +42,7 @@ export function AiToolsContent({
       <div className="mx-auto w-full max-w-7xl px-4 py-8 md:px-6 md:py-12">
         <main className="flex-1 space-y-16">
           <div className="space-y-4 text-center">
-              <h1 className="text-4xl md:text-5xl font-serif tracking-tight">INSIDE GOOGLE'S AI ECOSYSTEM</h1>
+              <h1 className="text-4xl md:text-5xl font-serif tracking-tight bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">INSIDE GOOGLE'S AI ECOSYSTEM</h1>
               <p className="text-lg text-muted-foreground">THE TOOLS REDEFINING CREATIVITY IN 2025</p>
           </div>
           

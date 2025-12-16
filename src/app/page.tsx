@@ -38,7 +38,7 @@ export default function Home() {
         <div className="container">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
             <div className="flex flex-col justify-center space-y-6">
-              <h1 className="text-4xl font-serif tracking-tighter sm:text-5xl xl:text-6xl/none">
+              <h1 className="text-4xl font-serif tracking-tighter sm:text-5xl xl:text-6xl/none bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
                 Your Gateway to Online Earning
               </h1>
               <p className="max-w-[600px] text-muted-foreground md:text-xl">

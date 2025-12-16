@@ -35,7 +35,7 @@ function ToolListItem({ tool }: { tool: AiTool }) {
 function ToolList({ category }: { category: AiToolCategory }) {
   return (
     <div>
-      <h3 className="text-lg font-semibold text-primary mb-4">{category.name}</h3>
+      <h3 className="text-lg font-semibold text-primary mb-4 bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">{category.name}</h3>
       <ul className="space-y-3">
         {category.tools.map((tool) => (
           <ToolListItem key={tool.name} tool={tool} />
@@ -76,7 +76,7 @@ export function IllegalAiTools({ searchQuery, illegalAiTools = [], aiToolsPyrami
             {shouldShowIllegalTools && (
                 <div className="text-center space-y-4">
                     <div className="inline-block bg-primary/20 border border-primary/50 rounded-lg px-6 py-2">
-                        <h2 className="text-2xl md:text-3xl font-bold text-primary tracking-tight">AI TOOLS THAT FEEL ILLEGAL TO KNOW FOR 2026</h2>
+                        <h2 className="text-2xl md:text-3xl font-bold text-primary tracking-tight bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">AI TOOLS THAT FEEL ILLEGAL TO KNOW FOR 2026</h2>
                     </div>
                     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8 pt-8">
                         {filteredIllegalCategories.map(category => (
@@ -88,7 +88,7 @@ export function IllegalAiTools({ searchQuery, illegalAiTools = [], aiToolsPyrami
             
             {shouldShowSoloFounderTools && (
                 <div className="text-center space-y-4 pt-8">
-                    <p className="text-xl font-serif text-white">15 AI tools every solo founder needs to know about</p>
+                    <p className="text-xl font-serif text-white bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">15 AI tools every solo founder needs to know about</p>
                     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8 pt-8">
                         {filteredSoloFounderCategories.map(category => (
                             <ToolList key={category.name} category={category} />

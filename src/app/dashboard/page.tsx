@@ -283,7 +283,7 @@ export default function DashboardPage() {
     <div className="flex h-screen bg-background text-foreground">
       {/* Sidebar */}
       <aside className="w-64 flex flex-col border-r border-border p-4">
-        <h2 className="text-xl font-bold mb-4">My Lists</h2>
+        <h2 className="text-xl font-bold mb-4 bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">My Lists</h2>
         <div className="flex-1 space-y-2 overflow-y-auto">
           {lists.map((list) => (
             <div
@@ -336,7 +336,7 @@ export default function DashboardPage() {
       <main className="flex-1 flex flex-col p-6">
         {selectedList ? (
           <>
-            <h1 className="text-3xl font-bold mb-6">{selectedList.name}</h1>
+            <h1 className="text-3xl font-bold mb-6 bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">{selectedList.name}</h1>
             <div className="flex-1 space-y-4 overflow-y-auto pr-2">
                 <DndContext 
                     sensors={sensors}
@@ -372,7 +372,7 @@ export default function DashboardPage() {
         ) : (
           <div className="flex-1 flex items-center justify-center">
             <div className="text-center">
-              <h2 className="text-2xl font-semibold">No list selected</h2>
+              <h2 className="text-2xl font-semibold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">No list selected</h2>
               <p className="text-muted-foreground mt-2">Create or select a list to get started.</p>
             </div>
           </div>

@@ -3,7 +3,7 @@ import { type ProductivityTool } from '@/lib/productivity-tools-data';
 import Image from 'next/image';
 import Link from 'next/link';
 
-export function ProductivityTools({ searchQuery, productivityTools = [] }: { searchQuery: string, productivityTools: ProductivityTool[] }) {
+export function ProductivityTools({ searchQuery, productivityTools = [] }: { searchQuery: string, productivityTools?: ProductivityTool[] }) {
 
   const filteredTools = productivityTools.filter(tool => 
     tool.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
@@ -26,7 +26,7 @@ export function ProductivityTools({ searchQuery, productivityTools = [] }: { sea
       />
       <div className="relative z-10">
         <div className="mb-8 text-center">
-          <h2 className="text-4xl font-bold tracking-tight text-white">Productivity</h2>
+          <h2 className="text-4xl font-bold tracking-tight text-white bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">Productivity</h2>
           <div className="mt-2 h-1 w-24 bg-[#00A3FF] mx-auto rounded-full" />
         </div>
         <ul className="space-y-5 text-white/80">

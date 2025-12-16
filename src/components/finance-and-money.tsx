@@ -3,7 +3,7 @@ import { type FinanceAndMoneyTool } from '@/lib/finance-and-money-data';
 import Image from 'next/image';
 import Link from 'next/link';
 
-export function FinanceAndMoney({ searchQuery, financeAndMoneyTools = [] }: { searchQuery: string, financeAndMoneyTools: FinanceAndMoneyTool[] }) {
+export function FinanceAndMoney({ searchQuery, financeAndMoneyTools = [] }: { searchQuery: string, financeAndMoneyTools?: FinanceAndMoneyTool[] }) {
   
   const filteredTools = financeAndMoneyTools.filter(tool =>
     tool.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -26,7 +26,7 @@ export function FinanceAndMoney({ searchQuery, financeAndMoneyTools = [] }: { se
       />
       <div className="relative z-10">
         <div className="mb-8 text-center">
-          <h2 className="text-4xl font-bold tracking-tight text-white">Finance & Money</h2>
+          <h2 className="text-4xl font-bold tracking-tight text-white bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">Finance & Money</h2>
           <div className="mt-2 h-1 w-24 bg-[#00A3FF] mx-auto rounded-full" />
         </div>
         <ul className="space-y-5 text-white/80">
