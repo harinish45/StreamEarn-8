@@ -536,6 +536,30 @@ export const earningOpportunities: EarningCategory[] = [
             { id: 'da-2', title: 'Lionbridge', description: 'Data annotation services', link: 'https://www.lionbridge.com/', logoKey: 'lionbridgeLogo', imageKey: 'dataLabelImage2', aiHint: 'data label' },
         ],
     },
+    {
+        id: 'ai-image-video-tools',
+        name: 'AI Image & Video Tools',
+        icon: 'Camera',
+        description: "Tools for generating and editing images and videos with AI.",
+        opportunities: [
+            { id: 'aivt-1', title: 'Syllaby', description: 'AI video script generator.', link: 'https://www.syllaby.io/', logoKey: 'syllabyLogo', imageKey: 'aiVideoLogo', aiHint: 'AI video' },
+            { id: 'aivt-2', title: 'HeyGen', description: 'AI video generation platform.', link: 'https://www.heygen.com/', logoKey: 'heyGenLogo', imageKey: 'aiVideoLogo', aiHint: 'AI video' },
+            { id: 'aivt-3', title: 'Runway', description: 'AI video editing and generation tools.', link: 'https://runwayml.com/', logoKey: 'runwayLogo', imageKey: 'aiVideoLogo', aiHint: 'AI video' },
+            { id: 'aivt-4', title: 'Submagic', description: 'AI-powered subtitle generation.', link: 'https://www.submagic.co/', logoKey: 'submagicLogo', imageKey: 'aiVideoLogo', aiHint: 'AI video' },
+            { id: 'aivt-5', title: 'Krea AI', description: 'Real-time AI image generation.', link: 'https://www.krea.ai/', logoKey: 'kreaAiLogo', imageKey: 'aiVideoLogo', aiHint: 'AI video' },
+        ],
+    },
+    {
+        id: 'ai-coding-assistants',
+        name: 'AI Coding Assistants',
+        icon: 'Bot',
+        description: "Assistants that help with writing and debugging code.",
+        opportunities: [
+            { id: 'aica-1', title: 'Cursor', description: 'AI-first code editor.', link: 'https://cursor.sh/', logoKey: 'cursorAssistLogo', imageKey: 'chatbotRobotImage1', aiHint: 'AI code' },
+            { id: 'aica-2', title: 'Github Copilot', description: 'AI pair programmer from GitHub.', link: 'https://github.com/features/copilot', logoKey: 'githubCopilotLogo', imageKey: 'chatbotRobotImage2', aiHint: 'AI code' },
+            { id: 'aica-3', title: 'Tabnine', description: 'AI assistant for software developers.', link: 'https://www.tabnine.com/', logoKey: 'tabnineLogo', imageKey: 'chatbotRobotImage3', aiHint: 'AI code' },
+            { id: 'aica-4', title: 'Devin', description: 'The first AI software engineer.', link: 'https://www.cognition-labs.com/blog/introducing-devin', logoKey: 'devinLogo', imageKey: 'chatbotRobotImage4', aiHint: 'AI code' },
+            { id: 'aica-5', title: 'Aider', description: 'AI pair programming in your terminal.', link: 'https://aider.chat/', logoKey: 'aiderLogo', imageKey: 'chatbotRobotImage5', aiHint: 'AI code' },
+        ],
+    },
 ];
-
-    
