@@ -1,23 +1,23 @@
 
 import { Header } from '@/components/header';
-import { SidebarProvider } from '@/components/ui/sidebar';
 import { AppSidebar } from '@/components/app-sidebar';
 import { earningOpportunities, type EarningCategory } from '@/lib/data';
 import { AiToolsContent } from "@/components/ai-tools-content";
 import { productivityTools, type ProductivityTool } from '@/lib/productivity-tools-data';
 import { jobsAndCareersTools, type JobsAndCareersTool } from '@/lib/jobs-and-careers-data';
 import { financeAndMoneyTools, type FinanceAndMoneyTool } from '@/lib/finance-and-money-data';
-import { illegalAiTools, type AiToolCategory } from '@/lib/illegal-ai-tools-data';
+import { illegalAiTools, type AiToolCategory as IllegalAiToolCategory } from '@/lib/illegal-ai-tools-data';
+import { aiToolsPyramid, type AiToolCategory as AiToolsPyramidCategory } from '@/lib/ai-tools-data';
 import { googleAiTools, type GoogleAiTool } from '@/lib/google-ai-ecosystem-data';
-import { aiToolsPyramid } from '@/lib/ai-tools-data';
+import { SidebarProvider } from '@/components/ui/sidebar';
 
 async function getPageData() {
   const categories: EarningCategory[] = earningOpportunities;
   const pTools: ProductivityTool[] = productivityTools;
   const jcTools: JobsAndCareersTool[] = jobsAndCareersTools;
   const fmTools: FinanceAndMoneyTool[] = financeAndMoneyTools;
-  const illegal: AiToolCategory[] = illegalAiTools;
-  const pyramid: AiToolCategory[] = aiToolsPyramid;
+  const illegal: IllegalAiToolCategory[] = illegalAiTools;
+  const pyramid: AiToolsPyramidCategory[] = aiToolsPyramid;
   const googleTools: GoogleAiTool[] = googleAiTools;
   
   return {

@@ -16,25 +16,26 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import type { ProductivityTool } from '@/lib/productivity-tools-data';
 import type { JobsAndCareersTool } from '@/lib/jobs-and-careers-data';
 import type { FinanceAndMoneyTool } from '@/lib/finance-and-money-data';
-import type { AiToolCategory } from '@/lib/illegal-ai-tools-data';
+import type { AiToolCategory as IllegalAiToolCategory } from '@/lib/illegal-ai-tools-data';
+import type { AiToolCategory as AiToolsPyramidCategory } from '@/lib/ai-tools-data';
 import type { GoogleAiTool } from '@/lib/google-ai-ecosystem-data';
 
 interface AiToolsContentProps {
   productivityTools: ProductivityTool[];
   jobsAndCareersTools: JobsAndCareersTool[];
   financeAndMoneyTools: FinanceAndMoneyTool[];
-  illegalAiTools: AiToolCategory[];
-  aiToolsPyramid: AiToolCategory[];
+  illegalAiTools: IllegalAiToolCategory[];
+  aiToolsPyramid: AiToolsPyramidCategory[];
   googleAiTools: GoogleAiTool[];
 }
 
 export function AiToolsContent({
-  productivityTools,
-  jobsAndCareersTools,
-  financeAndMoneyTools,
-  illegalAiTools,
-  aiToolsPyramid,
-  googleAiTools,
+  productivityTools = [],
+  jobsAndCareersTools = [],
+  financeAndMoneyTools = [],
+  illegalAiTools = [],
+  aiToolsPyramid = [],
+  googleAiTools = [],
 }: AiToolsContentProps) {
   const [searchQuery, setSearchQuery] = useState('');
 
