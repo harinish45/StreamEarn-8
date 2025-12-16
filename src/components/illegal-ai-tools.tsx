@@ -20,10 +20,10 @@ function ToolListItem({ tool }: { tool: AiTool }) {
                     alt={`${tool.name} logo`}
                     width={24}
                     height={24}
-                    className="rounded-md object-contain"
+                    className="rounded-full object-cover"
                     data-ai-hint="logo"
                 />
-                <span className="text-sm font-medium transition-colors group-hover:text-primary">{tool.name}</span>
+                <span className="text-sm font-medium text-white transition-colors group-hover:text-primary">{tool.name}</span>
             </Link>
         </li>
     );
@@ -57,8 +57,8 @@ export function IllegalAiTools({ searchQuery }: { searchQuery: string }) {
   return (
     <div className="bg-black py-16 px-4 md:px-6">
         <div className="mx-auto max-w-6xl space-y-12">
-            <div className="text-center">
-                <div className="inline-block bg-primary/20 border border-primary/50 rounded-lg px-6 py-2 mb-2">
+            <div className="text-center space-y-4">
+                <div className="inline-block bg-primary/20 border border-primary/50 rounded-lg px-6 py-2">
                     <h2 className="text-2xl md:text-3xl font-bold text-primary tracking-tight">AI TOOLS THAT FEEL ILLEGAL TO KNOW FOR 2026</h2>
                 </div>
                  <p className="mt-4 text-xl font-serif text-white">15 AI tools every solo founder needs to know about</p>
