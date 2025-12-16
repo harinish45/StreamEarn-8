@@ -93,7 +93,7 @@ export default {
             boxShadow: '0 0 8px 0px hsl(var(--primary) / 0.4), 0 0 16px 0px hsl(var(--primary) / 0.2)',
           },
           '50%': {
-            boxShadow: '0 0 16px 4px hsl(var(--primary) / 0.6), 0 0 24px 4px hsl(var(--primary) / 0.4)',
+            boxShadow: '0 0 16px 4px hsl(var(--primary) / 0.4), 0 0 24px 4px hsl(var(--primary) / 0.2)',
           },
         },
       },
