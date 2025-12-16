@@ -90,17 +90,17 @@ export default {
         },
         'breathing-glow': {
           '0%, 100%': {
-            boxShadow: '0 0 10px 0px hsl(var(--primary) / 0.5), 0 0 20px 0px hsl(var(--primary) / 0.3)',
+            boxShadow: '0 0 8px 0px hsl(var(--primary) / 0.4), 0 0 16px 0px hsl(var(--primary) / 0.2)',
           },
           '50%': {
-            boxShadow: '0 0 20px 5px hsl(var(--primary) / 0.7), 0 0 30px 5px hsl(var(--primary) / 0.5)',
+            boxShadow: '0 0 16px 4px hsl(var(--primary) / 0.6), 0 0 24px 4px hsl(var(--primary) / 0.4)',
           },
         },
       },
       animation: {
         'accordion-down': 'accordion-down 0.2s ease-out',
         'accordion-up': 'accordion-up 0.2s ease-out',
-        'breathing-glow': 'breathing-glow 4s ease-in-out infinite',
+        'breathing-glow': 'breathing-glow 8s ease-in-out infinite',
       },
     },
   },
