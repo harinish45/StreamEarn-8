@@ -36,3 +36,4 @@ export function CategoryList({ category }: CategoryListProps) {
     </section>
   );
 }
+
