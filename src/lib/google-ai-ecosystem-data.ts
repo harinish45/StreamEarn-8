@@ -50,7 +50,7 @@ export const googleAiTools: GoogleAiTool[] = [
     description: 'Fast, creative image generation',
     image: createImage('nanobanana-card'),
     aiHint: 'banana image',
-    link: 'https://deepmind.google/discover/blog/generating-and-editing-images-with-multimodal-large-language-models/',
+    link: 'https://gemini.google/overview/image-generation/',
   },
   {
     name: 'AI STUDIO',
