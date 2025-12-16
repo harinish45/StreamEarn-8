@@ -40,9 +40,9 @@ export default function Home() {
         </div>
       </header>
 
-      <main className="flex-1">
-        <div className="container relative py-12 md:py-24 lg:py-32">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
+      <main className="flex-1 flex items-center">
+        <div className="container">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
             <div className="flex flex-col justify-center space-y-6">
               <h1 className="text-4xl font-serif tracking-tighter sm:text-5xl xl:text-6xl/none">
                 Your Gateway to Online Earning
