@@ -50,7 +50,7 @@ export const googleAiTools: GoogleAiTool[] = [
     description: 'Fast, creative image generation',
     image: createImage('nanobanana-card'),
     aiHint: 'banana image',
-    link: 'https://gemini.google/overview/image-generation/',
+    link: 'https://gemini.google.com/overview/image-generation/',
   },
   {
     name: 'AI STUDIO',
@@ -65,5 +65,33 @@ export const googleAiTools: GoogleAiTool[] = [
     image: createImage('opal-card'),
     aiHint: 'code interface',
     link: 'https://opal.dev/',
+  },
+  {
+    name: 'GROQ',
+    description: 'Lightning-fast AI inference',
+    image: createImage('groq-card'),
+    aiHint: 'speed circuit',
+    link: 'https://groq.com/',
+  },
+  {
+    name: 'OPEN ROUTER',
+    description: 'Access hundreds of AI models',
+    image: createImage('openrouter-card'),
+    aiHint: 'network hub',
+    link: 'https://openrouter.ai/',
+  },
+  {
+    name: 'DEEPSEEK',
+    description: 'Advanced code & language models',
+    image: createImage('deepseek-card'),
+    aiHint: 'brain code',
+    link: 'https://www.deepseek.com/',
+  },
+  {
+    name: 'AIMLAPI',
+    description: 'A single API for multiple AI models',
+    image: createImage('aimlapi-card'),
+    aiHint: 'api interface',
+    link: 'https://www.aimlapi.com/',
   },
 ];
