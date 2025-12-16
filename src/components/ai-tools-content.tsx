@@ -19,7 +19,7 @@ export function AiToolsContent() {
 
   return (
     <SidebarInset>
-      <Header searchQuery={searchQuery} setSearchQuery={setSearchQuery} />
+      <Header />
       <ScrollArea className="h-[calc(100vh-4rem)]">
         <div className="mx-auto w-full max-w-7xl px-4 py-8 md:px-6 md:py-12">
           <main className="flex-1 space-y-16">
