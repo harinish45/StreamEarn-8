@@ -39,7 +39,7 @@ export default async function CategoryPage({ params }: { params: { categoryId: s
           categories={allCategories} 
         />
         <SidebarInset>
-          <Header />
+          <Header showSidebarTrigger={true} />
           <ScrollArea className="h-[calc(100vh-4rem)]">
             <main className="flex-1 p-4 md:p-6">
                 <div className="space-y-4 mb-6">

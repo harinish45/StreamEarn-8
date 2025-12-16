@@ -34,7 +34,7 @@ export default async function EarningsPage() {
           categories={sortedCategories}
         />
         <SidebarInset>
-          <Header viewMode={viewMode} />
+          <Header viewMode={viewMode} showSidebarTrigger={true} />
           <ScrollArea className="h-[calc(100vh-4rem)]">
             <main className="flex-1">
               <div className="p-4 md:p-6 space-y-4">

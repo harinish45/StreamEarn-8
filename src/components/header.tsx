@@ -1,4 +1,3 @@
-
 'use client';
 
 import { Search, Bell, List, Grid } from "lucide-react";
@@ -23,13 +22,15 @@ interface HeaderProps {
     setViewMode?: (mode: 'grid' | 'list') => void;
     searchQuery?: string;
     setSearchQuery?: (query: string) => void;
+    showSidebarTrigger?: boolean;
 }
 
 export function Header({ 
   viewMode, 
   setViewMode, 
   searchQuery, 
-  setSearchQuery 
+  setSearchQuery,
+  showSidebarTrigger = false
 }: HeaderProps) {
 
   const showViewModeSwitcher = viewMode && setViewMode;
@@ -37,9 +38,11 @@ export function Header({
 
   return (
     <header className="sticky top-0 z-20 flex h-16 items-center gap-4 border-b bg-background/80 px-4 backdrop-blur-sm md:px-6">
-      <div className="md:hidden">
-        <SidebarTrigger />
-      </div>
+      {showSidebarTrigger && (
+        <div className="md:hidden">
+          <SidebarTrigger />
+        </div>
+      )}
       <div className="flex flex-1 items-center gap-4">
         {showViewModeSwitcher && (
           <div className="hidden items-center gap-2 md:flex">
@@ -94,5 +97,3 @@ export function Header({
     </header>
   );
 }
-
-    
