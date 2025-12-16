@@ -1,3 +1,4 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -20,8 +21,6 @@
     
     --shadow: 0 2px 10px rgba(0,0,0,0.05);
     --glow: 0 0 10px hsl(var(--button-bg), 0.5);
-
-    --radius: 0.8rem;
   }
 
   .dark {
@@ -311,5 +310,3 @@
     border-radius: 10px;
   }
 }
-
-    

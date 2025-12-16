@@ -1,3 +1,4 @@
+
 'use client';
 
 import * as React from 'react';
@@ -32,17 +33,28 @@ export function ThemeProvider({
   storageKey = 'theme',
   ...props
 }: ThemeProviderProps) {
-  const [theme, setTheme] = React.useState(
-    () => (typeof window !== 'undefined' && localStorage.getItem(storageKey)) || defaultTheme
-  );
+  const [theme, setTheme] = React.useState(defaultTheme);
+
+  React.useEffect(() => {
+    const storedTheme = localStorage.getItem(storageKey);
+    if (storedTheme) {
+      setTheme(storedTheme);
+    }
+  }, [storageKey]);
 
   React.useEffect(() => {
     const body = window.document.body;
     
     // Remove all possible theme classes before adding the new one
     themes.forEach(t => {
-      body.classList.remove(getThemeClass(t.name));
+      const themeClass = getThemeClass(t.name);
+      if (themeClass) {
+        body.classList.remove(themeClass);
+      }
     });
+    
+    // remove light/dark from previous themes
+    body.classList.remove('light', 'dark');
 
     let effectiveTheme = theme;
     if (theme === 'system') {
@@ -57,22 +69,21 @@ export function ThemeProvider({
     // Also update the html element for shadcn dark mode compatibility
     const doc = window.document.documentElement;
     doc.classList.remove('light', 'dark');
-    if (newThemeClass === 'dark' || newThemeClass === 'matrix' || newThemeClass === 'batman' || newThemeClass === 'iron-man' || newThemeClass === 'hulk') {
+    
+    const isDark = ['dark', 'matrix', 'batman', 'spider-man', 'iron-man', 'hulk'].includes(newThemeClass);
+    if (isDark) {
         doc.classList.add('dark');
     } else {
         doc.classList.add('light');
     }
 
-
   }, [theme]);
 
   const value = {
     theme,
-    setTheme: (theme: string) => {
-      if (typeof window !== 'undefined') {
-        localStorage.setItem(storageKey, theme);
-      }
-      setTheme(theme);
+    setTheme: (newTheme: string) => {
+      localStorage.setItem(storageKey, newTheme);
+      setTheme(newTheme);
     },
   };
 
