@@ -17,10 +17,20 @@ const ToolCard = ({ tool, subLabel }: ToolCardProps) => (
   </Link>
 );
 
-export function AiToolsPyramid() {
+export function AiToolsPyramid({ searchQuery }: { searchQuery: string }) {
+
+  const filteredCategories = aiToolsPyramid.map(category => ({
+    ...category,
+    tools: category.tools.filter(tool => tool.name.toLowerCase().includes(searchQuery.toLowerCase()))
+  })).filter(category => category.tools.length > 0);
+
+  if (filteredCategories.length === 0 && searchQuery) {
+    return null;
+  }
+
   return (
     <div className="flex flex-col items-center gap-4">
-      {aiToolsPyramid.map((category, index) => (
+      {filteredCategories.map((category, index) => (
         <div key={category.name} className="w-full flex flex-col items-center">
           <div className="flex justify-center flex-wrap gap-4 md:gap-8 items-start">
             {category.tools.map((tool) => (
@@ -28,9 +38,9 @@ export function AiToolsPyramid() {
             ))}
           </div>
           <div className="flex items-center w-full my-4">
-            { index < aiToolsPyramid.length && <div className="h-px flex-1 bg-border" />}
+            { index < filteredCategories.length && <div className="h-px flex-1 bg-border" />}
             <p className="text-sm text-muted-foreground px-4 flex-shrink-0">{category.name}</p>
-            { index < aiToolsPyramid.length && <div className="h-px flex-1 bg-border" />}
+            { index < filteredCategories.length && <div className="h-px flex-1 bg-border" />}
           </div>
         </div>
       ))}

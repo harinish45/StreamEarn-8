@@ -30,9 +30,19 @@ const ToolCard = ({ tool, side }: { tool: GoogleAiTool; side: 'left' | 'right' }
   );
 };
 
-export function GoogleAiEcosystem() {
-  const leftTools = googleAiTools.slice(0, 4);
-  const rightTools = googleAiTools.slice(4);
+export function GoogleAiEcosystem({ searchQuery }: { searchQuery: string }) {
+
+  const filteredTools = googleAiTools.filter(tool => 
+    tool.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
+    tool.description.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
+  const leftTools = filteredTools.slice(0, Math.ceil(filteredTools.length / 2));
+  const rightTools = filteredTools.slice(Math.ceil(filteredTools.length / 2));
+
+  if (filteredTools.length === 0 && searchQuery) {
+    return null;
+  }
 
   return (
     <div className="relative my-24">

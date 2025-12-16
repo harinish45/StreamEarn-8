@@ -1,6 +1,5 @@
 
 import Image from 'next/image';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { illegalAiTools, type AiToolCategory, type AiTool } from '@/lib/illegal-ai-tools-data';
 import Link from 'next/link';
 
@@ -43,7 +42,17 @@ function ToolList({ category }: { category: AiToolCategory }) {
   );
 }
 
-export function IllegalAiTools() {
+export function IllegalAiTools({ searchQuery }: { searchQuery: string }) {
+
+  const filteredCategories = illegalAiTools.map(category => ({
+    ...category,
+    tools: category.tools.filter(tool => tool.name.toLowerCase().includes(searchQuery.toLowerCase()))
+  })).filter(category => category.tools.length > 0);
+
+  if (filteredCategories.length === 0 && searchQuery) {
+      return null;
+  }
+
   return (
     <div className="bg-black py-16 px-4 md:px-6">
         <div className="mx-auto max-w-6xl">
@@ -54,7 +63,7 @@ export function IllegalAiTools() {
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
-                {illegalAiTools.map(category => (
+                {filteredCategories.map(category => (
                     <ToolList key={category.name} category={category} />
                 ))}
             </div>
