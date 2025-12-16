@@ -1,7 +1,6 @@
 
 import Image from 'next/image';
-import { illegalAiTools, type AiToolCategory, type AiTool } from '@/lib/illegal-ai-tools-data';
-import { aiToolsPyramid as soloFounderTools } from '@/lib/ai-tools-data';
+import { type AiToolCategory, type AiTool } from '@/lib/illegal-ai-tools-data';
 import Link from 'next/link';
 
 function ToolListItem({ tool }: { tool: AiTool }) {
@@ -46,7 +45,13 @@ function ToolList({ category }: { category: AiToolCategory }) {
   );
 }
 
-export function IllegalAiTools({ searchQuery }: { searchQuery: string }) {
+interface IllegalAiToolsProps {
+  searchQuery: string;
+  illegalAiTools: AiToolCategory[];
+  aiToolsPyramid: AiToolCategory[];
+}
+
+export function IllegalAiTools({ searchQuery, illegalAiTools, aiToolsPyramid }: IllegalAiToolsProps) {
 
   const filterTools = (categories: AiToolCategory[]) => {
     return categories.map(category => ({
@@ -56,7 +61,7 @@ export function IllegalAiTools({ searchQuery }: { searchQuery: string }) {
   };
 
   const filteredIllegalCategories = filterTools(illegalAiTools);
-  const filteredSoloFounderCategories = filterTools(soloFounderTools);
+  const filteredSoloFounderCategories = filterTools(aiToolsPyramid);
 
   const shouldShowIllegalTools = filteredIllegalCategories.length > 0;
   const shouldShowSoloFounderTools = filteredSoloFounderCategories.length > 0;

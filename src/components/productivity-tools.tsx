@@ -1,9 +1,9 @@
 
-import { productivityTools } from '@/lib/productivity-tools-data';
+import { type ProductivityTool } from '@/lib/productivity-tools-data';
 import Image from 'next/image';
 import Link from 'next/link';
 
-export function ProductivityTools({ searchQuery }: { searchQuery: string }) {
+export function ProductivityTools({ searchQuery, productivityTools }: { searchQuery: string, productivityTools: ProductivityTool[] }) {
 
   const filteredTools = productivityTools.filter(tool => 
     tool.name.toLowerCase().includes(searchQuery.toLowerCase()) || 

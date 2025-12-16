@@ -13,8 +13,29 @@ import { Search } from 'lucide-react';
 import { Header } from '@/components/header';
 import { SidebarInset } from '@/components/ui/sidebar';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import type { ProductivityTool } from '@/lib/productivity-tools-data';
+import type { JobsAndCareersTool } from '@/lib/jobs-and-careers-data';
+import type { FinanceAndMoneyTool } from '@/lib/finance-and-money-data';
+import type { AiToolCategory } from '@/lib/illegal-ai-tools-data';
+import type { GoogleAiTool } from '@/lib/google-ai-ecosystem-data';
 
-export function AiToolsContent() {
+interface AiToolsContentProps {
+  productivityTools: ProductivityTool[];
+  jobsAndCareersTools: JobsAndCareersTool[];
+  financeAndMoneyTools: FinanceAndMoneyTool[];
+  illegalAiTools: AiToolCategory[];
+  aiToolsPyramid: AiToolCategory[];
+  googleAiTools: GoogleAiTool[];
+}
+
+export function AiToolsContent({
+  productivityTools,
+  jobsAndCareersTools,
+  financeAndMoneyTools,
+  illegalAiTools,
+  aiToolsPyramid,
+  googleAiTools,
+}: AiToolsContentProps) {
   const [searchQuery, setSearchQuery] = useState('');
 
   return (
@@ -38,18 +59,22 @@ export function AiToolsContent() {
               />
             </div>
 
-            <GoogleAiEcosystem searchQuery={searchQuery} />
+            <GoogleAiEcosystem searchQuery={searchQuery} googleAiTools={googleAiTools} />
 
-            <IllegalAiTools searchQuery={searchQuery} />
+            <IllegalAiTools 
+              searchQuery={searchQuery} 
+              illegalAiTools={illegalAiTools} 
+              aiToolsPyramid={aiToolsPyramid} 
+            />
 
              <div className="space-y-8 pt-12 border-t border-border">
                 <div className="space-y-4">
                     <Breadcrumbs path={[{ name: "AI Tools", href: "/ai-tools" }]} />
                 </div>
                <div className="grid grid-cols-1 md:grid-cols-3 gap-8 pt-8">
-                   <ProductivityTools searchQuery={searchQuery} />
-                   <JobsAndCareers searchQuery={searchQuery} />
-                   <FinanceAndMoney searchQuery={searchQuery} />
+                   <ProductivityTools searchQuery={searchQuery} productivityTools={productivityTools} />
+                   <JobsAndCareers searchQuery={searchQuery} jobsAndCareersTools={jobsAndCareersTools} />
+                   <FinanceAndMoney searchQuery={searchQuery} financeAndMoneyTools={financeAndMoneyTools} />
                </div>
              </div>
           </main>

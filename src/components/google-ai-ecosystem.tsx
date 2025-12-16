@@ -1,7 +1,7 @@
 
 'use client';
 
-import { googleAiTools, type GoogleAiTool } from '@/lib/google-ai-ecosystem-data';
+import { type GoogleAiTool } from '@/lib/google-ai-ecosystem-data';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useState, useEffect } from 'react';
@@ -42,7 +42,7 @@ const ToolCard = ({ tool }: { tool: GoogleAiTool }) => {
 };
 
 
-export function GoogleAiEcosystem({ searchQuery }: { searchQuery: string }) {
+export function GoogleAiEcosystem({ searchQuery, googleAiTools }: { searchQuery: string, googleAiTools: GoogleAiTool[] }) {
   const filteredTools = googleAiTools.filter(tool => 
     tool.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
     tool.description.toLowerCase().includes(searchQuery.toLowerCase())

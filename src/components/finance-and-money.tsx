@@ -1,9 +1,9 @@
 
-import { financeAndMoneyTools } from '@/lib/finance-and-money-data';
+import { type FinanceAndMoneyTool } from '@/lib/finance-and-money-data';
 import Image from 'next/image';
 import Link from 'next/link';
 
-export function FinanceAndMoney({ searchQuery }: { searchQuery: string }) {
+export function FinanceAndMoney({ searchQuery, financeAndMoneyTools }: { searchQuery: string, financeAndMoneyTools: FinanceAndMoneyTool[] }) {
   
   const filteredTools = financeAndMoneyTools.filter(tool =>
     tool.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
