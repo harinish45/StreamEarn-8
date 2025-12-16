@@ -37,14 +37,12 @@ export function ThemeProvider({
   );
 
   React.useEffect(() => {
-    const root = window.document.documentElement;
+    const body = window.document.body;
     
     // Remove all possible theme classes
     themes.forEach(t => {
-      root.classList.remove(getThemeClass(t.name));
+      body.classList.remove(getThemeClass(t.name));
     });
-    // also remove legacy blitzit-dark
-    root.classList.remove('blitzit-dark');
 
     let effectiveTheme = theme;
     if (theme === 'system') {
@@ -52,7 +50,7 @@ export function ThemeProvider({
     }
 
     const newThemeClass = getThemeClass(effectiveTheme);
-    root.classList.add(newThemeClass);
+    body.classList.add(newThemeClass);
 
   }, [theme]);
 
