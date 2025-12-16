@@ -2,10 +2,10 @@
 import Image from 'next/image';
 import { type AiToolCategory, type AiTool } from '@/lib/illegal-ai-tools-data';
 import Link from 'next/link';
-import { placeholderImages } from '@/lib/placeholder-images';
+import placeholderImages from "@/lib/placeholder-images.json" with { type: "json" };
 
 function ToolListItem({ tool }: { tool: AiTool }) {
-    const logo = placeholderImages[tool.logoKey];
+    const logo = placeholderImages[tool.logoKey as keyof typeof placeholderImages];
     return (
         <li>
             <Link 
@@ -66,9 +66,9 @@ export function IllegalAiTools({ searchQuery, illegalAiTools = [], aiToolsPyrami
   const filteredSoloFounderCategories = filterTools(aiToolsPyramid);
 
   const shouldShowIllegalTools = filteredIllegalCategories.length > 0;
-  const shouldShowSoloFounderTools = filteredSoloFounderCategories.length > 0;
+  const shouldShowSoloFounderCategories = filteredSoloFounderCategories.length > 0;
 
-  if (!shouldShowIllegalTools && !shouldShowSoloFounderTools) {
+  if (!shouldShowIllegalTools && !shouldShowSoloFounderCategories) {
     return null;
   }
 
