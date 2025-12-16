@@ -47,11 +47,11 @@ function ToolList({ category }: { category: AiToolCategory }) {
 
 interface IllegalAiToolsProps {
   searchQuery: string;
-  illegalAiTools: AiToolCategory[];
-  aiToolsPyramid: AiToolCategory[];
+  illegalAiTools?: AiToolCategory[];
+  aiToolsPyramid?: AiToolCategory[];
 }
 
-export function IllegalAiTools({ searchQuery, illegalAiTools, aiToolsPyramid }: IllegalAiToolsProps) {
+export function IllegalAiTools({ searchQuery, illegalAiTools = [], aiToolsPyramid = [] }: IllegalAiToolsProps) {
 
   const filterTools = (categories: AiToolCategory[]) => {
     return categories.map(category => ({

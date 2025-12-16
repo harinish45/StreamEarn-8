@@ -42,7 +42,7 @@ const ToolCard = ({ tool }: { tool: GoogleAiTool }) => {
 };
 
 
-export function GoogleAiEcosystem({ searchQuery, googleAiTools }: { searchQuery: string, googleAiTools: GoogleAiTool[] }) {
+export function GoogleAiEcosystem({ searchQuery, googleAiTools = [] }: { searchQuery: string, googleAiTools: GoogleAiTool[] }) {
   const filteredTools = googleAiTools.filter(tool => 
     tool.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
     tool.description.toLowerCase().includes(searchQuery.toLowerCase())

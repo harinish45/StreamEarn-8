@@ -3,7 +3,7 @@ import { type JobsAndCareersTool } from '@/lib/jobs-and-careers-data';
 import Image from 'next/image';
 import Link from 'next/link';
 
-export function JobsAndCareers({ searchQuery, jobsAndCareersTools }: { searchQuery: string, jobsAndCareersTools: JobsAndCareersTool[] }) {
+export function JobsAndCareers({ searchQuery, jobsAndCareersTools = [] }: { searchQuery: string, jobsAndCareersTools: JobsAndCareersTool[] }) {
 
   const filteredTools = jobsAndCareersTools.filter(tool =>
     tool.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
