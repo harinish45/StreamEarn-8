@@ -40,7 +40,7 @@ export default function Home() {
         </div>
       </header>
 
-      <main className="flex-1 flex items-center">
+      <main className="flex-1 flex items-center justify-center">
         <div className="container">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
             <div className="flex flex-col justify-center space-y-6">
@@ -51,10 +51,10 @@ export default function Home() {
                 Discover a world of opportunities. Our platform connects you with the best ways to earn online, from micro-tasks and freelancing to AI-powered ventures.
               </p>
               <div className="flex flex-col gap-4 sm:flex-row flex-wrap">
-                <Button size="lg" variant="gradientOutline" className="animate-breathing-glow" asChild>
+                <Button size="lg" variant="gradient" className="animate-breathing-glow" asChild>
                     <Link href="/earnings">Explore Earning Opportunities</Link>
                 </Button>
-                <Button size="lg" variant="gradientOutline" className="animate-breathing-glow" asChild>
+                <Button size="lg" variant="gradient" className="animate-breathing-glow" asChild>
                     <Link href="/ai-tools">Discover AI Tools</Link>
                 </Button>
               </div>
