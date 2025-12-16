@@ -1,7 +1,10 @@
 
+'use client';
+
 import { aiToolsPyramid, toolSubLabels, type AiTool } from '@/lib/ai-tools-data';
 import Link from 'next/link';
 import { cn } from '@/lib/utils';
+import Image from 'next/image';
 
 interface ToolCardProps {
   tool: AiTool;
@@ -10,8 +13,15 @@ interface ToolCardProps {
 
 const ToolCard = ({ tool, subLabel }: ToolCardProps) => (
   <Link href={tool.link} target="_blank" rel="noopener noreferrer" className="flex flex-col items-center gap-2 group">
-    <div className="w-16 h-16 bg-card border border-border rounded-lg flex items-center justify-center transition-colors group-hover:border-primary p-1">
-      {tool.logo}
+    <div className="w-12 h-12 bg-card border border-border rounded-lg flex items-center justify-center transition-colors group-hover:border-primary p-1">
+      <Image
+          src={tool.logo as string}
+          alt={`${tool.name} logo`}
+          width={48}
+          height={48}
+          className="rounded-md object-cover"
+          data-ai-hint="logo"
+        />
     </div>
     <p className="font-semibold text-xs transition-colors group-hover:text-primary text-white">{tool.name}</p>
     {subLabel && <p className="text-[10px] text-muted-foreground">{subLabel}</p>}
@@ -31,7 +41,7 @@ export function AiToolsPyramid({ searchQuery }: { searchQuery: string }) {
 
   return (
     <div className="flex flex-col items-center gap-4">
-      {filteredCategories.map((category, index) => (
+      {filteredCategories.map((category) => (
         <div key={category.name} className="w-full flex flex-col items-center">
           <div className="flex justify-center flex-wrap gap-4 items-start p-4">
             {category.tools.map((tool) => (

@@ -15,14 +15,16 @@ function ToolListItem({ tool }: { tool: AiTool }) {
             >
                 <div className="absolute left-0 top-1/2 -translate-y-1/2 w-4 h-px bg-muted-foreground transition-colors group-hover:bg-primary"></div>
                 <div className="absolute left-0 top-0 h-full w-px bg-muted-foreground transition-colors group-hover:bg-primary"></div>
-                <Image
-                    src={tool.logo}
-                    alt={`${tool.name} logo`}
-                    width={24}
-                    height={24}
-                    className="rounded-full object-cover"
-                    data-ai-hint="logo"
-                />
+                 <div className="w-6 h-6 rounded-full bg-card border border-border flex items-center justify-center transition-colors group-hover:border-primary p-1">
+                    <Image
+                        src={tool.logo}
+                        alt={`${tool.name} logo`}
+                        width={24}
+                        height={24}
+                        className="rounded-full object-cover"
+                        data-ai-hint="logo"
+                    />
+                </div>
                 <span className="text-sm font-medium text-white transition-colors group-hover:text-primary">{tool.name}</span>
             </Link>
         </li>
