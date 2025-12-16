@@ -1,12 +1,11 @@
-
 'use client';
 import type { Opportunity } from "@/lib/data";
 import { ArrowUpRight } from "lucide-react";
-import { Button } from "./ui/button";
 import Image from "next/image";
 import Link from "next/link";
 import { Badge } from "./ui/badge";
 import { useState } from "react";
+import { cn } from "@/lib/utils";
 
 interface OpportunityCardProps {
   opportunity: Opportunity;
@@ -21,8 +20,6 @@ export function OpportunityCard({ opportunity: initialOpportunity, categoryId }:
         if (!opportunity.visited) {
             setOpportunity(prev => ({...prev, visited: true}));
         }
-        // In a real app, you might persist this to local storage or a backend
-        // Since we removed the backend, this state is temporary.
     };
   
   return (
@@ -33,7 +30,10 @@ export function OpportunityCard({ opportunity: initialOpportunity, categoryId }:
       onClick={handleClick}
       className="group relative block h-full w-full"
     >
-      <div className="flex flex-col justify-between h-full w-full overflow-hidden rounded-lg border border-border bg-card p-4 shadow-sm transition-all hover:shadow-lg hover:border-primary/50">
+      <div className={cn(
+          "themed-card flex flex-col justify-between h-full w-full overflow-hidden rounded-lg border p-4 transition-all hover:scale-105",
+          "hover:border-accent"
+        )}>
         <div>
           <div className="flex items-center justify-between mb-2">
             <div className="flex items-center gap-3">
@@ -45,7 +45,7 @@ export function OpportunityCard({ opportunity: initialOpportunity, categoryId }:
                     className="rounded-md object-contain"
                     data-ai-hint="logo"
                 />
-                <h3 className="font-semibold text-base whitespace-normal">{opportunity.title}</h3>
+                <h3 className="font-semibold text-base whitespace-normal text-foreground">{opportunity.title}</h3>
             </div>
             {opportunity.visited && (
               <Badge variant="secondary" className="bg-primary/20 text-primary-foreground hover:bg-primary/30 text-xs">
@@ -55,10 +55,10 @@ export function OpportunityCard({ opportunity: initialOpportunity, categoryId }:
           </div>
           <p className="text-sm text-muted-foreground line-clamp-2 min-h-[40px] whitespace-normal">{opportunity.description}</p>
         </div>
-        <Button variant="default" className="w-full mt-4 bg-primary/80 hover:bg-primary text-primary-foreground">
+        <button className="btn-main inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 h-10 px-4 py-2 w-full mt-4">
           Visit Website
           <ArrowUpRight className="ml-2 h-4 w-4" />
-        </Button>
+        </button>
       </div>
     </Link>
   );

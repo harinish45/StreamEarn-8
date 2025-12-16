@@ -18,12 +18,12 @@ export function CategoryList({ category }: CategoryListProps) {
     <section id={category.id} className="py-8 md:py-12">
       <div className="flex items-center justify-between mb-6 px-4 md:px-6">
         <div className="flex items-center gap-4">
-          <h2 className="text-2xl md:text-3xl font-serif tracking-tight bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
+          <h2 className="text-2xl md:text-3xl font-serif tracking-tight text-accent">
             {category.name}
           </h2>
         </div>
         <Button variant="link" asChild>
-          <Link href={`/category/${category.id}`}>
+          <Link href={`/category/${category.id}`} className="text-accent">
             See All <ArrowRight className="ml-2 h-4 w-4" />
           </Link>
         </Button>

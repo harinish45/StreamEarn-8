@@ -1,258 +1,155 @@
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 240 10% 3.9%;
-    --card: 0 0% 100%;
-    --card-foreground: 240 10% 3.9%;
-    --popover: 0 0% 100%;
-    --popover-foreground: 240 10% 3.9%;
-    --primary: 346.8 77.2% 49.8%;
-    --primary-foreground: 355.7 100% 97.3%;
-    --secondary: 240 4.8% 95.9%;
-    --secondary-foreground: 240 5.9% 10%;
-    --muted: 240 4.8% 95.9%;
-    --muted-foreground: 240 3.8% 46.1%;
-    --accent: 240 4.8% 95.9%;
-    --accent-foreground: 240 5.9% 10%;
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 0 0% 98%;
-    --border: 240 5.9% 90%;
-    --input: 240 5.9% 90%;
-    --ring: 346.8 77.2% 49.8%;
-    --radius: 0.8rem;
-    --success: 142 76% 36%;
-    --warning: 38 92% 50%;
-    --urgent: 0 78% 63%;
+    /* Default (Light) mapping based on user image */
+    --main-bg: 240 5% 96%;
+    --sidebar-bg: 0 0% 100%;
+    --card-bg: 0 0% 100%;
+    --button-bg: 346.8 77.2% 49.8%;
+    --button-text: 0 0% 100%;
     
-    --sidebar-background: var(--background);
-    --sidebar-foreground: var(--foreground);
-    --sidebar-primary: var(--primary);
-    --sidebar-primary-foreground: var(--primary-foreground);
-    --sidebar-accent: var(--accent);
-    --sidebar-accent-foreground: var(--accent-foreground);
-    --sidebar-border: var(--border);
-    --sidebar-ring: var(--ring);
-  }
+    --text-primary: 240 10% 3.9%;
+    --text-secondary: 240 3.8% 46.1%;
+    --text-accent: 346.8 77.2% 49.8%;
+    
+    --border-color: 240 5.9% 90%;
+    --ring-color: 346.8 77.2% 49.8%;
+    
+    --shadow: 0 2px 10px rgba(0,0,0,0.05);
+    --glow: 0 0 10px hsl(var(--button-bg), 0.5);
 
-  .light {
-    --background: 240 5% 96%;
-    --foreground: 240 10% 3.9%;
-    --card: 0 0% 100%;
-    --card-foreground: 240 10% 3.9%;
-    --popover: 0 0% 100%;
-    --popover-foreground: 240 10% 3.9%;
-    --primary: 346.8 77.2% 49.8%;
-    --primary-foreground: 0 0% 100%;
-    --secondary: 240 4.8% 95.9%;
-    --secondary-foreground: 240 5.9% 10%;
-    --muted: 240 4.8% 95.9%;
-    --muted-foreground: 240 3.8% 46.1%;
-    --accent: 240 4.8% 95.9%;
-    --accent-foreground: 240 5.9% 10%;
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 0 0% 98%;
-    --border: 240 5.9% 90%;
-    --input: 240 5.9% 90%;
-    --ring: 346.8 77.2% 49.8%;
-    
-    --sidebar-background: 240 5% 98%;
-    --sidebar-border: 240 5.9% 92%;
-    --sidebar-accent: 346.8 77.2% 49.8%;
-    --sidebar-accent-foreground: 0 0% 100%;
+    --radius: 0.8rem;
   }
 
   .dark {
-    --background: 222 47% 8%;
-    --foreground: 210 40% 98%;
-    --card: 222 47% 11%;
-    --card-foreground: 210 40% 98%;
-    --popover: 222 47% 8%;
-    --popover-foreground: 210 40% 98%;
-    --primary: 217 91% 60%;
-    --primary-foreground: 222 47% 11%;
-    --secondary: 217 28% 21%;
-    --secondary-foreground: 210 40% 98%;
-    --muted: 217 28% 18%;
-    --muted-foreground: 215 20% 65%;
-    --accent: 217 28% 21%;
-    --accent-foreground: 210 40% 98%;
-    --destructive: 0 63% 31%;
-    --destructive-foreground: 210 40% 98%;
-    --border: 217 28% 16%;
-    --input: 217 28% 16%;
-    --ring: 217 91% 60%;
+    --main-bg: 222 47% 8%;
+    --sidebar-bg: 222 47% 9.5%;
+    --card-bg: 222 47% 11%;
+    --button-bg: 217 91% 60%;
+    --button-text: 222 47% 11%;
+
+    --text-primary: 210 40% 98%;
+    --text-secondary: 215 20% 65%;
+    --text-accent: 217 91% 60%;
     
-    --sidebar-background: 222 47% 9.5%;
-    --sidebar-border: 217 28% 18%;
-    --sidebar-accent: 217 91% 60%;
-    --sidebar-accent-foreground: 222 47% 11%;
+    --border-color: 217 28% 16%;
+    --ring-color: 217 91% 60%;
+
+    --shadow: 0 4px 15px rgba(0, 123, 255, 0.1);
+    --glow: 0 0 15px hsl(var(--button-bg));
   }
 
   .matrix {
-    --background: 0 0% 4%;
-    --foreground: 130 100% 70%;
-    --card: 130 30% 8%;
-    --card-foreground: 130 100% 75%;
-    --popover: 0 0% 2%;
-    --popover-foreground: 130 100% 70%;
-    --primary: 130 100% 50%;
-    --primary-foreground: 0 0% 2%;
-    --secondary: 130 50% 15%;
-    --secondary-foreground: 130 100% 80%;
-    --muted: 130 40% 10%;
-    --muted-foreground: 130 70% 40%;
-    --accent: 130 80% 20%;
-    --accent-foreground: 130 100% 85%;
-    --destructive: 130 80% 30%;
-    --destructive-foreground: 0 0% 0%;
-    --border: 130 60% 25%;
-    --input: 130 40% 12%;
-    --ring: 130 100% 50%;
-
-    --sidebar-background: 0 0% 6%;
-    --sidebar-border: 130 60% 20%;
-    --sidebar-accent: 130 100% 50%;
-    --sidebar-accent-foreground: 0 0% 2%;
-  }
-
-  .spider-man {
-    --background: 220 40% 8%;
-    --foreground: 0 0% 98%;
-    --card: 220 30% 14%;
-    --card-foreground: 0 0% 98%;
-    --popover: 220 40% 8%;
-    --popover-foreground: 0 0% 98%;
-    --primary: 0 85% 55%;
-    --primary-foreground: 0 0% 100%;
-    --secondary: 215 80% 45%;
-    --secondary-foreground: 0 0% 100%;
-    --muted: 220 30% 18%;
-    --muted-foreground: 0 0% 85%;
-    --accent: 215 80% 45%;
-    --accent-foreground: 0 0% 100%;
-    --destructive: 0 90% 65%;
-    --destructive-foreground: 0 0% 100%;
-    --border: 215 50% 30%;
-    --input: 220 30% 20%;
-    --ring: 0 85% 55%;
+    --main-bg: 120 70% 2%; /* Very dark green/black */
+    --sidebar-bg: 0 0% 0%;
+    --card-bg: 120 100% 3%;
+    --button-bg: transparent;
+    --button-text: 130 100% 50%;
     
-    --sidebar-background: 220 40% 10%;
-    --sidebar-border: 215 50% 25%;
-    --sidebar-accent: 0 85% 55%;
-    --sidebar-accent-foreground: 0 0% 100%;
+    --text-primary: 130 100% 50%;
+    --text-secondary: 130 100% 40%;
+    --text-accent: 130 100% 60%;
+
+    --border-color: 130 100% 50%;
+    --sidebar-border: 120 100% 12%;
+    --ring-color: 130 100% 50%;
+    
+    --shadow: none;
+    --glow: 0 0 8px hsl(var(--border-color));
   }
 
   .batman {
-    --background: 240 10% 4%;
-    --foreground: 50 100% 80%;
-    --card: 240 10% 10%;
-    --card-foreground: 50 95% 85%;
-    --popover: 240 15% 5%;
-    --popover-foreground: 50 100% 80%;
-    --primary: 50 100% 55%;
-    --primary-foreground: 240 15% 5%;
-    --secondary: 240 8% 20%;
-    --secondary-foreground: 0 0% 100%;
-    --muted: 240 8% 15%;
-    --muted-foreground: 240 5% 60%;
-    --accent: 240 8% 20%;
-    --accent-foreground: 50 95% 85%;
-    --destructive: 0 80% 50%;
-    --destructive-foreground: 0 0% 100%;
-    --border: 240 8% 18%;
-    --input: 240, 8%, 15%;
-    --ring: 50 100% 55%;
+    --main-bg: 0 0% 2%;
+    --sidebar-bg: 240 2% 11%;
+    --card-bg: 240 2% 17%;
+    --card-border-top: 50 100% 55%;
+    --button-bg: 50 100% 55%;
+    --button-text: 0 0% 0%;
+
+    --text-primary: 0 0% 88%;
+    --text-secondary: 0 0% 60%;
+    --text-accent: 50 100% 55%;
     
-    --sidebar-background: 240 10% 6%;
-    --sidebar-border: 240 8% 15%;
-    --sidebar-accent: 50 100% 55%;
-    --sidebar-accent-foreground: 240 15% 5%;
+    --border-color: 240 2% 25%;
+    --ring-color: 50 100% 55%;
+
+    --shadow: 0 1px 3px rgba(0,0,0,0.5);
+    --glow: 0 0 12px hsl(var(--button-bg));
+  }
+
+  .spider-man {
+    --main-bg: 240 5% 98%;
+    --sidebar-bg: 212 100% 22%;
+    --card-bg: 0 0% 100%;
+    --button-bg: 0 84% 57%;
+    --button-text: 0 0% 100%;
+    
+    --text-primary: 240 10% 3.9%;
+    --text-secondary: 240 5% 40%;
+    --text-accent: 0 84% 57%;
+    
+    --border-color: 240 5.9% 90%;
+    --ring-color: 0 84% 57%;
+
+    --shadow: 0 4px 15px rgba(226, 54, 54, 0.15);
+    --glow: 0 0 10px hsl(var(--button-bg));
   }
 
   .iron-man {
-    --background: 10 50% 8%;
-    --foreground: 35 100% 92%;
-    --card: 0 60% 12%;
-    --card-foreground: 35 100% 92%;
-    --popover: 10 60% 8%;
-    --popover-foreground: 35 100% 92%;
-    --primary: 200 100% 50%;
-    --primary-foreground: 0 0% 100%;
-    --secondary: 0 85% 50%;
-    --secondary-foreground: 35 100% 95%;
-    --muted: 0 50% 20%;
-    --muted-foreground: 35 30% 75%;
-    --accent: 0 60% 25%;
-    --accent-foreground: 35 100% 92%;
-    --destructive: 0 85% 50%;
-    --destructive-foreground: 0 0% 100%;
-    --border: 0 70% 35%;
-    --input: 0 60% 18%;
-    --ring: 200 100% 50%;
+    --main-bg: 10 20% 8%;
+    --sidebar-bg: 10 50% 5%;
+    --card-bg: hsla(10, 20%, 8%, 0.7);
+    --button-bg: 0 100% 27%;
+    --button-text: 45 76% 62%;
     
-    --sidebar-background: 10 50% 10%;
-    --sidebar-border: 0 70% 30%;
-    --sidebar-accent: 200 100% 50%;
-    --sidebar-accent-foreground: 0 0% 100%;
+    --text-primary: 197 100% 80%;
+    --text-secondary: 197, 70%, 70%;
+    --text-accent: 197 100% 63%;
+    
+    --border-color: 197 100% 63%;
+    --ring-color: 197 100% 63%;
+
+    --shadow: none;
+    --glow: 0 0 10px hsl(var(--button-bg));
   }
-
+  
   .superman {
-    --background: 215 80% 10%;
-    --foreground: 0 0% 98%;
-    --card: 215 70% 18%;
-    --card-foreground: 0 0% 98%;
-    --popover: 215 90% 12%;
-    --popover-foreground: 0 0% 98%;
-    --primary: 0 80% 55%;
-    --primary-foreground: 0 0% 100%;
-    --secondary: 210 90% 45%;
-    --secondary-foreground: 0 0% 100%;
-    --muted: 215 70% 25%;
-    --muted-foreground: 0 0% 88%;
-    --accent: 50 100% 50%;
-    --accent-foreground: 215 80% 10%;
-    --destructive: 0 80% 55%;
-    --destructive-foreground: 0 0% 100%;
-    --border: 210 90% 35%;
-    --input: 215 70% 28%;
-    --ring: 50 100% 50%;
+    --main-bg: 220 50% 94%;
+    --sidebar-bg: 210 100% 32%;
+    --card-bg: 0 0% 100%;
+    --button-bg: 3 78% 49%;
+    --button-text: 50 100% 50%;
 
-    --sidebar-background: 215 80% 12%;
-    --sidebar-border: 210 90% 30%;
-    --sidebar-accent: 0 80% 55%;
-    --sidebar-accent-foreground: 0 0% 100%;
+    --text-primary: 240 10% 20%;
+    --text-secondary: 240 5% 45%;
+    --text-accent: 3 78% 49%;
+
+    --border-color: 220 20% 85%;
+    --ring-color: 3 78% 49%;
+
+    --shadow: 0 2px 8px rgba(0,0,0,0.07);
+    --glow: 0 0 12px hsl(var(--button-bg), 0.7);
   }
 
   .hulk {
-    --background: 280 20% 8%;
-    --foreground: 120 70% 85%;
-    --card: 280 20% 12%;
-    --card-foreground: 120 70% 85%;
-    --popover: 280 20% 8%;
-    --popover-foreground: 120 70% 85%;
-    --primary: 120 60% 45%;
-    --primary-foreground: 0 0% 0%;
-    --secondary: 280 30% 30%;
-    --secondary-foreground: 120 70% 85%;
-    --muted: 280 20% 18%;
-    --muted-foreground: 280 10% 65%;
-    --accent: 280 30% 30%;
-    --accent-foreground: 120 70% 85%;
-    --destructive: 0 70% 50%;
-    --destructive-foreground: 0 0% 100%;
-    --border: 280 30% 25%;
-    --input: 280 20% 18%;
-    --ring: 120 60% 45%;
+    --main-bg: 275 10% 11%;
+    --sidebar-bg: 275 15% 16%;
+    --card-bg: 275 10% 20%;
+    --button-bg: 263 45% 48%;
+    --button-text: 0 0% 100%;
 
-    --sidebar-background: 280 20% 10%;
-    --sidebar-border: 280 30% 22%;
-    --sidebar-accent: 120 60% 45%;
-    --sidebar-accent-foreground: 0 0% 0%;
+    --text-primary: 0 0% 100%;
+    --text-secondary: 0 0% 70%;
+    --text-accent: 125 50% 55%;
+
+    --border-color: 125 50% 55%;
+    --ring-color: 125 50% 55%;
+
+    --shadow: 0 2px 8px rgba(0,0,0,0.3);
+    --glow: 0 0 15px hsl(var(--border-color));
   }
 }
 
@@ -261,7 +158,114 @@
     @apply border-border;
   }
   body {
-    @apply bg-background text-foreground;
+    background-color: hsl(var(--main-bg));
+    color: hsl(var(--text-primary));
+  }
+  .matrix {
+    font-family: 'Courier New', 'monospace';
+  }
+  .iron-man {
+    font-family: 'Orbitron', sans-serif;
+  }
+}
+
+@layer components {
+  /* Applying new variables to ShadCN/custom components */
+  .bg-background {
+    background-color: hsl(var(--main-bg));
+  }
+  .text-foreground {
+    color: hsl(var(--text-primary));
+  }
+  .text-muted-foreground {
+    color: hsl(var(--text-secondary));
+  }
+  .bg-card {
+    background-color: hsl(var(--card-bg));
+  }
+  .text-card-foreground {
+    color: hsl(var(--text-primary));
+  }
+  .border-border {
+    border-color: hsl(var(--border-color));
+  }
+  .ring-ring {
+    --tw-ring-color: hsl(var(--ring-color));
+  }
+  .bg-primary {
+    background-color: hsl(var(--button-bg));
+  }
+  .text-primary-foreground {
+    color: hsl(var(--button-text));
+  }
+  .text-primary {
+      color: hsl(var(--text-accent));
+  }
+  .bg-gradient-to-r.from-primary.to-secondary {
+    color: hsl(var(--text-accent));
+    background-image: none; /* Override gradient for single accent color */
+  }
+
+  /* Sidebar theming */
+  [data-sidebar="sidebar"] {
+    background-color: hsl(var(--sidebar-bg)) !important;
+  }
+  [data-sidebar="sidebar"] [data-sidebar="menu-button"] {
+    color: hsl(var(--text-secondary));
+  }
+  [data-sidebar="sidebar"] [data-sidebar="menu-button"][data-active="true"] {
+    background-color: hsl(var(--button-bg));
+    color: hsl(var(--button-text));
+  }
+  [data-sidebar="sidebar"] [data-sidebar="menu-button"]:hover {
+    background-color: hsl(var(--button-bg));
+    color: hsl(var(--button-text));
+    opacity: 0.8;
+  }
+  .matrix [data-sidebar="sidebar"] {
+    border-right: 1px solid hsl(var(--sidebar-border));
+  }
+
+  /* Button theming */
+  .btn-main {
+    background-color: hsl(var(--button-bg));
+    color: hsl(var(--button-text));
+    box-shadow: var(--glow);
+  }
+  .btn-main:hover {
+    filter: brightness(1.1);
+  }
+  .matrix .btn-main {
+    border: 1px solid hsl(var(--border-color));
+  }
+  .matrix .btn-main:hover {
+    background-color: hsl(var(--border-color));
+    color: #000;
+  }
+  .hulk .btn-main {
+    border: 2px solid hsl(var(--border-color));
+  }
+
+  /* Card theming */
+  .themed-card {
+    background-color: hsl(var(--card-bg));
+    color: hsl(var(--text-primary));
+    box-shadow: var(--shadow);
+    transition: all 0.2s ease-in-out;
+  }
+  .matrix .themed-card {
+    border: 1px solid hsl(var(--border-color));
+  }
+  .batman .themed-card {
+    border-top: 2px solid hsl(var(--card-border-top));
+  }
+  .iron-man .themed-card {
+    backdrop-filter: blur(10px);
+    border: 1px solid hsl(var(--border-color));
+  }
+  .hulk .themed-card:hover {
+    box-shadow: var(--glow);
+    border-color: hsl(var(--text-accent));
   }
 }
 

@@ -79,6 +79,17 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
         </Comp>
       )
     }
+    
+    if (variant === 'default') {
+      return (
+        <Comp
+          className={cn(buttonVariants({ size }), 'btn-main', className)}
+          ref={ref}
+          {...props}
+        />
+      )
+    }
+
 
     return (
       <Comp
