@@ -16,7 +16,7 @@ const placeholderLogo = (seed: string) => (
   <img
     src={`https://picsum.photos/seed/${seed}/48/48`}
     alt={`${seed} logo`}
-    className="h-12 w-12 rounded-full object-cover"
+    className="h-10 w-10 rounded-full object-cover"
     data-ai-hint="logo"
   />
 );
