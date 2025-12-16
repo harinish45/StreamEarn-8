@@ -1,9 +1,19 @@
 
+'use client';
+
 import { googleAiTools, type GoogleAiTool } from '@/lib/google-ai-ecosystem-data';
 import Image from 'next/image';
 import Link from 'next/link';
+import { useState, useEffect } from 'react';
 
 const ToolCard = ({ tool, side }: { tool: GoogleAiTool; side: 'left' | 'right' }) => {
+  const [animationDelay, setAnimationDelay] = useState('0s');
+
+  useEffect(() => {
+    // This ensures the random value is only generated on the client after hydration
+    setAnimationDelay(`${Math.random() * 2}s`);
+  }, []);
+
   return (
     <Link href={tool.link} target="_blank" rel="noopener noreferrer" className="relative group">
       <div className={`flex items-center gap-4 ${side === 'left' ? 'flex-row-reverse' : 'flex-row'}`}>
@@ -25,7 +35,7 @@ const ToolCard = ({ tool, side }: { tool: GoogleAiTool; side: 'left' | 'right' }
       </div>
       <div 
         className={`absolute top-1/2 h-px w-1/4 bg-primary/30 animate-breathing-glow ${side === 'left' ? 'right-1/2 translate-x-1/2' : 'left-1/2 -translate-x-1/2'}`}
-        style={{ animationDelay: `${Math.random() * 2}s` }}
+        style={{ animationDelay }}
       />
     </Link>
   );
