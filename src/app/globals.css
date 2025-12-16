@@ -44,7 +44,7 @@
   }
   
   .matrix {
-    --main-bg: 150 71% 3%; /* #0D0208 */
+    --main-bg: 135 71% 3%; /* #0D0208 */
     --sidebar-bg: 0 0% 0%; /* #000000 */
     --card-bg: 120 100% 3%; /* #001100 */
     --button-bg: transparent;
@@ -185,10 +185,10 @@
   .text-muted-foreground {
     color: hsl(var(--text-secondary));
   }
-  .bg-card {
+  .bg-card, .bg-popover {
     background-color: hsl(var(--card-bg));
   }
-  .text-card-foreground {
+  .text-card-foreground, .text-popover-foreground {
     color: hsl(var(--text-primary));
   }
   .border {

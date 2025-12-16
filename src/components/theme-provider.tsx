@@ -40,7 +40,9 @@ export function ThemeProvider({
     const body = window.document.body;
     
     // Remove all possible theme classes before adding the new one
-    body.className = body.className.split(' ').filter(c => !themes.map(t => getThemeClass(t.name)).includes(c)).join(' ');
+    themes.forEach(t => {
+      body.classList.remove(getThemeClass(t.name));
+    });
 
     let effectiveTheme = theme;
     if (theme === 'system') {
@@ -55,7 +57,7 @@ export function ThemeProvider({
     // Also update the html element for shadcn dark mode compatibility
     const doc = window.document.documentElement;
     doc.classList.remove('light', 'dark');
-    if (effectiveTheme === 'Dark' || effectiveTheme === 'Matrix' || effectiveTheme === 'Batman' || effectiveTheme === 'Iron Man' || effectiveTheme === 'Hulk') {
+    if (newThemeClass === 'dark' || newThemeClass === 'matrix' || newThemeClass === 'batman' || newThemeClass === 'iron-man' || newThemeClass === 'hulk') {
         doc.classList.add('dark');
     } else {
         doc.classList.add('light');
