@@ -2,8 +2,10 @@ import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
+import placeholderImages from "@/lib/placeholder-images.json" with { type: "json" };
 
 export default function Home() {
+  const heroImage = placeholderImages.futureAbstract;
   return (
     <div className="flex flex-col min-h-screen bg-background text-foreground">
       <header className="sticky top-0 z-50 w-full border-b border-border bg-sidebar/95 backdrop-blur supports-[backdrop-filter]:bg-sidebar/60">
@@ -55,9 +57,9 @@ export default function Home() {
             </div>
             <div className="flex items-center justify-center">
                 <Image
-                    src="https://picsum.photos/seed/future/800/600"
-                    width={800}
-                    height={600}
+                    src={heroImage.src}
+                    width={heroImage.width}
+                    height={heroImage.height}
                     alt="Abstract business image"
                     className="rounded-xl shadow-2xl object-cover"
                     data-ai-hint="futuristic abstract"

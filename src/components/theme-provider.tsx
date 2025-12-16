@@ -36,8 +36,10 @@ export function ThemeProvider({
   const [theme, setTheme] = React.useState(defaultTheme);
 
   React.useEffect(() => {
-    const storedTheme = localStorage.getItem(storageKey) || defaultTheme;
-    setTheme(storedTheme);
+    const storedTheme = localStorage.getItem(storageKey);
+    // On initial load, use stored theme or default, but don't set 'system' directly
+    const initialTheme = storedTheme || defaultTheme;
+    setTheme(initialTheme);
   }, [storageKey, defaultTheme]);
 
   React.useEffect(() => {
@@ -54,12 +56,12 @@ export function ThemeProvider({
     // remove light/dark from previous themes
     body.classList.remove('light', 'dark');
 
-    let effectiveTheme = theme;
+    let effectiveThemeName = theme;
     if (theme === 'system') {
-        effectiveTheme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "Dark" : "Light";
+        effectiveThemeName = window.matchMedia("(prefers-color-scheme: dark)").matches ? "Dark" : "Light";
     }
 
-    const newThemeClass = getThemeClass(effectiveTheme);
+    const newThemeClass = getThemeClass(effectiveThemeName);
     if(newThemeClass) {
       body.classList.add(newThemeClass);
     }

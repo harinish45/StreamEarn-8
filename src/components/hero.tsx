@@ -1,10 +1,12 @@
 import Image from "next/image";
+import { placeholderImages } from "@/lib/placeholder-images";
 
 export function Hero() {
+  const heroImage = placeholderImages.heroImage;
   return (
     <div className="relative h-[30vh] w-full overflow-hidden rounded-xl md:h-[40vh]">
       <Image
-        src="https://picsum.photos/seed/hero/1600/900"
+        src={heroImage.src}
         alt="Featured Earning Opportunity"
         fill
         className="object-cover"

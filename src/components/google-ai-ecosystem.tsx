@@ -5,6 +5,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useState, useEffect } from 'react';
 import { cn } from '@/lib/utils';
+import { placeholderImages } from '@/lib/placeholder-images';
 
 const ToolCard = ({ tool, isLastInRow }: { tool: GoogleAiTool; isLastInRow: boolean }) => {
   const [isClient, setIsClient] = useState(false);
@@ -12,6 +13,8 @@ const ToolCard = ({ tool, isLastInRow }: { tool: GoogleAiTool; isLastInRow: bool
   useEffect(() => {
     setIsClient(true);
   }, []);
+
+  const image = placeholderImages[tool.imageKey];
 
   return (
     <div className="relative flex items-center justify-between group">
@@ -29,9 +32,10 @@ const ToolCard = ({ tool, isLastInRow }: { tool: GoogleAiTool; isLastInRow: bool
         <Link href={tool.link} target="_blank" rel="noopener noreferrer" className="w-full">
             <div className="relative aspect-video w-full overflow-hidden rounded-lg border-2 border-card bg-black transition-all group-hover:border-primary/50 group-hover:shadow-lg">
               <Image
-                src={tool.image}
+                src={image.src}
                 alt={tool.name}
-                fill
+                width={image.width}
+                height={image.height}
                 className="object-cover"
                 data-ai-hint={tool.aiHint}
               />

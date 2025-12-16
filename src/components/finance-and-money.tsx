@@ -2,6 +2,7 @@
 import { type FinanceAndMoneyTool } from '@/lib/finance-and-money-data';
 import Image from 'next/image';
 import Link from 'next/link';
+import { placeholderImages } from '@/lib/placeholder-images';
 
 export function FinanceAndMoney({ searchQuery, financeAndMoneyTools = [] }: { searchQuery: string, financeAndMoneyTools?: FinanceAndMoneyTool[] }) {
   
@@ -14,13 +15,15 @@ export function FinanceAndMoney({ searchQuery, financeAndMoneyTools = [] }: { se
     return null;
   }
 
+  const waveBg = placeholderImages.waveBg;
+
   return (
     <div className="relative w-full overflow-hidden rounded-xl bg-gradient-to-b from-[#0a101d] to-[#0c1222] p-8 shadow-2xl h-full">
       <Image
-        src="https://picsum.photos/seed/wave-bg/1024/300"
+        src={waveBg.src}
         alt="Abstract wave background"
-        width={1024}
-        height={300}
+        width={waveBg.width}
+        height={waveBg.height}
         className="absolute top-0 left-0 w-full h-auto object-cover opacity-30"
         data-ai-hint="abstract wave"
       />

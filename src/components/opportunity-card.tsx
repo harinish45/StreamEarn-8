@@ -6,6 +6,7 @@ import Link from "next/link";
 import { Badge } from "./ui/badge";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
+import placeholderImages from "@/lib/placeholder-images.json" with { type: "json" };
 
 interface OpportunityCardProps {
   opportunity: Opportunity;
@@ -22,6 +23,8 @@ export function OpportunityCard({ opportunity: initialOpportunity, categoryId }:
         }
     };
   
+    const logo = placeholderImages[opportunity.logoKey as keyof typeof placeholderImages];
+
   return (
     <Link 
       href={opportunity.link}
@@ -37,14 +40,14 @@ export function OpportunityCard({ opportunity: initialOpportunity, categoryId }:
         <div>
           <div className="flex items-center justify-between mb-2">
             <div className="flex items-center gap-3">
-                <Image
-                    src={opportunity.logo}
+                {logo && <Image
+                    src={logo.src}
                     alt={`${opportunity.title} logo`}
-                    width={24}
-                    height={24}
+                    width={logo.width}
+                    height={logo.height}
                     className="rounded-md object-contain"
                     data-ai-hint="logo"
-                />
+                />}
                 <h3 className="font-semibold text-base whitespace-normal text-foreground">{opportunity.title}</h3>
             </div>
             {opportunity.visited && (

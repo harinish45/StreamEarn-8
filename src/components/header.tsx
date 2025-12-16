@@ -16,6 +16,7 @@ import {
 import { cn } from "@/lib/utils";
 import { ThemeSwitcher } from "./theme-switcher";
 import React from 'react';
+import placeholderImages from "@/lib/placeholder-images.json" with { type: "json" };
 
 interface HeaderProps {
     viewMode?: 'grid' | 'list';
@@ -35,6 +36,7 @@ export function Header({
 
   const showViewModeSwitcher = viewMode && setViewMode;
   const showSearch = searchQuery !== undefined && setSearchQuery;
+  const userAvatar = placeholderImages.userAvatar;
 
   return (
     <header className="sticky top-0 z-20 flex h-16 items-center gap-4 border-b bg-background/80 px-4 backdrop-blur-sm md:px-6">
@@ -77,7 +79,7 @@ export function Header({
           <DropdownMenuTrigger asChild>
             <Button variant="ghost" size="icon" className="rounded-full">
               <Avatar className="h-8 w-8">
-                <AvatarImage src="https://picsum.photos/100/100" alt="User" data-ai-hint="person face" />
+                <AvatarImage src={userAvatar.src} alt="User" data-ai-hint="person face" />
                 <AvatarFallback>U</AvatarFallback>
               </Avatar>
             </Button>

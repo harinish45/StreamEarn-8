@@ -2,8 +2,10 @@
 import Image from 'next/image';
 import { type AiToolCategory, type AiTool } from '@/lib/illegal-ai-tools-data';
 import Link from 'next/link';
+import { placeholderImages } from '@/lib/placeholder-images';
 
 function ToolListItem({ tool }: { tool: AiTool }) {
+    const logo = placeholderImages[tool.logoKey];
     return (
         <li>
             <Link 
@@ -15,12 +17,12 @@ function ToolListItem({ tool }: { tool: AiTool }) {
                 <div className="absolute left-0 top-1/2 -translate-y-1/2 w-4 h-px bg-muted-foreground transition-colors group-hover:bg-primary"></div>
                 <div className="absolute left-0 top-0 h-full w-px bg-muted-foreground transition-colors group-hover:bg-primary"></div>
                  <div className="w-8 h-8 rounded-full bg-card border border-border flex items-center justify-center transition-colors group-hover:border-primary p-1">
-                    {tool.logo ? (
+                    {logo ? (
                         <Image
-                            src={tool.logo}
+                            src={logo.src}
                             alt={`${tool.name} logo`}
-                            width={32}
-                            height={32}
+                            width={logo.width}
+                            height={logo.height}
                             className="rounded-full object-cover"
                             data-ai-hint="logo"
                         />
