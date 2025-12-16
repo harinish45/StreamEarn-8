@@ -67,10 +67,6 @@ export function IllegalAiTools({ searchQuery }: { searchQuery: string }) {
                     <ToolList key={category.name} category={category} />
                 ))}
             </div>
-
-            <div className="text-center mt-12">
-                <p className="text-muted-foreground">Created by Rene Remsik @aitrendz.xyz</p>
-            </div>
         </div>
     </div>
   );
