@@ -1,4 +1,3 @@
-
 'use client';
 import {
   Sidebar,
@@ -116,5 +115,3 @@ export function AppSidebar({ categories: initialCategories }: AppSidebarProps) {
     </Sidebar>
   );
 }
-
-    

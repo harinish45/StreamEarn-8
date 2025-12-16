@@ -5,7 +5,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useState, useEffect } from 'react';
 import { cn } from '@/lib/utils';
-import { placeholderImages } from '@/lib/placeholder-images';
+import placeholderImages from "@/lib/placeholder-images.json" with { type: "json" };
 
 const ToolCard = ({ tool, isLastInRow }: { tool: GoogleAiTool; isLastInRow: boolean }) => {
   const [isClient, setIsClient] = useState(false);
@@ -14,7 +14,7 @@ const ToolCard = ({ tool, isLastInRow }: { tool: GoogleAiTool; isLastInRow: bool
     setIsClient(true);
   }, []);
 
-  const image = placeholderImages[tool.imageKey];
+  const image = placeholderImages[tool.imageKey as keyof typeof placeholderImages];
 
   return (
     <div className="relative flex items-center justify-between group">
