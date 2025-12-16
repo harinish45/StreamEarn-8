@@ -1,10 +1,9 @@
 
 import React from 'react';
-import Image from 'next/image';
 
 export type AiTool = {
   name: string;
-  logo: React.ReactNode;
+  logo: string;
   link: string;
 };
 
@@ -13,67 +12,58 @@ export type AiToolCategory = {
   tools: AiTool[];
 };
 
-const placeholderLogo = (seed: string) => (
-  <Image
-    src={`https://picsum.photos/seed/${seed}/48/48`}
-    alt={`${seed} logo`}
-    width={48}
-    height={48}
-    className="rounded-md object-cover"
-    data-ai-hint="logo"
-  />
-);
+const createLogo = (seed: string) => `https://picsum.photos/seed/${seed}/60/60`;
 
 export const aiToolsPyramid: AiToolCategory[] = [
   {
     name: 'Code Editor',
     tools: [
-      { name: 'Cursor', logo: placeholderLogo('Cursor'), link: 'https://cursor.sh/' },
+      { name: 'Cursor', logo: createLogo('Cursor'), link: 'https://cursor.sh/' },
     ],
   },
   {
     name: 'Market Research',
     tools: [
-      { name: 'Perplexity', logo: placeholderLogo('Perplexity'), link: 'https://www.perplexity.ai/' },
-      { name: 'Gemini', logo: placeholderLogo('Gemini'), link: 'https://gemini.google.com/' },
+      { name: 'Perplexity', logo: createLogo('Perplexity'), link: 'https://www.perplexity.ai/' },
+      { name: 'Gemini', logo: createLogo('Gemini'), link: 'https://gemini.google.com/' },
     ],
   },
   {
     name: 'Writing Assistant',
     tools: [
-      { name: 'ChatGPT', logo: placeholderLogo('ChatGPT'), link: 'https://chat.openai.com/' },
-      { name: 'Claude', logo: placeholderLogo('Claude'), link: 'https://claude.ai/' },
-      { name: 'Grok', logo: placeholderLogo('Grok'), link: 'https://grok.x.ai/' },
+      { name: 'ChatGPT', logo: createLogo('ChatGPT'), link: 'https://chat.openai.com/' },
+      { name: 'Claude', logo: createLogo('Claude'), link: 'https://claude.ai/' },
+      { name: 'Grok', logo: createLogo('Grok'), link: 'https://grok.x.ai/' },
     ],
   },
   {
     name: 'Design Tools',
     tools: [
-      { name: 'Midjourney', logo: placeholderLogo('Midjourney'), link: 'https://www.midjourney.com/' },
-      { name: 'Recraft', logo: placeholderLogo('Recraft'), link: 'https://www.recraft.ai/' },
-      { name: 'Figma', logo: placeholderLogo('Figma'), link: 'https://www.figma.com/' },
-      { name: 'Canva', logo: placeholderLogo('Canva'), link: 'https://www.canva.com/' },
+      { name: 'Midjourney', logo: createLogo('Midjourney'), link: 'https://www.midjourney.com/' },
+      { name: 'Recraft', logo: createLogo('Recraft'), link: 'https://www.recraft.ai/' },
+      { name: 'Figma', logo: createLogo('Figma'), link: 'https://www.figma.com/' },
+      { name: 'Canva', logo: createLogo('Canva'), link: 'https://www.canva.com/' },
     ],
   },
   {
     name: 'Lead Automation',
     tools: [
-      { name: 'Clay', logo: placeholderLogo('Clay'), link: 'https://www.clay.com/' },
-      { name: 'Apify', logo: placeholderLogo('Apify'), link: 'https://apify.com/' },
-      { name: 'Hunter', logo: placeholderLogo('Hunter'), link: 'https://hunter.io/' },
-      { name: 'Clearbit', logo: placeholderLogo('Clearbit'), link: 'https://clearbit.com/' },
-      { name: 'Lusha', logo: placeholderLogo('Lusha'), link: 'https://www.lusha.com/' },
-      { name: 'ZoomInfo', logo: placeholderLogo('ZoomInfo'), link: 'https://www.zoominfo.com/' },
+      { name: 'Clay', logo: createLogo('Clay'), link: 'https://www.clay.com/' },
+      { name: 'Apify', logo: createLogo('Apify'), link: 'https://apify.com/' },
+      { name: 'Hunter', logo: createLogo('Hunter'), link: 'https://hunter.io/' },
+      { name: 'Clearbit', logo: createLogo('Clearbit'), link: 'https://clearbit.com/' },
+      { name: 'Lusha', logo: createLogo('Lusha'), link: 'https://www.lusha.com/' },
+      { name: 'ZoomInfo', logo: createLogo('ZoomInfo'), link: 'https://www.zoominfo.com/' },
     ],
   },
   {
     name: 'Productivity',
     tools: [
-      { name: 'RecCloud', logo: placeholderLogo('RecCloud'), link: 'https://www.reccloud.com/' },
-      { name: 'Tidio', logo: placeholderLogo('Tidio'), link: 'https://www.tidio.com/' },
-      { name: 'Zapier', logo: placeholderLogo('Zapier'), link: 'https://zapier.com/' },
-      { name: 'Calendly', logo: placeholderLogo('Calendly'), link: 'https://calendly.com/' },
-      { name: 'PicWish', logo: placeholderLogo('PicWish'), link: 'https://picwish.com/' },
+      { name: 'RecCloud', logo: createLogo('RecCloud'), link: 'https://www.reccloud.com/' },
+      { name: 'Tidio', logo: createLogo('Tidio'), link: 'https://www.tidio.com/' },
+      { name: 'Zapier', logo: createLogo('Zapier'), link: 'https://zapier.com/' },
+      { name: 'Calendly', logo: createLogo('Calendly'), link: 'https://calendly.com/' },
+      { name: 'PicWish', logo: createLogo('PicWish'), link: 'https://picwish.com/' },
     ],
   },
 ];

@@ -54,9 +54,7 @@ export function IllegalAiTools({ searchQuery }: { searchQuery: string }) {
     tools: category.tools.filter(tool => tool.name.toLowerCase().includes(searchQuery.toLowerCase()))
   })).filter(category => category.tools.length > 0);
 
-  if (filteredCategories.length === 0 && searchQuery) {
-      return null;
-  }
+  const shouldShowIllegalTools = !(filteredCategories.length === 0 && searchQuery);
 
   return (
     <div className="bg-black py-16 px-4 md:px-6">
@@ -65,16 +63,21 @@ export function IllegalAiTools({ searchQuery }: { searchQuery: string }) {
                 <div className="inline-block bg-primary/20 border border-primary/50 rounded-lg px-6 py-2">
                     <h2 className="text-2xl md:text-3xl font-bold text-primary tracking-tight">AI TOOLS THAT FEEL ILLEGAL TO KNOW FOR 2026</h2>
                 </div>
-                 <p className="mt-4 text-xl font-serif text-white">15 AI tools every solo founder needs to know about</p>
+                {shouldShowIllegalTools && 
+                    <p className="mt-4 text-xl font-serif text-white">15 AI tools every solo founder needs to know about</p>
+                }
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
-                {filteredCategories.map(category => (
-                    <ToolList key={category.name} category={category} />
-                ))}
-            </div>
+            {shouldShowIllegalTools && 
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
+                    {filteredCategories.map(category => (
+                        <ToolList key={category.name} category={category} />
+                    ))}
+                </div>
+            }
             
             <div className="pt-8">
+                 <p className="mt-4 text-center text-xl font-serif text-white">15 AI tools every solo founder needs to know about</p>
                 <AiToolsPyramid searchQuery={searchQuery} />
             </div>
         </div>
