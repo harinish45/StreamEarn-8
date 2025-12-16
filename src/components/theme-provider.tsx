@@ -22,13 +22,13 @@ const initialState: ThemeProviderState = {
 const ThemeProviderContext = React.createContext<ThemeProviderState>(initialState);
 
 function getThemeClass(themeName: string | undefined) {
-  if (!themeName) return 'dark';
+  if (!themeName) return 'light';
   return themeName.toLowerCase().replace(/\s+/g, '-');
 }
 
 export function ThemeProvider({
   children,
-  defaultTheme = 'Dark',
+  defaultTheme = 'Light',
   storageKey = 'theme',
   ...props
 }: ThemeProviderProps) {
@@ -39,10 +39,8 @@ export function ThemeProvider({
   React.useEffect(() => {
     const body = window.document.body;
     
-    // Remove all possible theme classes
-    themes.forEach(t => {
-      body.classList.remove(getThemeClass(t.name));
-    });
+    // Remove all possible theme classes before adding the new one
+    body.className = body.className.split(' ').filter(c => !themes.map(t => getThemeClass(t.name)).includes(c)).join(' ');
 
     let effectiveTheme = theme;
     if (theme === 'system') {
@@ -50,7 +48,19 @@ export function ThemeProvider({
     }
 
     const newThemeClass = getThemeClass(effectiveTheme);
-    body.classList.add(newThemeClass);
+    if(newThemeClass) {
+      body.classList.add(newThemeClass);
+    }
+    
+    // Also update the html element for shadcn dark mode compatibility
+    const doc = window.document.documentElement;
+    doc.classList.remove('light', 'dark');
+    if (effectiveTheme === 'Dark' || effectiveTheme === 'Matrix' || effectiveTheme === 'Batman' || effectiveTheme === 'Iron Man' || effectiveTheme === 'Hulk') {
+        doc.classList.add('dark');
+    } else {
+        doc.classList.add('light');
+    }
+
 
   }, [theme]);
 
