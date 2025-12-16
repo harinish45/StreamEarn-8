@@ -28,12 +28,6 @@ export default function Home() {
               >
                 AI Tools
               </Link>
-              <Link
-                href="/blitzit"
-                className="text-foreground/60 transition-colors hover:text-foreground/80"
-              >
-                Blitzit
-              </Link>
             </nav>
           </div>
         </div>
@@ -56,19 +50,16 @@ export default function Home() {
                 <Button size="lg" variant="gradient" asChild>
                     <Link href="/ai-tools">Discover AI Tools</Link>
                 </Button>
-                <Button size="lg" variant="gradient" asChild>
-                    <Link href="/blitzit">Blitzit Productivity Suite</Link>
-                </Button>
               </div>
             </div>
             <div className="flex items-center justify-center">
                 <Image
-                    src="https://picsum.photos/seed/einstein/800/600"
+                    src="https://picsum.photos/seed/business/800/600"
                     width={800}
                     height={600}
-                    alt="Photo of Albert Einstein"
+                    alt="Abstract business image"
                     className="rounded-xl shadow-2xl object-cover"
-                    data-ai-hint="albert einstein"
+                    data-ai-hint="business abstract"
                 />
             </div>
           </div>
