@@ -2,7 +2,7 @@
 import { type FinanceAndMoneyTool } from '@/lib/finance-and-money-data';
 import Image from 'next/image';
 import Link from 'next/link';
-import { placeholderImages } from '@/lib/placeholder-images';
+import placeholderImages from "@/lib/placeholder-images.json" with { type: "json" };
 
 export function FinanceAndMoney({ searchQuery, financeAndMoneyTools = [] }: { searchQuery: string, financeAndMoneyTools?: FinanceAndMoneyTool[] }) {
   

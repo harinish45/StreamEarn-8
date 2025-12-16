@@ -2,7 +2,7 @@
 import { type JobsAndCareersTool } from '@/lib/jobs-and-careers-data';
 import Image from 'next/image';
 import Link from 'next/link';
-import { placeholderImages } from '@/lib/placeholder-images';
+import placeholderImages from "@/lib/placeholder-images.json" with { type: "json" };
 
 export function JobsAndCareers({ searchQuery, jobsAndCareersTools = [] }: { searchQuery: string, jobsAndCareersTools?: JobsAndCareersTool[] }) {
 
