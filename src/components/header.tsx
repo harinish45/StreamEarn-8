@@ -16,7 +16,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { cn } from "@/lib/utils";
 import { ThemeSwitcher } from "./theme-switcher";
-import React, { useState } from 'react';
+import React from 'react';
 
 interface HeaderProps {
     viewMode?: 'grid' | 'list';
@@ -26,21 +26,14 @@ interface HeaderProps {
 }
 
 export function Header({ 
-  viewMode: controlledViewMode, 
-  setViewMode: controlledSetViewMode, 
-  searchQuery: controlledSearchQuery, 
-  setSearchQuery: controlledSetSearchQuery 
+  viewMode, 
+  setViewMode, 
+  searchQuery, 
+  setSearchQuery 
 }: HeaderProps) {
-  const [internalViewMode, setInternalViewMode] = useState<'grid' | 'list'>('grid');
-  const [internalSearchQuery, setInternalSearchQuery] = useState('');
 
-  const viewMode = controlledViewMode !== undefined ? controlledViewMode : internalViewMode;
-  const setViewMode = controlledSetViewMode !== undefined ? controlledSetViewMode : setInternalViewMode;
-  
-  const searchQuery = controlledSearchQuery !== undefined ? controlledSearchQuery : internalSearchQuery;
-  const setSearchQuery = controlledSetSearchQuery !== undefined ? controlledSetSearchQuery : setInternalSearchQuery;
-
-  const showViewModeSwitcher = !!(controlledViewMode && controlledSetViewMode);
+  const showViewModeSwitcher = !!(viewMode && setViewMode);
+  const showSearch = !!(searchQuery !== undefined && setSearchQuery);
 
   return (
     <header className="sticky top-0 z-20 flex h-16 items-center gap-4 border-b bg-background/80 px-4 backdrop-blur-sm md:px-6">
@@ -62,15 +55,17 @@ export function Header({
         )}
       </div>
       <div className="flex items-center gap-2 md:gap-4">
-        <div className="relative hidden md:block">
-          <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-          <Input
-            placeholder="Search..."
-            className="w-48 bg-secondary pl-8 md:w-64"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-          />
-        </div>
+        {showSearch && (
+          <div className="relative hidden md:block">
+            <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+            <Input
+              placeholder="Search..."
+              className="w-48 bg-secondary pl-8 md:w-64"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+            />
+          </div>
+        )}
         <Button variant="ghost" size="icon" className="rounded-full">
           <Bell className="h-5 w-5" />
           <span className="sr-only">Notifications</span>
