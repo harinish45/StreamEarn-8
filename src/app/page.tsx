@@ -61,6 +61,7 @@ export default function Home() {
                     alt="Abstract business image"
                     className="rounded-xl shadow-2xl object-cover"
                     data-ai-hint="futuristic abstract"
+                    priority
                 />
             </div>
           </div>
