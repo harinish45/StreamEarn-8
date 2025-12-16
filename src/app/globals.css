@@ -4,7 +4,6 @@
 
 @layer base {
   :root {
-    /* Default (Light) mapping based on user image */
     --main-bg: 240 5% 96%; /* #F5F5F7 */
     --sidebar-bg: 0 0% 100%; /* #FFFFFF */
     --card-bg: 0 0% 100%; /* #FFFFFF */
