@@ -10,17 +10,18 @@ import React from "react";
 import { CategoryList } from "@/components/category-list";
 import { Breadcrumbs } from "@/components/breadcrumbs";
 
-async function getEarningOpportunities() {
-  // Mocking data fetch since DB is removed
-  return earningOpportunities;
+async function getEarningData() {
+  // In a real app, you might fetch this data from a database
+  const categories: EarningCategory[] = earningOpportunities;
+  return categories;
 }
 
 export default async function EarningsPage() {
-  const earningOpportunities: EarningCategory[] = await getEarningOpportunities();
+  const categories = await getEarningData();
 
   const viewMode = 'grid'; // Default view mode
 
-  const sortedCategories = [...earningOpportunities].sort((a, b) => {
+  const sortedCategories = [...categories].sort((a, b) => {
     if (a.pinned && !b.pinned) return -1;
     if (!a.pinned && b.pinned) return 1;
     return a.name.localeCompare(b.name);
@@ -33,7 +34,7 @@ export default async function EarningsPage() {
           categories={sortedCategories}
         />
         <SidebarInset>
-          <Header />
+          <Header viewMode={viewMode} />
           <ScrollArea className="h-[calc(100vh-4rem)]">
             <main className="flex-1">
               <div className="p-4 md:p-6 space-y-4">
@@ -56,3 +57,5 @@ export default async function EarningsPage() {
     </SidebarProvider>
   );
 }
+
+    

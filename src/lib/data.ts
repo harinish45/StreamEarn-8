@@ -1,47 +1,5 @@
 
 import type { LucideIcon } from 'lucide-react';
-import {
-  Type,
-  MousePointerClick,
-  Headphones,
-  Mic,
-  BookOpen,
-  UserCheck,
-  FlaskConical,
-  MessageSquare,
-  FileText,
-  ClipboardList,
-  GraduationCap,
-  BriefcaseBusiness,
-  Languages,
-  School,
-  Home,
-  Palette,
-  Bug,
-  Users,
-  Share2,
-  Youtube,
-  Instagram,
-  BrainCircuit,
-  Paintbrush,
-  Book,
-  Bot,
-  CircleDollarSign,
-  TrendingUp,
-  Landmark,
-  Shield,
-  Printer,
-  Package,
-  Laptop,
-  Camera,
-  Store,
-  Wifi,
-  Tag,
-  PenTool,
-  Wallet,
-  Clock,
-  Pin,
-} from 'lucide-react';
 
 export type Opportunity = {
   id: string;
@@ -58,7 +16,7 @@ export type EarningCategory = {
   id: string;
   name: string;
   description: string;
-  icon: LucideIcon;
+  icon: string; // Changed from LucideIcon
   opportunities: Opportunity[];
   pinned?: boolean;
 };
@@ -70,14 +28,14 @@ export const earningOpportunities: EarningCategory[] = [
     {
         id: 'home',
         name: 'Home',
-        icon: Home,
+        icon: 'Home',
         description: "The main dashboard.",
         opportunities: [],
     },
     {
         id: 'recently-watched',
         name: 'Recently Watched',
-        icon: Clock,
+        icon: 'Clock',
         description: "Opportunities you've recently viewed.",
         opportunities: [
           { id: 'rw-1', title: 'Upwork', description: 'Freelance platform for various jobs', link: 'https://www.upwork.com/', logo: createLogo('upwork'), image: createImage(7), aiHint: 'data spreadsheet' },
@@ -88,7 +46,7 @@ export const earningOpportunities: EarningCategory[] = [
     {
         id: 'captcha-entry',
         name: 'Captcha Entry',
-        icon: MousePointerClick,
+        icon: 'MousePointerClick',
         description: "Earn by solving captchas.",
         opportunities: [
             { id: 'ce-1', title: '2Captcha', description: 'Captcha solving service', link: 'https://2captcha.com/', logo: createLogo('2captcha'), image: createImage(3), aiHint: 'captcha security' },
@@ -100,7 +58,7 @@ export const earningOpportunities: EarningCategory[] = [
     {
         id: 'data-entry',
         name: 'Data Entry',
-        icon: Type,
+        icon: 'Type',
         description: "Jobs involving entering data into systems.",
         opportunities: [
             { id: 'de-1', title: 'Upwork', description: 'Freelance platform for various jobs', link: 'https://www.upwork.com/', logo: createLogo('upwork'), image: createImage(7), aiHint: 'data spreadsheet' },
@@ -114,7 +72,7 @@ export const earningOpportunities: EarningCategory[] = [
     {
         id: 'transcription',
         name: 'Transcription',
-        icon: Headphones,
+        icon: 'Headphones',
         description: "Convert audio to text.",
         opportunities: [
             { id: 't-1', title: 'Rev', description: 'Transcription and captioning services', link: 'https://www.rev.com/', logo: createLogo('rev'), image: createImage(13), aiHint: 'audio transcription' },
@@ -127,7 +85,7 @@ export const earningOpportunities: EarningCategory[] = [
     {
         id: 'microtasks',
         name: 'Copy Pasting / Microtasks',
-        icon: ClipboardList,
+        icon: 'ClipboardList',
         description: "Complete small, simple online tasks.",
         opportunities: [
             { id: 'm-1', title: 'Clickworker', description: 'Microtask platform', link: 'https://www.clickworker.com/', logo: createLogo('clickworker'), image: createImage(18), aiHint: 'task list' },
@@ -137,7 +95,7 @@ export const earningOpportunities: EarningCategory[] = [
     {
         id: 'virtual-assistant',
         name: 'Virtual Assistant',
-        icon: UserCheck,
+        icon: 'UserCheck',
         description: "Provide remote administrative support.",
         opportunities: [
             { id: 'va-1', title: 'Belay Solutions', description: 'Virtual assistant services', link: 'https://belaysolutions.com/', logo: createLogo('belay'), image: createImage(20), aiHint: 'virtual assistant' },
@@ -149,7 +107,7 @@ export const earningOpportunities: EarningCategory[] = [
     {
         id: 'online-surveys',
         name: 'Online Surveys',
-        icon: MessageSquare,
+        icon: 'MessageSquare',
         description: "Share your opinion for rewards.",
         opportunities: [
             { id: 'os-1', title: 'Swagbucks', description: 'Rewards and survey site', link: 'https://www.swagbucks.com/', logo: createLogo('swagbucks'), image: createImage(24), aiHint: 'survey form' },
@@ -163,7 +121,7 @@ export const earningOpportunities: EarningCategory[] = [
     {
         id: 'product-testing',
         name: 'Product Testing',
-        icon: FlaskConical,
+        icon: 'FlaskConical',
         description: "Test new products and give feedback.",
         opportunities: [
             { id: 'pt-1', title: 'UserTesting', description: 'Usability testing platform', link: 'https://www.usertesting.com/', logo: createLogo('usertesting'), image: createImage(30), aiHint: 'product testing' },
@@ -175,7 +133,7 @@ export const earningOpportunities: EarningCategory[] = [
     {
         id: 'writing-reviews',
         name: 'Writing Product Reviews',
-        icon: PenTool,
+        icon: 'PenTool',
         description: "Get paid to write reviews.",
         opportunities: [
             { id: 'wpr-1', title: 'Amazon Vine', description: 'Amazon review program', link: 'https://www.amazon.com/vine', logo: createLogo('amazonvine'), image: createImage(34), aiHint: 'writing review' },
@@ -188,7 +146,7 @@ export const earningOpportunities: EarningCategory[] = [
     {
         id: 'app-testing',
         name: 'App Testing',
-        icon: Laptop,
+        icon: 'Laptop',
         description: "Test mobile and web apps.",
         opportunities: [
             { id: 'at-1', title: 'uTest', description: 'Software testing platform', link: 'https://www.utest.com/', logo: createLogo('utest'), image: createImage(39), aiHint: 'app testing' },
@@ -200,7 +158,7 @@ export const earningOpportunities: EarningCategory[] = [
     {
         id: 'usability-testing',
         name: 'Feedback & Usability Testing',
-        icon: Users,
+        icon: 'Users',
         description: "Test websites and apps for user-friendliness.",
         opportunities: [
             { id: 'ut-1', title: 'Userfeel', description: 'Usability testing platform', link: 'https://www.userfeel.com/', logo: createLogo('userfeel'), image: createImage(43), aiHint: 'user feedback' },
@@ -211,7 +169,7 @@ export const earningOpportunities: EarningCategory[] = [
     {
         id: 'content-writing',
         name: 'Content Writing',
-        icon: FileText,
+        icon: 'FileText',
         description: "Write articles, blog posts, and more.",
         opportunities: [
             { id: 'cw-1', title: 'iWriter', description: 'Content writing service', link: 'https://www.iwriter.com/', logo: createLogo('iwriter'), image: createImage(46), aiHint: 'content writing' },
@@ -222,7 +180,7 @@ export const earningOpportunities: EarningCategory[] = [
     {
         id: 'copywriting',
         name: 'Copywriting',
-        icon: BookOpen,
+        icon: 'BookOpen',
         description: "Write compelling marketing copy.",
         opportunities: [
             { id: 'c-1', title: 'ProBlogger Job Board', description: 'Job board for bloggers', link: 'https://problogger.com/jobs/', logo: createLogo('problogger'), image: createImage(49), aiHint: 'copywriting book' },
@@ -232,7 +190,7 @@ export const earningOpportunities: EarningCategory[] = [
     {
         id: 'proofreading-editing',
         name: 'Proofreading & Editing',
-        icon: GraduationCap,
+        icon: 'GraduationCap',
         description: "Correct grammar and style in texts.",
         opportunities: [
             { id: 'pe-1', title: 'Scribendi', description: 'Editing and proofreading services', link: 'https://www.scribendi.com/', logo: createLogo('scribendi'), image: createImage(51), aiHint: 'editing document' },
@@ -242,7 +200,7 @@ export const earningOpportunities: EarningCategory[] = [
     {
         id: 'resume-writing',
         name: 'Resume Writing',
-        icon: BriefcaseBusiness,
+        icon: 'BriefcaseBusiness',
         description: "Help people create professional resumes.",
         opportunities: [
             { id: 'rw-4', title: 'LinkedIn Services Marketplace', description: 'Find professionals on LinkedIn', link: 'https://www.linkedin.com/services/', logo: createLogo('linkedin'), image: createImage(53), aiHint: 'resume document' },
@@ -253,7 +211,7 @@ export const earningOpportunities: EarningCategory[] = [
     {
         id: 'translation-jobs',
         name: 'Translation Jobs',
-        icon: Languages,
+        icon: 'Languages',
         description: "Translate documents and audio.",
         opportunities: [
             { id: 'tj-1', title: 'Gengo', description: 'Translation platform', link: 'https://gengo.com/', logo: createLogo('gengo'), image: createImage(56), aiHint: 'language translation' },
@@ -265,7 +223,7 @@ export const earningOpportunities: EarningCategory[] = [
     {
         id: 'online-tutoring',
         name: 'Online Tutoring',
-        icon: School,
+        icon: 'School',
         description: "Tutor students in various subjects.",
         opportunities: [
             { id: 'ot-1', title: 'Chegg Tutors', description: 'Online tutoring', link: 'https://www.chegg.com/tutors/', logo: createLogo('chegg'), image: createImage(60), aiHint: 'online tutoring' },
@@ -279,7 +237,7 @@ export const earningOpportunities: EarningCategory[] = [
     {
         id: 'homework-help',
         name: 'Homework Help',
-        icon: Home,
+        icon: 'Home',
         description: "Assist students with their homework.",
         opportunities: [
             { id: 'hh-1', title: 'Course Hero', description: 'Online learning platform', link: 'https://www.coursehero.com/', logo: createLogo('coursehero'), image: createImage(66), aiHint: 'student homework' },
@@ -291,7 +249,7 @@ export const earningOpportunities: EarningCategory[] = [
     {
         id: 'ui-ux-design',
         name: 'UI/UX Design',
-        icon: Palette,
+        icon: 'Palette',
         description: "Design user interfaces and experiences.",
         opportunities: [
             { id: 'ui-1', title: 'Dribbble', description: 'Design portfolio platform', link: 'https://dribbble.com/', logo: createLogo('dribbble'), image: createImage(70), aiHint: 'design prototype' },
@@ -302,7 +260,7 @@ export const earningOpportunities: EarningCategory[] = [
     {
         id: 'bug-bounty',
         name: 'Bug Bounty Hunting',
-        icon: Bug,
+        icon: 'Bug',
         description: "Find and report software bugs.",
         opportunities: [
             { id: 'bb-1', title: 'HackerOne', description: 'Bug bounty platform', link: 'https://www.hackerone.com/', logo: createLogo('hackerone'), image: createImage(73), aiHint: 'hacker code' },
@@ -315,7 +273,7 @@ export const earningOpportunities: EarningCategory[] = [
     {
         id: 'social-media',
         name: 'Social Media Management',
-        icon: Share2,
+        icon: 'Share2',
         description: "Manage social media accounts for businesses.",
         opportunities: [
             { id: 'sm-1', title: 'Simply Hired', description: 'Job search engine', link: 'https://www.simplyhired.com/', logo: createLogo('simplyhired'), image: createImage(78), aiHint: 'social media' },
@@ -325,7 +283,7 @@ export const earningOpportunities: EarningCategory[] = [
     {
         id: 'affiliate-marketing',
         name: 'Affiliate Marketing',
-        icon: Tag,
+        icon: 'Tag',
         description: "Promote products and earn commissions.",
         opportunities: [
             { id: 'am-1', title: 'Amazon Associates', description: 'Amazon affiliate program', link: 'https://affiliate-program.amazon.com/', logo: createLogo('amazon'), image: createImage(80), aiHint: 'affiliate chart' },
@@ -339,7 +297,7 @@ export const earningOpportunities: EarningCategory[] = [
     {
         id: 'youtube',
         name: 'YouTube Content Creation',
-        icon: Youtube,
+        icon: 'Youtube',
         description: "Create and monetize YouTube videos.",
         opportunities: [
             { id: 'yt-1', title: 'YouTube Partner Program', description: 'Monetize YouTube content', link: 'https://www.youtube.com/creators/how-things-work/getting-paid/', logo: createLogo('youtube'), image: createImage(86), aiHint: 'youtube creator' },
@@ -351,7 +309,7 @@ export const earningOpportunities: EarningCategory[] = [
     {
         id: 'instagram-marketing',
         name: 'Instagram Marketing',
-        icon: Instagram,
+        icon: 'Instagram',
         description: "Market products and services on Instagram.",
         opportunities: [
             { id: 'im-1', title: 'Aspire', description: 'Influencer marketing platform', link: 'https://www.aspire.io/', logo: createLogo('aspire'), image: createImage(90), aiHint: 'instagram phone' },
@@ -364,7 +322,7 @@ export const earningOpportunities: EarningCategory[] = [
     {
         id: 'ai-prompts',
         name: 'Creating & Selling AI Prompts',
-        icon: BrainCircuit,
+        icon: 'BrainCircuit',
         description: "Craft and sell prompts for AI models.",
         opportunities: [
             { id: 'aip-1', title: 'PromptBase', description: 'Marketplace for AI prompts', link: 'https://promptbase.com/', logo: createLogo('promptbase'), image: createImage(95), aiHint: 'ai brain' },
@@ -374,7 +332,7 @@ export const earningOpportunities: EarningCategory[] = [
     {
         id: 'ai-art',
         name: 'Selling AI-Generated Art',
-        icon: Paintbrush,
+        icon: 'Paintbrush',
         description: "Create and sell art made with AI.",
         opportunities: [
             { id: 'aia-1', title: 'Etsy', description: 'Marketplace for handmade and vintage goods', link: 'https://www.etsy.com/', logo: createLogo('etsy'), image: createImage(97), aiHint: 'ai art' },
@@ -388,7 +346,7 @@ export const earningOpportunities: EarningCategory[] = [
     {
         id: 'ai-voiceover',
         name: 'AI Voiceover Work',
-        icon: Mic,
+        icon: 'Mic',
         description: "Use AI for voiceover projects.",
         opportunities: [
             { id: 'aiv-1', title: 'Descript', description: 'AI-powered audio/video editor', link: 'https://www.descript.com/', logo: createLogo('descript'), image: createImage(103), aiHint: 'voiceover microphone' },
@@ -401,7 +359,7 @@ export const earningOpportunities: EarningCategory[] = [
     {
         id: 'ai-ebooks',
         name: 'Selling AI-Generated Ebooks',
-        icon: Book,
+        icon: 'Book',
         description: "Write and sell ebooks with AI assistance.",
         opportunities: [
             { id: 'aie-1', title: 'Amazon KDP', description: 'Self-publishing platform', link: 'https://kdp.amazon.com/', logo: createLogo('amazonkdp'), image: createImage(108), aiHint: 'ebook library' },
@@ -414,7 +372,7 @@ export const earningOpportunities: EarningCategory[] = [
     {
         id: 'ai-chat-dev',
         name: 'AI Based Chat Development',
-        icon: Bot,
+        icon: 'Bot',
         description: "Develop chatbots using AI.",
         opportunities: [
             { id: 'aicd-1', title: 'OpenAI API', description: 'API for AI models', link: 'https://platform.openai.com/', logo: createLogo('openai'), image: createImage(113), aiHint: 'chatbot robot' },
@@ -428,7 +386,7 @@ export const earningOpportunities: EarningCategory[] = [
     {
         id: 'crypto-staking',
         name: 'Cryptocurrency Staking',
-        icon: CircleDollarSign,
+        icon: 'CircleDollarSign',
         description: "Earn rewards by staking crypto.",
         opportunities: [
             { id: 'cs-1', title: 'Binance Earn', description: 'Crypto earning platform', link: 'https://www.binance.com/en/earn', logo: createLogo('binance'), image: createImage(119), aiHint: 'crypto coin' },
@@ -442,7 +400,7 @@ export const earningOpportunities: EarningCategory[] = [
     {
         id: 'stock-trading',
         name: 'Stock Market Trading',
-        icon: TrendingUp,
+        icon: 'TrendingUp',
         description: "Trade stocks on the financial markets.",
         opportunities: [
             { id: 'st-1', title: 'Robinhood', description: 'Stock trading platform', link: 'https://robinhood.com/', logo: createLogo('robinhood'), image: createImage(125), aiHint: 'stock chart' },
@@ -456,7 +414,7 @@ export const earningOpportunities: EarningCategory[] = [
     {
         id: 'nft-trading',
         name: 'NFT Trading',
-        icon: Landmark,
+        icon: 'Landmark',
         description: "Buy and sell Non-Fungible Tokens.",
         opportunities: [
             { id: 'nft-1', title: 'OpenSea', description: 'NFT marketplace', link: 'https://opensea.io/', logo: createLogo('opensea'), image: createImage(131), aiHint: 'nft art' },
@@ -470,7 +428,7 @@ export const earningOpportunities: EarningCategory[] = [
     {
         id: 'forex-trading',
         name: 'Forex Trading',
-        icon: Wallet,
+        icon: 'Wallet',
         description: "Trade currencies on the foreign exchange market.",
         opportunities: [
             { id: 'ft-1', title: 'Forex.com', description: 'Forex trading platform', link: 'https://www.forex.com/', logo: createLogo('forexcom'), image: createImage(137), aiHint: 'forex graph' },
@@ -484,7 +442,7 @@ export const earningOpportunities: EarningCategory[] = [
     {
         id: 'airdrops',
         name: 'Participating in Airdrops',
-        icon: Shield,
+        icon: 'Shield',
         description: "Receive free tokens from new crypto projects.",
         opportunities: [
             { id: 'a-1', title: 'CoinMarketCap Airdrops', description: 'Airdrop listings', link: 'https://coinmarketcap.com/airdrop/', logo: createLogo('coinmarketcap'), image: createImage(143), aiHint: 'crypto airdrop' },
@@ -496,7 +454,7 @@ export const earningOpportunities: EarningCategory[] = [
     {
         id: 'print-on-demand',
         name: 'Print-on-Demand Stores',
-        icon: Printer,
+        icon: 'Printer',
         description: "Sell custom designs on products.",
         opportunities: [
             { id: 'pod-1', title: 'Redbubble', description: 'Print-on-demand marketplace', link: 'https://www.redbubble.com/', logo: createLogo('redbubble'), image: createImage(147), aiHint: 'tshirt design' },
@@ -510,7 +468,7 @@ export const earningOpportunities: EarningCategory[] = [
     {
         id: 'dropshipping',
         name: 'Dropshipping',
-        icon: Package,
+        icon: 'Package',
         description: "Sell products without holding inventory.",
         opportunities: [
             { id: 'd-1', title: 'Shopify', description: 'E-commerce platform', link: 'https://www.shopify.com/', logo: createLogo('shopify'), image: createImage(153), aiHint: 'shipping box' },
@@ -523,7 +481,7 @@ export const earningOpportunities: EarningCategory[] = [
     {
         id: 'digital-products',
         name: 'Selling Digital Products',
-        icon: Laptop,
+        icon: 'Laptop',
         description: "Sell your own digital creations.",
         opportunities: [
             { id: 'dp-1', title: 'Gumroad', description: 'Platform for creators to sell products', link: 'https://gumroad.com/', logo: createLogo('gumroad'), image: createImage(158), aiHint: 'digital download' },
@@ -537,7 +495,7 @@ export const earningOpportunities: EarningCategory[] = [
     {
         id: 'sell-photos',
         name: 'Selling Photos & Videos',
-        icon: Camera,
+        icon: 'Camera',
         description: "Monetize your photography and videography.",
         opportunities: [
             { id: 'spv-1', title: 'Shutterstock', description: 'Stock photo marketplace', link: 'https://www.shutterstock.com/', logo: createLogo('shutterstock'), image: createImage(164), aiHint: 'camera lens' },
@@ -550,7 +508,7 @@ export const earningOpportunities: EarningCategory[] = [
     {
         id: 'mystery-shopping',
         name: 'Online Mystery Shopping',
-        icon: Store,
+        icon: 'Store',
         description: "Evaluate online businesses anonymously.",
         opportunities: [
             { id: 'oms-1', title: 'BestMark', description: 'Mystery shopping company', link: 'https://www.bestmark.com/', logo: createLogo('bestmark'), image: createImage(169), aiHint: 'online shopping' },
@@ -563,7 +521,7 @@ export const earningOpportunities: EarningCategory[] = [
     {
         id: 'rent-digital-space',
         name: 'Renting Out Digital Space',
-        icon: Wifi,
+        icon: 'Wifi',
         description: "Share your internet bandwidth for cash.",
         opportunities: [
             { id: 'rds-1', title: 'Honeygain', description: 'Share internet to earn', link: 'https://www.honeygain.com/', logo: createLogo('honeygain'), image: createImage(174), aiHint: 'internet router' },
@@ -574,7 +532,7 @@ export const earningOpportunities: EarningCategory[] = [
     {
         id: 'data-annotation',
         name: 'Data Annotation',
-        icon: Tag,
+        icon: 'Tag',
         description: "Label data to train AI models.",
         opportunities: [
             { id: 'da-1', title: 'Appen', description: 'Data annotation services', link: 'https://appen.com/', logo: createLogo('appen'), image: createImage(177), aiHint: 'data label' },
@@ -582,3 +540,5 @@ export const earningOpportunities: EarningCategory[] = [
         ],
     },
 ];
+
+    

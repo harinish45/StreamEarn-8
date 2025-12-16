@@ -18,6 +18,7 @@ import { cn } from "@/lib/utils";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState, useMemo } from 'react';
+import { Icon } from "./icons";
 
 
 interface AppSidebarProps {
@@ -87,7 +88,7 @@ export function AppSidebar({ categories: initialCategories }: AppSidebarProps) {
                 <SidebarMenuItem key={category.id} className="group/menu-item">
                 <SidebarMenuButton asChild tooltip={category.name} isActive={isActive}>
                     <Link href={`/category/${category.id}`}>
-                    <category.icon />
+                    <Icon name={category.icon} />
                     <span>{category.name}</span>
                     </Link>
                 </SidebarMenuButton>
@@ -115,3 +116,5 @@ export function AppSidebar({ categories: initialCategories }: AppSidebarProps) {
     </Sidebar>
   );
 }
+
+    
