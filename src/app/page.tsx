@@ -31,6 +31,12 @@ export default function Home() {
               >
                 AI Tools
               </Link>
+              <Link
+                href="/courses"
+                className="text-muted-foreground transition-colors hover:text-foreground"
+              >
+                Courses
+              </Link>
             </nav>
           </div>
         </div>
@@ -52,6 +58,9 @@ export default function Home() {
                 </Link>
                 <Link href="/ai-tools" className={cn("btn-main", "inline-flex items-center justify-center h-11 rounded-md px-8 text-sm font-medium")}>
                     Discover AI Tools
+                </Link>
+                <Link href="/courses" className={cn("btn-main", "inline-flex items-center justify-center h-11 rounded-md px-8 text-sm font-medium")}>
+                    Browse Courses
                 </Link>
               </div>
             </div>
