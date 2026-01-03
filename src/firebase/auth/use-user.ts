@@ -11,13 +11,18 @@ export function useUser() {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    // No need to check for auth, the provider ensures it's available.
+    if (!auth) {
+      // Firebase auth is not initialized yet.
+      return;
+    }
+
     const unsubscribe = onIdTokenChanged(auth, async (firebaseUser) => {
       setIsLoading(true);
       if (firebaseUser) {
         setUser(firebaseUser);
       } else {
         try {
+          // This might be the first sign-in attempt
           const userCredential = await signInAnonymously(auth);
           setUser(userCredential.user);
         } catch (error) {

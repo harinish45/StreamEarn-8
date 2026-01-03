@@ -1,6 +1,6 @@
 'use client';
 
-import { createContext, useContext, useEffect, useState } from 'react';
+import { createContext, useContext, useEffect, useState, useMemo } from 'react';
 import type { FirebaseApp } from 'firebase/app';
 import type { Auth } from 'firebase/auth';
 import type { Firestore } from 'firebase/firestore';
@@ -10,18 +10,16 @@ export type FirebaseContextValue = {
   app: FirebaseApp;
   auth: Auth;
   firestore: Firestore;
-};
+} | null;
 
-const FirebaseContext = createContext<FirebaseContextValue | undefined>(
-  undefined
-);
+const FirebaseContext = createContext<FirebaseContextValue>(null);
 
 export function FirebaseProvider({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const [firebase, setFirebase] = useState<FirebaseContextValue | null>(null);
+  const [firebase, setFirebase] = useState<FirebaseContextValue>(null);
 
   useEffect(() => {
     // This ensures Firebase is only initialized on the client side.
@@ -29,22 +27,18 @@ export function FirebaseProvider({
       setFirebase(initializeFirebase());
     }
   }, []);
-
-  // While Firebase is initializing, we can show a loader or nothing,
-  // but we must not render children that depend on the context.
-  if (!firebase) {
-    return null; 
-  }
+  
+  const contextValue = useMemo(() => firebase, [firebase]);
 
   return (
-    <FirebaseContext.Provider value={firebase}>
+    <FirebaseContext.Provider value={contextValue}>
       {children}
     </FirebaseContext.Provider>
   );
 }
 
 export const useFirebase = () => {
-  return useContext(FirebaseContext) as FirebaseContextValue;
+  return useContext(FirebaseContext);
 };
 
 export const useFirebaseApp = () => {
@@ -52,7 +46,7 @@ export const useFirebaseApp = () => {
   if (context === undefined) {
     throw new Error('useFirebaseApp must be used within a FirebaseProvider');
   }
-  return context.app;
+  return context?.app;
 };
 
 export const useFirestore = () => {
@@ -60,7 +54,7 @@ export const useFirestore = () => {
   if (context === undefined) {
     throw new Error('useFirestore must be used within a FirebaseProvider');
   }
-  return context.firestore;
+  return context?.firestore;
 };
 
 export const useAuth = () => {
@@ -68,7 +62,7 @@ export const useAuth = () => {
   if (context === undefined) {
     throw new Error('useAuth must be used within a FirebaseProvider');
   }
-  return context.auth;
+  return context?.auth;
 };
 
 export { FirebaseContext };
