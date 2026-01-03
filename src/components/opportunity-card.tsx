@@ -34,7 +34,7 @@ export function OpportunityCard({ opportunity: initialOpportunity, categoryId }:
       className="group relative block h-full w-full"
     >
       <div className={cn(
-          "themed-card flex flex-col justify-between h-full w-full overflow-hidden rounded-lg border p-4 transition-all hover:scale-105",
+          "themed-card flex flex-col justify-between h-full w-full overflow-hidden p-4 transition-all hover:scale-105",
           "hover:border-accent"
         )}>
         <div>
@@ -58,9 +58,8 @@ export function OpportunityCard({ opportunity: initialOpportunity, categoryId }:
           </div>
           <p className="text-sm text-muted-foreground line-clamp-2 min-h-[40px] whitespace-normal">{opportunity.description}</p>
         </div>
-        <button className="btn-main inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 h-10 px-4 py-2 w-full mt-4">
-          Visit Website
-          <ArrowUpRight className="ml-2 h-4 w-4" />
+        <button className="btn-main inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 h-10 px-4 py-2 w-full mt-4">
+          <ArrowUpRight className="h-4 w-4" />
         </button>
       </div>
     </Link>
