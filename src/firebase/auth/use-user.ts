@@ -11,13 +11,7 @@ export function useUser() {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    if (!auth) {
-      // Firebase auth instance is not ready yet.
-      // We'll wait for it to become available.
-      setIsLoading(true);
-      return;
-    }
-
+    // No need to check for auth, the provider ensures it's available.
     const unsubscribe = onIdTokenChanged(auth, async (firebaseUser) => {
       setIsLoading(true);
       if (firebaseUser) {

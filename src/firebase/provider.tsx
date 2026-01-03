@@ -30,10 +30,14 @@ export function FirebaseProvider({
     }
   }, []);
 
-  // While Firebase is initializing, we still render the children.
-  // The hooks that use the context are responsible for handling the loading state.
+  // While Firebase is initializing, we can show a loader or nothing,
+  // but we must not render children that depend on the context.
+  if (!firebase) {
+    return null; 
+  }
+
   return (
-    <FirebaseContext.Provider value={firebase || undefined}>
+    <FirebaseContext.Provider value={firebase}>
       {children}
     </FirebaseContext.Provider>
   );
@@ -46,8 +50,7 @@ export const useFirebase = () => {
 export const useFirebaseApp = () => {
   const context = useContext(FirebaseContext);
   if (context === undefined) {
-    // This can happen on the server or during the initial client render.
-    return undefined;
+    throw new Error('useFirebaseApp must be used within a FirebaseProvider');
   }
   return context.app;
 };
@@ -55,7 +58,7 @@ export const useFirebaseApp = () => {
 export const useFirestore = () => {
   const context = useContext(FirebaseContext);
   if (context === undefined) {
-    return undefined;
+    throw new Error('useFirestore must be used within a FirebaseProvider');
   }
   return context.firestore;
 };
@@ -63,7 +66,7 @@ export const useFirestore = () => {
 export const useAuth = () => {
   const context = useContext(FirebaseContext);
   if (context === undefined) {
-    return undefined;
+    throw new Error('useAuth must be used within a FirebaseProvider');
   }
   return context.auth;
 };
