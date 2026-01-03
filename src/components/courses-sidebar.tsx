@@ -13,7 +13,6 @@ import { Users, FileText, BookOpen, Flag } from "lucide-react";
 
 const menuItems = [
     { href: "/leads", label: "Leads", icon: <Users /> },
-    { href: "/brokers", label: "Brokers", icon: <Users /> },
     { href: "/directory", label: "Directory", icon: <BookOpen /> },
 ];
 
