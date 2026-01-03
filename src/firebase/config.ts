@@ -11,8 +11,9 @@ const firebaseConfig = {
 };
 
 export function getFirebaseConfig() {
-    if (!firebaseConfig.apiKey) {
-    throw new Error('Missing Firebase config: Make sure to set the required environment variables.');
+    if (typeof window !== 'undefined' && !firebaseConfig.apiKey) {
+    // This check only runs on the client-side
+    console.warn('Missing Firebase config: Make sure to set the required environment variables.');
   }
   return firebaseConfig;
 }

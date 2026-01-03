@@ -5,15 +5,21 @@ import { FirebaseContext } from './provider';
 import { initializeFirebase } from '.';
 
 export function FirebaseClientProvider({ children }: { children: React.ReactNode; }) {
-  const { app, auth, firestore } = useMemo(initializeFirebase, []);
+  const firebaseMemo = useMemo(initializeFirebase, []);
 
   const contextValue = useMemo(() => {
+    if (!firebaseMemo) return undefined;
     return {
-      app,
-      auth,
-      firestore,
+      app: firebaseMemo.app,
+      auth: firebaseMemo.auth,
+      firestore: firebaseMemo.firestore,
     };
-  }, [app, auth, firestore]);
+  }, [firebaseMemo]);
+
+  if (!contextValue) {
+    return <>{children}</>;
+  }
+
 
   return (
     <FirebaseContext.Provider value={contextValue}>
