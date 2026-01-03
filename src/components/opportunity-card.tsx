@@ -42,36 +42,36 @@ export function OpportunityCard({ opportunity: initialOpportunity, categoryId }:
       onClick={() => !opportunity.visited && setOpportunity(prev => ({...prev, visited: true}))}
     >
       <div className={cn(
-          "themed-card flex flex-col justify-between h-full w-full overflow-hidden p-4 transition-all hover:scale-105",
+          "themed-card flex flex-col justify-between h-full w-full overflow-hidden p-2 transition-all hover:scale-105",
           "hover:border-accent"
         )}>
         <div>
           <div className="flex items-start justify-between mb-2">
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2">
                 {logo && <Image
                     src={logo.src}
                     alt={`${opportunity.title} logo`}
                     width={logo.width}
                     height={logo.height}
-                    className="rounded-md object-contain"
+                    className="rounded-md object-contain h-8 w-8"
                     data-ai-hint="logo"
                 />}
-                <h3 className="font-semibold text-base whitespace-normal text-foreground">{opportunity.title}</h3>
+                <h3 className="font-semibold text-sm whitespace-normal text-foreground">{opportunity.title}</h3>
             </div>
-             <Button variant="ghost" size="icon" className="h-7 w-7 -mr-2 -mt-1" onClick={handleFavoriteClick}>
-                <Star className={cn("h-5 w-5", isFavorited ? "fill-current text-yellow-400" : "text-muted-foreground")}/>
+             <Button variant="ghost" size="icon" className="h-6 w-6 -mr-1 -mt-1" onClick={handleFavoriteClick}>
+                <Star className={cn("h-4 w-4", isFavorited ? "fill-current text-yellow-400" : "text-muted-foreground")}/>
              </Button>
           </div>
-          <p className="text-sm text-muted-foreground line-clamp-2 min-h-[40px] whitespace-normal mb-4">{opportunity.description}</p>
+          <p className="text-xs text-muted-foreground line-clamp-2 min-h-[32px] whitespace-normal mb-2">{opportunity.description}</p>
         </div>
         <div className="flex items-center justify-between">
-            <div className="flex flex-wrap gap-2">
+            <div className="flex flex-wrap gap-1">
                 {opportunity.tags?.map(tag => (
-                    <Badge key={tag} variant="secondary" className="text-xs">{tag}</Badge>
+                    <Badge key={tag} variant="secondary" className="text-xs px-1.5 py-0.5">{tag}</Badge>
                 ))}
             </div>
             <a href={opportunity.link} onClick={handleVisitClick} className="text-muted-foreground hover:text-foreground">
-                <ArrowUpRight className="h-5 w-5" />
+                <ArrowUpRight className="h-4 w-4" />
             </a>
         </div>
       </div>

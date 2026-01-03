@@ -38,7 +38,7 @@ export default async function EarningsPage() {
                 <Breadcrumbs path={[{ name: "Earnings", href: "/earnings" }]} />
                 <Hero />
               </div>
-              <div className="space-y-8">
+              <div className="space-y-4">
                 {sortedCategories.map((category) => (
                   <CategoryList key={category.id} category={category} />
                 ))}
