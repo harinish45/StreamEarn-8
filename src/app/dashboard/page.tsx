@@ -1,3 +1,4 @@
+
 'use client';
 
 import React, { useState, useCallback, useMemo, useEffect } from 'react';
@@ -91,7 +92,7 @@ export default function DashboardPage() {
     return collection(firestore, `users/${user.uid}/taskLists`);
   }, [firestore, user?.uid]);
 
-  const { data: lists, loading: isListsLoading, add: addList optimistically, remove: removeListOptimistically } = useCollection<List>(listsQuery);
+  const { data: lists, loading: isListsLoading } = useCollection<List>(listsQuery);
 
   const [selectedListId, setSelectedListId] = useState<string | null>(null);
   const [newListName, setNewListName] = useState('');
@@ -346,3 +347,5 @@ export default function DashboardPage() {
     </div>
   );
 }
+
+    
