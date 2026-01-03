@@ -270,6 +270,7 @@
     color: hsl(var(--text-primary));
     box-shadow: var(--shadow);
     transition: all 0.2s ease-in-out;
+    border-radius: var(--radius);
   }
   .dark .themed-card {
     border: 1px solid hsl(var(--border-color));
