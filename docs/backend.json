@@ -85,6 +85,24 @@
         "level": { "type": "number" },
         "totalTasksCompleted": { "type": "number" }
       }
+    },
+    "Lead": {
+        "title": "Lead",
+        "description": "Represents a potential customer or sales lead.",
+        "type": "object",
+        "properties": {
+            "id": { "type": "string" },
+            "ownerId": { "type": "string" },
+            "name": { "type": "string" },
+            "email": { "type": "string", "format": "email" },
+            "property": { "type": "string" },
+            "status": { "type": "string", "enum": ["New", "Contacted", "Qualified", "Closed", "Lost", "Dead"] },
+            "priority": { "type": "string", "enum": ["Hot", "Warm", "Cold"] },
+            "isFraudulent": { "type": "boolean" },
+            "lastContacted": { "type": "string", "format": "date" },
+            "leadData": { "type": "string" }
+        },
+        "required": ["id", "ownerId", "name", "email", "property", "status", "priority", "lastContacted"]
     }
   },
   "auth": {
@@ -114,6 +132,10 @@
     "/users/{userId}/gamification/{statsId}": {
         "schema": { "$ref": "#/entities/GamificationStats" },
         "description": "Stores gamification stats. `statsId` is a singleton document, e.g., 'main'."
+    },
+    "/users/{userId}/leads/{leadId}": {
+        "schema": { "$ref": "#/entities/Lead" },
+        "description": "Stores individual leads for a user."
     }
   }
 }

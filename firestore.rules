@@ -25,5 +25,9 @@ service cloud.firestore {
     match /users/{uid}/sessions/{sessionId} {
       allow read, write: if isOwner(uid);
     }
+
+    match /users/{userId}/leads/{leadId} {
+      allow read, create, update, delete: if isOwner(userId);
+    }
   }
 }
