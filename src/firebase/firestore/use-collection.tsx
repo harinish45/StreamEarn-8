@@ -5,8 +5,9 @@ import type {
   Query,
   DocumentData,
   QuerySnapshot,
+  CollectionReference,
 } from 'firebase/firestore';
-import { onSnapshot } from 'firebase/firestore';
+import { onSnapshot, collection } from 'firebase/firestore';
 import { produce } from 'immer';
 import { fromDb } from '@/lib/utils';
 import { errorEmitter } from '@/firebase/error-emitter';
@@ -17,7 +18,7 @@ interface UseCollectionOptions {
   listen?: boolean;
 }
 
-export function useCollection<T extends { id: string }>(
+export function useCollection<T extends { id: string, tasks?: any[] }>(
   query: Query<DocumentData> | null,
   options: UseCollectionOptions = { listen: true }
 ) {
@@ -62,21 +63,28 @@ export function useCollection<T extends { id: string }>(
     setLoading(true);
 
     const handleSnapshot = (snapshot: QuerySnapshot<DocumentData>) => {
-      const newData = snapshot.docs.map(doc => {
-          const docData = doc.data();
-          const id = doc.id;
-          
-          const tasksCollection = collection(doc.ref, 'tasks');
-          onSnapshot(tasksCollection, (tasksSnapshot) => {
-              const tasks = tasksSnapshot.docs.map(taskDoc => ({...taskDoc.data(), id: taskDoc.id})) as T['tasks'];
-              update(id, { tasks: tasks });
-          });
+        const newData = snapshot.docs.map(doc => {
+            const docData = doc.data();
+            const id = doc.id;
+            
+            try {
+                const tasksCollection = collection(doc.ref, 'tasks');
+                onSnapshot(tasksCollection, (tasksSnapshot) => {
+                    const tasks = tasksSnapshot.docs.map(taskDoc => ({...taskDoc.data(), id: taskDoc.id})) as T['tasks'];
+                    update(id, { tasks: tasks });
+                }, (error) => {
+                    // This sub-collection might not exist, which is fine.
+                    // console.warn(`Could not listen to 'tasks' sub-collection for doc ${id}:`, error.message);
+                });
+            } catch(e) {
+                // Ignore if subcollection doesn't exist or other errors.
+            }
 
-          return fromDb({ ...docData, id: doc.id })
-      }) as T[];
+            return fromDb({ ...docData, id: doc.id })
+        }) as T[];
 
-      setData(newData);
-      setLoading(false);
+        setData(newData);
+        setLoading(false);
     };
 
     const handleError = async (error: Error) => {

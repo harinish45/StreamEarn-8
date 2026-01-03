@@ -12,6 +12,9 @@ export function useUser() {
 
   useEffect(() => {
     if (!auth) {
+      // Firebase auth instance is not ready yet.
+      // We'll wait for it to become available.
+      setIsLoading(true);
       return;
     }
 
