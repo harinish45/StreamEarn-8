@@ -208,7 +208,7 @@ export default function DashboardPage() {
 
   const SidebarSkeleton = () => (
     <aside className="w-64 flex flex-col border-r border-border p-4">
-      <Skeleton className="h-8 w-2/4 mb-4" />
+      <h2 className="text-xl font-bold mb-4 bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">My Lists</h2>
       <div className="flex-1 space-y-2 overflow-y-auto">
         <Skeleton className="h-8 w-full" />
         <Skeleton className="h-8 w-full" />
@@ -347,5 +347,3 @@ export default function DashboardPage() {
     </div>
   );
 }
-
-    
