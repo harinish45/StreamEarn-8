@@ -1,4 +1,3 @@
-
 'use client';
 
 import React, { useState, useCallback, useMemo, useEffect } from 'react';
@@ -26,41 +25,22 @@ import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useToast } from '@/hooks/use-toast';
+import { useUser, useFirestore, useCollection } from '@/firebase';
+import { collection, doc, addDoc, updateDoc, deleteDoc, writeBatch } from 'firebase/firestore';
 
 // --- Types ---
 type Task = {
   id: string;
   text: string;
   completed: boolean;
+  order: number;
 };
 
 type List = {
-  id: string; // Changed from _id
+  id: string; 
   name: string;
   tasks: Task[];
 };
-
-// --- Mock Data ---
-const initialLists: List[] = [
-  {
-    id: 'list-1',
-    name: 'Shopping List',
-    tasks: [
-      { id: 'task-1-1', text: 'Milk', completed: false },
-      { id: 'task-1-2', text: 'Bread', completed: true },
-      { id: 'task-1-3', text: 'Eggs', completed: false },
-    ],
-  },
-  {
-    id: 'list-2',
-    name: 'Work Todos',
-    tasks: [
-      { id: 'task-2-1', text: 'Finish report', completed: false },
-      { id: 'task-2-2', text: 'Email team', completed: false },
-    ],
-  },
-];
-
 
 // --- Components ---
 
@@ -103,27 +83,30 @@ function TaskItem({ task, onToggle, onDelete, id }: { task: Task; onToggle: () =
 
 
 export default function DashboardPage() {
-  const [isClient, setIsClient] = useState(false);
-  const [lists, setLists] = useState<List[]>([]);
+  const { user, isLoading: isUserLoading } = useUser();
+  const firestore = useFirestore();
+
+  const listsQuery = useMemo(() => {
+    if (!firestore || !user?.uid) return null;
+    return collection(firestore, `users/${user.uid}/taskLists`);
+  }, [firestore, user?.uid]);
+
+  const { data: lists, loading: isListsLoading, add: addList optimistically, remove: removeListOptimistically } = useCollection<List>(listsQuery);
+
   const [selectedListId, setSelectedListId] = useState<string | null>(null);
   const [newListName, setNewListName] = useState('');
   const [newTaskText, setNewTaskText] = useState('');
   const [editingListId, setEditingListId] = useState<string | null>(null);
   const [editingListName, setEditingListName] = useState('');
-  const [isLoading, setIsLoading] = useState(true);
   const { toast } = useToast();
+
+  const isLoading = isUserLoading || isListsLoading;
   
   useEffect(() => {
-    setIsClient(true);
-    // Simulate fetching data
-    setTimeout(() => {
-      setLists(initialLists);
-      if (initialLists.length > 0 && !selectedListId) {
-        setSelectedListId(initialLists[0].id);
-      }
-      setIsLoading(false);
-    }, 500);
-  }, [selectedListId]);
+    if (lists && lists.length > 0 && !selectedListId) {
+      setSelectedListId(lists[0].id);
+    }
+  }, [lists, selectedListId]);
   
   const sensors = useSensors(
     useSensor(PointerSensor),
@@ -133,83 +116,59 @@ export default function DashboardPage() {
   );
 
   const selectedList = useMemo(
-    () => lists.find((list) => list.id === selectedListId),
+    () => lists?.find((list) => list.id === selectedListId),
     [lists, selectedListId]
   );
   
-  const updateList = useCallback((listId: string, updatedList: Partial<Omit<List, 'id'>>) => {
-     setLists(currentLists => currentLists.map(l => l.id === listId ? { ...l, ...updatedList } : l));
-     toast({title: 'List updated (local only)'});
-  }, [toast]);
-
-
   const handleAddList = async () => {
-    if (newListName.trim()) {
-      const newList: List = {
-        id: `list-${Date.now()}`,
-        name: newListName.trim(),
-        tasks: [],
-      };
-      setLists([...lists, newList]);
-      setSelectedListId(newList.id);
+    if (newListName.trim() && firestore && user) {
+      const newListData = { name: newListName.trim() };
+      const docRef = await addDoc(collection(firestore, `users/${user.uid}/taskLists`), newListData);
+      // No need for optimistic update here, useCollection handles it
+      setSelectedListId(docRef.id);
       setNewListName('');
-      toast({title: 'List added (local only)'});
+      toast({title: 'List added'});
     }
   };
 
   const handleAddTask = async () => {
-    if (newTaskText.trim() && selectedListId && selectedList) {
-      const newTask: Task = {
-        id: `task-${Date.now()}`,
-        text: newTaskText.trim(),
-        completed: false,
-      };
-
-      const updatedTasks = [...selectedList.tasks, newTask];
-      
-      setLists(
-        produce((draft) => {
-          const list = draft.find((l) => l.id === selectedListId);
-          if (list) {
-            list.tasks.push(newTask);
-          }
-        })
-      );
-      setNewTaskText('');
-      toast({title: 'Task added (local only)'});
+    if (newTaskText.trim() && selectedListId && firestore && user && selectedList) {
+        const newTaskData = {
+            text: newTaskText.trim(),
+            completed: false,
+            order: selectedList.tasks?.length || 0,
+        };
+        await addDoc(collection(firestore, `users/${user.uid}/taskLists/${selectedListId}/tasks`), newTaskData);
+        setNewTaskText('');
+        toast({ title: 'Task added' });
     }
   };
 
-  const handleToggleTask = (taskId: string) => {
-    if (!selectedList) return;
-    
-    const updatedTasks = produce(selectedList.tasks, draft => {
-        const task = draft.find(t => t.id === taskId);
-        if (task) {
-            task.completed = !task.completed;
-        }
-    });
-
-    setLists(lists.map(l => l.id === selectedListId ? { ...l, tasks: updatedTasks } : l));
-    updateList(selectedListId, { tasks: updatedTasks });
+  const handleToggleTask = async (taskId: string) => {
+    if (!selectedListId || !firestore || !user) return;
+    const task = selectedList?.tasks.find(t => t.id === taskId);
+    if (task) {
+        const taskRef = doc(firestore, `users/${user.uid}/taskLists/${selectedListId}/tasks`, taskId);
+        await updateDoc(taskRef, { completed: !task.completed });
+    }
   };
   
-  const handleDeleteTask = (taskId: string) => {
-    if (!selectedList) return;
-
-    const updatedTasks = selectedList.tasks.filter((t) => t.id !== taskId);
-    setLists(lists.map(l => l.id === selectedListId ? { ...l, tasks: updatedTasks } : l));
-    updateList(selectedListId, { tasks: updatedTasks });
+  const handleDeleteTask = async (taskId: string) => {
+    if (!selectedListId || !firestore || !user) return;
+    const taskRef = doc(firestore, `users/${user.uid}/taskLists/${selectedListId}/tasks`, taskId);
+    await deleteDoc(taskRef);
   };
 
   const handleDeleteList = async (listId: string) => {
-    const originalLists = lists;
-    setLists(lists.filter(l => l.id !== listId));
+    if (!firestore || !user) return;
+    
+    await deleteDoc(doc(firestore, `users/${user.uid}/taskLists`, listId));
+    
     if(selectedListId === listId) {
-        const remainingLists = originalLists.filter(l => l.id !== listId);
-        setSelectedListId(remainingLists[0]?.id || null);
+        const remainingLists = lists?.filter(l => l.id !== listId);
+        setSelectedListId(remainingLists?.[0]?.id || null);
     }
-    toast({title: 'List deleted (local only)'});
+    toast({title: 'List deleted'});
   };
   
   const handleStartEditingList = (list: List) => {
@@ -217,26 +176,32 @@ export default function DashboardPage() {
     setEditingListName(list.name);
   };
   
-  const handleUpdateList = () => {
-      if(editingListId && editingListName.trim()) {
-          updateList(editingListId, { name: editingListName.trim() });
+  const handleUpdateList = async () => {
+      if(editingListId && editingListName.trim() && firestore && user) {
+          const listRef = doc(firestore, `users/${user.uid}/taskLists`, editingListId);
+          await updateDoc(listRef, { name: editingListName.trim() });
           setEditingListId(null);
           setEditingListName('');
+          toast({title: "List name updated"});
       }
   };
 
-  const handleDragEnd = (event: DragEndEvent) => {
+  const handleDragEnd = async (event: DragEndEvent) => {
     const {active, over} = event;
-    if (active.id !== over?.id && selectedListId && selectedList) {
+    if (active.id !== over?.id && selectedListId && selectedList && firestore && user) {
         const oldIndex = selectedList.tasks.findIndex(t => t.id === active.id);
         const newIndex = selectedList.tasks.findIndex(t => t.id === over?.id);
 
         if (oldIndex === -1 || newIndex === -1) return;
         
         const newTasks = arrayMove(selectedList.tasks, oldIndex, newIndex);
-
-        setLists(lists.map(l => l.id === selectedListId ? { ...l, tasks: newTasks } : l));
-        updateList(selectedListId, { tasks: newTasks });
+        
+        const batch = writeBatch(firestore);
+        newTasks.forEach((task, index) => {
+            const taskRef = doc(firestore, `users/${user.uid}/taskLists/${selectedListId}/tasks`, task.id);
+            batch.update(taskRef, { order: index });
+        });
+        await batch.commit();
     }
   };
 
@@ -270,7 +235,7 @@ export default function DashboardPage() {
      </main>
   );
 
-  if (isLoading || !isClient) {
+  if (isLoading) {
     return (
         <div className="flex h-screen bg-background text-foreground">
             <SidebarSkeleton />
@@ -285,7 +250,7 @@ export default function DashboardPage() {
       <aside className="w-64 flex flex-col border-r border-border p-4">
         <h2 className="text-xl font-bold mb-4 bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">My Lists</h2>
         <div className="flex-1 space-y-2 overflow-y-auto">
-          {lists.map((list) => (
+          {lists?.map((list) => (
             <div
               key={list.id}
               className={`group flex items-center justify-between p-2 rounded-md cursor-pointer ${selectedListId === list.id ? 'bg-primary/20 text-primary' : 'hover:bg-accent'}`}
@@ -344,10 +309,10 @@ export default function DashboardPage() {
                     onDragEnd={handleDragEnd}
                 >
                     <SortableContext 
-                        items={selectedList.tasks.map(t => t.id)}
+                        items={selectedList.tasks?.map(t => t.id) || []}
                         strategy={verticalListSortingStrategy}
                     >
-                        {selectedList.tasks.map((task) => (
+                        {selectedList.tasks?.sort((a, b) => a.order - b.order).map((task) => (
                             <TaskItem 
                                 key={task.id}
                                 id={task.id}

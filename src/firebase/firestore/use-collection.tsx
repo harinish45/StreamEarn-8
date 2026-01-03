@@ -26,7 +26,7 @@ export function useCollection<T extends { id: string }>(
 
   const add = useCallback((item: T) => {
     setData(produce(draft => {
-      if (draft) {
+      if (draft && !draft.some(d => d.id === item.id)) {
         draft.push(item);
       }
     }));
@@ -62,14 +62,28 @@ export function useCollection<T extends { id: string }>(
     setLoading(true);
 
     const handleSnapshot = (snapshot: QuerySnapshot<DocumentData>) => {
-      const newData = snapshot.docs.map(doc => fromDb({ ...doc.data(), id: doc.id })) as T[];
+      const newData = snapshot.docs.map(doc => {
+          const docData = doc.data();
+          const id = doc.id;
+          
+          const tasksCollection = collection(doc.ref, 'tasks');
+          onSnapshot(tasksCollection, (tasksSnapshot) => {
+              const tasks = tasksSnapshot.docs.map(taskDoc => ({...taskDoc.data(), id: taskDoc.id})) as T['tasks'];
+              update(id, { tasks: tasks });
+          });
+
+          return fromDb({ ...docData, id: doc.id })
+      }) as T[];
+
       setData(newData);
       setLoading(false);
     };
 
     const handleError = async (error: Error) => {
+        // This is a hack to get the collection path from the query
+        const path = (query as any)._query.path.segments.join('/');
         const permissionError = new FirestorePermissionError({
-            path: query.path,
+            path: path,
             operation: 'list',
         });
         errorEmitter.emit('permission-error', permissionError);
@@ -84,6 +98,7 @@ export function useCollection<T extends { id: string }>(
     const unsubscribe = onSnapshot(query, handleSnapshot, handleError);
 
     return () => unsubscribe();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [query, options.listen]);
 
   const memoizedData = useMemo(() => data, [data]);
