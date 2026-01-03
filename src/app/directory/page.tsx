@@ -20,6 +20,10 @@ import Link from 'next/link';
 import { Input } from '@/components/ui/input';
 import { Search, Mic, MicOff } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { SidebarProvider, SidebarInset } from '@/components/ui/sidebar';
+import { CoursesSidebar } from '@/components/courses-sidebar';
+import { Header } from '@/components/header';
+import { ScrollArea } from '@/components/ui/scroll-area';
 
 const indianWebsites = [
     { rank: 1, name: '99acres', website: '99acres.com', focus: 'Residential, Commercial, Plots, Rentals (Pan-India)', contact: '1800 41 99000' },
