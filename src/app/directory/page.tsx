@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useMemo, useRef, useEffect } from 'react';
@@ -24,6 +25,7 @@ import { SidebarProvider, SidebarInset } from '@/components/ui/sidebar';
 import { CoursesSidebar } from '@/components/courses-sidebar';
 import { Header } from '@/components/header';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { Breadcrumbs } from '@/components/breadcrumbs';
 
 const indianWebsites = [
     { rank: 1, name: '99acres', website: '99acres.com', focus: 'Residential, Commercial, Plots, Rentals (Pan-India)', contact: '1800 41 99000' },
