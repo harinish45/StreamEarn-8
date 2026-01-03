@@ -5,6 +5,7 @@
 
 @layer base {
   :root, .light {
+    --radius: 1.5rem;
     --main-bg: 228 33% 97%; /* #F5F7FA */
     --sidebar-bg: 0 0% 100%; /* #FFFFFF */
     --card-bg: 0 0% 100%; /* #FFFFFF */
@@ -24,6 +25,7 @@
   }
 
   .dark {
+    --radius: 1.5rem;
     --main-bg: 0 0% 0%; /* #000000 */
     --sidebar-bg: 0 0% 10%; /* #1A1A1A */
     --card-bg: 0 0% 7%; /* #121212 */
@@ -43,6 +45,7 @@
   }
   
   .matrix {
+    --radius: 1.5rem;
     --main-bg: 135 71% 3%; /* #0D0208 */
     --sidebar-bg: 0 0% 0%; /* #000000 */
     --card-bg: 120 100% 3%; /* #001100 */
@@ -62,6 +65,7 @@
   }
 
   .batman {
+    --radius: 1.5rem;
     --main-bg: 0 0% 2%; /* #050505 */
     --sidebar-bg: 0 0% 11%; /* #1C1C1C */
     --card-bg: 214 11% 25%; /* #2F353B */
@@ -81,6 +85,7 @@
   }
 
   .spider-man {
+    --radius: 1.5rem;
     --main-bg: 0 0% 7%; /* #111111 */
     --sidebar-bg: 0 0% 0%; /* #000000 */
     --card-bg: 0 0% 10%; /* #1A1A1A */
@@ -100,6 +105,7 @@
   }
   
   .iron-man {
+    --radius: 1.5rem;
     --main-bg: 0 0% 0%; /* #000000 */
     --sidebar-bg: 221 44% 11%; /* #0F172A */
     --card-bg: 221 44% 11% / 0.6; /* rgba(15, 23, 42, 0.6) */
@@ -119,6 +125,7 @@
   }
   
   .superman {
+    --radius: 1.5rem;
     --main-bg: 216 25% 95%; /* #F0F4F8 */
     --sidebar-bg: 213 65% 14%; /* #0B1F3A */
     --card-bg: 0 0% 100%; /* #FFFFFF */
@@ -138,6 +145,7 @@
   }
 
   .hulk {
+    --radius: 1.5rem;
     --main-bg: 0 0% 11%; /* #1C1C1C */
     --sidebar-bg: 120 12% 21%; /* #2F3E2F */
     --card-bg: 0 0% 17%; /* #2B2B2B */
