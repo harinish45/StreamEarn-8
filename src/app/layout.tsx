@@ -29,7 +29,7 @@ export default function RootLayout({
         <FirebaseProvider>
           <ThemeProvider
             storageKey="theme"
-            defaultTheme="Light"
+            defaultTheme="Batman"
           >
             {children}
             <Toaster />
