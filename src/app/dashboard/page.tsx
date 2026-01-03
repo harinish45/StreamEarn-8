@@ -26,8 +26,6 @@ import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useToast } from '@/hooks/use-toast';
-import { useUser, useFirestore, useCollection } from '@/firebase';
-import { collection, doc, addDoc, updateDoc, deleteDoc, writeBatch } from 'firebase/firestore';
 
 // --- Types ---
 type Task = {
@@ -42,6 +40,28 @@ type List = {
   name: string;
   tasks: Task[];
 };
+
+// --- Initial Data ---
+const initialLists: List[] = [
+    {
+        id: 'list-1',
+        name: 'My Tasks',
+        tasks: [
+            { id: 'task-1', text: 'Sign up for a freelance platform', completed: false, order: 0 },
+            { id: 'task-2', text: 'Complete profile on Upwork', completed: false, order: 1 },
+            { id: 'task-3', text: 'Browse data entry jobs', completed: true, order: 2 },
+        ]
+    },
+    {
+        id: 'list-2',
+        name: 'Shopping List',
+        tasks: [
+            { id: 'task-4', text: 'Milk', completed: false, order: 0 },
+            { id: 'task-5', text: 'Bread', completed: false, order: 1 },
+        ]
+    }
+];
+
 
 // --- Components ---
 
@@ -84,15 +104,8 @@ function TaskItem({ task, onToggle, onDelete, id }: { task: Task; onToggle: () =
 
 
 export default function DashboardPage() {
-  const { user, isLoading: isUserLoading } = useUser();
-  const firestore = useFirestore();
-
-  const listsQuery = useMemo(() => {
-    if (!firestore || !user?.uid) return null;
-    return collection(firestore, `users/${user.uid}/taskLists`);
-  }, [firestore, user?.uid]);
-
-  const { data: lists, loading: isListsLoading } = useCollection<List>(listsQuery);
+  const [lists, setLists] = useState<List[]>(initialLists);
+  const [isLoading, setIsLoading] = useState(true);
 
   const [selectedListId, setSelectedListId] = useState<string | null>(null);
   const [newListName, setNewListName] = useState('');
@@ -100,13 +113,16 @@ export default function DashboardPage() {
   const [editingListId, setEditingListId] = useState<string | null>(null);
   const [editingListName, setEditingListName] = useState('');
   const { toast } = useToast();
-
-  const isLoading = isUserLoading || isListsLoading;
   
   useEffect(() => {
-    if (lists && lists.length > 0 && !selectedListId) {
-      setSelectedListId(lists[0].id);
-    }
+    // Simulate loading
+    const timer = setTimeout(() => {
+        if (lists && lists.length > 0 && !selectedListId) {
+            setSelectedListId(lists[0].id);
+        }
+        setIsLoading(false);
+    }, 500);
+    return () => clearTimeout(timer);
   }, [lists, selectedListId]);
   
   const sensors = useSensors(
@@ -121,49 +137,74 @@ export default function DashboardPage() {
     [lists, selectedListId]
   );
   
-  const handleAddList = async () => {
-    if (newListName.trim() && firestore && user) {
-      const newListData = { name: newListName.trim() };
-      const docRef = await addDoc(collection(firestore, `users/${user.uid}/taskLists`), newListData);
-      // No need for optimistic update here, useCollection handles it
-      setSelectedListId(docRef.id);
-      setNewListName('');
-      toast({title: 'List added'});
+  const handleAddList = () => {
+    if (newListName.trim()) {
+        const newList: List = {
+            id: `list-${Date.now()}`,
+            name: newListName.trim(),
+            tasks: [],
+        };
+        setLists(produce(draft => {
+            draft.push(newList);
+        }));
+        setSelectedListId(newList.id);
+        setNewListName('');
+        toast({title: 'List added'});
     }
   };
 
-  const handleAddTask = async () => {
-    if (newTaskText.trim() && selectedListId && firestore && user && selectedList) {
-        const newTaskData = {
+  const handleAddTask = () => {
+    if (newTaskText.trim() && selectedListId && selectedList) {
+        const newTask: Task = {
+            id: `task-${Date.now()}`,
             text: newTaskText.trim(),
             completed: false,
             order: selectedList.tasks?.length || 0,
         };
-        await addDoc(collection(firestore, `users/${user.uid}/taskLists/${selectedListId}/tasks`), newTaskData);
+        setLists(produce(draft => {
+            const list = draft.find(l => l.id === selectedListId);
+            if (list) {
+                list.tasks.push(newTask);
+            }
+        }));
         setNewTaskText('');
         toast({ title: 'Task added' });
     }
   };
 
-  const handleToggleTask = async (taskId: string) => {
-    if (!selectedListId || !firestore || !user) return;
-    const task = selectedList?.tasks.find(t => t.id === taskId);
-    if (task) {
-        const taskRef = doc(firestore, `users/${user.uid}/taskLists/${selectedListId}/tasks`, taskId);
-        await updateDoc(taskRef, { completed: !task.completed });
-    }
+  const handleToggleTask = (taskId: string) => {
+    if (!selectedListId) return;
+    setLists(produce(draft => {
+        const list = draft.find(l => l.id === selectedListId);
+        if (list) {
+            const task = list.tasks.find(t => t.id === taskId);
+            if (task) {
+                task.completed = !task.completed;
+            }
+        }
+    }));
   };
   
-  const handleDeleteTask = async (taskId: string) => {
-    if (!selectedListId || !firestore || !user) return;
-    const taskRef = doc(firestore, `users/${user.uid}/taskLists/${selectedListId}/tasks`, taskId);
-    await deleteDoc(taskRef);
+  const handleDeleteTask = (taskId: string) => {
+    if (!selectedListId) return;
+    setLists(produce(draft => {
+        const list = draft.find(l => l.id === selectedListId);
+        if(list) {
+            const taskIndex = list.tasks.findIndex(t => t.id === taskId);
+            if (taskIndex > -1) {
+                list.tasks.splice(taskIndex, 1);
+            }
+        }
+    }));
   };
 
-  const handleDeleteList = async (listId: string) => {
-    if (!firestore || !user) return;
-    
-    await deleteDoc(doc(firestore, `users/${user.uid}/taskLists`, listId));
+  const handleDeleteList = (listId: string) => {
+    setLists(produce(draft => {
+        const listIndex = draft.findIndex(l => l.id === listId);
+        if (listIndex > -1) {
+            draft.splice(listIndex, 1);
+        }
+    }));
     
     if(selectedListId === listId) {
         const remainingLists = lists?.filter(l => l.id !== listId);
@@ -177,32 +218,36 @@ export default function DashboardPage() {
     setEditingListName(list.name);
   };
   
-  const handleUpdateList = async () => {
-      if(editingListId && editingListName.trim() && firestore && user) {
-          const listRef = doc(firestore, `users/${user.uid}/taskLists`, editingListId);
-          await updateDoc(listRef, { name: editingListName.trim() });
-          setEditingListId(null);
-          setEditingListName('');
-          toast({title: "List name updated"});
-      }
+  const handleUpdateList = () => {
+    if(editingListId && editingListName.trim()) {
+        setLists(produce(draft => {
+            const list = draft.find(l => l.id === editingListId);
+            if (list) {
+                list.name = editingListName.trim();
+            }
+        }));
+        setEditingListId(null);
+        setEditingListName('');
+        toast({title: "List name updated"});
+    }
   };
 
-  const handleDragEnd = async (event: DragEndEvent) => {
+  const handleDragEnd = (event: DragEndEvent) => {
     const {active, over} = event;
-    if (active.id !== over?.id && selectedListId && selectedList && firestore && user) {
+    if (active.id !== over?.id && selectedListId && selectedList) {
         const oldIndex = selectedList.tasks.findIndex(t => t.id === active.id);
         const newIndex = selectedList.tasks.findIndex(t => t.id === over?.id);
 
         if (oldIndex === -1 || newIndex === -1) return;
         
-        const newTasks = arrayMove(selectedList.tasks, oldIndex, newIndex);
+        const newTasksOrder = arrayMove(selectedList.tasks, oldIndex, newIndex);
         
-        const batch = writeBatch(firestore);
-        newTasks.forEach((task, index) => {
-            const taskRef = doc(firestore, `users/${user.uid}/taskLists/${selectedListId}/tasks`, task.id);
-            batch.update(taskRef, { order: index });
-        });
-        await batch.commit();
+        setLists(produce(draft => {
+            const list = draft.find(l => l.id === selectedListId);
+            if(list) {
+                list.tasks = newTasksOrder.map((task, index) => ({...task, order: index}));
+            }
+        }));
     }
   };
 
