@@ -359,7 +359,7 @@ const DataTable = ({ title, description, data, searchTerm }: { title: string, de
 )};
 
 
-export default function DashboardDirectory() {
+export default function DirectoryPage() {
     const [searchTerm, setSearchTerm] = useState('');
     const [isListening, setIsListening] = useState(false);
     const recognitionRef = useRef<any>(null);
@@ -404,68 +404,83 @@ export default function DashboardDirectory() {
 
 
   return (
-    <div className="space-y-8">
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-        <div>
-            <h2 className="text-2xl font-bold font-headline tracking-tight">
-              Real Estate Directory
-            </h2>
-            <p className="text-muted-foreground">
-              Your central hub for top real estate portals and brokerage firms.
-            </p>
+    <SidebarProvider>
+        <div className="flex min-h-screen bg-background">
+            <CoursesSidebar />
+            <SidebarInset>
+                <Header showSidebarTrigger={true} />
+                <ScrollArea className="h-[calc(100vh-4rem)]">
+                    <main className="flex-1 p-4 md:p-6 space-y-8">
+                        <Breadcrumbs path={[{ name: "Directory", href: "/directory" }]} />
+                        <div className="space-y-8">
+                            <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                                <div>
+                                    <h2 className="text-2xl font-bold font-headline tracking-tight">
+                                    Real Estate Directory
+                                    </h2>
+                                    <p className="text-muted-foreground">
+                                    Your central hub for top real estate portals and brokerage firms.
+                                    </p>
+                                </div>
+                            </div>
+
+                                <div className="relative w-full">
+                                    <Search className="absolute left-3.5 top-3.5 h-5 w-5 text-muted-foreground" />
+                                    <Input
+                                        type="search"
+                                        placeholder="Search across all lists (by name, website, or focus)..."
+                                        className="w-full rounded-lg bg-background pl-11 text-base h-12 pr-12"
+                                        value={searchTerm}
+                                        onChange={(e) => setSearchTerm(e.target.value)}
+                                    />
+                                    <Button variant="ghost" size="icon" className="absolute right-2.5 top-2.5 h-7 w-7" onClick={handleListen} disabled={!recognitionRef.current}>
+                                        {isListening ? <MicOff className="h-4 w-4 text-destructive" /> : <Mic className="h-4 w-4" />}
+                                        <span className="sr-only">{isListening ? 'Stop listening' : 'Start voice search'}</span>
+                                    </Button>
+                                </div>
+                            
+                            <DataTable 
+                                title="🇮🇳 Top 50 Indian Real Estate Websites"
+                                description="A mix of major property portals and classifieds with strong real estate sections."
+                                data={indianWebsites}
+                                searchTerm={searchTerm}
+                            />
+
+                            <DataTable 
+                                title="🌎 Top 50 Global Real Estate Websites"
+                                description="Major portals from North America, Europe, Asia-Pacific, and other key markets."
+                                data={globalWebsites}
+                                searchTerm={searchTerm}
+                            />
+
+                            <DataTable 
+                                title="🇮🇳 Top 50 Indian Brokerage & Development Firms"
+                                description="Major developers and advisors who control most sales in India."
+                                data={indianBrokers}
+                                searchTerm={searchTerm}
+                            />
+
+                            <DataTable 
+                                title="🌎 Top 50 Global Brokerage & Franchise Firms"
+                                description="The largest global brokerage and real estate services companies."
+                                data={globalBrokers}
+                                searchTerm={searchTerm}
+                            />
+
+                                <DataTable 
+                                title="🏢 Top 50 Global Development & Investment Firms"
+                                description="The largest global developers and real estate investment companies."
+                                data={globalDevelopers}
+                                searchTerm={searchTerm}
+                            />
+                            
+                            </div>
+                    </main>
+                </ScrollArea>
+            </SidebarInset>
         </div>
-      </div>
-
-        <div className="relative w-full">
-            <Search className="absolute left-3.5 top-3.5 h-5 w-5 text-muted-foreground" />
-            <Input
-                type="search"
-                placeholder="Search across all lists (by name, website, or focus)..."
-                className="w-full rounded-lg bg-background pl-11 text-base h-12 pr-12"
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-            />
-            <Button variant="ghost" size="icon" className="absolute right-2.5 top-2.5 h-7 w-7" onClick={handleListen} disabled={!recognitionRef.current}>
-                {isListening ? <MicOff className="h-4 w-4 text-destructive" /> : <Mic className="h-4 w-4" />}
-                <span className="sr-only">{isListening ? 'Stop listening' : 'Start voice search'}</span>
-            </Button>
-        </div>
-      
-      <DataTable 
-        title="🇮🇳 Top 50 Indian Real Estate Websites"
-        description="A mix of major property portals and classifieds with strong real estate sections."
-        data={indianWebsites}
-        searchTerm={searchTerm}
-      />
-
-      <DataTable 
-        title="🌎 Top 50 Global Real Estate Websites"
-        description="Major portals from North America, Europe, Asia-Pacific, and other key markets."
-        data={globalWebsites}
-        searchTerm={searchTerm}
-      />
-
-      <DataTable 
-        title="🇮🇳 Top 50 Indian Brokerage & Development Firms"
-        description="Major developers and advisors who control most sales in India."
-        data={indianBrokers}
-        searchTerm={searchTerm}
-      />
-
-      <DataTable 
-        title="🌎 Top 50 Global Brokerage & Franchise Firms"
-        description="The largest global brokerage and real estate services companies."
-        data={globalBrokers}
-        searchTerm={searchTerm}
-      />
-
-        <DataTable 
-        title="🏢 Top 50 Global Development & Investment Firms"
-        description="The largest global developers and real estate investment companies."
-        data={globalDevelopers}
-        searchTerm={searchTerm}
-      />
-      
-    </div>
+    </SidebarProvider>
   );
 }
+
+    
