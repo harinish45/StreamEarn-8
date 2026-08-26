@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { ArrowLeft, CalendarDays, Check, ChevronLeft, ChevronRight, Grip, Plus, RotateCcw, Search, Trash2, X } from 'lucide-react';
+import { ArrowLeft, CalendarDays, ChevronLeft, ChevronRight, Grip, Plus, RotateCcw, Search, Trash2 } from 'lucide-react';
 import Link from 'next/link';
 
 type Palette = 'lemon' | 'blush' | 'sky' | 'mint' | 'peach' | 'lilac';
@@ -23,10 +23,10 @@ const today = () => new Date().toISOString().slice(0, 10);
 const id = () => globalThis.crypto?.randomUUID?.() ?? `${Date.now()}-${Math.random().toString(36).slice(2)}`;
 
 function seedNotes(): Note[] { return []; }
-function read(): Note[] { if (typeof window === 'undefined') return seedNotes(); try { return JSON.parse(localStorage.getItem(KEY) || '[]'); } catch { return []; } }
+function read(): Note[] { if (typeof window === 'undefined') return seedNotes(); try { const parsed = JSON.parse(localStorage.getItem(KEY) || '[]'); return Array.isArray(parsed) ? parsed : []; } catch { return []; } }
 
-export default function StickyWallPage() {
-  const [notes, setNotes] = useState<Note[]>(read);
+export function StickyWallPage({ embedded = false }: { embedded?: boolean }) {
+  const [notes, setNotes] = useState<Note[]>([]);
   const [color, setColor] = useState<Palette>('lemon');
   const [style, setStyle] = useState<NoteStyle>(1);
   const [query, setQuery] = useState('');
@@ -34,8 +34,13 @@ export default function StickyWallPage() {
   const [calendar, setCalendar] = useState<string | null>(null);
   const [drag, setDrag] = useState<{ id: string; dx: number; dy: number } | null>(null);
   const boardRef = useRef<HTMLDivElement>(null);
+  const hydrated = useRef(false);
 
-  useEffect(() => localStorage.setItem(KEY, JSON.stringify(notes)), [notes]);
+  useEffect(() => {
+    setNotes(read());
+    hydrated.current = true;
+  }, []);
+  useEffect(() => { if (hydrated.current) localStorage.setItem(KEY, JSON.stringify(notes)); }, [notes]);
   useEffect(() => {
     const move = (e: PointerEvent) => {
       if (!drag || !boardRef.current) return;
@@ -51,20 +56,19 @@ export default function StickyWallPage() {
 
   const visible = useMemo(() => notes.filter(n => (showArchived || !n.archived) && n.text.toLowerCase().includes(query.toLowerCase())), [notes, query, showArchived]);
   const add = () => {
-    const r = boardRef.current?.getBoundingClientRect();
     const i = notes.length;
-    setNotes(v => [{ id: id(), text: '', color, style, x: 30 + (i % 4) * 285, y: 30 + (Math.floor(i / 4) % 4) * 275, rotation: [-2, 1, -1, 2, 0][i % 5], created: new Date().toISOString(), updated: new Date().toISOString() }, ...v]);
+    const now = new Date().toISOString();
+    setNotes(v => [{ id: id(), text: '', color, style, x: 30 + (i % 4) * 285, y: 30 + (Math.floor(i / 4) % 4) * 275, rotation: [-2, 1, -1, 2, 0][i % 5], created: now, updated: now }, ...v]);
     setTimeout(() => document.querySelector<HTMLTextAreaElement>('[data-new-note="true"]')?.focus(), 30);
-    void r;
   };
   const update = (noteId: string, patch: Partial<Note>) => setNotes(v => v.map(n => n.id === noteId ? { ...n, ...patch, updated: new Date().toISOString() } : n));
-  const remove = (noteId: string) => setNotes(v => v.map(n => n.id === noteId ? { ...n, archived: true } : n));
-  const restore = (noteId: string) => setNotes(v => v.map(n => n.id === noteId ? { ...n, archived: false } : n));
+  const remove = (noteId: string) => setNotes(v => v.map(n => n.id === noteId ? { ...n, archived: true, updated: new Date().toISOString() } : n));
+  const restore = (noteId: string) => setNotes(v => v.map(n => n.id === noteId ? { ...n, archived: false, updated: new Date().toISOString() } : n));
   const empty = () => { if (confirm('Delete every sticky note? This cannot be undone.')) setNotes([]); };
 
-  return <div className="min-h-screen overflow-hidden bg-[#171210] text-[#F3E9DC]">
+  return <div className={`${embedded ? 'min-h-[560px] rounded-2xl border border-white/10' : 'min-h-screen'} overflow-hidden bg-[#171210] text-[#F3E9DC]`}>
     <header className="flex flex-wrap items-center gap-3 border-b border-white/10 bg-[#17110d]/90 px-4 py-3 backdrop-blur-xl md:px-6">
-      <Link href="/planner" className="inline-flex h-9 w-9 items-center justify-center rounded-full bg-white/10 hover:bg-white/15" aria-label="Back to planner"><ArrowLeft className="h-4 w-4" /></Link>
+      {!embedded && <Link href="/planner" className="inline-flex h-9 w-9 items-center justify-center rounded-full bg-white/10 hover:bg-white/15" aria-label="Back to planner"><ArrowLeft className="h-4 w-4" /></Link>}
       <div className="flex items-center gap-3"><div className="h-8 w-8 -rotate-6 rounded-[3px] bg-gradient-to-br from-[#EFD45B] to-[#DDBB2E] shadow-lg" /><div><h1 className="font-serif text-2xl leading-none">Sticky Wall</h1><p className="mt-0.5 text-[10px] uppercase tracking-[.18em] text-[#9A8672]">Local • private • no AI</p></div></div>
       <div className="ml-auto flex flex-wrap items-center gap-2">
         <div className="hidden items-center gap-1 rounded-full bg-white/[.06] px-2 py-1.5 sm:flex">{COLORS.map(k => <button key={k} onClick={() => setColor(k)} aria-label={`Use ${k}`} className={`h-5 w-5 rounded-[5px] transition ${color === k ? 'ring-2 ring-[#F2C94C] ring-offset-2 ring-offset-[#171210]' : '-rotate-6 hover:rotate-0'}`} style={{ background: `linear-gradient(160deg,${PALETTES[k].p1},${PALETTES[k].p2})` }} />)}</div>
@@ -80,7 +84,7 @@ export default function StickyWallPage() {
       <button onClick={empty} className="rounded-full p-2 text-[#9A8672] hover:bg-red-500/10 hover:text-red-300" aria-label="Clear all notes"><Trash2 className="h-4 w-4" /></button>
     </div>
 
-    <main ref={boardRef} className="relative h-[calc(100vh-105px)] min-h-[520px] overflow-auto bg-[radial-gradient(rgba(255,235,205,.08)_1px,transparent_1px)] [background-size:28px_28px] p-2">
+    <main ref={boardRef} className={`relative ${embedded ? 'h-[600px]' : 'h-[calc(100vh-105px)]'} min-h-[520px] overflow-auto bg-[radial-gradient(rgba(255,235,205,.08)_1px,transparent_1px)] [background-size:28px_28px] p-2`}>
       {visible.length === 0 && <div className="pointer-events-none absolute inset-0 grid place-items-center"><div className="text-center"><div className="mx-auto mb-4 h-16 w-16 -rotate-6 rounded bg-gradient-to-br from-[#EFD45B] to-[#DDBB2E] shadow-2xl" /><p className="text-sm text-[#C9B391]">{query ? 'No notes match your search.' : 'Nothing pinned yet.'}</p><p className="mt-1 text-xs text-[#756454]">Create a note and keep quick thoughts visible.</p></div></div>}
       {visible.map(n => <StickyCard key={n.id} note={n} onChange={text => update(n.id, { text })} onDelete={() => remove(n.id)} onRestore={() => restore(n.id)} onColor={c => update(n.id, { color: c })} onDate={() => setCalendar(n.id)} onPointerDown={(e) => { if ((e.target as HTMLElement).closest('textarea,button')) return; const r = (e.currentTarget as HTMLElement).getBoundingClientRect(); setDrag({ id: n.id, dx: e.clientX - r.left, dy: e.clientY - r.top }); }} />)}
     </main>
@@ -89,8 +93,10 @@ export default function StickyWallPage() {
   </div>;
 }
 
+export default StickyWallPage;
+
 function StickyCard({ note, onChange, onDelete, onRestore, onColor, onDate, onPointerDown }: { note: Note; onChange: (v: string) => void; onDelete: () => void; onRestore: () => void; onColor: (v: Palette) => void; onDate: () => void; onPointerDown: (e: React.PointerEvent<HTMLDivElement>) => void }) {
-  const p = PALETTES[note.color];
+  const p = PALETTES[note.color] || PALETTES.lemon;
   const styleClass = note.style === 2 ? 'bg-[repeating-linear-gradient(transparent_0_25px,rgba(0,0,0,.12)_25px_26px)]' : note.style === 3 ? 'bg-[radial-gradient(rgba(0,0,0,.14)_1px,transparent_1.4px)] [background-size:14px_14px]' : note.style === 4 ? 'bg-[linear-gradient(90deg,transparent_30px,rgba(217,72,15,.4)_30px_31.5px,transparent_31.5px)]' : note.style === 5 ? 'bg-[repeating-linear-gradient(45deg,rgba(255,255,255,.1)_0_14px,transparent_14px_28px)]' : '';
   return <article onPointerDown={onPointerDown} className="absolute flex h-[250px] w-[250px] flex-col rounded-[3px] p-4 text-[#262019] shadow-[0_5px_12px_rgba(0,0,0,.4),0_25px_45px_-12px_rgba(0,0,0,.6)] transition-shadow hover:shadow-[0_8px_16px_rgba(0,0,0,.4),0_32px_55px_-12px_rgba(0,0,0,.72)]" style={{ left: note.x, top: note.y, transform: `rotate(${note.rotation}deg)`, background: `linear-gradient(175deg,${p.p1},${p.p2})` }}>
     <div className="pointer-events-none absolute inset-0 rounded-[inherit] bg-gradient-to-b from-white/20 to-transparent" />
