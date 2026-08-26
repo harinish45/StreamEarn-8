@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Bot, BriefcaseBusiness, Compass, GraduationCap, LayoutDashboard, Library, Newspaper, Search, Settings2, ShieldCheck, Sparkles, WalletCards } from 'lucide-react';
+import { Bot, BriefcaseBusiness, Compass, GraduationCap, LayoutDashboard, Library, Newspaper, Search, Settings2, ShieldCheck, Sparkles, WalletCards, Globe2 } from 'lucide-react';
 import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem, SidebarSeparator } from '@/components/ui/sidebar';
 
 const groups = [
@@ -12,18 +12,19 @@ const groups = [
   ]},
   { label: 'AI Intelligence', items: [
     { href: '/ai-tools', label: 'AI Tools', icon: Sparkles },
+    { href: '/browser', label: 'AI Browser', icon: Globe2 },
     { href: '/hub', label: 'Resource Hub', icon: Library },
     { href: '/courses', label: 'Learning & Courses', icon: GraduationCap },
-    { href: '/directory', label: 'Directory', icon: Compass },
   ]},
-  { label: 'Earn & Build', items: [
+  { label: 'Build & Earn', items: [
+    { href: '/ai-work', label: 'AI Work', icon: Bot },
     { href: '/earnings', label: 'Earning Opportunities', icon: WalletCards },
     { href: '/leads', label: 'Leads & GTM', icon: BriefcaseBusiness },
-    { href: '/category/ai-training', label: 'AI Work', icon: Bot },
+    { href: '/directory', label: 'Directory', icon: Compass },
   ]},
   { label: 'Security & Operations', items: [
-    { href: '/category/cybersecurity', label: 'Cybersecurity', icon: ShieldCheck },
-    { href: '/dashboard', label: 'Workspace', icon: Settings2 },
+    { href: '/cybersecurity', label: 'Cybersecurity', icon: ShieldCheck },
+    { href: '/workspace', label: 'Workspace', icon: Settings2 },
   ]},
 ];
 
