@@ -3,10 +3,21 @@ import { ai } from '@/ai/genkit';
 
 type Message = { role: 'user' | 'assistant' | 'system'; content: string };
 
+function providerConfigured() {
+  return Boolean(process.env.GEMINI_API_KEY || process.env.GOOGLE_API_KEY);
+}
+
 export async function POST(request: Request) {
   try {
+    if (!providerConfigured()) {
+      return NextResponse.json({
+        error: 'AI provider is not configured on the server. Add GEMINI_API_KEY or GOOGLE_API_KEY to the Render service environment, then redeploy.',
+        code: 'AI_PROVIDER_NOT_CONFIGURED'
+      }, { status: 503 });
+    }
+
     const body = await request.json() as { messages?: Message[]; mode?: string; pageContext?: string };
-    const messages = Array.isArray(body.messages) ? body.messages.slice(-20) : [];
+    const messages = Array.isArray(body.messages) ? body.messages.slice(-30) : [];
     const latest = messages.filter(m => m.role === 'user').at(-1)?.content?.trim();
     if (!latest) return NextResponse.json({ error: 'Message is required.' }, { status: 400 });
 
@@ -18,6 +29,6 @@ export async function POST(request: Request) {
     return NextResponse.json({ answer: result.text });
   } catch (error) {
     console.error('StreamEarn chat error', error);
-    return NextResponse.json({ error: 'AI service is unavailable. Check the configured AI provider credentials on Render.' }, { status: 503 });
+    return NextResponse.json({ error: 'The AI provider request failed. Check the Render AI provider configuration and server logs.' }, { status: 503 });
   }
 }
