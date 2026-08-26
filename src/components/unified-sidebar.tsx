@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Bot, Compass, GraduationCap, LayoutDashboard, Library, Newspaper, Search, ShieldCheck, Sparkles, WalletCards } from 'lucide-react';
+import { Bot, Compass, GraduationCap, LayoutDashboard, Library, Newspaper, Search, ShieldCheck, Sparkles, WalletCards, BriefcaseBusiness } from 'lucide-react';
 import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem, SidebarSeparator } from '@/components/ui/sidebar';
 
 const groups = [
@@ -19,6 +19,7 @@ const groups = [
     { href: '/ai-work', label: 'AI Work', icon: Bot },
     { href: '/earnings', label: 'Earning Opportunities', icon: WalletCards },
     { href: '/directory', label: 'Directory', icon: Compass },
+    { href: '/opportunities', label: 'Internships & Scholarships', icon: BriefcaseBusiness },
   ]},
   { label: 'Security', items: [
     { href: '/cybersecurity', label: 'Cybersecurity', icon: ShieldCheck },
