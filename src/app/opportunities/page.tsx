@@ -10,6 +10,8 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 
+export const dynamic = 'force-dynamic';
+
 const opportunities = [
   { id:'outreachy-dec-2026', type:'Internship', status:'Closing soon', title:'Outreachy — December 2026 Cohort', org:'Outreachy', area:'Open Source • Software • Security • Research', location:'Global', mode:'Remote • Paid', deadline:'31 Aug 2026', url:'https://www.outreachy.org/apply/', image:'outreachy-dec-2026', note:'December 2026 applications are open Aug 24–31. India is in the Northern Hemisphere, so student cohort eligibility depends on having 42 consecutive days free during the May–August cohort rules; verify the official student eligibility before applying.' },
   { id:'drdo-sspl-2026', type:'Internship', status:'Closing soon', title:'DRDO SSPL Paid Internship — 6 Months', org:'DRDO • SSPL', area:'Engineering • Research • Technology', location:'Delhi, India', mode:'Onsite', deadline:'30 Sep 2026', url:'https://www.drdo.gov.in/drdo/offerings/vacancies?page=1', image:'drdo-sspl-2026', note:'Official DRDO vacancy listing shows a paid six-month internship with an application end date of 30 Sep 2026. Check the advertisement for exact branch, year and document requirements.' },
