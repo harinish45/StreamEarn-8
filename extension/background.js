@@ -1,4 +1,5 @@
 const ALLOWED_ORIGIN = 'https://streamearn-ai.onrender.com';
+const LOCAL_AI_URL = 'http://127.0.0.1:11434/api/chat';
 
 async function handle(message, sender, sendResponse) {
   if (message?.type === 'STREAM_EARN_GET_ACTIVE_TAB') {
@@ -13,13 +14,20 @@ async function handle(message, sender, sendResponse) {
     const tabId = message.tabId || sender.tab?.id; if (!tabId) { sendResponse({ ok: false, error: 'No tab selected' }); return; }
     try { sendResponse(await chrome.tabs.sendMessage(tabId, { type: 'STREAM_EARN_EXTRACT_PAGE' })); } catch (error) { sendResponse({ ok: false, error: String(error) }); } return;
   }
-  if (message?.type === 'STREAM_EARN_FILL_FORM') {
+  if (message?.type === 'STREAM_EARN_FILL_FORM' || message?.type === 'STREAM_EARN_CLICK') {
     const tabId = message.tabId || sender.tab?.id; if (!tabId) { sendResponse({ ok: false, error: 'No tab selected' }); return; }
-    try { sendResponse(await chrome.tabs.sendMessage(tabId, { type: 'STREAM_EARN_FILL_FORM', fields: message.fields })); } catch (error) { sendResponse({ ok: false, error: String(error) }); } return;
+    try { sendResponse(await chrome.tabs.sendMessage(tabId, message)); } catch (error) { sendResponse({ ok: false, error: String(error) }); } return;
   }
-  if (message?.type === 'STREAM_EARN_CLICK') {
-    const tabId = message.tabId || sender.tab?.id; if (!tabId) { sendResponse({ ok: false, error: 'No tab selected' }); return; }
-    try { sendResponse(await chrome.tabs.sendMessage(tabId, { type: 'STREAM_EARN_CLICK', text: message.text })); } catch (error) { sendResponse({ ok: false, error: String(error) }); } return;
+  if (message?.type === 'STREAM_EARN_LOCAL_AI') {
+    const payload = { model: String(message.model || ''), messages: Array.isArray(message.messages) ? message.messages : [], stream: false };
+    if (!payload.model) { sendResponse({ ok: false, error: 'No local AI engine profile is selected.' }); return; }
+    try {
+      const response = await fetch(LOCAL_AI_URL, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+      const data = await response.json();
+      if (!response.ok) { sendResponse({ ok: false, error: data?.error || `Local AI returned HTTP ${response.status}` }); return; }
+      sendResponse({ ok: true, answer: data?.message?.content || '' });
+    } catch { sendResponse({ ok: false, error: 'Local AI engine is not reachable. Start the local engine and allow the StreamEarn extension to access it.' }); }
+    return;
   }
   sendResponse({ ok: false, error: 'Unsupported browser action' });
 }
