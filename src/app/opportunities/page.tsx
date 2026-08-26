@@ -43,7 +43,6 @@ const opportunities: Opportunity[] = [
   { id:'cern-student', type:'Internship', status:'Upcoming', title:'CERN Student Opportunities', org:'CERN', area:'Computer Science • Engineering • Computing • Research', location:'Geneva, Switzerland', mode:'Onsite', url:'https://careers.cern/student-opportunities', image:'cern-student', match:'Strong research target', note:'Technical student and summer opportunities. Check the current cycle and eligibility before treating a program as an open application.' },
   { id:'drdo-internships', type:'Internship', status:'Open now', title:'DRDO Paid Internship Radar', org:'DRDO • Government of India', area:'Engineering • Cyber/IT-adjacent • Defence Research', location:'India', mode:'Onsite / institute-specific', url:'https://drdo.gov.in/drdo/en/search/node?keys=Internship', image:'drdo-internships', match:'Government + security research fit', note:'DRDO labs publish institute-specific internship notices. Each notice controls eligibility and dates.' },
   { id:'palo-alto-india', type:'Internship', status:'Open now', title:'Palo Alto Networks India Early Career', org:'Palo Alto Networks', area:'Cybersecurity • Unit 42 • MDR • Cortex', location:'India', mode:'Onsite / hybrid varies', url:'https://jobs.paloaltonetworks.com/en/india', image:'palo-alto-india', match:'Excellent India cybersecurity target', note:'India careers hub with early-career roles; search live openings and verify exact requirements.' },
-
   { id:'nsp', type:'Scholarship', status:'Open now', title:'National Scholarship Portal — 2026–27', org:'Government of India', area:'Merit • Welfare • Central & State schemes', location:'India', mode:'Online', deadline:'Scheme-specific', url:'https://scholarships.gov.in/All-Scholarships', image:'nsp', match:'Primary national scholarship hub', note:'Official 2026–27 catalogue. Use scheme-level eligibility and OTR information before applying.' },
   { id:'pm-yasasvi-college', type:'Scholarship', status:'Open now', title:'PM YASASVI Top Class Education in College — OBC/EBC/DNT', org:'Government of India', area:'Undergraduate • Tuition • Living support', location:'India', mode:'Online via NSP', deadline:'31 Oct 2026', url:'https://scholarships.gov.in/All-Scholarships', image:'pm-yasasvi-college', match:'Potential strong income/category fit', note:'Current NSP listing. Eligibility includes OBC/EBC/DNT, notified institutions and income conditions. Confirm institution/course eligibility before applying.' },
   { id:'tn-bc-postmatric', type:'Scholarship', status:'Open now', title:'Tamil Nadu BC / MBC / DNC Post-Matric Scholarship', org:'Government of Tamil Nadu', area:'Professional UG • Tuition • Exam • Book support', location:'Tamil Nadu', mode:'Institution / state portal', deadline:'Scheme/institution specific', url:'https://www.bcw.tn.gov.in/sub_page/8', image:'tn-bc-postmatric', match:'High-priority Tamil Nadu check', note:'Tamil Nadu professional-course assistance route. Confirm the current year, income limit, category and institution process with SRM/UMIS.' },
@@ -56,133 +55,44 @@ const opportunities: Opportunity[] = [
 const internshipStatuses = ['All', 'Closing soon', 'Open now', 'Upcoming'] as const;
 const scholarshipStatuses = ['All', 'Closing soon', 'Open now', 'Upcoming'] as const;
 const personalStatuses: PersonalStatus[] = ['Not reviewed', 'Interested', 'Applied', 'Interview / Selection', 'Selected', 'Not selected', 'Saved for later'];
-const statusKey = 'streamearn-opportunity-tracker-v1';
+const statusKey = 'streamearn-opportunity-tracker-v2';
 
 function imageUrl(seed:string) { return `https://picsum.photos/seed/${encodeURIComponent(`streamearn-${seed}`)}/1000/620`; }
-
-function normalizeTab(value: string | null): 'All' | 'Internships' | 'Scholarships' {
-  if (value === 'Internships' || value === 'Internship') return 'Internships';
-  if (value === 'Scholarships' || value === 'Scholarship') return 'Scholarships';
-  return 'All';
-}
+function normalizeTab(value: string | null): 'All' | 'Internships' | 'Scholarships' { if (value === 'Internships' || value === 'Internship') return 'Internships'; if (value === 'Scholarships' || value === 'Scholarship') return 'Scholarships'; return 'All'; }
 
 export default function OpportunitiesPage() {
-  const searchParams = useSearchParams();
-  const [tab, setTab] = useState<'All'|'Internships'|'Scholarships'>(() => normalizeTab(searchParams.get('type')));
+  const [tab, setTab] = useState<'All'|'Internships'|'Scholarships'>('All');
   const [openingStatus, setOpeningStatus] = useState('All');
   const [query, setQuery] = useState('');
   const [view, setView] = useState<'list'|'grid'>('list');
   const [tracker, setTracker] = useState<Record<string, PersonalStatus>>({});
 
   useEffect(() => {
-    try {
-      const raw = JSON.parse(localStorage.getItem(statusKey) || '{}');
-      if (raw && typeof raw === 'object') setTracker(raw);
-    } catch {}
+    try { const raw = JSON.parse(localStorage.getItem(statusKey) || '{}'); if (raw && typeof raw === 'object') setTracker(raw); } catch {}
+    setTab(normalizeTab(new URLSearchParams(window.location.search).get('type')));
   }, []);
-
-  useEffect(() => {
-    try { localStorage.setItem(statusKey, JSON.stringify(tracker)); } catch {}
-  }, [tracker]);
-
-  useEffect(() => {
-    setTab(normalizeTab(searchParams.get('type')));
-    setOpeningStatus('All');
-    setQuery('');
-  }, [searchParams]);
+  useEffect(() => { try { localStorage.setItem(statusKey, JSON.stringify(tracker)); } catch {} }, [tracker]);
 
   const type = tab === 'Internships' ? 'Internship' : tab === 'Scholarships' ? 'Scholarship' : null;
   const filtered = useMemo(() => opportunities.filter(o => {
     const typeMatch = !type || o.type === type;
     const statusMatch = openingStatus === 'All' || o.status === openingStatus;
     const q = query.trim().toLowerCase();
-    const searchMatch = !q || `${o.title} ${o.org} ${o.area} ${o.location} ${o.mode} ${o.match}`.toLowerCase().includes(q);
-    return typeMatch && statusMatch && searchMatch;
-  }), [tab, type, openingStatus, query]);
-
+    return typeMatch && statusMatch && (!q || `${o.title} ${o.org} ${o.area} ${o.location} ${o.mode} ${o.match}`.toLowerCase().includes(q));
+  }), [type, openingStatus, query]);
   const internships = opportunities.filter(o => o.type === 'Internship');
   const scholarships = opportunities.filter(o => o.type === 'Scholarship');
-  const activeList = tab === 'Internships' ? internships : tab === 'Scholarships' ? scholarships : opportunities;
-  const mine = activeList.filter(o => tracker[o.id] === 'Interested' || tracker[o.id] === 'Applied' || tracker[o.id] === 'Saved for later' || tracker[o.id] === 'Interview / Selection');
+  const activeList = type ? opportunities.filter(o => o.type === type) : opportunities;
+  const tracked = activeList.filter(o => tracker[o.id] && tracker[o.id] !== 'Not reviewed').length;
 
   const setPersonalStatus = (id: string, value: PersonalStatus) => setTracker(v => ({ ...v, [id]: value }));
-
   const heroTitle = tab === 'Internships' ? 'Internship Radar' : tab === 'Scholarships' ? 'Scholarship Radar' : 'Opportunities Radar';
-  const heroText = tab === 'Internships'
-    ? 'Track global, India and Tamil Nadu-relevant internships without mixing them with scholarship workflows.'
-    : tab === 'Scholarships'
-      ? 'Track scholarship schemes separately, with eligibility, deadline and application status in one place.'
-      : 'Separate internship and scholarship discovery with persistent personal application status.';
+  const heroText = tab === 'Internships' ? 'Internships are shown in their own workflow, with application tracking and deadline filters.' : tab === 'Scholarships' ? 'Scholarships are shown separately, with eligibility-focused details and personal application status.' : 'Internships and scholarships stay in one directory while keeping their workflows separate.';
 
-  return <SidebarProvider><UnifiedSidebar/><SidebarInset><Header showSidebarTrigger/><main className="min-h-screen px-4 pb-12 pt-4 sm:px-6 lg:px-8">
-    <section className="mx-auto max-w-[1380px] overflow-hidden rounded-2xl border bg-card">
-      <div className="p-4 sm:p-5">
-        <div className="flex flex-wrap items-start justify-between gap-3">
-          <div className="min-w-0">
-            <div className="mb-1 flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[.15em] text-primary"><Sparkles className="h-3.5 w-3.5"/>{tab === 'All' ? 'Opportunity radar' : tab}</div>
-            <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">{heroTitle}</h1>
-            <p className="mt-1 max-w-3xl text-sm text-muted-foreground">{heroText}</p>
-          </div>
-          <div className="grid grid-cols-3 gap-2 text-center text-[10px] sm:min-w-[300px]">
-            <div className="rounded-lg border bg-muted/30 px-3 py-2"><div className="text-lg font-semibold">{internships.length}</div><div className="text-muted-foreground">Internships</div></div>
-            <div className="rounded-lg border bg-muted/30 px-3 py-2"><div className="text-lg font-semibold">{scholarships.length}</div><div className="text-muted-foreground">Scholarships</div></div>
-            <div className="rounded-lg border bg-muted/30 px-3 py-2"><div className="text-lg font-semibold">{mine.length}</div><div className="text-muted-foreground">Tracking</div></div>
-          </div>
-        </div>
-
-        <div className="mt-4 flex flex-col gap-2 lg:flex-row">
-          <div className="relative flex-1"><Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground"/><Input value={query} onChange={e=>setQuery(e.target.value)} placeholder={tab === 'Internships' ? 'Search internship, company, cyber, software, research…' : tab === 'Scholarships' ? 'Search scholarship, category, state, government, college…' : 'Search internships or scholarships…'} className="h-10 pl-9"/></div>
-          <div className="flex shrink-0 gap-1 rounded-lg border bg-background p-1">
-            {(['All','Internships','Scholarships'] as const).map(t => <Button key={t} size="sm" variant={tab===t?'secondary':'ghost'} onClick={()=>{setTab(t);setOpeningStatus('All')}}>{t}</Button>)}
-          </div>
-          <div className="flex shrink-0 gap-1 rounded-lg border bg-background p-1">
-            <Button size="sm" variant={view==='list'?'secondary':'ghost'} onClick={()=>setView('list')}>List</Button>
-            <Button size="sm" variant={view==='grid'?'secondary':'ghost'} onClick={()=>setView('grid')}>Grid</Button>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <section className="mx-auto mt-4 max-w-[1380px]">
-      <div className="mb-3 flex flex-wrap items-center gap-1.5">
-        {((tab === 'Internships' ? internshipStatuses : tab === 'Scholarships' ? scholarshipStatuses : ['All','Closing soon','Open now','Upcoming']) as readonly string[]).map(s=><Button key={s} size="sm" variant={openingStatus===s?'default':'outline'} className="h-8 px-3 text-xs" onClick={()=>setOpeningStatus(s)}>{s}</Button>)}
-        <span className="ml-auto text-xs text-muted-foreground">{filtered.length} shown • {activeList.length} retained in directory</span>
-      </div>
-
-      {filtered.length === 0 ? <div className="rounded-xl border border-dashed bg-card px-6 py-14 text-center"><SlidersHorizontal className="mx-auto h-7 w-7 text-muted-foreground"/><h2 className="mt-3 font-semibold">No current match</h2><p className="mt-1 text-sm text-muted-foreground">The directory still retains all current records. Change the search or status filter rather than deleting anything.</p></div> :
-      <div className={view==='grid' ? 'grid gap-3 sm:grid-cols-2 xl:grid-cols-3' : 'space-y-2'}>
-        {filtered.map(o => {
-          const mineStatus = tracker[o.id] || 'Not reviewed';
-          return <article key={o.id} className="overflow-hidden rounded-xl border bg-card transition hover:border-primary/40 hover:shadow-sm">
-            {view==='grid' ? <>
-              <img src={imageUrl(o.image)} alt="" className="h-36 w-full object-cover"/>
-              <div className="p-4">
-                <div className="flex flex-wrap items-center gap-1.5"><Badge>{o.type}</Badge><Badge variant="outline">{o.status}</Badge>{o.deadline&&<Badge variant="outline">Due {o.deadline}</Badge>}</div>
-                <h2 className="mt-2 text-sm font-semibold leading-snug">{o.title}</h2><p className="mt-1 text-xs text-muted-foreground">{o.org} • {o.area}</p>
-                <p className="mt-2 text-xs font-medium text-primary">{o.match}</p><p className="mt-1 line-clamp-3 text-xs text-muted-foreground">{o.note}</p>
-                <div className="mt-3 grid gap-2"><select value={mineStatus} onChange={e=>setPersonalStatus(o.id,e.target.value as PersonalStatus)} className="h-9 rounded-md border bg-background px-2 text-xs"><option>Not reviewed</option>{personalStatuses.slice(1).map(s=><option key={s}>{s}</option>)}</select><div className="flex gap-2"><Button asChild size="sm" className="flex-1"><a href={o.url} target="_blank" rel="noreferrer">Official <ExternalLink className="ml-1 h-3 w-3"/></a></Button></div></div>
-              </div>
-            </> : <div className="flex flex-col gap-3 p-3 sm:flex-row sm:items-center">
-              <img src={imageUrl(o.image)} alt="" className="h-24 w-full rounded-lg object-cover sm:h-20 sm:w-28 sm:shrink-0"/>
-              <div className="min-w-0 flex-1">
-                <div className="flex flex-wrap items-center gap-1.5"><Badge>{o.type}</Badge><Badge variant="outline">{o.status}</Badge>{o.deadline&&<Badge variant="outline">Due {o.deadline}</Badge>}<Badge variant="outline">{mineStatus}</Badge></div>
-                <h2 className="mt-1 text-sm font-semibold leading-tight">{o.title}</h2><p className="mt-0.5 text-xs text-muted-foreground">{o.org} • {o.area}</p>
-                <div className="mt-1.5 flex flex-wrap gap-2 text-[11px] text-muted-foreground"><span className="inline-flex items-center gap-1"><Globe2 className="h-3 w-3"/>{o.location}</span><span className="inline-flex items-center gap-1"><MapPin className="h-3 w-3"/>{o.mode}</span></div>
-                <p className="mt-1 text-[11px] font-medium text-primary">{o.match}</p><p className="mt-1 line-clamp-2 text-xs text-muted-foreground">{o.note}</p>
-              </div>
-              <div className="flex shrink-0 flex-col gap-2 sm:w-44"><select value={mineStatus} onChange={e=>setPersonalStatus(o.id,e.target.value as PersonalStatus)} className="h-8 rounded-md border bg-background px-2 text-xs"><option>Not reviewed</option>{personalStatuses.slice(1).map(s=><option key={s}>{s}</option>)}</select><Button asChild size="sm"><a href={o.url} target="_blank" rel="noreferrer">Open official <ExternalLink className="ml-1 h-3 w-3"/></a></Button></div>
-            </div>}
-          </article>;
-        })}
-      </div>}
-    </section>
-
-    {tab !== 'All' && <section className="mx-auto mt-4 grid max-w-[1380px] gap-3 md:grid-cols-3">
-      <div className="rounded-xl border bg-card p-4"><div className="flex items-center gap-2">{tab==='Internships'?<BriefcaseBusiness className="h-4 w-4 text-primary"/>:<GraduationCap className="h-4 w-4 text-primary"/>}<h3 className="text-sm font-semibold">{tab} workflow</h3></div><p className="mt-2 text-xs text-muted-foreground">Use the personal status on each record to move from discovery → shortlist → application → selection without deleting the original opportunity.</p></div>
-      <div className="rounded-xl border bg-card p-4"><CalendarClock className="h-4 w-4 text-primary"/><h3 className="mt-2 text-sm font-semibold">Deadline focus</h3><p className="mt-1 text-xs text-muted-foreground">Closing soon, Open now and Upcoming are discovery statuses. Your personal application status is stored separately.</p></div>
-      <div className="rounded-xl border bg-card p-4"><CheckCircle2 className="h-4 w-4 text-primary"/><h3 className="mt-2 text-sm font-semibold">Retained directory</h3><p className="mt-1 text-xs text-muted-foreground">New entries can be appended over time while your personal status stays attached to each opportunity.</p></div>
-    </section>}
-
-    <div className="mx-auto mt-4 flex max-w-[1380px] items-center gap-2 rounded-lg border bg-muted/30 px-3 py-2 text-[11px] text-muted-foreground"><CheckCircle2 className="h-3.5 w-3.5 text-primary"/>Official sources are preferred. Eligibility is verified against the current source before an entry is treated as a confirmed opening.</div>
+  return <SidebarProvider><UnifiedSidebar/><SidebarInset><Header showSidebarTrigger/><main className="min-h-screen w-full overflow-x-hidden px-3 pb-10 pt-3 sm:px-5 lg:px-7">
+    <section className="mx-auto w-full max-w-[1380px] overflow-hidden rounded-2xl border bg-card"><div className="p-4 sm:p-5"><div className="flex flex-wrap items-start justify-between gap-3"><div className="min-w-0"><div className="mb-1 flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[.15em] text-primary"><Sparkles className="h-3.5 w-3.5"/>{tab === 'All' ? 'Opportunity radar' : tab}</div><h1 className="text-2xl font-bold tracking-tight sm:text-3xl">{heroTitle}</h1><p className="mt-1 max-w-3xl text-sm text-muted-foreground">{heroText}</p></div><div className="grid grid-cols-3 gap-2 text-center text-[10px] sm:min-w-[300px]"><div className="rounded-lg border bg-muted/30 px-3 py-2"><div className="text-lg font-semibold">{internships.length}</div><div className="text-muted-foreground">Internships</div></div><div className="rounded-lg border bg-muted/30 px-3 py-2"><div className="text-lg font-semibold">{scholarships.length}</div><div className="text-muted-foreground">Scholarships</div></div><div className="rounded-lg border bg-muted/30 px-3 py-2"><div className="text-lg font-semibold">{tracked}</div><div className="text-muted-foreground">Tracking</div></div></div></div><div className="mt-4 flex flex-col gap-2 lg:flex-row"><div className="relative min-w-0 flex-1"><Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground"/><Input value={query} onChange={e=>setQuery(e.target.value)} placeholder={tab==='Internships'?'Search internship, company, cyber, software, research…':tab==='Scholarships'?'Search scholarship, category, state, government, college…':'Search internships or scholarships…'} className="h-9 pl-9"/></div><div className="flex shrink-0 gap-1 rounded-lg border bg-background p-1">{(['All','Internships','Scholarships'] as const).map(t=><Button key={t} size="sm" variant={tab===t?'secondary':'ghost'} onClick={()=>{setTab(t);setOpeningStatus('All')}}>{t}</Button>)}</div><div className="flex shrink-0 gap-1 rounded-lg border bg-background p-1"><Button size="sm" variant={view==='list'?'secondary':'ghost'} onClick={()=>setView('list')}>List</Button><Button size="sm" variant={view==='grid'?'secondary':'ghost'} onClick={()=>setView('grid')}>Grid</Button></div></div></div></section>
+    <section className="mx-auto mt-4 w-full max-w-[1380px]"><div className="mb-3 flex flex-wrap items-center gap-1.5">{((tab==='Internships'?internshipStatuses:tab==='Scholarships'?scholarshipStatuses:['All','Closing soon','Open now','Upcoming']) as readonly string[]).map(s=><Button key={s} size="sm" variant={openingStatus===s?'default':'outline'} className="h-8 px-3 text-xs" onClick={()=>setOpeningStatus(s)}>{s}</Button>)}<span className="ml-auto text-xs text-muted-foreground">{filtered.length} shown • {activeList.length} retained</span></div>{filtered.length===0?<div className="rounded-xl border border-dashed bg-card px-6 py-14 text-center"><SlidersHorizontal className="mx-auto h-7 w-7 text-muted-foreground"/><h2 className="mt-3 font-semibold">No current match</h2><p className="mt-1 text-sm text-muted-foreground">Nothing is deleted by filters. Change the search or status to reveal retained records.</p></div>:<div className={view==='grid'?'grid gap-3 sm:grid-cols-2 xl:grid-cols-3':'space-y-2'}>{filtered.map(o=>{const mine=tracker[o.id]||'Not reviewed';return <article key={o.id} className="overflow-hidden rounded-xl border bg-card transition hover:border-primary/40 hover:shadow-sm">{view==='grid'?<><img src={imageUrl(o.image)} alt="" className="h-32 w-full object-cover"/><div className="p-3.5"><div className="flex flex-wrap gap-1.5"><Badge>{o.type}</Badge><Badge variant="outline">{o.status}</Badge>{o.deadline&&<Badge variant="outline">Due {o.deadline}</Badge>}</div><h2 className="mt-2 text-sm font-semibold leading-snug">{o.title}</h2><p className="mt-1 text-xs text-muted-foreground">{o.org} • {o.area}</p><p className="mt-2 text-xs font-medium text-primary">{o.match}</p><p className="mt-1 line-clamp-3 text-xs text-muted-foreground">{o.note}</p><select value={mine} onChange={e=>setPersonalStatus(o.id,e.target.value as PersonalStatus)} className="mt-3 h-8 w-full rounded-md border bg-background px-2 text-xs"><option>Not reviewed</option>{personalStatuses.slice(1).map(s=><option key={s}>{s}</option>)}</select><Button asChild size="sm" className="mt-2 w-full"><a href={o.url} target="_blank" rel="noreferrer">Open official <ExternalLink className="ml-1 h-3 w-3"/></a></Button></div></>:<div className="flex flex-col gap-3 p-3 sm:flex-row sm:items-center"><img src={imageUrl(o.image)} alt="" className="h-24 w-full rounded-lg object-cover sm:h-20 sm:w-28 sm:shrink-0"/><div className="min-w-0 flex-1"><div className="flex flex-wrap items-center gap-1.5"><Badge>{o.type}</Badge><Badge variant="outline">{o.status}</Badge>{o.deadline&&<Badge variant="outline">Due {o.deadline}</Badge>}<Badge variant="outline">{mine}</Badge></div><h2 className="mt-1 text-sm font-semibold leading-tight">{o.title}</h2><p className="mt-0.5 text-xs text-muted-foreground">{o.org} • {o.area}</p><div className="mt-1.5 flex flex-wrap gap-2 text-[11px] text-muted-foreground"><span className="inline-flex items-center gap-1"><Globe2 className="h-3 w-3"/>{o.location}</span><span className="inline-flex items-center gap-1"><MapPin className="h-3 w-3"/>{o.mode}</span></div><p className="mt-1 text-[11px] font-medium text-primary">{o.match}</p><p className="mt-1 line-clamp-2 text-xs text-muted-foreground">{o.note}</p></div><div className="flex shrink-0 flex-col gap-2 sm:w-44"><select value={mine} onChange={e=>setPersonalStatus(o.id,e.target.value as PersonalStatus)} className="h-8 rounded-md border bg-background px-2 text-xs"><option>Not reviewed</option>{personalStatuses.slice(1).map(s=><option key={s}>{s}</option>)}</select><Button asChild size="sm"><a href={o.url} target="_blank" rel="noreferrer">Open official <ExternalLink className="ml-1 h-3 w-3"/></a></Button></div></div>}</article>})}</div>}</section>
+    {tab!=='All'&&<section className="mx-auto mt-4 grid w-full max-w-[1380px] gap-3 md:grid-cols-3"><div className="rounded-xl border bg-card p-4"><div className="flex items-center gap-2">{tab==='Internships'?<BriefcaseBusiness className="h-4 w-4 text-primary"/>:<GraduationCap className="h-4 w-4 text-primary"/>}<h3 className="text-sm font-semibold">{tab} workflow</h3></div><p className="mt-2 text-xs text-muted-foreground">Discovery and your personal application status are separate. Updating your status never removes the original opportunity.</p></div><div className="rounded-xl border bg-card p-4"><CalendarClock className="h-4 w-4 text-primary"/><h3 className="mt-2 text-sm font-semibold">Deadline status</h3><p className="mt-1 text-xs text-muted-foreground">Closing soon, Open now and Upcoming describe the opportunity. Your own status is tracked independently.</p></div><div className="rounded-xl border bg-card p-4"><CheckCircle2 className="h-4 w-4 text-primary"/><h3 className="mt-2 text-sm font-semibold">Retained entries</h3><p className="mt-1 text-xs text-muted-foreground">The directory is additive: new verified entries can be appended while existing records and your tracking remain available.</p></div></section>}
+    <div className="mx-auto mt-4 flex w-full max-w-[1380px] items-center gap-2 rounded-lg border bg-muted/30 px-3 py-2 text-[11px] text-muted-foreground"><CheckCircle2 className="h-3.5 w-3.5 text-primary"/>Official sources are preferred. A listing remains in the directory unless you explicitly filter it out.</div>
   </main></SidebarInset></SidebarProvider>;
 }
