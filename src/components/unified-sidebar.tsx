@@ -21,8 +21,8 @@ const groups = [
     { href: '/directory', label: 'Directory', icon: Compass },
   ]},
   { label: 'Opportunities', items: [
-    { href: '/opportunities?type=Internships', label: 'Internships', icon: BriefcaseBusiness },
-    { href: '/opportunities?type=Scholarships', label: 'Scholarships', icon: GraduationCap },
+    { href: '/internships', label: 'Internships', icon: BriefcaseBusiness },
+    { href: '/scholarships', label: 'Scholarships', icon: GraduationCap },
   ]},
   { label: 'Personal', items: [
     { href: '/planner-v4', label: 'Planner', icon: ClipboardList },
