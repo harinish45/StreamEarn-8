@@ -25,7 +25,7 @@ const groups = [
     { href: '/opportunities?type=Scholarships', label: 'Scholarships', icon: GraduationCap },
   ]},
   { label: 'Personal', items: [
-    { href: '/planner-v2', label: 'Planner', icon: ClipboardList },
+    { href: '/planner-v3', label: 'Planner', icon: ClipboardList },
   ]},
   { label: 'Security', items: [
     { href: '/cybersecurity', label: 'Cybersecurity', icon: ShieldCheck },
