@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Bot, Compass, GraduationCap, LayoutDashboard, Library, Newspaper, Search, ShieldCheck, Sparkles, WalletCards, BriefcaseBusiness } from 'lucide-react';
+import { Bot, Compass, GraduationCap, LayoutDashboard, Library, Newspaper, Search, ShieldCheck, Sparkles, WalletCards, BriefcaseBusiness, ClipboardList } from 'lucide-react';
 import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem, SidebarSeparator } from '@/components/ui/sidebar';
 
 const groups = [
@@ -23,6 +23,9 @@ const groups = [
   { label: 'Opportunities', items: [
     { href: '/opportunities?type=Internships', label: 'Internships', icon: BriefcaseBusiness },
     { href: '/opportunities?type=Scholarships', label: 'Scholarships', icon: GraduationCap },
+  ]},
+  { label: 'Personal', items: [
+    { href: '/planner', label: 'Planner', icon: ClipboardList },
   ]},
   { label: 'Security', items: [
     { href: '/cybersecurity', label: 'Cybersecurity', icon: ShieldCheck },
