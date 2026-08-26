@@ -1,0 +1,197 @@
+export type CurrentAITool = { name: string; url: string; summary: string; tags: string[]; featured?: boolean };
+export type CurrentAICategory = { id: string; name: string; description: string; tools: CurrentAITool[] };
+
+const t = (name: string, url: string, summary: string, tags: string[], featured = false): CurrentAITool => ({ name, url, summary, tags, ...(featured ? { featured: true } : {}) });
+const c = (id: string, name: string, description: string, tools: CurrentAITool[]): CurrentAICategory => ({ id, name, description, tools });
+
+export const currentAIDirectory: CurrentAICategory[] = [
+  c('assistants','AI Assistants & Everyday AI','General-purpose assistants for work, study, planning, writing and research.',[
+    t('ChatGPT','https://chatgpt.com/','General AI workspace for research, writing, analysis and task execution.',['assistant','research'],true),
+    t('Claude','https://claude.ai/','Writing, analysis, coding and knowledge work.',['assistant','writing','coding'],true),
+    t('Gemini','https://gemini.google.com/','Research, multimodal work and Google ecosystem workflows.',['assistant','research']),
+    t('Microsoft Copilot','https://copilot.microsoft.com/','AI assistance across Microsoft productivity workflows.',['assistant','enterprise']),
+    t('Grok','https://grok.com/','Conversational research and brainstorming.',['assistant','research']),
+    t('Poe','https://poe.com/','Multi-provider AI workspace and bot platform.',['assistant','multi-tool'])]),
+  c('agents','Agentic AI & Task Delegation','Products centered on multi-step task execution and delegation.',[
+    t('Manus','https://manus.im/','Delegated agent workflows for multi-step tasks.',['agents','automation'],true),
+    t('Genspark','https://www.genspark.ai/','Agentic research, creation and task execution.',['agents','research']),
+    t('Replit Agent','https://replit.com/ai','Natural-language application building and iteration.',['agents','coding']),
+    t('Devin','https://devin.ai/','Autonomous software engineering workflows.',['agents','coding']),
+    t('OpenHands','https://www.all-hands.dev/','Open platform for software-development agents.',['agents','coding','open-source']),
+    t('Lindy','https://www.lindy.ai/','Personal and business AI assistants for recurring work.',['agents','automation'])]),
+  c('coding','AI Coding Agents & IDEs','Terminal agents, IDE agents, code review and software delivery.',[
+    t('OpenCode','https://opencode.ai/','Open-source terminal coding agent.',['coding','terminal'],true),
+    t('Claude Code','https://www.anthropic.com/claude-code','Terminal-native repository coding agent.',['coding','terminal']),
+    t('Gemini CLI','https://github.com/google-gemini/gemini-cli','Open-source terminal agent for coding and tooling.',['coding','terminal']),
+    t('Codex','https://openai.com/codex/','Agentic software-development environment.',['coding','agents']),
+    t('Cursor','https://www.cursor.com/','AI-native editor with multi-file agent workflows.',['coding','ide']),
+    t('GitHub Copilot','https://github.com/features/copilot','Coding, review and agent-assisted development.',['coding','github']),
+    t('Cline','https://cline.bot/','Open coding agent with tool use.',['coding','open-source']),
+    t('Aider','https://aider.chat/','Git-aware terminal pair programming.',['coding','git'])]),
+  c('app-builders','AI App Builders & Full-Stack Creation','Prompt-to-app tools for prototypes and production web projects.',[
+    t('Lovable','https://lovable.dev/','Full-stack app building from natural language.',['app-builder','full-stack'],true),
+    t('v0','https://v0.dev/','AI-assisted interface and application generation.',['app-builder','ui']),
+    t('Bolt.new','https://bolt.new/','Browser-based full-stack app creation.',['app-builder','full-stack']),
+    t('Replit','https://replit.com/','Cloud development with AI-assisted building.',['app-builder','cloud']),
+    t('Firebase Studio','https://firebase.studio/','AI-assisted app prototyping in Firebase workflows.',['app-builder','firebase']),
+    t('Framer','https://www.framer.com/ai/','AI-assisted site generation and publishing.',['app-builder','web'])]),
+  c('research','Search, Research & Knowledge Discovery','AI-native search and evidence gathering.',[
+    t('Perplexity','https://www.perplexity.ai/','Answer-focused web research with sources.',['research','search'],true),
+    t('NotebookLM','https://notebooklm.google.com/','Source-grounded synthesis over your material.',['research','knowledge'],true),
+    t('Consensus','https://consensus.app/','Academic search and evidence-oriented synthesis.',['research','academic']),
+    t('Elicit','https://elicit.com/','Literature review and evidence extraction.',['research','papers']),
+    t('Scite','https://scite.ai/','Literature search with citation context.',['research','citations']),
+    t('You.com','https://you.com/','AI search and research workspace.',['research','search'])]),
+  c('browser','Browser & Computer-Use Agents','Tools for navigating, extracting from and acting on real websites.',[
+    t('Browser Use','https://browser-use.com/','Open browser agents for web automation.',['browser','agents'],true),
+    t('Browserbase','https://www.browserbase.com/','Cloud browser infrastructure for production agents.',['browser','infrastructure'],true),
+    t('Stagehand','https://www.stagehand.dev/','Developer SDK for reliable browser automation.',['browser','sdk']),
+    t('Steel','https://steel.dev/','Browser infrastructure for AI-driven web automation.',['browser','infrastructure']),
+    t('Skyvern','https://www.skyvern.com/','Visual browser automation for complex workflows.',['browser','automation']),
+    t('Axiom.ai','https://axiom.ai/','No-code browser bots for repetitive tasks.',['browser','nocode'])]),
+  c('automation','Workflow Automation & AI Orchestration','Connect apps, trigger actions and build AI workflows.',[
+    t('n8n','https://n8n.io/','Visual workflow automation with AI extensibility.',['automation','workflow'],true),
+    t('Zapier','https://zapier.com/','Business automation across connected applications.',['automation','workflow']),
+    t('Make','https://www.make.com/','Visual multi-step automation.',['automation','workflow']),
+    t('Gumloop','https://www.gumloop.com/','AI-first workflow automation.',['automation','agents']),
+    t('Relevance AI','https://relevanceai.com/','AI agents and business workflows.',['automation','agents']),
+    t('Relay.app','https://relay.app/','Human-in-the-loop workflow automation.',['automation','workflow'])]),
+  c('frameworks','Agent Frameworks & SDKs','Frameworks for building, orchestrating and deploying agents.',[
+    t('OpenAI Agents SDK','https://openai.github.io/openai-agents-python/','Tools, handoffs, tracing and structured agents.',['agents','sdk'],true),
+    t('Google ADK','https://google.github.io/adk-docs/','Code-first agent development and evaluation.',['agents','sdk']),
+    t('LangGraph','https://www.langchain.com/langgraph','Stateful graph-based orchestration.',['agents','orchestration']),
+    t('CrewAI','https://www.crewai.com/','Role-based multi-agent workflows.',['agents','multi-agent']),
+    t('Pydantic AI','https://ai.pydantic.dev/','Typed agent development and structured I/O.',['agents','python']),
+    t('Mastra','https://mastra.ai/','TypeScript workflows, memory and agents.',['agents','typescript']),
+    t('Vercel AI SDK','https://ai-sdk.dev/','Provider-agnostic toolkit for AI apps and agents.',['sdk','typescript'])]),
+  c('connectivity','MCP, Agent Connectivity & Tool Access','Connect agents to tools, data and other agents.',[
+    t('Model Context Protocol','https://modelcontextprotocol.io/','Open standard for AI-to-tool and context connections.',['mcp','protocol'],true),
+    t('MCP Inspector','https://modelcontextprotocol.io/docs/tools/inspector','Inspect and debug MCP servers.',['mcp','developer-tools']),
+    t('Composio','https://composio.dev/','Managed tools, authentication and integrations.',['mcp','integrations']),
+    t('Smithery','https://smithery.ai/','Discovery and deployment layer for agent tools.',['mcp','registry']),
+    t('Glama','https://glama.ai/','Discovery and hosting for MCP servers.',['mcp','registry']),
+    t('A2A','https://a2a-protocol.org/','Protocol for agent-to-agent interoperability.',['agents','protocol'])]),
+  c('rag','RAG, Vector Search & Knowledge Infrastructure','Retrieval, indexing and document layers for AI applications.',[
+    t('LlamaIndex','https://www.llamaindex.ai/','Data and retrieval framework for AI apps.',['rag','retrieval']),
+    t('Haystack','https://haystack.deepset.ai/','Pipeline-based retrieval and AI applications.',['rag','framework']),
+    t('Pinecone','https://www.pinecone.io/','Managed vector search infrastructure.',['vector-db','rag'],true),
+    t('Weaviate','https://weaviate.io/','Vector database with hybrid search.',['vector-db','rag']),
+    t('Qdrant','https://qdrant.tech/','Vector similarity search engine.',['vector-db','open-source']),
+    t('Unstructured','https://unstructured.io/','Document ingestion for AI pipelines.',['documents','rag'])]),
+  c('evals','AI Evaluation, Observability & Quality','Tracing, evaluation, testing and production quality.',[
+    t('Langfuse','https://langfuse.com/','Open tracing, prompts and evaluation.',['observability','evals'],true),
+    t('LangSmith','https://smith.langchain.com/','Tracing, evaluation and debugging.',['observability','evals']),
+    t('Arize Phoenix','https://phoenix.arize.com/','Open tracing and AI evaluation.',['observability','open-source']),
+    t('Helicone','https://www.helicone.ai/','Observability, costs and analytics.',['observability','costs']),
+    t('Opik','https://www.comet.com/docs/opik/','Evaluation and tracing.',['evals','observability']),
+    t('DeepEval','https://deepeval.com/','Testing and evaluation framework.',['evals','testing'])]),
+  c('image','Image Generation, Design & Creative','Visual generation, brand assets and design production.',[
+    t('Midjourney','https://www.midjourney.com/','High-end visual creation and ideation.',['image','design'],true),
+    t('Adobe Firefly','https://firefly.adobe.com/','Generative creative tools inside Adobe workflows.',['image','design']),
+    t('Ideogram','https://ideogram.ai/','Image creation with strong typography workflows.',['image','typography']),
+    t('Recraft','https://www.recraft.ai/','Brand-aware image and vector creation.',['design','vector']),
+    t('Canva Magic Studio','https://www.canva.com/magic-studio/','AI-assisted visual content creation.',['design','marketing']),
+    t('Krea','https://www.krea.ai/','Real-time visual generation and editing.',['image','creative']),
+    t('Figma AI','https://www.figma.com/ai/','AI-assisted product and interface design.',['design','ui'])]),
+  c('video','AI Video, Avatars & Motion','Video generation, avatars, editing and localization.',[
+    t('Runway','https://runwayml.com/','Generative video and creative production.',['video','creative'],true),
+    t('Luma','https://lumalabs.ai/','Generative video and visual content.',['video','creative']),
+    t('Pika','https://pika.art/','Fast creative video generation.',['video','social']),
+    t('Kling AI','https://klingai.com/','Generative video for cinematic and social work.',['video','creative']),
+    t('HeyGen','https://www.heygen.com/','AI avatars, localization and business video.',['video','avatars']),
+    t('Synthesia','https://www.synthesia.io/','Business avatar video creation.',['video','enterprise']),
+    t('Descript','https://www.descript.com/','Text-based video and audio editing.',['video','editing'])]),
+  c('voice','Voice, Speech, Audio & Music','Voice, dubbing, speech agents and music creation.',[
+    t('ElevenLabs','https://elevenlabs.io/','Voice generation, dubbing and speech infrastructure.',['voice','audio'],true),
+    t('Cartesia','https://cartesia.ai/','Low-latency voice infrastructure.',['voice','realtime']),
+    t('Vapi','https://vapi.ai/','Developer platform for voice agents.',['voice','agents']),
+    t('Retell AI','https://www.retellai.com/','Production voice agents.',['voice','agents']),
+    t('LiveKit','https://livekit.io/','Real-time infrastructure for voice agents.',['voice','realtime']),
+    t('Suno','https://suno.com/','Generative music creation.',['music','creative']),
+    t('Udio','https://www.udio.com/','Generative music creation and remixing.',['music','creative'])]),
+  c('writing','Writing, Editing & Content Operations','Long-form writing, copy, editing and brand voice.',[
+    t('Grammarly','https://www.grammarly.com/','Writing quality, rewriting and communication support.',['writing','editing']),
+    t('Jasper','https://www.jasper.ai/','Marketing content workflows.',['writing','marketing']),
+    t('Copy.ai','https://www.copy.ai/','GTM and content workflows.',['writing','gtm']),
+    t('Writer','https://writer.com/','Enterprise writing and governed content workflows.',['writing','enterprise']),
+    t('Sudowrite','https://www.sudowrite.com/','Creative writing support.',['writing','creative']),
+    t('Lex','https://lex.page/','AI-native document editor.',['writing','documents'])]),
+  c('productivity','Productivity, Notes & Personal Knowledge','AI-enhanced notes, planning and personal workflows.',[
+    t('Notion AI','https://www.notion.com/product/ai','AI inside docs, databases and knowledge workflows.',['productivity','knowledge'],true),
+    t('Mem','https://mem.ai/','AI-first personal knowledge capture.',['knowledge','notes']),
+    t('Granola','https://www.granola.ai/','Meeting notes and structured context.',['meetings','notes']),
+    t('Motion','https://www.usemotion.com/','AI scheduling and task management.',['productivity','planning']),
+    t('Reclaim','https://reclaim.ai/','AI calendar and time optimization.',['productivity','calendar']),
+    t('Readwise Reader','https://readwise.io/read','AI-assisted reading and knowledge retention.',['knowledge','reading'])]),
+  c('meetings','Meetings, Transcription & Conversation Intelligence','Meeting capture, summaries and searchable conversations.',[
+    t('Fireflies.ai','https://fireflies.ai/','Transcription, search and summaries.',['meetings','transcription'],true),
+    t('Fathom','https://fathom.video/','AI meeting notes and summaries.',['meetings','transcription']),
+    t('Otter.ai','https://otter.ai/','Meeting transcription and conversation search.',['meetings','transcription']),
+    t('tl;dv','https://tldv.io/','Meeting recording and knowledge capture.',['meetings','knowledge']),
+    t('Avoma','https://www.avoma.com/','Conversation intelligence for sales teams.',['meetings','sales']),
+    t('Krisp','https://krisp.ai/','AI audio cleanup and meeting intelligence.',['audio','meetings'])]),
+  c('sales','Sales, GTM & Lead Intelligence','Prospecting, enrichment, outbound and revenue workflows.',[
+    t('Clay','https://www.clay.com/','GTM engineering and AI prospecting.',['sales','gtm'],true),
+    t('Apollo','https://www.apollo.io/','Sales intelligence and outbound.',['sales','prospecting']),
+    t('HubSpot AI','https://www.hubspot.com/artificial-intelligence','AI across CRM, sales and marketing.',['sales','crm']),
+    t('Instantly','https://instantly.ai/','Outbound and email automation.',['sales','outbound']),
+    t('Common Room','https://www.commonroom.io/','Signal-based GTM intelligence.',['sales','signals']),
+    t('Regie.ai','https://www.regie.ai/','AI sales engagement.',['sales','outbound'])]),
+  c('support','Customer Support & Service AI','Support automation and agent assistance.',[
+    t('Intercom Fin','https://www.intercom.com/fin','AI customer support agent.',['support','agents'],true),
+    t('Zendesk AI','https://www.zendesk.com/ai/','AI for service and agent assistance.',['support','enterprise']),
+    t('Ada','https://www.ada.cx/','AI customer service automation.',['support','automation']),
+    t('Sierra','https://sierra.ai/','Conversational AI for service workflows.',['support','agents']),
+    t('Decagon','https://decagon.ai/','AI customer support agents.',['support','agents']),
+    t('Gorgias','https://www.gorgias.com/','AI support automation for commerce.',['support','ecommerce'])]),
+  c('data','Data Analysis, BI & Spreadsheets','Natural-language analysis and AI data workflows.',[
+    t('Julius AI','https://julius.ai/','Natural-language data analysis and charts.',['data','analytics'],true),
+    t('Hex','https://hex.tech/','Collaborative analytics with AI assistance.',['data','analytics']),
+    t('Rows AI','https://rows.com/ai','AI-assisted spreadsheet research.',['data','spreadsheets']),
+    t('Power BI','https://www.microsoft.com/power-platform/products/power-bi/ai','AI-assisted business intelligence.',['data','bi']),
+    t('Tableau','https://www.tableau.com/','Analytics and AI-assisted discovery.',['data','bi']),
+    t('Dataiku','https://www.dataiku.com/','Enterprise AI and analytics workflows.',['data','enterprise'])]),
+  c('security','Cybersecurity, AppSec & AI Security','Security operations, AI defense and AI application protection.',[
+    t('Microsoft Security Copilot','https://www.microsoft.com/en-us/security/business/ai-machine-learning/microsoft-security-copilot','AI-assisted security operations.',['security','soc'],true),
+    t('CrowdStrike Charlotte AI','https://www.crowdstrike.com/products/charlotte-ai/','AI-assisted investigation and response.',['security','soc']),
+    t('SentinelOne Purple AI','https://www.sentinelone.com/platform/purple-ai/','AI-assisted threat hunting.',['security','threat-hunting']),
+    t('Lakera','https://www.lakera.ai/','AI security and guardrails.',['ai-security','guardrails']),
+    t('Protect AI','https://protectai.com/','Security for AI and ML supply chains.',['ai-security','mlsecops']),
+    t('Prompt Security','https://www.prompt.security/','Enterprise controls for generative AI use.',['ai-security','enterprise'])]),
+  c('education','Education, Learning & Teaching','AI tutoring, lesson design and study support.',[
+    t('Khanmigo','https://www.khanmigo.ai/','AI tutoring and teaching assistance.',['education','tutor'],true),
+    t('MagicSchool','https://www.magicschool.ai/','AI tools for educators.',['education','teachers']),
+    t('Diffit','https://www.diffit.me/','Differentiated learning materials.',['education','teachers']),
+    t('Quizlet','https://quizlet.com/','AI-assisted study and practice.',['education','study']),
+    t('SchoolAI','https://schoolai.com/','AI learning environments.',['education','classroom'])]),
+  c('presentations','Presentations, Documents & Storytelling','Slides, proposals, reports and visual communication.',[
+    t('Gamma','https://gamma.app/','Generate presentations and visual documents.',['presentations','documents'],true),
+    t('Beautiful.ai','https://www.beautiful.ai/','AI-assisted presentation design.',['presentations','design']),
+    t('Canva','https://www.canva.com/','AI-assisted design and presentations.',['presentations','design']),
+    t('Plus AI','https://www.plusdocs.com/','AI presentation generation and editing.',['presentations','slides']),
+    t('SlidesAI','https://www.slidesai.io/','Turn text into presentation slides.',['presentations','slides']),
+    t('Pitch','https://pitch.com/','Collaborative presentation creation.',['presentations','collaboration'])]),
+  c('local','Local, Open & Self-Hosted AI','Run AI applications locally or self-host your own private AI stack.',[
+    t('Ollama','https://ollama.com/','Simple local AI runtime.',['local','self-hosted'],true),
+    t('LM Studio','https://lmstudio.ai/','Desktop environment for local AI.',['local','desktop']),
+    t('Jan','https://jan.ai/','Open-source local AI desktop application.',['local','open-source']),
+    t('Open WebUI','https://openwebui.com/','Self-hosted interface for AI services.',['self-hosted','open-source']),
+    t('AnythingLLM','https://anythingllm.com/','Private document chat and knowledge workspace.',['local','rag']),
+    t('GPT4All','https://www.nomic.ai/gpt4all','Desktop-first local AI workflows.',['local','private'])]),
+  c('infra','AI Infrastructure, Deployment & Serving','Build, deploy, host and scale AI workloads.',[
+    t('Vercel','https://vercel.com/ai','Web deployment and AI application infrastructure.',['infra','deployment'],true),
+    t('Cloudflare Workers AI','https://developers.cloudflare.com/workers-ai/','Edge AI infrastructure.',['infra','edge']),
+    t('Modal','https://modal.com/','Serverless compute for AI workloads.',['infra','compute']),
+    t('Replicate','https://replicate.com/','API platform for AI integrations.',['infra','api']),
+    t('RunPod','https://www.runpod.io/','On-demand compute infrastructure.',['infra','compute']),
+    t('Baseten','https://www.baseten.co/','Production AI serving infrastructure.',['infra','inference'])]),
+  c('translation','Translation, Localization & Accessibility','Translation, dubbing and multilingual workflows.',[
+    t('DeepL','https://www.deepl.com/','Translation and language assistance.',['translation','language'],true),
+    t('HeyGen','https://www.heygen.com/','Video translation and localization.',['translation','video']),
+    t('ElevenLabs','https://elevenlabs.io/','Voice dubbing and multilingual speech.',['translation','voice']),
+    t('Rask AI','https://www.rask.ai/','Video localization and dubbing.',['translation','video']),
+    t('Unbabel','https://www.unbabel.com/','Enterprise language operations.',['translation','enterprise'])])
+];
+
+export const currentAICategoryCount = currentAIDirectory.length;
+export const currentAIToolCount = currentAIDirectory.reduce((sum, category) => sum + category.tools.length, 0);
