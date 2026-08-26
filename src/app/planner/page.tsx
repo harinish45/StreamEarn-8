@@ -1,0 +1,87 @@
+'use client';
+
+import { useEffect, useMemo, useState } from 'react';
+import { CalendarDays, CheckCircle2, ChevronLeft, ChevronRight, ClipboardList, LayoutList, Plus, StickyNote, Target, Trash2 } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Badge } from '@/components/ui/badge';
+import { SidebarInset, SidebarProvider } from '@/components/ui/sidebar';
+import { UnifiedSidebar } from '@/components/unified-sidebar';
+
+type Task = { id: string; title: string; date: string; done: boolean; priority: 'low' | 'medium' | 'high' };
+type Note = { id: string; text: string; date: string };
+
+type Store = { tasks: Task[]; notes: Note[]; lastPlanDate: string };
+
+const KEY = 'streamearn-xara-planner-v1';
+const iso = (d: Date) => d.toISOString().slice(0, 10);
+const todayIso = () => iso(new Date());
+const parseDate = (s: string) => new Date(`${s}T12:00:00`);
+const addDays = (s: string, n: number) => { const d = parseDate(s); d.setDate(d.getDate() + n); return iso(d); };
+const emptyStore = (): Store => ({ tasks: [], notes: [], lastPlanDate: todayIso() });
+
+function loadStore(): Store {
+  if (typeof window === 'undefined') return emptyStore();
+  try { const raw = localStorage.getItem(KEY); return raw ? JSON.parse(raw) : emptyStore(); } catch { return emptyStore(); }
+}
+
+function carryPending(store: Store): Store {
+  const today = todayIso();
+  if (store.lastPlanDate === today) return store;
+  const pending = store.tasks.filter(t => t.date === store.lastPlanDate && !t.done);
+  const existing = new Set(store.tasks.filter(t => t.date === today).map(t => t.title.trim().toLowerCase()));
+  const carried = pending.filter(t => !existing.has(t.title.trim().toLowerCase())).map(t => ({ ...t, id: crypto.randomUUID(), date: today }));
+  return { ...store, tasks: [...store.tasks, ...carried], lastPlanDate: today };
+}
+
+export default function PlannerPage() {
+  const [store, setStore] = useState<Store>(() => carryPending(loadStore()));
+  const [date, setDate] = useState(todayIso());
+  const [view, setView] = useState<'today' | 'week' | 'calendar' | 'notes' | 'progress'>('today');
+  const [newTask, setNewTask] = useState('');
+  const [newNote, setNewNote] = useState('');
+
+  useEffect(() => { localStorage.setItem(KEY, JSON.stringify(store)); }, [store]);
+
+  const tasks = useMemo(() => store.tasks.filter(t => t.date === date), [store.tasks, date]);
+  const completed = store.tasks.filter(t => t.done).length;
+  const total = store.tasks.length;
+  const progress = total ? Math.round((completed / total) * 100) : 0;
+  const week = useMemo(() => Array.from({ length: 7 }, (_, i) => addDays(date, i)), [date]);
+
+  function addTask() {
+    const title = newTask.trim(); if (!title) return;
+    setStore(s => ({ ...s, tasks: [...s.tasks, { id: crypto.randomUUID(), title, date, done: false, priority: 'medium' }] }));
+    setNewTask('');
+  }
+  function toggle(id: string) { setStore(s => ({ ...s, tasks: s.tasks.map(t => t.id === id ? { ...t, done: !t.done } : t) })); }
+  function remove(id: string) { setStore(s => ({ ...s, tasks: s.tasks.filter(t => t.id !== id) })); }
+  function addNote() { const text = newNote.trim(); if (!text) return; setStore(s => ({ ...s, notes: [{ id: crypto.randomUUID(), text, date }, ...s.notes] })); setNewNote(''); }
+
+  return <SidebarProvider><UnifiedSidebar /><SidebarInset><main className="min-h-screen bg-background overflow-x-hidden"><div className="mx-auto max-w-[1200px] px-4 py-5 md:px-7 md:py-7">
+    <header className="mb-5 flex flex-wrap items-end justify-between gap-3">
+      <div><div className="mb-1 text-[10px] font-semibold uppercase tracking-[0.18em] text-muted-foreground">Personal workspace</div><h1 className="text-3xl font-semibold tracking-tight">Xara Planner</h1><p className="mt-1 max-w-2xl text-sm text-muted-foreground">A compact daily planner, task system, notes space and progress view — merged into StreamEarn.</p></div>
+      <div className="flex items-center gap-1.5 rounded-lg border bg-card p-1"><Button size="sm" variant="ghost" onClick={() => setDate(addDays(date, -1))}><ChevronLeft className="h-4 w-4" /></Button><Button size="sm" variant="ghost" onClick={() => setDate(todayIso())}>Today</Button><Button size="sm" variant="ghost" onClick={() => setDate(addDays(date, 1))}><ChevronRight className="h-4 w-4" /></Button></div>
+    </header>
+
+    <div className="mb-5 flex flex-wrap gap-1.5 border-b pb-3">
+      {([['today','Today',ClipboardList],['week','Week',LayoutList],['calendar','Calendar',CalendarDays],['notes','Notes',StickyNote],['progress','Progress',Target]] as const).map(([id,label,Icon]) => <button key={id} onClick={() => setView(id)} className={`inline-flex items-center gap-1.5 rounded-md px-2.5 py-1.5 text-xs font-medium transition ${view === id ? 'bg-foreground text-background' : 'text-muted-foreground hover:bg-muted hover:text-foreground'}`}><Icon className="h-3.5 w-3.5" />{label}</button>)}
+    </div>
+
+    {view === 'today' && <section className="grid gap-5 lg:grid-cols-[1fr_300px]">
+      <div className="rounded-xl border bg-card p-4 md:p-5"><div className="mb-4 flex items-center justify-between"><div><h2 className="text-lg font-semibold">{date === todayIso() ? 'Today' : parseDate(date).toLocaleDateString(undefined, { weekday: 'long', month: 'short', day: 'numeric' })}</h2><p className="text-xs text-muted-foreground">Pending tasks automatically carry to the next day.</p></div><Badge variant="secondary">{tasks.filter(t => !t.done).length} pending</Badge></div>
+        <form onSubmit={e => { e.preventDefault(); addTask(); }} className="mb-4 flex gap-2"><Input value={newTask} onChange={e => setNewTask(e.target.value)} placeholder="Add a task…" /><Button type="submit" size="sm"><Plus className="mr-1.5 h-4 w-4" />Add</Button></form>
+        <div className="divide-y">{tasks.length === 0 ? <div className="py-12 text-center text-sm text-muted-foreground">No tasks yet. Add the first one above.</div> : tasks.map(t => <div key={t.id} className="group flex items-center gap-3 py-3"><button onClick={() => toggle(t.id)} aria-label="Toggle task" className="shrink-0">{t.done ? <CheckCircle2 className="h-5 w-5 text-primary" /> : <span className="block h-5 w-5 rounded-full border-2" />}</button><span className={`min-w-0 flex-1 text-sm ${t.done ? 'text-muted-foreground line-through' : ''}`}>{t.title}</span><Badge variant="outline" className="hidden text-[10px] sm:inline-flex">{t.priority}</Badge><button onClick={() => remove(t.id)} className="opacity-0 transition group-hover:opacity-100" aria-label="Delete task"><Trash2 className="h-4 w-4 text-muted-foreground" /></button></div>)}</div>
+      </div>
+      <aside className="space-y-3"><div className="rounded-xl border bg-card p-4"><p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Progress</p><div className="mt-2 text-3xl font-semibold">{progress}%</div><div className="mt-3 h-1.5 overflow-hidden rounded-full bg-muted"><div className="h-full rounded-full bg-primary transition-all" style={{ width: `${progress}%` }} /></div><p className="mt-2 text-xs text-muted-foreground">{completed} completed of {total} total</p></div><div className="rounded-xl border bg-card p-4"><p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Planner rule</p><p className="mt-2 text-sm text-muted-foreground">Only incomplete tasks roll forward. Completed tasks remain on their original date. Manual deletion is permanent for this device.</p></div></aside>
+    </section>}
+
+    {view === 'week' && <section className="grid gap-2 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-7">{week.map(d => { const ts = store.tasks.filter(t => t.date === d); return <button key={d} onClick={() => { setDate(d); setView('today'); }} className="min-h-36 rounded-xl border bg-card p-3 text-left transition hover:border-primary/50 hover:bg-muted/30"><p className="text-xs font-semibold">{parseDate(d).toLocaleDateString(undefined, { weekday: 'short' })}</p><p className="text-[11px] text-muted-foreground">{parseDate(d).toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}</p><div className="mt-3 space-y-1.5">{ts.slice(0, 4).map(t => <div key={t.id} className={`truncate text-xs ${t.done ? 'text-muted-foreground line-through' : ''}`}>• {t.title}</div>)}{ts.length > 4 && <div className="text-[10px] text-muted-foreground">+{ts.length - 4} more</div>}</div></button>; })}</section>}
+
+    {view === 'calendar' && <section className="rounded-xl border bg-card p-4"><div className="mb-4 flex items-center justify-between"><h2 className="font-semibold">Calendar</h2><span className="text-xs text-muted-foreground">Select a day to open its plan</span></div><div className="grid grid-cols-7 gap-1">{Array.from({ length: 35 }, (_, i) => { const first = new Date(parseDate(date).getFullYear(), parseDate(date).getMonth(), 1); const d = new Date(first); d.setDate(i - first.getDay() + 1); const ds = iso(d); const count = store.tasks.filter(t => t.date === ds).length; return <button key={ds + i} onClick={() => { setDate(ds); setView('today'); }} className={`min-h-16 rounded-md border p-2 text-left hover:bg-muted ${ds === todayIso() ? 'border-primary' : ''}`}><span className="text-xs font-medium">{d.getDate()}</span>{count > 0 && <span className="mt-1 block text-[10px] text-muted-foreground">{count} task{count > 1 ? 's' : ''}</span>}</button>; })}</div></section>}
+
+    {view === 'notes' && <section className="grid gap-5 lg:grid-cols-[1fr_1fr]"><div className="rounded-xl border bg-card p-4"><h2 className="font-semibold">Quick note</h2><textarea value={newNote} onChange={e => setNewNote(e.target.value)} placeholder="Capture an idea, plan or reminder…" className="mt-3 min-h-36 w-full resize-y rounded-lg border bg-background p-3 text-sm outline-none focus:ring-2 focus:ring-primary/30" /><Button className="mt-2" size="sm" onClick={addNote}>Save note</Button></div><div className="space-y-2">{store.notes.length === 0 ? <div className="rounded-xl border bg-card p-8 text-center text-sm text-muted-foreground">No notes yet.</div> : store.notes.map(n => <article key={n.id} className="rounded-xl border bg-card p-4"><div className="mb-2 text-[10px] text-muted-foreground">{n.date}</div><p className="whitespace-pre-wrap text-sm">{n.text}</p></article>)}</div></section>}
+
+    {view === 'progress' && <section className="grid gap-3 sm:grid-cols-3"><div className="rounded-xl border bg-card p-5"><p className="text-xs text-muted-foreground">All tasks</p><p className="mt-1 text-3xl font-semibold">{total}</p></div><div className="rounded-xl border bg-card p-5"><p className="text-xs text-muted-foreground">Completed</p><p className="mt-1 text-3xl font-semibold">{completed}</p></div><div className="rounded-xl border bg-card p-5"><p className="text-xs text-muted-foreground">Completion</p><p className="mt-1 text-3xl font-semibold">{progress}%</p></div><div className="rounded-xl border bg-card p-5 sm:col-span-3"><h2 className="font-semibold">Planning principle</h2><p className="mt-2 max-w-2xl text-sm text-muted-foreground">StreamEarn Planner keeps the useful Xara planning ideas in one compact workspace: daily plans, automatic carry-forward, weekly overview, calendar, notes and progress without adding separate sidebar clutter.</p></div></section>}
+  </div></main></SidebarInset></SidebarProvider>;
+}
