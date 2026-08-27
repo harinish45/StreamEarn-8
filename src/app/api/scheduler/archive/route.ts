@@ -1,0 +1,7 @@
+import { NextRequest, NextResponse } from 'next/server';
+import { cookies } from 'next/headers';
+import { createSupabaseServerClient } from '@/lib/supabase/server';
+import { AUTH_COOKIE, verifySession } from '@/lib/auth';
+import { rejectCrossOrigin } from '@/lib/security';
+export const runtime='nodejs';
+export async function POST(request:NextRequest){const blocked=rejectCrossOrigin(request);if(blocked)return blocked;if(!verifySession((await cookies()).get(AUTH_COOKIE)?.value))return NextResponse.json({error:'Unauthorized'},{status:401});try{const body=await request.json();const id=typeof body?.id==='string'?body.id.trim():'';if(!/^[0-9a-f-]{36}$/i.test(id))return NextResponse.json({error:'Invalid item id'},{status:400});const sb=await createSupabaseServerClient();const {data:{user}}=await sb.auth.getUser();if(!user)return NextResponse.json({error:'Unauthorized'},{status:401});const {error}=await sb.from('scheduler_items').update({archived_at:new Date().toISOString()}).eq('id',id).is('archived_at',null);if(error)throw error;return NextResponse.json({ok:true},{headers:{'Cache-Control':'no-store'}})}catch{return NextResponse.json({error:'Unable to archive scheduler item'},{status:500})}}
