@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: write
+  contents: read
 
 concurrency:
   group: streamearn-daily-append
@@ -22,17 +22,11 @@ jobs:
         with:
           fetch-depth: 1
 
-      - name: Append new feed records
-        run: node scripts/append-scheduled-feeds.mjs
+      - name: Append new feed records to Supabase
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+        run: node scripts/append-scheduled-to-supabase.mjs
 
-      - name: Commit only if new records were added
-        run: |
-          git config user.name 'StreamEarn Scheduler'
-          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add src/data/scheduled/*.json
-          if git diff --cached --quiet; then
-            echo 'No new records. Existing data was left untouched.'
-            exit 0
-          fi
-          git commit -m 'chore(scheduler): append daily StreamEarn opportunities'
-          git push origin HEAD:main
+      - name: Verify repository was not modified
+        run: git diff --exit-code -- src/data/scheduled || (echo 'Scheduler must never rewrite legacy feed data' && exit 1)
