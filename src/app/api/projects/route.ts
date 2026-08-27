@@ -1,0 +1,39 @@
+import { NextRequest, NextResponse } from 'next/server';
+import crypto from 'node:crypto';
+import { cookies } from 'next/headers';
+import { addProject, listProjects, type Project } from '@/lib/project-store';
+import { AUTH_COOKIE, verifySession } from '@/lib/auth';
+
+export const runtime = 'nodejs';
+
+function denied() { return NextResponse.json({ error: 'Unauthorized' }, { status: 401, headers: { 'Cache-Control': 'no-store' } }); }
+function cleanString(value: unknown, max = 500) { return typeof value === 'string' ? value.trim().slice(0, max) : ''; }
+function cleanList(value: unknown, maxItems = 20, maxLength = 120) { return Array.isArray(value) ? value.filter((x): x is string => typeof x === 'string').slice(0, maxItems).map((x) => x.trim().slice(0, maxLength)).filter(Boolean) : []; }
+
+async function authenticated() { return verifySession((await cookies()).get(AUTH_COOKIE)?.value); }
+
+export async function GET() {
+  if (!await authenticated()) return denied();
+  try { return NextResponse.json(await listProjects(), { headers: { 'Cache-Control': 'private, no-store' } }); }
+  catch { return NextResponse.json({ error: 'Unable to load projects' }, { status: 500, headers: { 'Cache-Control': 'no-store' } }); }
+}
+
+export async function POST(request: NextRequest) {
+  if (!await authenticated()) return denied();
+  if (!(request.headers.get('content-type') || '').toLowerCase().startsWith('application/json')) return NextResponse.json({ error: 'Invalid request' }, { status: 400 });
+  const length = Number(request.headers.get('content-length') || 0);
+  if (length > 64 * 1024) return NextResponse.json({ error: 'Request too large' }, { status: 413 });
+  try {
+    const body = await request.json();
+    if (!body || typeof body !== 'object' || Array.isArray(body)) return NextResponse.json({ error: 'Invalid request' }, { status: 400 });
+    const name = cleanString(body.name, 120);
+    if (!name) return NextResponse.json({ error: 'Project name is required' }, { status: 400 });
+    const project: Project = {
+      id: crypto.randomUUID(), name, description: cleanString(body.description), people: cleanList(body.people), organization: cleanString(body.organization, 160), role: cleanString(body.role, 120),
+      priority: ['P0','P1','P2','P3'].includes(body.priority) ? body.priority : 'P2',
+      status: ['idea','planning','in-progress','blocked','testing','completed','archived'].includes(body.status) ? body.status : 'idea',
+      progress: Math.min(100, Math.max(0, Number.isFinite(Number(body.progress)) ? Number(body.progress) : 0)), startDate: cleanString(body.startDate, 40), targetDate: cleanString(body.targetDate, 40), phase: cleanString(body.phase, 120), techStack: cleanList(body.techStack), repository: cleanString(body.repository, 500), liveUrl: cleanString(body.liveUrl, 500), nextAction: cleanString(body.nextAction, 300), blockers: cleanList(body.blockers), notes: cleanList(body.notes, 50, 1000), createdAt: new Date().toISOString(), updatedAt: new Date().toISOString()
+    };
+    return NextResponse.json(await addProject(project), { status: 201, headers: { 'Cache-Control': 'no-store' } });
+  } catch { return NextResponse.json({ error: 'Unable to save project' }, { status: 500, headers: { 'Cache-Control': 'no-store' } }); }
+}
