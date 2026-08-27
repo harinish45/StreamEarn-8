@@ -1,60 +1,15 @@
 import fs from 'node:fs/promises';
 import path from 'node:path';
+import { createSupabaseServerClient } from '@/lib/supabase/server';
 
 export type ProjectStatus = 'idea' | 'planning' | 'in-progress' | 'blocked' | 'testing' | 'completed' | 'archived';
 export type ProjectPriority = 'P0' | 'P1' | 'P2' | 'P3';
-
-export type Project = {
-  id: string;
-  name: string;
-  description: string;
-  people: string[];
-  organization: string;
-  role: string;
-  priority: ProjectPriority;
-  status: ProjectStatus;
-  progress: number;
-  startDate?: string;
-  targetDate?: string;
-  phase: string;
-  techStack: string[];
-  repository?: string;
-  liveUrl?: string;
-  nextAction: string;
-  blockers: string[];
-  notes: string[];
-  createdAt: string;
-  updatedAt: string;
-  archivedAt?: string;
-};
-
-const file = path.join(process.cwd(), 'src/data/projects/projects.json');
-
-async function read(): Promise<Project[]> {
-  const raw = await fs.readFile(file, 'utf8');
-  const parsed = JSON.parse(raw);
-  if (!Array.isArray(parsed)) throw new Error('Project store is invalid');
-  return parsed;
-}
-
-export async function listProjects() { return read(); }
-
-export async function addProject(project: Project) {
-  const projects = await read();
-  if (projects.some((p) => p.id === project.id)) throw new Error('Project already exists');
-  const next = [...projects, project];
-  const tmp = `${file}.${process.pid}.tmp`;
-  await fs.writeFile(tmp, `${JSON.stringify(next, null, 2)}\n`, 'utf8');
-  await fs.rename(tmp, file);
-  return project;
-}
-
-export async function archiveProject(id: string) {
-  const projects = await read();
-  const now = new Date().toISOString();
-  const next = projects.map((p) => p.id === id ? { ...p, status: 'archived' as const, archivedAt: now, updatedAt: now } : p);
-  if (next.every((p, i) => p === projects[i])) throw new Error('Project not found');
-  const tmp = `${file}.${process.pid}.tmp`;
-  await fs.writeFile(tmp, `${JSON.stringify(next, null, 2)}\n`, 'utf8');
-  await fs.rename(tmp, file);
-}
+export type Project = { id:string; name:string; description:string; people:string[]; organization:string; role:string; priority:ProjectPriority; status:ProjectStatus; progress:number; startDate?:string; targetDate?:string; phase:string; techStack:string[]; repository?:string; liveUrl?:string; nextAction:string; blockers:string[]; notes:string[]; createdAt:string; updatedAt:string; archivedAt?:string };
+const file=path.join(process.cwd(),'src/data/projects/projects.json');
+const configured=()=>Boolean(process.env.NEXT_PUBLIC_SUPABASE_URL&&process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY);
+async function legacy():Promise<Project[]>{const raw=await fs.readFile(file,'utf8');const parsed=JSON.parse(raw);if(!Array.isArray(parsed))throw new Error('Project store is invalid');return parsed}
+function fromRow(r:any):Project{return {id:r.id,name:r.name,description:r.description||'',people:Array.isArray(r.people)?r.people:[],organization:r.organization||'',role:r.role||'',priority:r.priority,status:r.status,progress:r.progress,startDate:r.start_date||undefined,targetDate:r.target_date||undefined,phase:r.phase||'',techStack:Array.isArray(r.tech_stack)?r.tech_stack:[],repository:r.repository||undefined,liveUrl:r.live_url||undefined,nextAction:r.next_action||'',blockers:Array.isArray(r.blockers)?r.blockers:[],notes:Array.isArray(r.notes)?r.notes:[],createdAt:r.created_at,updatedAt:r.updated_at,archivedAt:r.archived_at||undefined}}
+function row(p:Project,ownerId:string){return {id:p.id,owner_id:ownerId,name:p.name,description:p.description,organization:p.organization,role:p.role,priority:p.priority,status:p.status,progress:p.progress,start_date:p.startDate||null,target_date:p.targetDate||null,phase:p.phase,tech_stack:p.techStack,repository:p.repository||'',live_url:p.liveUrl||'',next_action:p.nextAction,blockers:p.blockers,notes:p.notes,created_at:p.createdAt,updated_at:p.updatedAt,archived_at:p.archivedAt||null}}
+export async function listProjects(){if(!configured())return legacy();const sb=await createSupabaseServerClient();const {data:{user}}=await sb.auth.getUser();if(!user)throw new Error('Unauthorized');const {data,error}=await sb.from('projects').select('*').eq('owner_id',user.id).order('updated_at',{ascending:false});if(error)throw error;return(data||[]).map(fromRow)}
+export async function addProject(project:Project){if(!configured()){const p=await legacy();if(p.some(x=>x.id===project.id))throw new Error('Project already exists');const tmp=`${file}.${process.pid}.tmp`;await fs.writeFile(tmp,`${JSON.stringify([...p,project],null,2)}\n`);await fs.rename(tmp,file);return project}const sb=await createSupabaseServerClient();const {data:{user}}=await sb.auth.getUser();if(!user)throw new Error('Unauthorized');const {data,error}=await sb.from('projects').insert(row(project,user.id)).select('*').single();if(error)throw error;return fromRow(data)}
+export async function archiveProject(id:string){if(!configured()){const p=await legacy();const now=new Date().toISOString();const next=p.map(x=>x.id===id?{...x,status:'archived' as const,archivedAt:now,updatedAt:now}:x);if(next.every((x,i)=>x===p[i]))throw new Error('Project not found');const tmp=`${file}.${process.pid}.tmp`;await fs.writeFile(tmp,`${JSON.stringify(next,null,2)}\n`);await fs.rename(tmp,file);return}const sb=await createSupabaseServerClient();const {data:{user}}=await sb.auth.getUser();if(!user)throw new Error('Unauthorized');const {error}=await sb.from('projects').update({status:'archived',archived_at:new Date().toISOString(),updated_at:new Date().toISOString()}).eq('id',id).eq('owner_id',user.id);if(error)throw error}
