@@ -28,7 +28,20 @@ export const currentAIAdditions: CurrentAICategory[] = [
       { name: 'DeepLearning.AI Agentic AI', url: 'https://www.deeplearning.ai/courses/agentic-ai', summary: 'Practical learning on reflection, tool use, planning, multi-agent workflows and evaluation.', tags: ['learning', 'agents', 'python'] },
       { name: 'Microsoft AI Learning Hub', url: 'https://learn.microsoft.com/en-us/ai/', summary: 'Official AI learning hub covering agents, enterprise AI, infrastructure and production skills.', tags: ['learning', 'agents', 'enterprise'] },
       { name: 'NVIDIA AI Learning Paths', url: 'https://www.nvidia.com/en-us/learn/learning-paths/', summary: 'Technical paths covering generative AI, agentic AI, infrastructure and professional credentials.', tags: ['learning', 'infrastructure', 'certification'] },
+      { name: 'NVIDIA NIM', url: 'https://www.nvidia.com/en-in/ai-data-science/products/nim-microservices/', summary: 'Portable, optimized inference microservices for deploying AI models on NVIDIA-accelerated infrastructure.', tags: ['infrastructure', 'inference', 'self-hosted'], featured: true },
       { name: 'Databricks Academy', url: 'https://www.databricks.com/learn/training', summary: 'Learning for data engineering, ML, generative AI and production lakehouse workflows.', tags: ['learning', 'data', 'production'] },
+      { name: 'Slack Code', url: 'https://slack.com/features/slack-code', summary: 'Collaborative coding channels that bring AI coding agents into team conversations with review and audit visibility.', tags: ['coding', 'collaboration', 'agents'], featured: true },
+    ],
+  },
+  {
+    id: 'agent-security',
+    name: 'AI Security & Agent Safety',
+    description: 'Current security-focused resources for agent containment, AI evaluation, model risk and production controls.',
+    tools: [
+      { name: 'OWASP GenAI Security Project', url: 'https://genai.owasp.org/', summary: 'Security guidance, risks and community resources for generative AI and agentic applications.', tags: ['security', 'owasp', 'agents'], featured: true },
+      { name: 'NVIDIA NIM Operator', url: 'https://docs.nvidia.com/nim-operator/latest/', summary: 'Kubernetes operator for managing NVIDIA NIM inference microservices and their lifecycle.', tags: ['security', 'infrastructure', 'kubernetes'] },
+      { name: 'Arize Phoenix', url: 'https://phoenix.arize.com/', summary: 'Open observability and evaluation for LLM and agent applications.', tags: ['security', 'evals', 'observability'] },
+      { name: 'Langfuse', url: 'https://langfuse.com/', summary: 'Open tracing, evaluation and prompt observability for production AI systems.', tags: ['security', 'evals', 'observability'] },
     ],
   },
 ];
