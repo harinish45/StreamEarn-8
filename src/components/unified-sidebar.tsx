@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Bot, Compass, GraduationCap, LayoutDashboard, Library, Newspaper, Search, ShieldCheck, Sparkles, WalletCards, BriefcaseBusiness, ClipboardList } from 'lucide-react';
+import { Compass, GraduationCap, LayoutDashboard, Library, Newspaper, Search, ShieldCheck, Sparkles, WalletCards, BriefcaseBusiness, ClipboardList } from 'lucide-react';
 import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem, SidebarSeparator } from '@/components/ui/sidebar';
 
 const groups = [
@@ -16,7 +16,6 @@ const groups = [
     { href: '/courses', label: 'Learning & Courses', icon: GraduationCap },
   ]},
   { label: 'Build & Earn', items: [
-    { href: '/ai-work', label: 'AI Work', icon: Bot },
     { href: '/earnings', label: 'Earning Opportunities', icon: WalletCards },
     { href: '/directory', label: 'Directory', icon: Compass },
   ]},
