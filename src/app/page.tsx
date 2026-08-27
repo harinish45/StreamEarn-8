@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { ArrowRight, BookOpen, Layers3, Search, ShieldCheck, Sparkles, Newspaper, WalletCards, Bot } from 'lucide-react';
+import { ArrowRight, BookOpen, Layers3, Search, ShieldCheck, Sparkles, Newspaper, WalletCards, FolderKanban } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { SidebarProvider, SidebarInset } from '@/components/ui/sidebar';
@@ -12,8 +12,8 @@ const destinations = [
   { href: '/hub', title: 'Resource Hub', description: 'Integrated learning, cybersecurity, careers and platform resources.', icon: Layers3 },
   { href: '/earnings', title: 'Earning Opportunities', description: 'Explore current online earning and digital-work opportunities.', icon: WalletCards },
   { href: '/courses', title: 'Learning & Courses', description: 'Advanced current learning paths for AI and technology.', icon: BookOpen },
+  { href: '/projects', title: 'Projects', description: 'Track what you are building, who you are working with, priorities, progress and next actions.', icon: FolderKanban },
   { href: '/directory', title: 'Directory', description: 'Browse useful businesses, platforms and opportunity listings.', icon: Search },
-  { href: '/ai-work', title: 'AI Work', description: 'Practical AI work paths, workflows and opportunities.', icon: Bot },
 ];
 
 export default function Home(){
