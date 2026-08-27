@@ -1,15 +1,16 @@
 # StreamEarn AI
 
-StreamEarn AI is a unified personal command centre for discovering AI tools and resources, following AI technology news, building skills, finding earning opportunities, tracking internships and scholarships, practising cybersecurity, and managing personal work in one responsive web application.
+StreamEarn AI is a unified personal command centre for discovering current AI tools, following AI technology news, building skills, finding earning opportunities, tracking internships and scholarships, practising cybersecurity, and managing personal work in one responsive web application.
 
 ## Project goals
 
 - Keep useful AI, learning, career and security resources in one place.
 - Prefer direct official sources for external resources.
+- Keep fast-changing ecosystem data curated and date-aware rather than presenting stale entries as current.
 - Separate discovery data from personal tracking state.
 - Preserve user-created state instead of deleting it during filtering or refreshes.
 - Keep interfaces compact, responsive and usable on desktop and mobile.
-- Avoid unnecessary dependencies on external AI providers for local productivity features.
+- Avoid unnecessary external AI/API dependencies for local productivity features.
 
 ## Main application areas
 
@@ -17,9 +18,9 @@ StreamEarn AI is a unified personal command centre for discovering AI tools and 
 The landing dashboard for the combined StreamEarn ecosystem and quick navigation into the major sections.
 
 ### AI Intelligence
-- **AI Tools** — categorized directory of current AI products and services.
-- **Resource Hub** — organized learning, research and reference resources.
-- **Learning & Courses** — structured courses and learning paths.
+- **AI Tools** — categorized directory of current assistants, agents, coding tools, research tools, automation, GTM/lead-generation, creative, security and infrastructure products.
+- **Resource Hub** — organized learning, research, cybersecurity, career and reference resources.
+- **Learning & Courses** — current official academies, courses, certifications and advanced learning paths.
 
 ### Build & Earn
 - **AI Work** — work and productivity-oriented AI resources.
@@ -27,16 +28,49 @@ The landing dashboard for the combined StreamEarn ecosystem and quick navigation
 - **Directory** — broader useful service and resource directory.
 
 ### Opportunities
-- **Internships** — dedicated internship discovery and tracking workflow.
-- **Scholarships** — dedicated scholarship discovery and tracking workflow.
+- **Internships** — verified internship radar with global, India, Tamil Nadu and remote coverage where credible listings are available.
+- **Scholarships** — strict undergraduate scholarship radar.
 
-Internships and scholarships are intentionally separate workflows even though they share common tracking concepts.
+Internships and scholarships are separate workflows even though they share common tracking concepts.
 
 ### Personal
-- **Planner** — tasks, weekly planning, monthly calendar, notes, Sticky Wall and progress tracking.
+- **Planner** — local-first tasks, weekly planning, calendar, notes, recurring work, database, progress and Sticky Wall access.
 
 ### Security
 - **Cybersecurity** — security resources, learning and practice platforms.
+
+## AI news refresh policy
+
+The AI News feed is intentionally short and fresh. Daily refreshes prioritize meaningful developments from the most recent 24-hour window and remove stale items from the primary feed rather than allowing an old archive to masquerade as current news.
+
+Stories should have:
+
+- a real publication date
+- a credible source
+- a working external link
+- a concise, non-invented summary
+- a unique visual seed
+
+## AI Tools refresh policy
+
+The AI Tools directory is organized around practical capabilities rather than hype. Current categories include assistants, agents, coding, app building, research, browser/computer-use, automation, agent frameworks, MCP/tool connectivity, RAG, evaluation, creative, video, voice, productivity, meetings and GTM/sales.
+
+Fast-moving additions are kept in `src/lib/current-ai-additions.ts`, while the broader stable directory lives in `src/lib/current-ai-directory.ts`.
+
+Excluded by policy:
+
+- AI Browser products as a dedicated StreamEarn feature
+- AI Workspace products as a dedicated StreamEarn feature
+- browser automation features built into StreamEarn
+- API-key-dependent AI features added to local workflows
+
+External tools can still be listed as reference products when they are useful and credible; StreamEarn does not silently integrate them into local functionality.
+
+## Learning & Courses refresh policy
+
+The learning section prioritizes official academies and current technical paths. Current examples include OpenAI Academy, Anthropic Academy, Microsoft Learn, Google AI learning, Hugging Face Agents, LangChain Academy, NVIDIA learning and production AI/security paths.
+
+Certification paths are date-aware. Retired certifications should not be presented as current learning targets.
 
 ## Internship & Scholarship tracking
 
@@ -46,6 +80,12 @@ Both opportunity pages retain the directory while allowing personal tracking for
 - Closing soon
 - Open now
 - Upcoming
+
+The display order is always:
+
+`Closing soon → Open now → Upcoming`
+
+Closed listings are excluded from the active radar.
 
 ### Personal status
 - Not reviewed
@@ -61,12 +101,19 @@ Both opportunity pages retain the directory while allowing personal tracking for
 - Opening-status filtering
 - List / grid presentation
 - Official-source links
-- Individual opportunity imagery
+- Official source logos/favicons where available
+- Unique visual image seeds per opportunity card
 - Persistent personal status
 - Favourites
 - Last visited marker
 
-Favourites and personal statuses are stored in browser storage so they remain available when the same browser is used again.
+Favourites, personal status and the last visited opportunity are stored in browser storage so they remain available when the same browser is used again.
+
+### Internship eligibility policy
+The internship radar prioritizes undergraduate technology profiles, especially CSE/cybersecurity, Python, security, AI, research and software roles. Sources are researched globally and across India/Tamil Nadu/remote channels, with preference for recognized companies, startups, universities, research labs, government organizations and credible official portals.
+
+### Scholarship eligibility policy
+The scholarship radar excludes postgraduate and study-abroad programmes. For need-based schemes where household income is an eligibility criterion, the active radar only includes schemes whose published income ceiling is at or below **₹2 lakh**. If no credible current scheme meets the strict criteria, the radar intentionally shows no verified match instead of inventing eligibility.
 
 ## Planner
 
@@ -77,45 +124,23 @@ The Planner is a local-first productivity workspace designed to keep everyday wo
 - Week
 - Calendar
 - To-Do
-- Notes
 - Sticky Wall
+- Pages & Notes
+- Recurring
+- Database
 - Progress
+- Settings
 
-### Task capabilities
-- Checkbox completion
-- Status: Not started / In progress / Done / Blocked
-- Priority: None / Low / Medium / High
-- Due date
-- Tags
-- Description
-- Search
-- Filtering
-- Sorting
-- Manual ordering
-- Move up / move down
-- Archive / restore
-- Task detail panel
-- Monthly calendar integration
+### Reliability
+Planner data is normalized before use so malformed or stale localStorage data does not crash the route. The Planner has a loading-safe client hydration path and carries unfinished tasks forward to the current day without duplicating them.
 
-### Sticky Wall
-Sticky Wall is embedded inside Planner rather than requiring another application route.
-
-- Multiple pages/boards
-- Independent notes per page
-- Dragging
-- Completion checkbox
-- Search
-- Archive / restore
-- Randomized note colour/design/rotation
-- Persistent browser storage
+Planner functionality does not require an external LLM provider or API key.
 
 ## Data and persistence
 
 The application separates curated directory data from personal browser state.
 
 Typical personal state is stored in `localStorage`, including Planner data, Sticky Wall data and opportunity tracking metadata. Data is normalized before use so stale or incomplete browser state does not crash the application.
-
-The application does not require an external LLM provider for Planner functionality.
 
 ## Technology
 
@@ -146,24 +171,20 @@ StreamEarn-8/
 │  │  ├─ internships/             # Internship workflow
 │  │  ├─ scholarships/            # Scholarship workflow
 │  │  ├─ news/                    # AI technology news
-│  │  ├─ opportunities/            # Shared/legacy opportunities route
-│  │  └─ planner-v4/               # Planner entry route
+│  │  └─ planner/                 # Stable Planner route
 │  │
 │  ├─ components/
 │  │  ├─ unified-sidebar.tsx      # Global navigation
 │  │  ├─ planner-sticky-workspace.tsx
-│  │  ├─ opportunity-type-page.tsx # Shared opportunity UI/data layer
-│  │  └─ opportunity-tracker-page.tsx # Enhanced internship/scholarship tracker
+│  │  ├─ opportunity-type-page.tsx # Internship/scholarship UI and tracking
+│  │  └─ opportunity-tracker-page.tsx
 │  │
 │  ├─ lib/
-│  │  ├─ ai-tools-data.tsx
+│  │  ├─ ai-news.ts
 │  │  ├─ current-ai-additions.ts
 │  │  ├─ current-ai-directory.ts
 │  │  ├─ courses-data.ts
-│  │  ├─ google-ai-ecosystem-data.ts
-│  │  ├─ jobs-and-careers-data.ts
 │  │  ├─ lead-automation-data.ts
-│  │  ├─ local-store.ts
 │  │  └─ resource-data.ts
 │  │
 │  └─ ...
@@ -174,7 +195,22 @@ StreamEarn-8/
 └─ configuration files
 ```
 
-The repository also contains additional component and data modules used by the individual sections. The list above highlights the main application structure rather than every generated/supporting file.
+## Important routes
+
+| Area | Route |
+| --- | --- |
+| Command Center | `/` |
+| AI Tools | `/ai-tools` |
+| Resource Hub | `/hub` |
+| Learning & Courses | `/courses` |
+| AI Work | `/ai-work` |
+| Earning Opportunities | `/earnings` |
+| Directory | `/directory` |
+| Internships | `/internships` |
+| Scholarships | `/scholarships` |
+| AI Tech News | `/news` |
+| Cybersecurity | `/cybersecurity` |
+| Planner | `/planner` |
 
 ## Local development
 
@@ -214,23 +250,6 @@ production
 
 Always verify the Render deployment status after pushing a production change.
 
-## Current important routes
-
-| Area | Route |
-| --- | --- |
-| Command Center | `/` |
-| AI Tools | `/ai-tools` |
-| Resource Hub | `/hub` |
-| Learning & Courses | `/courses` |
-| AI Work | `/ai-work` |
-| Earning Opportunities | `/earnings` |
-| Directory | `/directory` |
-| Internships | `/internships` |
-| Scholarships | `/scholarships` |
-| AI Tech News | `/news` |
-| Cybersecurity | `/cybersecurity` |
-| Planner | `/planner-v4` |
-
 ## UI principles
 
 - Keep important controls above the fold where practical.
@@ -240,12 +259,20 @@ Always verify the Render deployment status after pushing a production change.
 - Do not duplicate controls that already exist in the global header/sidebar.
 - Give external resources a clear official-source action.
 - Preserve user state across refreshes whenever technically reasonable.
+- Give every new visual card a unique non-repeating image seed.
 
-## Opportunity update policy
+## Daily maintenance policy
 
-New opportunity records should be **additive**. A new daily update should append or update records rather than clearing the existing directory. Personal favourites and application status must remain attached to the relevant opportunity id.
+Each refresh should:
 
-When an opportunity is no longer suitable for discovery, it can be represented with an appropriate opening status or retained as historical/reference data rather than silently deleting a user's tracking history.
+1. Verify current AI news before replacing the primary feed.
+2. Refresh current AI tools without adding prohibited StreamEarn integrations.
+3. Refresh official academies, courses and certification paths.
+4. Review Resource Hub links for obvious stale or broken destinations.
+5. Re-check internship and scholarship eligibility/deadlines before publishing active listings.
+6. Remove closed/stale opportunity records from the active radar while preserving local personal state where IDs remain relevant.
+7. Check important internal navigation routes, especially the unified Planner.
+8. Commit verified changes directly to `main` so Render can auto-deploy.
 
 ## Security and reliability
 
@@ -253,21 +280,11 @@ When an opportunity is no longer suitable for discovery, it can be represented w
 - Do not let malformed localStorage state crash a route.
 - Keep external links target-safe with appropriate `rel` attributes.
 - Avoid introducing provider/API requirements for features that do not need them.
-- Check production build logs before declaring a deployment successful.
+- Never invent deadlines, eligibility, tools, news, links or functionality.
+- Prefer official sources for opportunities and learning.
 
 ## Ownership and repository
 
 Repository: `https://github.com/harinish45/StreamEarn-8`
 
 Production: `https://streamearn-ai.onrender.com/`
-
-## Maintenance checklist
-
-Before merging a significant change:
-
-1. Verify the affected route locally.
-2. Verify the production build.
-3. Check for stale or incompatible localStorage schemas when changing client state.
-4. Confirm all navigation links point to existing routes.
-5. Check Render deployment status.
-6. Test the affected page after deployment, including refresh and direct URL navigation.
