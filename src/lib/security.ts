@@ -6,8 +6,8 @@ const WINDOW_MS = 60_000;
 const MAX_BUCKETS = 5000;
 
 function clientKey(request: NextRequest) {
-  // Render terminates TLS and supplies the forwarding headers. Prefer the
-  // platform-provided client address; never trust arbitrary query/body data.
+  // Render terminates TLS and supplies these headers. Never derive the key
+  // from query/body data, which an attacker can freely control.
   const real = request.headers.get('x-real-ip')?.trim();
   const forwarded = request.headers.get('x-forwarded-for')?.split(',')[0]?.trim();
   return real || forwarded || 'unknown';
@@ -28,9 +28,16 @@ export function sameOrigin(request: NextRequest) {
 
 export function rejectCrossOrigin(request: NextRequest) {
   if (!sameOrigin(request)) {
+    return NextResponse.json({ error: 'Forbidden' }, { status: 403, headers: { 'Cache-Control': 'no-store' } });
+  }
+  return null;
+}
+
+export function rejectUnsupportedMethod(request: NextRequest, allowed: readonly string[]) {
+  if (!allowed.includes(request.method)) {
     return NextResponse.json(
-      { error: 'Forbidden' },
-      { status: 403, headers: { 'Cache-Control': 'no-store' } },
+      { error: 'Method not allowed' },
+      { status: 405, headers: { Allow: allowed.join(', '), 'Cache-Control': 'no-store' } },
     );
   }
   return null;
@@ -53,10 +60,7 @@ export function rateLimit(request: NextRequest, limit = 120) {
   current.count += 1;
   if (current.count > limit) {
     const retry = Math.max(1, Math.ceil((current.resetAt - now) / 1000));
-    return NextResponse.json(
-      { error: 'Too many requests' },
-      { status: 429, headers: { 'Cache-Control': 'no-store', 'Retry-After': String(retry) } },
-    );
+    return NextResponse.json({ error: 'Too many requests' }, { status: 429, headers: { 'Cache-Control': 'no-store', 'Retry-After': String(retry) } });
   }
   return null;
 }
@@ -69,13 +73,11 @@ export function safeHttpUrl(value: unknown, max = 500) {
     if (url.protocol !== 'https:' && url.protocol !== 'http:') return '';
     if (url.username || url.password) return '';
     return url.toString();
-  } catch {
-    return '';
-  }
+  } catch { return ''; }
 }
 
 export function safeId(value: unknown) {
-  return typeof value === 'string' && /^[0-9a-f-]{36}$/i.test(value) ? value : '';
+  return typeof value === 'string' && /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(value) ? value : '';
 }
 
 export function noStore(response: NextResponse) {
