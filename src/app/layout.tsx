@@ -21,6 +21,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
+      <head>
+        <link rel="stylesheet" href="/project-command-center.css" />
+      </head>
       <body
         className={`${inter.variable} ${playfair.variable} ${courier.variable} ${orbitron.variable} font-sans antialiased`}
       >
