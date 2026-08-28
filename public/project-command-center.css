@@ -1,0 +1,21 @@
+/* Project Command Center form polish */
+main.bg-\[\#0d0c0a\] label { display:block; min-width:0; color:#d4cdc2; font-size:11px; font-weight:600; letter-spacing:.02em; }
+main.bg-\[\#0d0c0a\] label > input,
+main.bg-\[\#0d0c0a\] label > textarea,
+main.bg-\[\#0d0c0a\] label > select { box-sizing:border-box; display:block; width:100%; min-width:0; margin-top:8px; border:1px solid #2a2622; border-radius:10px; background:#0d0c0a; color:#f5f0e8; padding:10px 12px; font:inherit; font-size:13px; line-height:1.35; outline:none; transition:border-color .15s ease,box-shadow .15s ease,background .15s ease; }
+main.bg-\[\#0d0c0a\] label > input { height:42px; }
+main.bg-\[\#0d0c0a\] label > textarea { min-height:88px; resize:vertical; }
+main.bg-\[\#0d0c0a\] label > select { height:42px; appearance:auto; }
+main.bg-\[\#0d0c0a\] label > input:focus,
+main.bg-\[\#0d0c0a\] label > textarea:focus,
+main.bg-\[\#0d0c0a\] label > select:focus { border-color:#ff6b5a; box-shadow:0 0 0 3px rgba(255,107,90,.09); background:#12100e; }
+main.bg-\[\#0d0c0a\] label > input::placeholder,
+main.bg-\[\#0d0c0a\] label > textarea::placeholder { color:#5a5550; opacity:1; }
+main.bg-\[\#0d0c0a\] input[type=date] { color-scheme:dark; }
+main.bg-\[\#0d0c0a\] input[type=number] { appearance:textfield; }
+main.bg-\[\#0d0c0a\] input[type=number]::-webkit-inner-spin-button,
+main.bg-\[\#0d0c0a\] input[type=number]::-webkit-outer-spin-button { appearance:none; margin:0; }
+@media (max-width:767px){
+ main.bg-\[\#0d0c0a\] .md\:grid-cols-2 { grid-template-columns:1fr; }
+ main.bg-\[\#0d0c0a\] .md\:col-span-2 { grid-column:auto; }
+}
