@@ -15,7 +15,68 @@ main.bg-\[\#0d0c0a\] input[type=date] { color-scheme:dark; }
 main.bg-\[\#0d0c0a\] input[type=number] { appearance:textfield; }
 main.bg-\[\#0d0c0a\] input[type=number]::-webkit-inner-spin-button,
 main.bg-\[\#0d0c0a\] input[type=number]::-webkit-outer-spin-button { appearance:none; margin:0; }
+
+/* New Project modal — match the supplied Command Center reference exactly. */
+main.bg-\[\#0d0c0a\] > div:has(input[placeholder="e.g. StreamEarn"]) {
+  box-sizing:border-box;
+  width:min(720px,calc(100vw - 32px));
+  max-height:calc(100vh - 48px);
+  overflow:auto;
+  margin:auto;
+  border:1px solid #2a2622 !important;
+  border-radius:15px !important;
+  background:#100f0d !important;
+  box-shadow:0 28px 90px rgba(0,0,0,.62),0 0 0 1px rgba(255,255,255,.015) !important;
+  color:#f1ece3;
+}
+main.bg-\[\#0d0c0a\] > div:has(input[placeholder="e.g. StreamEarn"]) > div:first-child {
+  border-bottom:1px solid #25221f !important;
+  padding:30px 30px 26px !important;
+}
+main.bg-\[\#0d0c0a\] > div:has(input[placeholder="e.g. StreamEarn"]) h2,
+main.bg-\[\#0d0c0a\] > div:has(input[placeholder="e.g. StreamEarn"]) h3 {
+  font-family:var(--font-serif),Georgia,serif !important;
+  font-style:italic !important;
+  font-weight:500 !important;
+  letter-spacing:-.025em;
+  color:#f1ece3 !important;
+}
+main.bg-\[\#0d0c0a\] > div:has(input[placeholder="e.g. StreamEarn"]) label {
+  color:#8f8980 !important;
+  font-size:10px !important;
+  font-weight:700 !important;
+  letter-spacing:.09em !important;
+  text-transform:uppercase !important;
+}
+main.bg-\[\#0d0c0a\] > div:has(input[placeholder="e.g. StreamEarn"]) input,
+main.bg-\[\#0d0c0a\] > div:has(input[placeholder="e.g. StreamEarn"]) textarea,
+main.bg-\[\#0d0c0a\] > div:has(input[placeholder="e.g. StreamEarn"]) select {
+  border-color:#292622 !important;
+  border-radius:10px !important;
+  background:#0d0c0b !important;
+  color:#eee8df !important;
+  box-shadow:none !important;
+  font-family:var(--font-sans),Inter,sans-serif !important;
+}
+main.bg-\[\#0d0c0a\] > div:has(input[placeholder="e.g. StreamEarn"]) input:focus,
+main.bg-\[\#0d0c0a\] > div:has(input[placeholder="e.g. StreamEarn"]) textarea:focus,
+main.bg-\[\#0d0c0a\] > div:has(input[placeholder="e.g. StreamEarn"]) select:focus {
+  border-color:#ff6b5a !important;
+  box-shadow:0 0 0 3px rgba(255,107,90,.08) !important;
+  outline:none !important;
+}
+main.bg-\[\#0d0c0a\] > div:has(input[placeholder="e.g. StreamEarn"]) input::placeholder,
+main.bg-\[\#0d0c0a\] > div:has(input[placeholder="e.g. StreamEarn"]) textarea::placeholder { color:#5f5a54 !important; opacity:1; }
+main.bg-\[\#0d0c0a\] > div:has(input[placeholder="e.g. StreamEarn"]) button {
+  border-radius:10px;
+  transition:background-color .15s ease,border-color .15s ease,transform .15s ease;
+}
+main.bg-\[\#0d0c0a\] > div:has(input[placeholder="e.g. StreamEarn"]) button:focus-visible { outline:2px solid rgba(255,107,90,.55); outline-offset:2px; }
+main.bg-\[\#0d0c0a\] > div:has(input[placeholder="e.g. StreamEarn"]) input[type=date] { color-scheme:dark; }
+
 @media (max-width:767px){
  main.bg-\[\#0d0c0a\] .md\:grid-cols-2 { grid-template-columns:1fr; }
  main.bg-\[\#0d0c0a\] .md\:col-span-2 { grid-column:auto; }
+ main.bg-\[\#0d0c0a\] > div:has(input[placeholder="e.g. StreamEarn"]) { width:calc(100vw - 20px); max-height:calc(100vh - 20px); border-radius:13px !important; }
+ main.bg-\[\#0d0c0a\] > div:has(input[placeholder="e.g. StreamEarn"]) > div:first-child { padding:22px 20px 20px !important; }
 }
