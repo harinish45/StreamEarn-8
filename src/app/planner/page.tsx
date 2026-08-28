@@ -1,7 +1,7 @@
-import { redirect } from 'next/navigation';
+import PlannerV4 from '../planner-v4/page';
 
 export const dynamic = 'force-dynamic';
 
-export default function PlannerPage() {
-  redirect('/planner-v4');
-}
+// /planner is the canonical unified Planner entrypoint. Reuse the hardened
+// implementation directly instead of adding a client-visible redirect.
+export default PlannerV4;
