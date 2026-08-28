@@ -3,6 +3,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { rateLimit, rejectCrossOrigin, rejectUnsupportedMethod } from '@/lib/security';
 
 const API_METHODS = ['GET', 'HEAD', 'OPTIONS', 'POST', 'PUT', 'PATCH', 'DELETE'] as const;
+const SUPABASE_ORIGIN = 'https://xhmaqgyyajyxacbtdutz.supabase.co';
 
 export async function middleware(request: NextRequest) {
   const response = NextResponse.next({ request: { headers: request.headers } });
@@ -60,7 +61,7 @@ function security(response: NextResponse, request: NextRequest) {
   response.headers.set('X-Permitted-Cross-Domain-Policies', 'none');
   response.headers.set('X-Download-Options', 'noopen');
   response.headers.set('Origin-Agent-Cluster', '?1');
-  response.headers.set('Content-Security-Policy', "default-src 'self'; base-uri 'self'; frame-ancestors 'none'; object-src 'none'; form-action 'self'; img-src 'self' data: blob: https:; font-src 'self' data: https:; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline' https://*.supabase.co; connect-src 'self' https://*.supabase.co wss://*.supabase.co; frame-src 'self' https://*.supabase.co; upgrade-insecure-requests");
+  response.headers.set('Content-Security-Policy', `default-src 'self'; base-uri 'self'; frame-ancestors 'none'; object-src 'none'; form-action 'self'; img-src 'self' data: blob: https://picsum.photos https://placehold.co; font-src 'self' data: https://fonts.gstatic.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; script-src 'self' 'unsafe-inline' ${SUPABASE_ORIGIN}; connect-src 'self' ${SUPABASE_ORIGIN} wss://xhmaqgyyajyxacbtdutz.supabase.co; frame-src 'self' ${SUPABASE_ORIGIN}; upgrade-insecure-requests`);
   response.headers.set('Cache-Control', request.nextUrl.pathname.startsWith('/api/') ? 'private, no-store' : 'no-cache');
   response.headers.set('X-Robots-Tag', 'noindex, nofollow, noarchive');
   if (request.nextUrl.protocol === 'https:') response.headers.set('Strict-Transport-Security', 'max-age=31536000; includeSubDomains; preload');
