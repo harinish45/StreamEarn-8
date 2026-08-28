@@ -21,6 +21,7 @@ The landing dashboard for the combined StreamEarn ecosystem and quick navigation
 - **AI Tools** — categorized directory of current assistants, agents, coding tools, research tools, automation, GTM/lead-generation, creative, security and infrastructure products.
 - **Resource Hub** — organized learning, research, cybersecurity, career and reference resources.
 - **Learning & Courses** — current official academies, courses, certifications and advanced learning paths.
+- **AI News** — short, verified current feed of meaningful AI and technology developments.
 
 ### Build & Earn
 - **AI Work** — work and productivity-oriented AI resources.
@@ -34,14 +35,14 @@ The landing dashboard for the combined StreamEarn ecosystem and quick navigation
 Internships and scholarships are separate workflows even though they share common tracking concepts.
 
 ### Personal
-- **Planner** — local-first tasks, weekly planning, calendar, notes, recurring work, database, progress and Sticky Wall access.
+- **Planner** — local-first tasks, weekly planning, monthly calendar, notes, progress and Sticky Wall access.
 
 ### Security
 - **Cybersecurity** — security resources, learning and practice platforms.
 
 ## AI news refresh policy
 
-The AI News feed is intentionally short and fresh. Daily refreshes prioritize meaningful developments from the most recent 24-hour window and remove stale items from the primary feed rather than allowing an old archive to masquerade as current news.
+The AI News primary feed is intentionally short and fresh. Daily refreshes prioritize meaningful developments from the most recent verified window and replace stale items in the primary feed rather than allowing old stories to masquerade as current.
 
 Stories should have:
 
@@ -51,9 +52,11 @@ Stories should have:
 - a concise, non-invented summary
 - a unique visual seed
 
+The Aug 28, 2026 refresh covers verified Aug 27 developments across agentic hardware, AI security, coding-agent abuse, AI infrastructure, enterprise agents and industry strategy.
+
 ## AI Tools refresh policy
 
-The AI Tools directory is organized around practical capabilities rather than hype. Current categories include assistants, agents, coding, app building, research, browser/computer-use, automation, agent frameworks, MCP/tool connectivity, RAG, evaluation, creative, video, voice, productivity, meetings and GTM/sales.
+The AI Tools directory is organized around practical capabilities rather than hype. Current additions cover assistants, agents, coding, research, GTM/lead-generation automation, creative production, AI security, observability and infrastructure.
 
 Fast-moving additions are kept in `src/lib/current-ai-additions.ts`, while the broader stable directory lives in `src/lib/current-ai-directory.ts`.
 
@@ -68,9 +71,15 @@ External tools can still be listed as reference products when they are useful an
 
 ## Learning & Courses refresh policy
 
-The learning section prioritizes official academies and current technical paths. Current examples include OpenAI Academy, Anthropic Academy, Microsoft Learn, Google AI learning, Hugging Face Agents, LangChain Academy, NVIDIA learning and production AI/security paths.
+The learning section prioritizes official academies and current technical paths. Current examples include OpenAI Academy, Anthropic Academy, Microsoft Learn, Google AI learning, Hugging Face Agents and Context courses, LangChain Academy, NVIDIA learning and production AI/security paths.
+
+The catalog now also tracks current builder material such as OpenAI Academy Builder Bootcamp: Agents, Codex Bootcamp, Google's AI Professional Certificate and Build with Gemini 2026.
 
 Certification paths are date-aware. Retired certifications should not be presented as current learning targets.
+
+## Resource Hub maintenance
+
+Resource Hub resources should point to working official destinations. During refreshes, known redirects and moved learning hubs are corrected rather than leaving stale paths in the catalog. For example, Google's AI education destination now resolves through `https://ai.google/learn-ai-skills/` while remaining discoverable through the official Google AI learning entrypoint.
 
 ## Internship & Scholarship tracking
 
@@ -112,8 +121,12 @@ Favourites, personal status and the last visited opportunity are stored in brows
 ### Internship eligibility policy
 The internship radar prioritizes undergraduate technology profiles, especially CSE/cybersecurity, Python, security, AI, research and software roles. Sources are researched globally and across India/Tamil Nadu/remote channels, with preference for recognized companies, startups, universities, research labs, government organizations and credible official portals.
 
+For the Aug 28, 2026 refresh, only two currently verifiable active matches were retained: the Indian Statistical Institute Chennai Winter Internship Programme (deadline Sep 7, 2026; undergraduate applicants must have completed at least year two) and the AICTE Internship Portal's InternNova Cyber Security Intern (deadline Sep 10, 2026; remote, six weeks). Outreachy and old DRDO listings were removed from the active radar after eligibility/deadline verification rather than being presented as current matches.
+
 ### Scholarship eligibility policy
 The scholarship radar excludes postgraduate and study-abroad programmes. For need-based schemes where household income is an eligibility criterion, the active radar only includes schemes whose published income ceiling is at or below **₹2 lakh**. If no credible current scheme meets the strict criteria, the radar intentionally shows no verified match instead of inventing eligibility.
+
+As of the Aug 28, 2026 refresh, no currently verified scholarship was added to the active radar under the stored strict criteria. The National Scholarship Portal is open for AY 2026-27, but available schemes must still be checked individually for year-of-study, merit, domicile and income eligibility before being surfaced.
 
 ## Planner
 
@@ -124,15 +137,14 @@ The Planner is a local-first productivity workspace designed to keep everyday wo
 - Week
 - Calendar
 - To-Do
+- Notes
 - Sticky Wall
-- Pages & Notes
-- Recurring
-- Database
 - Progress
-- Settings
 
 ### Reliability
-Planner data is normalized before use so malformed or stale localStorage data does not crash the route. The Planner has a loading-safe client hydration path and carries unfinished tasks forward to the current day without duplicating them.
+The canonical `/planner` route now renders the hardened Planner implementation directly rather than performing a client-visible redirect. Planner data is normalized before use so malformed or stale localStorage data does not crash the route. The Planner has a loading-safe client hydration path and preserves valid stored state while ignoring malformed records.
+
+The monthly calendar is rendered as a normal seven-column calendar, while the weekly view and To-Do workflow remain compact and responsive.
 
 Planner functionality does not require an external LLM provider or API key.
 
@@ -171,7 +183,8 @@ StreamEarn-8/
 │  │  ├─ internships/             # Internship workflow
 │  │  ├─ scholarships/            # Scholarship workflow
 │  │  ├─ news/                    # AI technology news
-│  │  └─ planner/                 # Stable Planner route
+│  │  ├─ planner/                 # Canonical Planner route
+│  │  └─ planner-v4/              # Hardened Planner implementation
 │  │
 │  ├─ components/
 │  │  ├─ unified-sidebar.tsx      # Global navigation
@@ -268,11 +281,12 @@ Each refresh should:
 1. Verify current AI news before replacing the primary feed.
 2. Refresh current AI tools without adding prohibited StreamEarn integrations.
 3. Refresh official academies, courses and certification paths.
-4. Review Resource Hub links for obvious stale or broken destinations.
+4. Review Resource Hub links for obvious stale or broken destinations and correct verified redirects.
 5. Re-check internship and scholarship eligibility/deadlines before publishing active listings.
 6. Remove closed/stale opportunity records from the active radar while preserving local personal state where IDs remain relevant.
 7. Check important internal navigation routes, especially the unified Planner.
-8. Commit verified changes directly to `main` so Render can auto-deploy.
+8. Verify list/grid controls, official source links, logos and unique visual seeds.
+9. Commit verified changes directly to `main` so Render can auto-deploy.
 
 ## Security and reliability
 
