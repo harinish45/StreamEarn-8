@@ -13,7 +13,7 @@ export type Project = {
 
 const file = path.join(process.cwd(), 'src/data/projects/projects.json');
 const isProduction = process.env.NODE_ENV === 'production';
-const configured = () => Boolean(process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY);
+const configured = () => Boolean(process.env.NEXT_PUBLIC_SUPABASE_URL && (process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY));
 
 async function legacy(): Promise<Project[]> {
   if (isProduction) throw new Error('Project persistence is unavailable: Supabase is not configured');
@@ -29,43 +29,53 @@ async function db() {
   }
   const sb = await createSupabaseServerClient();
   const { data, error } = await sb.auth.getClaims();
-  if (error || !data?.claims?.sub) throw new Error('Unauthorized');
-  return sb;
+  const userId = data?.claims?.sub;
+  if (error || !userId) throw new Error('Unauthorized');
+  return { sb, userId };
 }
 
-function fromRow(r: any): Project {
+function fromRow(r: any, people: string[] = []): Project {
   return {
-    id: r.id, name: r.name, description: r.description || '', people: Array.isArray(r.people) ? r.people : [],
-    organization: r.organization || '', role: r.role || '', priority: r.priority, status: r.status,
-    progress: r.progress, startDate: r.start_date || undefined, targetDate: r.target_date || undefined,
-    phase: r.phase || '', techStack: Array.isArray(r.tech_stack) ? r.tech_stack : [],
-    repository: r.repository || undefined, liveUrl: r.live_url || undefined, nextAction: r.next_action || '',
-    blockers: Array.isArray(r.blockers) ? r.blockers : [], notes: Array.isArray(r.notes) ? r.notes : [],
+    id: r.id, name: r.name, description: r.description || '', people, organization: r.organization || '', role: r.role || '',
+    priority: r.priority, status: r.status, progress: r.progress, startDate: r.start_date || undefined, targetDate: r.target_date || undefined,
+    phase: r.phase || '', techStack: Array.isArray(r.tech_stack) ? r.tech_stack : [], repository: r.repository || undefined, liveUrl: r.live_url || undefined,
+    nextAction: r.next_action || '', blockers: Array.isArray(r.blockers) ? r.blockers : [], notes: Array.isArray(r.notes) ? r.notes : [],
     createdAt: r.created_at, updatedAt: r.updated_at, archivedAt: r.archived_at || undefined,
   };
 }
 
-function row(p: Project) {
+function row(p: Project, ownerId: string) {
   return {
-    id: p.id, name: p.name, description: p.description, organization: p.organization, role: p.role,
-    priority: p.priority, status: p.status, progress: p.progress, start_date: p.startDate || null,
-    target_date: p.targetDate || null, phase: p.phase, tech_stack: p.techStack, repository: p.repository || '',
-    live_url: p.liveUrl || '', next_action: p.nextAction, blockers: p.blockers, notes: p.notes,
-    created_at: p.createdAt, updated_at: p.updatedAt, archived_at: p.archivedAt || null,
+    id: p.id, owner_id: ownerId, name: p.name, description: p.description, organization: p.organization, role: p.role,
+    priority: p.priority, status: p.status, progress: p.progress, start_date: p.startDate || null, target_date: p.targetDate || null,
+    phase: p.phase, tech_stack: p.techStack, repository: p.repository || '', live_url: p.liveUrl || '', next_action: p.nextAction,
+    blockers: p.blockers, notes: p.notes, created_at: p.createdAt, updated_at: p.updatedAt, archived_at: p.archivedAt || null,
   };
 }
 
 export async function listProjects() {
-  const sb = await db();
-  if (!sb) return legacy();
-  const { data, error } = await sb.from('projects').select('*').order('updated_at', { ascending: false });
+  const ctx = await db();
+  if (!ctx) return legacy();
+  const { sb, userId } = ctx;
+  const { data, error } = await sb.from('projects').select('*').eq('owner_id', userId).order('updated_at', { ascending: false });
   if (error) throw error;
-  return (data || []).map(fromRow);
+  const projects = data || [];
+  if (!projects.length) return [];
+  const ids = projects.map(p => p.id);
+  const { data: peopleRows, error: peopleError } = await sb.from('project_people').select('project_id,name').eq('owner_id', userId).in('project_id', ids);
+  if (peopleError) throw peopleError;
+  const peopleByProject = new Map<string, string[]>();
+  for (const person of peopleRows || []) {
+    const current = peopleByProject.get(person.project_id) || [];
+    current.push(person.name);
+    peopleByProject.set(person.project_id, current);
+  }
+  return projects.map(p => fromRow(p, peopleByProject.get(p.id) || []));
 }
 
 export async function addProject(p: Project) {
-  const sb = await db();
-  if (!sb) {
+  const ctx = await db();
+  if (!ctx) {
     const old = await legacy();
     if (old.some(x => x.id === p.id)) throw new Error('Project already exists');
     const tmp = `${file}.${process.pid}.tmp`;
@@ -73,14 +83,22 @@ export async function addProject(p: Project) {
     await fs.rename(tmp, file);
     return p;
   }
-  const { data, error } = await sb.from('projects').insert(row(p)).select('*').single();
+  const { sb, userId } = ctx;
+  const { data, error } = await sb.from('projects').insert(row(p, userId)).select('*').single();
   if (error) throw error;
-  return fromRow(data);
+  if (p.people.length) {
+    const { error: peopleError } = await sb.from('project_people').insert(p.people.map(name => ({ project_id: p.id, owner_id: userId, name, role: '', organization: p.organization || '', notes: '' })));
+    if (peopleError) {
+      await sb.from('projects').delete().eq('id', p.id).eq('owner_id', userId);
+      throw peopleError;
+    }
+  }
+  return fromRow(data, p.people);
 }
 
 export async function archiveProject(id: string) {
-  const sb = await db();
-  if (!sb) {
+  const ctx = await db();
+  if (!ctx) {
     const old = await legacy();
     const now = new Date().toISOString();
     const next = old.map(p => p.id === id ? { ...p, status: 'archived' as const, archivedAt: now, updatedAt: now } : p);
@@ -90,6 +108,7 @@ export async function archiveProject(id: string) {
     await fs.rename(tmp, file);
     return;
   }
-  const { error } = await sb.from('projects').update({ status: 'archived', archived_at: new Date().toISOString() }).eq('id', id);
+  const { sb, userId } = ctx;
+  const { error } = await sb.from('projects').update({ status: 'archived', archived_at: new Date().toISOString() }).eq('id', id).eq('owner_id', userId);
   if (error) throw error;
 }
