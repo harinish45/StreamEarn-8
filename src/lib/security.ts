@@ -3,11 +3,15 @@ import { NextRequest, NextResponse } from 'next/server';
 type Bucket = { count: number; resetAt: number };
 const buckets = new Map<string, Bucket>();
 const WINDOW_MS = 60_000;
+const MAX_BUCKETS = 5000;
 
 export function sameOrigin(request: NextRequest) {
+  const target = new URL(request.url).origin;
   const origin = request.headers.get('origin');
-  if (!origin) return true;
-  try { return new URL(origin).origin === new URL(request.url).origin; } catch { return false; }
+  if (origin) { try { return new URL(origin).origin === target; } catch { return false; } }
+  const referer = request.headers.get('referer');
+  if (referer) { try { return new URL(referer).origin === target; } catch { return false; } }
+  return request.headers.get('sec-fetch-site') === 'same-origin';
 }
 
 export function rejectCrossOrigin(request: NextRequest) {
@@ -23,6 +27,7 @@ export function rateLimit(request: NextRequest, limit = 120) {
   const now = Date.now();
   const current = buckets.get(key);
   if (!current || current.resetAt <= now) {
+    if (buckets.size >= MAX_BUCKETS) for (const [k, v] of buckets) { if (v.resetAt <= now) buckets.delete(k); if (buckets.size < MAX_BUCKETS) break; }
     buckets.set(key, { count: 1, resetAt: now + WINDOW_MS });
     return null;
   }
@@ -37,10 +42,7 @@ export function rateLimit(request: NextRequest, limit = 120) {
 export function safeHttpUrl(value: unknown, max = 500) {
   if (typeof value !== 'string' || !value.trim()) return '';
   const candidate = value.trim().slice(0, max);
-  try {
-    const url = new URL(candidate);
-    return url.protocol === 'https:' || url.protocol === 'http:' ? url.toString() : '';
-  } catch { return ''; }
+  try { const url = new URL(candidate); return url.protocol === 'https:' || url.protocol === 'http:' ? url.toString() : ''; } catch { return ''; }
 }
 
 export function noStore(response: NextResponse) {
