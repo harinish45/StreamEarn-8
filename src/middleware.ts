@@ -1,6 +1,8 @@
 import { createServerClient } from '@supabase/ssr';
 import { NextRequest, NextResponse } from 'next/server';
-import { rateLimit, rejectCrossOrigin } from '@/lib/security';
+import { rateLimit, rejectCrossOrigin, rejectUnsupportedMethod } from '@/lib/security';
+
+const API_METHODS = ['GET', 'HEAD', 'OPTIONS', 'POST', 'PUT', 'PATCH', 'DELETE'] as const;
 
 export async function middleware(request: NextRequest) {
   const response = NextResponse.next({ request: { headers: request.headers } });
@@ -9,6 +11,8 @@ export async function middleware(request: NextRequest) {
   const publicPath = path === '/login' || path.startsWith('/_next/') || path === '/favicon.ico' || path === '/api/health';
 
   if (isApi && path !== '/api/health') {
+    const unsupported = rejectUnsupportedMethod(request, API_METHODS);
+    if (unsupported) return security(unsupported, request);
     const limited = rateLimit(request, request.method === 'GET' ? 180 : 60);
     if (limited) return security(limited, request);
     if (!['GET', 'HEAD', 'OPTIONS'].includes(request.method)) {
@@ -24,7 +28,12 @@ export async function middleware(request: NextRequest) {
   const supabase = createServerClient(url, key, {
     cookies: {
       getAll: () => request.cookies.getAll(),
-      setAll(cookiesToSet) { cookiesToSet.forEach(({ name, value, options }) => { request.cookies.set(name, value); response.cookies.set(name, value, options); }); },
+      setAll(cookiesToSet) {
+        cookiesToSet.forEach(({ name, value, options }) => {
+          request.cookies.set(name, value);
+          response.cookies.set(name, value, options);
+        });
+      },
     },
   });
   const { data } = await supabase.auth.getClaims();
@@ -44,7 +53,7 @@ function security(response: NextResponse, request: NextRequest) {
   response.headers.set('X-Frame-Options', 'DENY');
   response.headers.set('X-Content-Type-Options', 'nosniff');
   response.headers.set('Referrer-Policy', 'strict-origin-when-cross-origin');
-  response.headers.set('Permissions-Policy', 'camera=(), microphone=(), geolocation=(), payment=()');
+  response.headers.set('Permissions-Policy', 'camera=(), microphone=(), geolocation=(), payment=(), usb=(), bluetooth=(), serial=()');
   response.headers.set('Cross-Origin-Opener-Policy', 'same-origin');
   response.headers.set('Cross-Origin-Resource-Policy', 'same-origin');
   response.headers.set('X-DNS-Prefetch-Control', 'off');
@@ -53,6 +62,7 @@ function security(response: NextResponse, request: NextRequest) {
   response.headers.set('Origin-Agent-Cluster', '?1');
   response.headers.set('Content-Security-Policy', "default-src 'self'; base-uri 'self'; frame-ancestors 'none'; object-src 'none'; form-action 'self'; img-src 'self' data: blob: https:; font-src 'self' data: https:; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline' https://*.supabase.co; connect-src 'self' https://*.supabase.co wss://*.supabase.co; frame-src 'self' https://*.supabase.co; upgrade-insecure-requests");
   response.headers.set('Cache-Control', request.nextUrl.pathname.startsWith('/api/') ? 'private, no-store' : 'no-cache');
+  response.headers.set('X-Robots-Tag', 'noindex, nofollow, noarchive');
   if (request.nextUrl.protocol === 'https:') response.headers.set('Strict-Transport-Security', 'max-age=31536000; includeSubDomains; preload');
   return response;
 }
