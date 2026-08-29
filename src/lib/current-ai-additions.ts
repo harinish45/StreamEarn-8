@@ -22,6 +22,7 @@ export const currentAIAdditions: CurrentAICategory[] = [
     tools: [
       { name: 'GitHub Copilot Coding Agent', url: 'https://github.com/features/copilot', summary: 'Delegated coding agent for issues, code changes, tests, reviews and pull requests.', tags: ['coding', 'agent', 'github'], featured: true },
       { name: 'GitHub Copilot CLI', url: 'https://github.com/features/copilot/cli', summary: 'Terminal-native coding agent for planning, editing, testing and reviewing repositories.', tags: ['coding', 'cli', 'agent'], featured: true },
+      { name: 'Slack Code', url: 'https://app.slack.com/features/code-channels', summary: 'Team coding channels where developers and supported coding agents collaborate on a task with searchable context and reviewable work.', tags: ['coding', 'agents', 'collaboration'], featured: true },
       { name: 'LangChain Academy', url: 'https://academy.langchain.com/', summary: 'Official courses and production guidance for agents, observability and reliable workflows.', tags: ['learning', 'agents', 'production'] },
       { name: 'Hugging Face Agents Course', url: 'https://huggingface.co/learn/agents-course/unit0/introduction', summary: 'Hands-on agent fundamentals, frameworks, agentic RAG, evaluation and certification.', tags: ['learning', 'agents', 'hands-on'], featured: true },
       { name: 'Hugging Face Context Course', url: 'https://huggingface.co/context-course', summary: 'Hands-on learning for agent context, MCP, skills, plugins, subagents and hooks.', tags: ['learning', 'mcp', 'agents'] },
@@ -74,6 +75,9 @@ export const currentAIAdditions: CurrentAICategory[] = [
       { name: 'AWS Bedrock', url: 'https://aws.amazon.com/bedrock/', summary: 'Managed foundation-model platform for building and operating production generative AI applications.', tags: ['cloud', 'infrastructure', 'enterprise'] },
       { name: 'Google Vertex AI', url: 'https://cloud.google.com/vertex-ai', summary: 'Google Cloud platform for building, evaluating, deploying and governing AI applications.', tags: ['cloud', 'infrastructure', 'enterprise'] },
       { name: 'Microsoft Foundry', url: 'https://ai.azure.com/', summary: 'Microsoft environment for building, evaluating and governing enterprise AI applications and agents.', tags: ['cloud', 'agents', 'enterprise'] },
+      { name: 'Tencent Hy4 preview', url: 'https://www.tencent.com/tencent-releases-and-open-sources-tencent-hy4-preview/', summary: 'New open-source Tencent AI model stack aimed at coding, productivity and scientific research workloads.', tags: ['open-source', 'coding', 'research', 'long-context'], featured: true },
+      { name: 'Tencent CodeBuddy', url: 'https://www.codebuddy.ai/', summary: 'Tencent coding environment connected to its current AI development stack for software engineering workflows.', tags: ['coding', 'developer-tools', 'agent'] },
+      { name: 'Tencent WorkBuddy', url: 'https://workbuddy.ai/', summary: 'Tencent productivity assistant for work-oriented AI workflows and access to its current model ecosystem.', tags: ['assistant', 'productivity', 'enterprise'] },
     ],
   },
 ];
