@@ -6,9 +6,11 @@ import { SidebarInset, SidebarProvider } from '@/components/ui/sidebar';
 import { UnifiedSidebar } from '@/components/unified-sidebar';
 import { initialLinks, type ResourceLink } from '@/lib/resource-data';
 
-const STORAGE_KEY = 'streamearn-directory-v2';
+const STORAGE_KEY = 'streamearn-directory-v3';
 const DIRECTORY_LIMIT = 50;
 const HIDDEN_DIRECTORY_TAGS = new Set(['Monday', 'Tuesday', 'Learning']);
+// Known stale/retired destinations are excluded until re-verified. Keep this list explicit so bad links never surface silently.
+const INACTIVE_OR_RETIRED_IDS = new Set(['42', '68']);
 
 const CATEGORY_ORDER = [
   'AI', 'Developer', 'Cybersecurity', 'Security', 'Careers', 'Internships', 'Jobs',
@@ -17,11 +19,17 @@ const CATEGORY_ORDER = [
   'Web', 'Research', 'Standards', 'Practice', 'Labs', 'CTF', 'Linux', 'Roadmaps',
 ];
 
+function activeLinks() {
+  return initialLinks.filter((item) => !INACTIVE_OR_RETIRED_IDS.has(item.id));
+}
+
 function curatedFor(category: string) {
   const pool = category === 'All'
-    ? initialLinks
-    : initialLinks.filter((item) => item.tags.includes(category));
-  return pool.filter((item) => !item.tags.some((tag) => HIDDEN_DIRECTORY_TAGS.has(tag))).slice(0, DIRECTORY_LIMIT);
+    ? activeLinks()
+    : activeLinks().filter((item) => item.tags.includes(category));
+  return pool
+    .filter((item) => !item.tags.some((tag) => HIDDEN_DIRECTORY_TAGS.has(tag)))
+    .slice(0, DIRECTORY_LIMIT);
 }
 
 type SavedState = { isFavorite?: boolean; visitCount?: number };
@@ -48,7 +56,7 @@ export default function DirectoryPage() {
 
   const categories = useMemo(() => {
     const available = new Set<string>();
-    initialLinks.forEach((item) => item.tags.forEach((tag) => {
+    activeLinks().forEach((item) => item.tags.forEach((tag) => {
       if (!HIDDEN_DIRECTORY_TAGS.has(tag)) available.add(tag);
     }));
     return ['All', ...CATEGORY_ORDER.filter((tag) => available.has(tag)), ...Array.from(available).filter((tag) => !CATEGORY_ORDER.includes(tag)).sort()];
@@ -79,10 +87,11 @@ export default function DirectoryPage() {
     persist(links.map((link) => link.id === item.id ? { ...link, visitCount: link.visitCount + 1 } : link));
   }
 
+  const availableCount = curatedFor(category).length;
   const title = category === 'All' ? 'Top 50 resources' : `Top 50 ${category}`;
   const subtitle = category === 'All'
-    ? 'The strongest core resources across AI, development, cybersecurity, careers, business, real estate, cloud and platforms.'
-    : `A focused collection of up to 50 ${category.toLowerCase()} resources, kept inside the StreamEarn workspace.`;
+    ? 'Curated, active resources across AI, development, cybersecurity, careers, business, real estate, cloud and platforms.'
+    : `Curated active ${category.toLowerCase()} resources inside the StreamEarn workspace.`;
 
   return (
     <SidebarProvider>
@@ -97,7 +106,7 @@ export default function DirectoryPage() {
                   <h1 className="text-4xl font-semibold tracking-tight sm:text-5xl">{title}, <em className="font-serif font-normal">organized.</em></h1>
                   <p className="mt-3 max-w-3xl text-sm leading-6 text-[#9d978e]">{subtitle}</p>
                 </div>
-                <div className="text-right text-xs text-[#777168]"><strong className="text-2xl font-medium text-[#f1ece3]">{filtered.length}</strong><br />of {Math.min(DIRECTORY_LIMIT, curatedFor(category).length)}</div>
+                <div className="text-right text-xs text-[#777168]"><strong className="text-2xl font-medium text-[#f1ece3]">{filtered.length}</strong><br />of {availableCount}</div>
               </div>
             </header>
 
@@ -119,7 +128,7 @@ export default function DirectoryPage() {
               {categories.map((item) => <button key={item} onClick={() => { setCategory(item); setQuery(''); setFavoritesOnly(false); }} className={`whitespace-nowrap rounded-full border px-3 py-1.5 text-[11px] ${category === item ? 'border-[#ff6b5a] bg-[#211613] text-[#ff8b7d]' : 'border-[#302c27] text-[#817b73] hover:border-[#514a43]'}`}>{item}</button>)}
             </div>
 
-            {filtered.length === 0 ? <div className="rounded-2xl border border-dashed border-[#302c27] px-6 py-16 text-center text-sm text-[#777168]">No resources match these filters.</div> : view === 'grid' ? (
+            {filtered.length === 0 ? <div className="rounded-2xl border border-dashed border-[#302c27] px-6 py-16 text-center text-sm text-[#777168]">No active resources match these filters.</div> : view === 'grid' ? (
               <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
                 {filtered.map((item) => <article key={item.id} className="group rounded-2xl border border-[#292622] bg-[#141210] p-5 transition hover:-translate-y-0.5 hover:border-[#48413a]">
                   <div className="mb-5 flex items-start justify-between gap-3"><div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#211f1b] text-xs font-semibold text-[#ff8b7d]">{item.title.slice(0, 1)}</div><button aria-label={`${item.isFavorite ? 'Remove' : 'Add'} ${item.title} favorite`} onClick={() => toggleFavorite(item.id)} className="text-[#777168] hover:text-[#ff8b7d]"><Heart className={`h-4 w-4 ${item.isFavorite ? 'fill-current text-[#ff6b5a]' : ''}`} /></button></div>
