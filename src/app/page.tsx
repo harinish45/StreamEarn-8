@@ -6,19 +6,34 @@ import { SidebarProvider, SidebarInset } from '@/components/ui/sidebar';
 import { UnifiedSidebar } from '@/components/unified-sidebar';
 import { NewsSection } from '@/components/news-section';
 
-const imageFor = (id: string) => `https://picsum.photos/seed/streamearn-home-${encodeURIComponent(id)}/1000/600`;
 const destinations = [
-  { href: '/ai-tools', title: 'AI Tools', description: 'Current AI ecosystem across assistants, agents, coding, research, automation and creative production.', icon: Sparkles },
-  { href: '/hub', title: 'Resource Hub', description: 'Integrated learning, cybersecurity, careers and platform resources.', icon: Layers3 },
-  { href: '/earnings', title: 'Earning Opportunities', description: 'Explore current online earning and digital-work opportunities.', icon: WalletCards },
-  { href: '/projects', title: 'Projects', description: 'Track what you are building, who you are working with, priorities, progress and next actions.', icon: FolderKanban },
-  { href: '/directory', title: 'Directory', description: 'Browse useful businesses, platforms and opportunity listings.', icon: Search },
+  { href: '/ai-tools', title: 'AI Tools', description: 'Current frontier models, agents, coding systems, research and creative AI.', icon: Sparkles, image: '/visuals/ai-intelligence.svg' },
+  { href: '/hub', title: 'Resource Hub', description: 'Curated learning, cybersecurity, career and technology resources.', icon: Layers3, image: '/visuals/resource-hub.svg' },
+  { href: '/earnings', title: 'Earning Opportunities', description: 'Current online earning, freelance and digital-work opportunities.', icon: WalletCards, image: '/visuals/earnings.svg' },
+  { href: '/projects', title: 'Projects', description: 'Track projects, contributors, progress, priorities and next actions.', icon: FolderKanban, image: '/visuals/projects.svg' },
+  { href: '/directory', title: 'Directory', description: 'Browse curated platforms, businesses and opportunity resources.', icon: Search, image: '/visuals/directory.svg' },
 ];
 
-export default function Home(){
- return <SidebarProvider><UnifiedSidebar /><SidebarInset><main className="min-h-screen overflow-x-hidden bg-background"><div className="mx-auto max-w-[1500px] px-3 py-4 md:px-5 md:py-5">
-  <section className="relative overflow-hidden rounded-2xl border bg-card shadow-sm"><img src={imageFor('hero-command-center')} alt="" className="absolute inset-0 h-full w-full object-cover opacity-10" /><div className="absolute inset-0 bg-gradient-to-r from-background via-background/95 to-background/40" /><div className="relative max-w-4xl space-y-2.5 p-4 md:p-6"><div className="inline-flex items-center gap-2 rounded-full border bg-background/60 px-2.5 py-1 text-[10px] text-muted-foreground"><ShieldCheck className="h-3 w-3 text-primary" /> Unified command center</div><h1 className="text-3xl font-semibold tracking-tight md:text-5xl">AI, learning & earning — organised.</h1><p className="max-w-3xl text-xs leading-5 text-muted-foreground md:text-sm">Current AI discovery, cybersecurity practice, careers, earning opportunities and AI technology news behind one compact sidebar.</p><div className="flex flex-wrap gap-1.5"><Button asChild size="sm" className="h-8 text-xs"><Link href="/ai-tools">Explore AI Tools <ArrowRight className="ml-1.5 h-3 w-3" /></Link></Button><Button asChild size="sm" variant="outline" className="h-8 text-xs"><Link href="/news"><Newspaper className="mr-1.5 h-3 w-3" />Latest AI News</Link></Button><Button asChild size="sm" variant="outline" className="h-8 text-xs"><Link href="/cybersecurity">Practice Security</Link></Button></div></div></section>
-  <section className="mt-4 grid gap-2.5 sm:grid-cols-2 lg:grid-cols-3">{destinations.map(({href,title,description,icon:Icon})=><Link key={href} href={href} className="group"><Card className="h-full overflow-hidden rounded-xl transition group-hover:-translate-y-0.5 group-hover:border-primary/50 group-hover:shadow-md"><div className="relative aspect-[16/4] overflow-hidden"><img src={imageFor(title)} alt="" className="h-full w-full object-cover transition duration-500 group-hover:scale-105" loading="lazy" /><div className="absolute inset-0 bg-gradient-to-t from-black/65 to-transparent" /></div><CardHeader className="p-3 pb-1"><div className="flex items-center gap-2"><Icon className="h-4 w-4 text-primary" /><CardTitle className="text-sm">{title}</CardTitle></div></CardHeader><CardContent className="px-3 pb-3 pt-0 text-[11px] leading-4 text-muted-foreground">{description}</CardContent></Card></Link>)}</section>
-  <section className="mt-5"><NewsSection compact /></section>
- </div></main></SidebarInset></SidebarProvider>;
+export default function Home() {
+  return <SidebarProvider><UnifiedSidebar /><SidebarInset><main className="min-h-screen overflow-x-hidden bg-[#08090b] text-white"><div className="mx-auto w-full max-w-[1580px] px-4 py-5 md:px-7 md:py-7">
+    <section className="relative isolate overflow-hidden rounded-[28px] border border-white/10 bg-[#101216] shadow-[0_24px_80px_rgba(0,0,0,.35)]">
+      <img src="/visuals/ai-intelligence.svg" alt="" aria-hidden="true" className="absolute inset-0 -z-20 h-full w-full object-cover opacity-45" />
+      <div className="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_82%_20%,rgba(255,210,55,.16),transparent_28%),linear-gradient(90deg,#101216_5%,rgba(16,18,22,.94)_48%,rgba(16,18,22,.62))]" />
+      <div className="relative max-w-4xl space-y-5 p-6 md:p-10">
+        <div className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-black/30 px-3 py-1.5 text-[10px] font-medium text-white/70 backdrop-blur"><ShieldCheck className="h-3.5 w-3.5 text-primary" /> StreamEarn Command Center</div>
+        <div><h1 className="text-4xl font-semibold tracking-[-.04em] md:text-6xl">AI, learning &amp; earning — organised.</h1><p className="mt-3 max-w-3xl text-sm leading-7 text-white/55 md:text-base">One focused workspace for current AI discovery, cybersecurity, careers, earning opportunities, projects and technology intelligence.</p></div>
+        <div className="flex flex-wrap gap-2"><Button asChild size="sm" className="h-9"><Link href="/ai-tools">Explore AI Tools <ArrowRight className="ml-1.5 h-3.5 w-3.5" /></Link></Button><Button asChild size="sm" variant="outline" className="h-9 border-white/15 bg-black/20 text-white hover:bg-white/10"><Link href="/news"><Newspaper className="mr-1.5 h-3.5 w-3.5" />Latest AI News</Link></Button><Button asChild size="sm" variant="outline" className="h-9 border-white/15 bg-black/20 text-white hover:bg-white/10"><Link href="/cybersecurity">Practice Security</Link></Button></div>
+      </div>
+    </section>
+    <section className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      {destinations.map(({ href, title, description, icon: Icon, image }) => <Link key={href} href={href} className="group block">
+        <Card className="h-full overflow-hidden rounded-2xl border-white/10 bg-[#0f1114] shadow-[0_12px_35px_rgba(0,0,0,.2)] transition duration-200 group-hover:-translate-y-0.5 group-hover:border-white/20 group-hover:bg-[#12151a]">
+          <div className="relative h-36 overflow-hidden"><img src={image} alt="" aria-hidden="true" className="h-full w-full object-cover opacity-80 transition duration-500 group-hover:scale-[1.03] group-hover:opacity-100" /><div className="absolute inset-0 bg-gradient-to-t from-[#0f1114] via-transparent to-transparent" /><div className="absolute bottom-3 left-3 rounded-xl border border-white/10 bg-black/40 p-2 backdrop-blur"><Icon className="h-4 w-4 text-primary" /></div></div>
+          <CardHeader className="p-4 pb-1"><CardTitle className="text-[15px] tracking-tight text-white">{title}</CardTitle></CardHeader>
+          <CardContent className="px-4 pb-4 pt-0 text-[11px] leading-5 text-white/50">{description}</CardContent>
+        </Card>
+      </Link>)}
+    </section>
+    <section className="mt-7"><NewsSection compact /></section>
+  </div></main></SidebarInset></SidebarProvider>;
 }
