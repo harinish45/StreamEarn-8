@@ -2,8 +2,6 @@ import Link from 'next/link';
 import { ArrowRight, Layers3, Search, ShieldCheck, Sparkles, Newspaper, WalletCards, FolderKanban } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { SidebarProvider, SidebarInset } from '@/components/ui/sidebar';
-import { UnifiedSidebar } from '@/components/unified-sidebar';
 import { NewsSection } from '@/components/news-section';
 
 const destinations = [
@@ -15,7 +13,7 @@ const destinations = [
 ];
 
 export default function Home() {
-  return <SidebarProvider><UnifiedSidebar /><SidebarInset><main className="min-h-screen overflow-x-hidden bg-[#08090b] text-white"><div className="mx-auto w-full max-w-[1580px] px-4 py-5 md:px-7 md:py-7">
+  return <main className="min-h-screen overflow-x-hidden bg-[#08090b] text-white"><div className="mx-auto w-full max-w-[1580px] px-4 py-5 md:px-7 md:py-7">
     <section className="relative isolate overflow-hidden rounded-[28px] border border-white/10 bg-[#101216] shadow-[0_24px_80px_rgba(0,0,0,.35)]">
       <img src="/visuals/ai-intelligence.svg" alt="" aria-hidden="true" className="absolute inset-0 -z-20 h-full w-full object-cover opacity-45" />
       <div className="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_82%_20%,rgba(255,210,55,.16),transparent_28%),linear-gradient(90deg,#101216_5%,rgba(16,18,22,.94)_48%,rgba(16,18,22,.62))]" />
@@ -35,5 +33,5 @@ export default function Home() {
       </Link>)}
     </section>
     <section className="mt-7"><NewsSection compact /></section>
-  </div></main></SidebarInset></SidebarProvider>;
+  </div></main>;
 }
