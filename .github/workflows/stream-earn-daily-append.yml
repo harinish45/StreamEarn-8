@@ -1,4 +1,4 @@
-name: StreamEarn Daily Append
+name: StreamEarn Daily Verification Pipeline
 
 on:
   schedule:
@@ -9,24 +9,29 @@ permissions:
   contents: read
 
 concurrency:
-  group: streamearn-daily-append
+  group: streamearn-daily-verify
   cancel-in-progress: false
 
 jobs:
-  append-feeds:
+  verify-feeds:
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 15
     steps:
       - name: Checkout main
         uses: actions/checkout@v4
         with:
           fetch-depth: 1
 
-      - name: Append new feed records to Supabase
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Run Active-Data Verification Pipeline
         env:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
-        run: node scripts/append-scheduled-to-supabase.mjs
+        run: node scripts/verify-active-feeds.mjs
 
       - name: Verify repository was not modified
-        run: git diff --exit-code -- src/data/scheduled || (echo 'Scheduler must never rewrite legacy feed data' && exit 1)
+        run: git diff --exit-code -- src/data/scheduled || (echo 'Scheduler must never modify local JSON data directly' && exit 1)
