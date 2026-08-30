@@ -22,7 +22,7 @@ export const currentAIAdditions: CurrentAICategory[] = [
     tools: [
       { name: 'GitHub Copilot Coding Agent', url: 'https://github.com/features/copilot', summary: 'Delegated coding agent for issues, code changes, tests, reviews and pull requests.', tags: ['coding', 'agent', 'github'], featured: true },
       { name: 'GitHub Copilot CLI', url: 'https://github.com/features/copilot/cli', summary: 'Terminal-native coding agent for planning, editing, testing and reviewing repositories.', tags: ['coding', 'cli', 'agent'], featured: true },
-      { name: 'Slack Code', url: 'https://app.slack.com/features/code-channels', summary: 'Team coding channels where developers and supported coding agents collaborate on a task with searchable context and reviewable work.', tags: ['coding', 'agents', 'collaboration'], featured: true },
+      { name: 'Slack Code', url: 'https://app.slack.com/features/code-channels', summary: 'Team coding channels where developers and supported coding agents collaborate on tasks with searchable context and reviewable work.', tags: ['coding', 'agents', 'collaboration'], featured: true },
       { name: 'LangChain Academy', url: 'https://academy.langchain.com/', summary: 'Official courses and production guidance for agents, observability and reliable workflows.', tags: ['learning', 'agents', 'production'] },
       { name: 'Hugging Face Agents Course', url: 'https://huggingface.co/learn/agents-course/unit0/introduction', summary: 'Hands-on agent fundamentals, frameworks, agentic RAG, evaluation and certification.', tags: ['learning', 'agents', 'hands-on'], featured: true },
       { name: 'Hugging Face Context Course', url: 'https://huggingface.co/context-course', summary: 'Hands-on learning for agent context, MCP, skills, plugins, subagents and hooks.', tags: ['learning', 'mcp', 'agents'] },
@@ -39,8 +39,10 @@ export const currentAIAdditions: CurrentAICategory[] = [
     tools: [
       { name: 'Apollo', url: 'https://www.apollo.io/', summary: 'AI-native GTM platform for prospecting, enrichment, engagement, sequencing and agentic sales workflows.', tags: ['gtm', 'sales', 'lead-generation', 'automation'], featured: true },
       { name: 'Clay', url: 'https://www.clay.com/', summary: 'GTM data and workflow platform for enrichment, signals, research and automated outbound operations.', tags: ['gtm', 'enrichment', 'automation'], featured: true },
+      { name: 'Clay Account Agents', url: 'https://www.clay.com/blog/account-agents-workflows', summary: 'Open-beta account agents that bring account research and context into automated GTM workflows.', tags: ['gtm', 'agents', 'account-research', 'automation'], featured: true },
       { name: 'HubSpot Breeze', url: 'https://www.hubspot.com/products/artificial-intelligence', summary: 'AI agents and workflow assistance across marketing, sales, service and CRM operations.', tags: ['gtm', 'crm', 'agents'] },
-      { name: 'Common Room', url: 'https://www.commonroom.io/', summary: 'Go-to-market intelligence and signal workflows for identifying and engaging high-intent accounts.', tags: ['gtm', 'signals', 'sales'] },
+      { name: 'Common Room RoomieAI', url: 'https://www.commonroom.io/product/ai/', summary: 'GTM agents for signal discovery, pipeline plays and personalized outbound grounded in continuously refreshed buyer intelligence.', tags: ['gtm', 'signals', 'sales', 'agents'], featured: true },
+      { name: 'Common Room MCP', url: 'https://www.commonroom.io/product/mcp-server/', summary: 'MCP access to buyer intelligence for research, prospect lists, call briefs and personalized outreach workflows.', tags: ['gtm', 'mcp', 'buyer-intelligence'] },
       { name: 'Runable', url: 'https://runable.ai/', summary: 'AI agent platform focused on building and growing businesses through automated workflows and growth execution.', tags: ['agents', 'gtm', 'growth', 'automation'], featured: true },
     ],
   },
@@ -53,6 +55,7 @@ export const currentAIAdditions: CurrentAICategory[] = [
       { name: 'Adobe Firefly', url: 'https://www.adobe.com/products/firefly.html', summary: 'Generative creative tools integrated with Adobe workflows for images, video and design.', tags: ['creative', 'image', 'video'], featured: true },
       { name: 'Runway', url: 'https://runwayml.com/', summary: 'Generative video and creative production platform for visual storytelling and editing.', tags: ['creative', 'video', 'media'] },
       { name: 'Figma AI', url: 'https://www.figma.com/ai/', summary: 'AI-assisted design and prototyping workflows inside Figma.', tags: ['creative', 'design', 'prototyping'] },
+      { name: 'ElevenLabs', url: 'https://elevenlabs.io/', summary: 'Voice, speech, dubbing and audio production platform for expressive media workflows.', tags: ['creative', 'voice', 'audio'] },
     ],
   },
   {
@@ -72,10 +75,11 @@ export const currentAIAdditions: CurrentAICategory[] = [
     description: 'Current infrastructure platforms for model serving, inference, cloud deployment and scalable AI workloads.',
     tools: [
       { name: 'NVIDIA NIM', url: 'https://www.nvidia.com/en-in/ai-data-science/products/nim-microservices/', summary: 'Production inference microservices for accelerated AI serving.', tags: ['inference', 'gpu', 'production'] },
+      { name: 'NVIDIA BlueField-4 / Scale-In', url: 'https://developer.nvidia.com/blog/nvidia-bluefield-4-powers-new-scale-in-network-infrastructure-for-agentic-ai-factories/', summary: 'Infrastructure architecture for agentic AI factories, offloading security, data movement and operations to dedicated processing hardware.', tags: ['infrastructure', 'networking', 'security', 'agentic-ai'], featured: true },
       { name: 'AWS Bedrock', url: 'https://aws.amazon.com/bedrock/', summary: 'Managed foundation-model platform for building and operating production generative AI applications.', tags: ['cloud', 'infrastructure', 'enterprise'] },
       { name: 'Google Vertex AI', url: 'https://cloud.google.com/vertex-ai', summary: 'Google Cloud platform for building, evaluating, deploying and governing AI applications.', tags: ['cloud', 'infrastructure', 'enterprise'] },
       { name: 'Microsoft Foundry', url: 'https://ai.azure.com/', summary: 'Microsoft environment for building, evaluating and governing enterprise AI applications and agents.', tags: ['cloud', 'agents', 'enterprise'] },
-      { name: 'Tencent Hy4 preview', url: 'https://www.tencent.com/tencent-releases-and-open-sources-tencent-hy4-preview/', summary: 'New open-source Tencent AI model stack aimed at coding, productivity and scientific research workloads.', tags: ['open-source', 'coding', 'research', 'long-context'], featured: true },
+      { name: 'Tencent Hy4 preview', url: 'https://www.tencent.com/tencent-releases-and-open-sources-tencent-hy4-preview/', summary: 'Open-source Tencent AI model stack aimed at coding, productivity and scientific research workloads.', tags: ['open-source', 'coding', 'research', 'long-context'], featured: true },
       { name: 'Tencent CodeBuddy', url: 'https://www.codebuddy.ai/', summary: 'Tencent coding environment connected to its current AI development stack for software engineering workflows.', tags: ['coding', 'developer-tools', 'agent'] },
       { name: 'Tencent WorkBuddy', url: 'https://workbuddy.ai/', summary: 'Tencent productivity assistant for work-oriented AI workflows and access to its current model ecosystem.', tags: ['assistant', 'productivity', 'enterprise'] },
     ],
