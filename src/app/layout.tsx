@@ -3,6 +3,7 @@ import { Inter, Playfair_Display, Courier_Prime, Orbitron } from "next/font/goog
 import "./globals.css";
 import { Toaster } from "@/components/ui/toaster";
 import { ThemeProvider } from "@/components/theme-provider";
+import { AppShell } from "@/components/app-shell";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-sans" });
 const playfair = Playfair_Display({ subsets: ["latin"], variable: "--font-serif" });
@@ -14,24 +15,13 @@ export const metadata: Metadata = {
   description: "Your gateway to online earning opportunities.",
 };
 
-export default function RootLayout({
-  children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <head>
-        <link rel="stylesheet" href="/project-command-center.css" />
-      </head>
-      <body
-        className={`${inter.variable} ${playfair.variable} ${courier.variable} ${orbitron.variable} font-sans antialiased`}
-      >
-        <ThemeProvider
-          storageKey="theme"
-          defaultTheme="Batman"
-        >
-          {children}
+      <head><link rel="stylesheet" href="/project-command-center.css" /></head>
+      <body className={`${inter.variable} ${playfair.variable} ${courier.variable} ${orbitron.variable} font-sans antialiased`}>
+        <ThemeProvider storageKey="theme" defaultTheme="Batman">
+          <AppShell>{children}</AppShell>
           <Toaster />
         </ThemeProvider>
       </body>
