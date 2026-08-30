@@ -4,8 +4,10 @@ import { usePathname } from 'next/navigation';
 import { SidebarInset, SidebarProvider } from '@/components/ui/sidebar';
 import { UnifiedSidebar } from '@/components/unified-sidebar';
 
-// These routes already provide their own shell to avoid nested sidebars.
-const SELF_SHELLED = ['/', '/directory', '/earnings', '/projects', '/category', '/opportunities', '/planner', '/planner-v4'];
+// Only the login page lives outside the persistent StreamEarn shell.
+// Every other route gets the same SidebarProvider context, the same
+// UnifiedSidebar and the same SidebarInset. This eliminates sidebar
+// remounts, state resets on navigation and visual alignment mismatches.
 const PUBLIC = ['/login'];
 
 function matches(pathname: string, route: string) {
@@ -15,9 +17,8 @@ function matches(pathname: string, route: string) {
 export function AppShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const publicRoute = PUBLIC.some((route) => matches(pathname, route));
-  const selfShelled = SELF_SHELLED.some((route) => matches(pathname, route));
 
-  if (publicRoute || selfShelled) return <>{children}</>;
+  if (publicRoute) return <>{children}</>;
 
   return (
     <SidebarProvider>
