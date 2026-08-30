@@ -2,6 +2,24 @@ import type { CurrentAICategory } from './current-ai-directory';
 
 export const currentAIAdditions: CurrentAICategory[] = [
   {
+    id: 'frontier-aug-2026',
+    name: 'Frontier Models & New Releases',
+    description: 'Current frontier models and major AI releases verified against official August 2026 announcements.',
+    tools: [
+      { name: 'GPT-5.6 Sol', url: 'https://openai.com/index/gpt-5-6/', summary: 'OpenAI flagship model for complex reasoning, coding, knowledge work, cybersecurity, science and computer use.', tags: ['frontier', 'openai', 'reasoning', 'coding'], featured: true },
+      { name: 'GPT-5.6 Terra', url: 'https://developers.openai.com/api/docs/models', summary: 'Balanced GPT-5.6 option for strong capability with a lower cost profile.', tags: ['frontier', 'openai', 'balanced'] },
+      { name: 'GPT-5.6 Luna', url: 'https://developers.openai.com/api/docs/models', summary: 'Fast, cost-efficient GPT-5.6 option for high-volume workloads.', tags: ['frontier', 'openai', 'fast'] },
+      { name: 'GPT-Live-1', url: 'https://openai.com/index/introducing-gpt-live/', summary: 'OpenAI voice-native model family powering more natural, full-duplex ChatGPT voice interactions.', tags: ['voice', 'openai', 'realtime'], featured: true },
+      { name: 'Claude Opus 5', url: 'https://www.anthropic.com/news/claude-opus-5', summary: 'Anthropic frontier model for demanding coding, knowledge work and long-running agentic tasks.', tags: ['frontier', 'anthropic', 'coding'], featured: true },
+      { name: 'Claude Sonnet 5', url: 'https://www.anthropic.com/news/claude-sonnet-5', summary: 'Anthropic’s highly agentic Sonnet model for coding, tool use, knowledge work and everyday production tasks.', tags: ['frontier', 'anthropic', 'agents', 'coding'], featured: true },
+      { name: 'Gemini 3.7 Flash', url: 'https://blog.google/innovation-and-ai/models-and-research/gemini-models/introducing-gemini-3-7-flash/', summary: 'Google’s latest workhorse Gemini model focused on coding, agents and fast production workflows.', tags: ['frontier', 'google', 'agents', 'coding'], featured: true },
+      { name: 'Grok 4.6', url: 'https://x.ai/news/grok-4-6', summary: 'xAI flagship focused on long-running agents, interactive work, visual tasks and complex coding.', tags: ['frontier', 'xai', 'agents'], featured: true },
+      { name: 'Grok Bot', url: 'https://x.ai/news/introducing-grok-bot', summary: 'Always-on AI teammates that can operate tools and apps and complete delegated jobs end to end.', tags: ['agents', 'automation', 'xai'], featured: true },
+      { name: 'Grok Build', url: 'https://x.ai/news/grok-build-for-everyone', summary: 'Prompt-to-app builder for creating and publishing working apps, games, websites and dashboards.', tags: ['app-builder', 'xai', 'agents'], featured: true },
+      { name: 'Claude Science', url: 'https://www.anthropic.com/news/claude-science', summary: 'AI workbench for scientists with auditable artifacts, research tools and flexible compute workflows.', tags: ['science', 'research', 'anthropic'] },
+    ],
+  },
+  {
     id: 'current-assistants-research',
     name: 'Current Assistants & Research',
     description: 'Current assistants and research products for knowledge work, discovery, documents and advanced technical tasks.',
@@ -11,8 +29,6 @@ export const currentAIAdditions: CurrentAICategory[] = [
       { name: 'Kimi', url: 'https://www.kimi.com/', summary: 'General AI assistant for research, documents, presentations, spreadsheets and complex tasks.', tags: ['assistant', 'research', 'documents'] },
       { name: 'Google AI Studio', url: 'https://aistudio.google.com/', summary: 'Interactive environment for prototyping and testing AI applications.', tags: ['developer', 'prototyping', 'ai-apps'], featured: true },
       { name: 'NotebookLM', url: 'https://notebooklm.google.com/', summary: 'Source-grounded research and study workspace for working with supplied documents.', tags: ['research', 'documents', 'study'] },
-      { name: 'OpenAI Academy', url: 'https://academy.openai.com/', summary: 'Official practical AI learning covering foundations, workflows, agents and builder skills.', tags: ['learning', 'official', 'agents'], featured: true },
-      { name: 'Anthropic Academy', url: 'https://www.anthropic.com/learn', summary: 'Official learning hub for AI development, enterprise adoption, research and responsible use.', tags: ['learning', 'official', 'development'], featured: true },
     ],
   },
   {
@@ -22,10 +38,6 @@ export const currentAIAdditions: CurrentAICategory[] = [
     tools: [
       { name: 'GitHub Copilot Coding Agent', url: 'https://github.com/features/copilot', summary: 'Delegated coding agent for issues, code changes, tests, reviews and pull requests.', tags: ['coding', 'agent', 'github'], featured: true },
       { name: 'GitHub Copilot CLI', url: 'https://github.com/features/copilot/cli', summary: 'Terminal-native coding agent for planning, editing, testing and reviewing repositories.', tags: ['coding', 'cli', 'agent'], featured: true },
-      { name: 'Slack Code', url: 'https://app.slack.com/features/code-channels', summary: 'Team coding channels where developers and supported coding agents collaborate on tasks with searchable context and reviewable work.', tags: ['coding', 'agents', 'collaboration'], featured: true },
-      { name: 'LangChain Academy', url: 'https://academy.langchain.com/', summary: 'Official courses and production guidance for agents, observability and reliable workflows.', tags: ['learning', 'agents', 'production'] },
-      { name: 'Hugging Face Agents Course', url: 'https://huggingface.co/learn/agents-course/unit0/introduction', summary: 'Hands-on agent fundamentals, frameworks, agentic RAG, evaluation and certification.', tags: ['learning', 'agents', 'hands-on'], featured: true },
-      { name: 'Hugging Face Context Course', url: 'https://huggingface.co/context-course', summary: 'Hands-on learning for agent context, MCP, skills, plugins, subagents and hooks.', tags: ['learning', 'mcp', 'agents'] },
       { name: 'NVIDIA NIM', url: 'https://www.nvidia.com/en-in/ai-data-science/products/nim-microservices/', summary: 'Optimized inference microservices for deploying AI models on accelerated infrastructure.', tags: ['infrastructure', 'inference', 'self-hosted'], featured: true },
       { name: 'NVIDIA NIM Operator', url: 'https://docs.nvidia.com/nim-operator/latest/', summary: 'Kubernetes operator for managing NVIDIA NIM inference microservices and lifecycle operations.', tags: ['infrastructure', 'kubernetes', 'inference'] },
       { name: 'Arize Phoenix', url: 'https://phoenix.arize.com/', summary: 'Open observability and evaluation platform for LLM and agent applications.', tags: ['evals', 'observability', 'agents'] },
@@ -39,11 +51,11 @@ export const currentAIAdditions: CurrentAICategory[] = [
     tools: [
       { name: 'Apollo', url: 'https://www.apollo.io/', summary: 'AI-native GTM platform for prospecting, enrichment, engagement, sequencing and agentic sales workflows.', tags: ['gtm', 'sales', 'lead-generation', 'automation'], featured: true },
       { name: 'Clay', url: 'https://www.clay.com/', summary: 'GTM data and workflow platform for enrichment, signals, research and automated outbound operations.', tags: ['gtm', 'enrichment', 'automation'], featured: true },
-      { name: 'Clay Account Agents', url: 'https://www.clay.com/blog/account-agents-workflows', summary: 'Open-beta account agents that bring account research and context into automated GTM workflows.', tags: ['gtm', 'agents', 'account-research', 'automation'], featured: true },
+      { name: 'Clay Account Agents', url: 'https://www.clay.com/blog/account-agents-workflows', summary: 'Account agents for research and context inside automated GTM workflows.', tags: ['gtm', 'agents', 'account-research', 'automation'], featured: true },
       { name: 'HubSpot Breeze', url: 'https://www.hubspot.com/products/artificial-intelligence', summary: 'AI agents and workflow assistance across marketing, sales, service and CRM operations.', tags: ['gtm', 'crm', 'agents'] },
-      { name: 'Common Room RoomieAI', url: 'https://www.commonroom.io/product/ai/', summary: 'GTM agents for signal discovery, pipeline plays and personalized outbound grounded in continuously refreshed buyer intelligence.', tags: ['gtm', 'signals', 'sales', 'agents'], featured: true },
-      { name: 'Common Room MCP', url: 'https://www.commonroom.io/product/mcp-server/', summary: 'MCP access to buyer intelligence for research, prospect lists, call briefs and personalized outreach workflows.', tags: ['gtm', 'mcp', 'buyer-intelligence'] },
-      { name: 'Runable', url: 'https://runable.ai/', summary: 'AI agent platform focused on building and growing businesses through automated workflows and growth execution.', tags: ['agents', 'gtm', 'growth', 'automation'], featured: true },
+      { name: 'Common Room RoomieAI', url: 'https://www.commonroom.io/product/ai/', summary: 'GTM agents for signal discovery, pipeline plays and personalized outbound.', tags: ['gtm', 'signals', 'sales', 'agents'], featured: true },
+      { name: 'Common Room MCP', url: 'https://www.commonroom.io/product/mcp-server/', summary: 'MCP access to buyer intelligence for research, prospect lists and outreach workflows.', tags: ['gtm', 'mcp', 'buyer-intelligence'] },
+      { name: 'Runable', url: 'https://runable.ai/', summary: 'AI agent platform focused on automated workflows and growth execution.', tags: ['agents', 'gtm', 'growth', 'automation'], featured: true },
     ],
   },
   {
@@ -75,13 +87,9 @@ export const currentAIAdditions: CurrentAICategory[] = [
     description: 'Current infrastructure platforms for model serving, inference, cloud deployment and scalable AI workloads.',
     tools: [
       { name: 'NVIDIA NIM', url: 'https://www.nvidia.com/en-in/ai-data-science/products/nim-microservices/', summary: 'Production inference microservices for accelerated AI serving.', tags: ['inference', 'gpu', 'production'] },
-      { name: 'NVIDIA BlueField-4 / Scale-In', url: 'https://developer.nvidia.com/blog/nvidia-bluefield-4-powers-new-scale-in-network-infrastructure-for-agentic-ai-factories/', summary: 'Infrastructure architecture for agentic AI factories, offloading security, data movement and operations to dedicated processing hardware.', tags: ['infrastructure', 'networking', 'security', 'agentic-ai'], featured: true },
       { name: 'AWS Bedrock', url: 'https://aws.amazon.com/bedrock/', summary: 'Managed foundation-model platform for building and operating production generative AI applications.', tags: ['cloud', 'infrastructure', 'enterprise'] },
       { name: 'Google Vertex AI', url: 'https://cloud.google.com/vertex-ai', summary: 'Google Cloud platform for building, evaluating, deploying and governing AI applications.', tags: ['cloud', 'infrastructure', 'enterprise'] },
       { name: 'Microsoft Foundry', url: 'https://ai.azure.com/', summary: 'Microsoft environment for building, evaluating and governing enterprise AI applications and agents.', tags: ['cloud', 'agents', 'enterprise'] },
-      { name: 'Tencent Hy4 preview', url: 'https://www.tencent.com/tencent-releases-and-open-sources-tencent-hy4-preview/', summary: 'Open-source Tencent AI model stack aimed at coding, productivity and scientific research workloads.', tags: ['open-source', 'coding', 'research', 'long-context'], featured: true },
-      { name: 'Tencent CodeBuddy', url: 'https://www.codebuddy.ai/', summary: 'Tencent coding environment connected to its current AI development stack for software engineering workflows.', tags: ['coding', 'developer-tools', 'agent'] },
-      { name: 'Tencent WorkBuddy', url: 'https://workbuddy.ai/', summary: 'Tencent productivity assistant for work-oriented AI workflows and access to its current model ecosystem.', tags: ['assistant', 'productivity', 'enterprise'] },
     ],
   },
 ];
