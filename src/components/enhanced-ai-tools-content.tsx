@@ -72,15 +72,67 @@ export function EnhancedAiToolsContent() {
   const categories = useMemo(() => allDirectory.map(c => ({ ...c, tools: c.tools.filter(t => !normalized || [t.name, t.summary, ...t.tags, c.name, c.description].join(' ').toLowerCase().includes(normalized)) })).filter(c => c.tools.length), [normalized]);
   const count = allDirectory.reduce((n,c)=>n+c.tools.length,0);
   const visibleCount = categories.reduce((n,c)=>n+c.tools.length,0);
-  return <div className="min-h-[calc(100vh-4rem)] overflow-x-hidden bg-[#08090b] text-white"><main className="mx-auto w-full max-w-[1640px] px-4 py-6 md:px-8 md:py-10"><div className="space-y-8">
-    <section className="relative isolate overflow-hidden rounded-[28px] border border-white/10 bg-[#101216] p-6 shadow-[0_25px_80px_rgba(0,0,0,.35)] md:p-10"><div className="pointer-events-none absolute inset-0 -z-10"><div className="absolute inset-0" style={{ background: 'radial-gradient(circle at 82% 22%, rgba(255,210,55,.14), transparent 24%), radial-gradient(circle at 65% 80%, rgba(95,120,255,.13), transparent 28%), linear-gradient(135deg,#15171c,#0d0e11 55%,#101216)' }} /><div className="hero-grid"/><div className="hero-orbit orbit-a"/><div className="hero-orbit orbit-b"/></div><div className="relative max-w-4xl space-y-5"><div className="flex flex-wrap gap-2"><Badge className="rounded-full bg-white text-black hover:bg-white"><Sparkles className="mr-1 h-3 w-3"/>Refreshed Aug 2026</Badge><Badge variant="secondary" className="rounded-full bg-white/10 text-white/75">{allDirectory.length} categories</Badge><Badge variant="secondary" className="rounded-full bg-white/10 text-white/75">{count}+ tools</Badge></div><div><h1 className="text-4xl font-semibold tracking-[-.035em] md:text-6xl">AI Intelligence</h1><p className="mt-3 max-w-3xl text-sm leading-7 text-white/55 md:text-base">A curated, current directory of frontier models, coding agents, research tools, automation, creative platforms and production AI infrastructure.</p></div><div className="relative max-w-3xl"><Search className="absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-white/40"/><Input value={query} onChange={e => setQuery(e.target.value.slice(0,120))} placeholder="Search tools, agents, models, research, coding, automation..." className="h-12 rounded-2xl border-white/10 bg-black/30 pl-11 pr-11 text-white placeholder:text-white/30" aria-label="Search AI tools and categories" />{query && <Button size="icon" variant="ghost" onClick={() => setQuery('')} className="absolute right-1 top-1/2 h-10 w-10 -translate-y-1/2 rounded-xl text-white/60 hover:bg-white/10 hover:text-white" aria-label="Clear search"><X className="h-4 w-4"/></Button>}</div></div></section>
-    <div className="flex items-center justify-between gap-4 border-b border-white/10 pb-4 text-xs text-white/45"><span>{visibleCount} tools shown</span><div className="flex items-center gap-3"><Link href="/news" className="hidden items-center gap-1.5 text-white/60 hover:text-white md:inline-flex"><Newspaper className="h-3.5 w-3.5"/>Latest AI News</Link><div className="flex gap-1 rounded-xl border border-white/10 bg-white/[.03] p-1"><Button size="sm" variant={view==='grid'?'default':'ghost'} onClick={()=>setView('grid')} aria-label="Grid view" className="h-8 rounded-lg"><Grid2X2 className="h-3.5 w-3.5" /></Button><Button size="sm" variant={view==='list'?'default':'ghost'} onClick={()=>setView('list')} aria-label="List view" className="h-8 rounded-lg"><List className="h-3.5 w-3.5" /></Button></div></div></div>
-    <div className="space-y-10">{categories.map((category, categoryIndex) => <CategorySection key={category.id} category={category} index={categoryIndex} list={view==='list'} />)}</div>
-    {!categories.length && <div className="rounded-2xl border border-dashed border-white/15 bg-white/[.02] p-12 text-center text-sm text-white/45">No tools matched "{query}". Try a capability such as agents, coding, research or automation.</div>}
-  </div></main><style jsx>{`.hero-grid{position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.045) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.045) 1px,transparent 1px);background-size:32px 32px;mask-image:radial-gradient(circle at 78% 45%,black,transparent 62%)}.hero-orbit{position:absolute;border:1px solid rgba(255,255,255,.10);border-radius:999px}.orbit-a{width:520px;height:250px;right:-80px;top:20px;transform:rotate(-15deg)}.orbit-b{width:390px;height:190px;right:20px;top:65px;transform:rotate(18deg)}@media(max-width:768px){.hero-grid,.hero-orbit{display:none}}`}</style></div>;
+  
+  return (
+    <div className="overflow-x-hidden">
+      <div className="mx-auto w-full max-w-[1640px] px-4 py-6 md:px-8 md:py-10">
+        <div className="space-y-8">
+          <section className="relative isolate overflow-hidden rounded-[28px] border border-white/10 bg-[#101216] p-6 shadow-[0_25px_80px_rgba(0,0,0,.35)] md:p-10">
+            <div className="pointer-events-none absolute inset-0 -z-10">
+              <div className="absolute inset-0" style={{ background: 'radial-gradient(circle at 82% 22%, rgba(255,210,55,.14), transparent 24%), radial-gradient(circle at 65% 80%, rgba(95,120,255,.13), transparent 28%), linear-gradient(135deg,#15171c,#0d0e11 55%,#101216)' }} />
+              {/* Removed heavy mask-image grid and orbits for mobile performance */}
+              <div className="hidden md:block absolute inset-0 opacity-30" style={{backgroundImage: 'linear-gradient(rgba(255,255,255,.045) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.045) 1px,transparent 1px)', backgroundSize: '32px 32px', maskImage: 'radial-gradient(circle at 78% 45%,black,transparent 62%)'}} />
+            </div>
+            <div className="relative max-w-4xl space-y-5">
+              <div className="flex flex-wrap gap-2">
+                <Badge className="rounded-full bg-white text-black hover:bg-white"><Sparkles className="mr-1 h-3 w-3"/>Refreshed Aug 2026</Badge>
+                <Badge variant="secondary" className="rounded-full bg-white/10 text-white/75">{allDirectory.length} categories</Badge>
+                <Badge variant="secondary" className="rounded-full bg-white/10 text-white/75">{count}+ tools</Badge>
+              </div>
+              <div>
+                <h1 className="text-4xl font-semibold tracking-[-.035em] md:text-6xl">AI Intelligence</h1>
+                <p className="mt-3 max-w-3xl text-sm leading-7 text-white/55 md:text-base">A curated, current directory of frontier models, coding agents, research tools, automation, creative platforms and production AI infrastructure.</p>
+              </div>
+              <div className="relative max-w-3xl">
+                <Search className="absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-white/40"/>
+                <Input value={query} onChange={e => setQuery(e.target.value.slice(0,120))} placeholder="Search tools, agents, models, research, coding, automation..." className="h-12 rounded-2xl border-white/10 bg-black/30 pl-11 pr-11 text-white placeholder:text-white/30" aria-label="Search AI tools and categories" />
+                {query && <Button size="icon" variant="ghost" onClick={() => setQuery('')} className="absolute right-1 top-1/2 h-10 w-10 -translate-y-1/2 rounded-xl text-white/60 hover:bg-white/10 hover:text-white" aria-label="Clear search"><X className="h-4 w-4"/></Button>}
+              </div>
+            </div>
+          </section>
+          <div className="flex items-center justify-between gap-4 border-b border-white/10 pb-4 text-xs text-white/45">
+            <span>{visibleCount} tools shown</span>
+            <div className="flex items-center gap-3">
+              <Link href="/news" className="hidden items-center gap-1.5 text-white/60 hover:text-white md:inline-flex"><Newspaper className="h-3.5 w-3.5"/>Latest AI News</Link>
+              <div className="flex gap-1 rounded-xl border border-white/10 bg-white/[.03] p-1">
+                <Button size="sm" variant={view==='grid'?'default':'ghost'} onClick={()=>setView('grid')} aria-label="Grid view" className="h-8 rounded-lg"><Grid2X2 className="h-3.5 w-3.5" /></Button>
+                <Button size="sm" variant={view==='list'?'default':'ghost'} onClick={()=>setView('list')} aria-label="List view" className="h-8 rounded-lg"><List className="h-3.5 w-3.5" /></Button>
+              </div>
+            </div>
+          </div>
+          <div className="space-y-10">{categories.map((category, categoryIndex) => <CategorySection key={category.id} category={category} index={categoryIndex} list={view==='list'} />)}</div>
+          {!categories.length && <div className="rounded-2xl border border-dashed border-white/15 bg-white/[.02] p-12 text-center text-sm text-white/45">No tools matched &quot;{query}&quot;. Try a capability such as agents, coding, research or automation.</div>}
+        </div>
+      </div>
+    </div>
+  );
 }
 
 function CategorySection({ category, index, list }: { category: CurrentAICategory; index: number; list: boolean }) {
   const hue = hueFor(category.name);
-  return <section id={category.id} className="overflow-hidden rounded-[22px] border border-white/10 bg-[#0d0f12] shadow-[0_20px_60px_rgba(0,0,0,.18)]"><div className="relative overflow-hidden border-b border-white/10 px-5 py-5 md:px-6" style={{ background: `radial-gradient(circle at 80% 20%, hsla(${hue},70%,55%,.13), transparent 35%), linear-gradient(135deg,#15171b,#0d0f12)` }}><div className="flex items-end justify-between gap-4"><div><p className="mb-1 text-[9px] font-semibold uppercase tracking-[.22em] text-white/35">AI Directory</p><h2 className="text-xl font-semibold tracking-tight text-white md:text-2xl">{category.name}</h2><p className="mt-1 max-w-3xl text-xs leading-5 text-white/45">{category.description}</p></div><span className="hidden rounded-full border border-white/10 bg-white/[.03] px-3 py-1 text-[10px] text-white/40 sm:inline-flex">{category.tools.length} tools</span></div></div><div className={list ? 'space-y-3 p-4 md:p-5' : 'grid gap-4 p-4 md:grid-cols-2 md:p-5 xl:grid-cols-3'}>{category.tools.map((tool, toolIndex) => <ToolCard key={`${category.id}-${tool.name}-${toolIndex}`} tool={tool} category={category.name} list={list} />)}</div></section>;
+  return <section id={category.id} className="overflow-hidden rounded-[22px] border border-white/10 bg-[#0d0f12] shadow-[0_20px_60px_rgba(0,0,0,.18)]">
+    <div className="relative overflow-hidden border-b border-white/10 px-5 py-5 md:px-6" style={{ background: `radial-gradient(circle at 80% 20%, hsla(${hue},70%,55%,.13), transparent 35%), linear-gradient(135deg,#15171b,#0d0f12)` }}>
+      <div className="flex items-end justify-between gap-4">
+        <div>
+          <p className="mb-1 text-[9px] font-semibold uppercase tracking-[.22em] text-white/35">AI Directory</p>
+          <h2 className="text-xl font-semibold tracking-tight text-white md:text-2xl">{category.name}</h2>
+          <p className="mt-1 max-w-3xl text-xs leading-5 text-white/45">{category.description}</p>
+        </div>
+        <span className="hidden rounded-full border border-white/10 bg-white/[.03] px-3 py-1 text-[10px] text-white/40 sm:inline-flex">{category.tools.length} tools</span>
+      </div>
+    </div>
+    <div className={list ? 'space-y-3 p-4 md:p-5' : 'grid gap-4 p-4 md:grid-cols-2 md:p-5 xl:grid-cols-3'}>
+      {category.tools.map((tool, toolIndex) => <ToolCard key={`${category.id}-${tool.name}-${toolIndex}`} tool={tool} category={category.name} list={list} />)}
+    </div>
+  </section>;
 }
