@@ -20,7 +20,6 @@ The landing dashboard for the combined StreamEarn ecosystem and quick navigation
 ### AI Intelligence
 - **AI Tools** — categorized directory of current assistants, agents, coding tools, research tools, automation, GTM/lead-generation, creative, security and infrastructure products.
 - **Resource Hub** — organized learning, research, cybersecurity, career and reference resources.
-- **Learning & Courses** — current official academies, courses, certifications and advanced learning paths.
 - **AI News** — short, verified current feed of meaningful AI and technology developments.
 
 ### Build & Earn
@@ -68,14 +67,6 @@ Excluded by policy:
 - API-key-dependent AI features added to local workflows
 
 External tools can still be listed as reference products when they are useful and credible; StreamEarn does not silently integrate them into local functionality.
-
-## Learning & Courses refresh policy
-
-The learning section prioritizes official academies and current technical paths. Current examples include OpenAI Academy, Anthropic Academy, Microsoft Learn, Google AI learning, Hugging Face Agents and Context courses, LangChain Academy, NVIDIA learning and production AI/security paths.
-
-The catalog now also tracks current builder material such as OpenAI Academy Builder Bootcamp: Agents, Codex Bootcamp, Google's AI Professional Certificate and Build with Gemini 2026.
-
-Certification paths are date-aware. Retired certifications should not be presented as current learning targets.
 
 ## Resource Hub maintenance
 
@@ -176,7 +167,6 @@ StreamEarn-8/
 │  │  ├─ ai-tools/                # AI Tools directory
 │  │  ├─ ai-work/                 # AI Work
 │  │  ├─ cybersecurity/           # Cybersecurity area
-│  │  ├─ courses/                 # Learning & Courses
 │  │  ├─ directory/               # Directory
 │  │  ├─ earnings/                # Earning Opportunities
 │  │  ├─ hub/                     # Resource Hub
@@ -196,7 +186,6 @@ StreamEarn-8/
 │  │  ├─ ai-news.ts
 │  │  ├─ current-ai-additions.ts
 │  │  ├─ current-ai-directory.ts
-│  │  ├─ courses-data.ts
 │  │  ├─ lead-automation-data.ts
 │  │  └─ resource-data.ts
 │  │
@@ -215,7 +204,6 @@ StreamEarn-8/
 | Command Center | `/` |
 | AI Tools | `/ai-tools` |
 | Resource Hub | `/hub` |
-| Learning & Courses | `/courses` |
 | AI Work | `/ai-work` |
 | Earning Opportunities | `/earnings` |
 | Directory | `/directory` |
@@ -280,13 +268,12 @@ Each refresh should:
 
 1. Verify current AI news before replacing the primary feed.
 2. Refresh current AI tools without adding prohibited StreamEarn integrations.
-3. Refresh official academies, courses and certification paths.
-4. Review Resource Hub links for obvious stale or broken destinations and correct verified redirects.
-5. Re-check internship and scholarship eligibility/deadlines before publishing active listings.
-6. Remove closed/stale opportunity records from the active radar while preserving local personal state where IDs remain relevant.
-7. Check important internal navigation routes, especially the unified Planner.
-8. Verify list/grid controls, official source links, logos and unique visual seeds.
-9. Commit verified changes directly to `main` so Render can auto-deploy.
+3. Review Resource Hub links for obvious stale or broken destinations and correct verified redirects.
+4. Re-check internship and scholarship eligibility/deadlines before publishing active listings.
+5. Remove closed/stale opportunity records from the active radar while preserving local personal state where IDs remain relevant.
+6. Check important internal navigation routes, especially the unified Planner.
+7. Verify list/grid controls, official source links, logos and unique visual seeds.
+8. Commit verified changes directly to `main` so Render can auto-deploy.
 
 ## Security and reliability
 
