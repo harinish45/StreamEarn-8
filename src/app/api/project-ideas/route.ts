@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createSupabaseServerClient } from '@/lib/supabase/server';
 import { createSupabaseAdminClient } from '@/lib/supabase/admin';
 import { rejectCrossOrigin } from '@/lib/security';
+import crypto from 'node:crypto';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -38,19 +39,34 @@ export async function POST(request: NextRequest) {
   if (blocked) return blocked;
   try {
     const { sb, id } = await getUserId();
-    const body = await request.json();
-    const name = clean(body?.name, 160);
-    const description = clean(body?.description, 2000);
+    const contentType = (request.headers.get('content-type') || '').toLowerCase();
+    let name = '';
+    let description = '';
+    if (contentType.includes('application/json')) {
+      const body = await request.json();
+      name = clean(body?.name, 160);
+      description = clean(body?.description, 2000);
+    } else if (contentType.includes('multipart/form-data') || contentType.includes('application/x-www-form-urlencoded')) {
+      const form = await request.formData();
+      name = clean(form.get('name'), 160);
+      description = clean(form.get('description'), 2000);
+    } else {
+      return NextResponse.json({ error: 'Invalid request format.' }, { status: 415 });
+    }
     if (!name) return NextResponse.json({ error: 'Idea name is required.' }, { status: 400 });
-    const payload = { owner_id: id, name, description, updated_at: new Date().toISOString() };
+    const payload = { id: crypto.randomUUID(), owner_id: id, name, description, created_at: new Date().toISOString(), updated_at: new Date().toISOString() };
     const result = await sb.from('project_ideas').insert(payload).select('id,name,description,created_at,updated_at').single();
-    if (!result.error) return NextResponse.json(result.data, { status: 201, headers: { 'Cache-Control': 'no-store' } });
+    if (!result.error) {
+      if (contentType.includes('json')) return NextResponse.json(result.data, { status: 201, headers: { 'Cache-Control': 'no-store' } });
+      return NextResponse.redirect(new URL('/projects?idea=created', request.url), 303);
+    }
     const fallback = await createSupabaseAdminClient().from('project_ideas').insert(payload).select('id,name,description,created_at,updated_at').single();
     if (fallback.error) throw new Error(`${result.error.message}; fallback: ${fallback.error.message}`);
-    return NextResponse.json(fallback.data, { status: 201, headers: { 'Cache-Control': 'no-store' } });
+    if (contentType.includes('json')) return NextResponse.json(fallback.data, { status: 201, headers: { 'Cache-Control': 'no-store' } });
+    return NextResponse.redirect(new URL('/projects?idea=created', request.url), 303);
   } catch (error) {
     console.error('[project-ideas] create failed', error);
     if (error instanceof Error && error.message === 'Unauthorized') return unauthorized();
-    return NextResponse.json({ error: 'Idea could not be saved.' }, { status: 500, headers: { 'Cache-Control': 'no-store' } });
+    return NextResponse.json({ error: 'Idea could not be saved. Please try again.' }, { status: 500, headers: { 'Cache-Control': 'no-store' } });
   }
 }
