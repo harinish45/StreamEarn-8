@@ -1,9 +1,61 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createSupabaseServerClient } from '@/lib/supabase/server';
-import { createSupabaseAdminClient } from '@/lib/supabase/admin';
 import { rejectCrossOrigin } from '@/lib/security';
-export const runtime='nodejs'; export const dynamic='force-dynamic';
-async function auth(){const sb=await createSupabaseServerClient();const claims=await sb.auth.getClaims().catch(()=>null);const userId=claims?.data?.claims?.sub||(await sb.auth.getUser()).data.user?.id||'';return {sb,userId};}
-export async function GET(_request:NextRequest,{params}:{params:Promise<{id:string}>}){const {id}=await params;if(!/^[0-9a-f-]{36}$/i.test(id))return NextResponse.json({error:'Not found'},{status:404});const {sb,userId}=await auth();if(!userId)return NextResponse.json({error:'Unauthorized'},{status:401});const {data,error}=await sb.from('projects').select('*').eq('id',id).eq('owner_id',userId).maybeSingle();if(error||!data)return NextResponse.json({error:'Not found'},{status:404});return NextResponse.json(data,{headers:{'Cache-Control':'private,no-store'}})}
-export async function PATCH(request:NextRequest,{params}:{params:Promise<{id:string}>}){const blocked=rejectCrossOrigin(request);if(blocked)return blocked;const {sb,userId}=await auth();if(!userId)return NextResponse.json({error:'Authentication required.'},{status:401});const {id}=await params;const body=await request.json().catch(()=>null);if(!body||typeof body!=='object')return NextResponse.json({error:'Invalid request.'},{status:400});const patch:Record<string,unknown>={updated_at:new Date().toISOString()};const status=['idea','planning','in-progress','blocked','testing','completed','archived'];const priority=['P0','P1','P2','P3'];if(typeof body.name==='string'&&body.name.trim())patch.name=body.name.trim().slice(0,120);if(typeof body.description==='string')patch.description=body.description.trim().slice(0,2000);if(typeof body.status==='string'&&status.includes(body.status))patch.status=body.status;if(typeof body.priority==='string'&&priority.includes(body.priority))patch.priority=body.priority;if(Number.isFinite(Number(body.progress)))patch.progress=Math.min(100,Math.max(0,Number(body.progress)));if(typeof body.nextAction==='string')patch.next_action=body.nextAction.trim().slice(0,300);if(typeof body.phase==='string')patch.phase=body.phase.trim().slice(0,120);const run=(client:any)=>client.from('projects').update(patch).eq('id',id).eq('owner_id',userId).select('*').single();let result=await run(sb);if(result.error)result=await run(createSupabaseAdminClient());if(result.error){console.error('[projects] update failed',result.error);return NextResponse.json({error:'Unable to update project.'},{status:500})}return NextResponse.json(result.data,{headers:{'Cache-Control':'no-store'}})}
-export async function DELETE(request:NextRequest,{params}:{params:Promise<{id:string}>}){const blocked=rejectCrossOrigin(request);if(blocked)return blocked;const {sb,userId}=await auth();if(!userId)return NextResponse.json({error:'Authentication required.'},{status:401});const {id}=await params;if(!/^[0-9a-f-]{36}$/i.test(id))return NextResponse.json({error:'Invalid project.'},{status:400});const run=(client:any)=>client.from('projects').delete().eq('id',id).eq('owner_id',userId);let result=await run(sb);if(result.error)result=await run(createSupabaseAdminClient());if(result.error){console.error('[projects] delete failed',result.error);return NextResponse.json({error:'Unable to delete project.'},{status:500})}return NextResponse.json({ok:true},{headers:{'Cache-Control':'no-store'}})}
+import { deleteProject, updateProject } from '@/lib/project-store';
+
+export const runtime='nodejs';
+export const dynamic='force-dynamic';
+
+async function paramsId(params:Promise<{id:string}>){
+  const {id}=await params;
+  return /^[0-9a-f-]{36}$/i.test(id)?id:'';
+}
+
+export async function GET(_request:NextRequest,{params}:{params:Promise<{id:string}>}){
+  const id=await paramsId(params);
+  if(!id)return NextResponse.json({error:'Not found'},{status:404});
+  try{
+    const { listProjects }=await import('@/lib/project-store');
+    const projects=await listProjects();
+    const project=projects.find(p=>p.id===id);
+    return project?NextResponse.json(project,{headers:{'Cache-Control':'private,no-store'}}):NextResponse.json({error:'Not found'},{status:404});
+  }catch(error){
+    console.error('[projects] get failed',error);
+    return NextResponse.json({error:'Unable to load project.'},{status:500,headers:{'Cache-Control':'no-store'}});
+  }
+}
+
+export async function PATCH(request:NextRequest,{params}:{params:Promise<{id:string}>}){
+  const blocked=rejectCrossOrigin(request); if(blocked)return blocked;
+  const id=await paramsId(params); if(!id)return NextResponse.json({error:'Invalid project.'},{status:400});
+  const body=await request.json().catch(()=>null);
+  if(!body||typeof body!=='object'||Array.isArray(body))return NextResponse.json({error:'Invalid request.'},{status:400});
+  const source=body as Record<string,unknown>;
+  const patch:Record<string,unknown>={};
+  const statuses=['idea','planning','in-progress','blocked','testing','completed','archived'];
+  const priorities=['P0','P1','P2','P3'];
+  if(typeof source.name==='string'&&source.name.trim())patch.name=source.name.trim().slice(0,120);
+  if(typeof source.description==='string')patch.description=source.description.trim().slice(0,2000);
+  if(typeof source.status==='string'&&statuses.includes(source.status))patch.status=source.status;
+  if(typeof source.priority==='string'&&priorities.includes(source.priority))patch.priority=source.priority;
+  if(Number.isFinite(Number(source.progress)))patch.progress=Math.min(100,Math.max(0,Number(source.progress)));
+  if(typeof source.nextAction==='string')patch.nextAction=source.nextAction.trim().slice(0,300);
+  if(typeof source.phase==='string')patch.phase=source.phase.trim().slice(0,120);
+  try{
+    return NextResponse.json(await updateProject(id,patch),{headers:{'Cache-Control':'no-store'}});
+  }catch(error){
+    console.error('[projects] update failed',error);
+    return NextResponse.json({error:error instanceof Error?error.message:'Unable to update project.'},{status:500,headers:{'Cache-Control':'no-store'}});
+  }
+}
+
+export async function DELETE(request:NextRequest,{params}:{params:Promise<{id:string}>}){
+  const blocked=rejectCrossOrigin(request); if(blocked)return blocked;
+  const id=await paramsId(params); if(!id)return NextResponse.json({error:'Invalid project.'},{status:400});
+  try{
+    await deleteProject(id);
+    return NextResponse.json({ok:true},{headers:{'Cache-Control':'no-store'}});
+  }catch(error){
+    console.error('[projects] delete failed',error);
+    return NextResponse.json({error:error instanceof Error?error.message:'Unable to delete project.'},{status:500,headers:{'Cache-Control':'no-store'}});
+  }
+}
