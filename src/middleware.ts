@@ -37,8 +37,22 @@ export async function middleware(request: NextRequest) {
       },
     },
   });
-  const { data } = await supabase.auth.getClaims();
-  const userId = data?.claims?.sub;
+
+  let userId = '';
+  try {
+    const claims = await supabase.auth.getClaims();
+    userId = claims.data?.claims?.sub || '';
+  } catch {}
+  // getUser() is the authoritative fallback when local JWT/JWKS claim
+  // verification is unavailable or a refreshed SSR session has not yet been
+  // reflected in getClaims(). This keeps authenticated API routes usable.
+  if (!userId) {
+    try {
+      const user = await supabase.auth.getUser();
+      userId = user.data.user?.id || '';
+    } catch {}
+  }
+
   if (publicPath) return security(response, request);
   if (!userId) {
     if (isApi) return security(NextResponse.json({ error: 'Authentication required' }, { status: 401, headers: { 'Cache-Control': 'no-store' } }), request);
@@ -61,7 +75,6 @@ function security(response: NextResponse, request: NextRequest) {
   response.headers.set('X-Permitted-Cross-Domain-Policies', 'none');
   response.headers.set('X-Download-Options', 'noopen');
   response.headers.set('Origin-Agent-Cluster', '?1');
-  // Removed obsolete placeholder image hosts (picsum.photos, placehold.co) from img-src
   response.headers.set('Content-Security-Policy', `default-src 'self'; base-uri 'self'; frame-ancestors 'none'; object-src 'none'; form-action 'self'; img-src 'self' data: blob:; font-src 'self' data: https://fonts.gstatic.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; script-src 'self' 'unsafe-inline' ${SUPABASE_ORIGIN}; connect-src 'self' ${SUPABASE_ORIGIN} wss://xhmaqgyyajyxacbtdutz.supabase.co; frame-src 'self' ${SUPABASE_ORIGIN}; upgrade-insecure-requests`);
   response.headers.set('Cache-Control', request.nextUrl.pathname.startsWith('/api/') ? 'private, no-store' : 'no-cache');
   response.headers.set('X-Robots-Tag', 'noindex, nofollow, noarchive');
