@@ -8,7 +8,7 @@ export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
 
 function denied(){
-  return NextResponse.json({error:'Unauthorized'},{status:401,headers:{'Cache-Control':'no-store'}});
+  return NextResponse.json({error:'Authentication required. Please sign in again.'},{status:401,headers:{'Cache-Control':'no-store'}});
 }
 function cleanString(value:unknown,max=500){
   return typeof value==='string'?value.trim().slice(0,max):'';
@@ -19,14 +19,15 @@ function cleanList(value:unknown,maxItems=20,maxLength=120){
     : [];
 }
 
-// Keep API authentication aligned with middleware and project-store. Using
-// getClaims avoids an unnecessary user lookup and prevents a valid refreshed
-// SSR session from being rejected only on POST /api/projects.
 async function authenticated(){
   try{
     const sb=await createSupabaseServerClient();
-    const {data,error}=await sb.auth.getClaims();
-    return !error && Boolean(data?.claims?.sub);
+    const claims=await sb.auth.getClaims();
+    if(!claims.error&&claims.data?.claims?.sub)return true;
+    // Fallback for sessions whose JWT cannot be locally verified immediately
+    // after refresh. This keeps the project API consistent with the login state.
+    const user=await sb.auth.getUser();
+    return !user.error&&Boolean(user.data.user?.id);
   }catch{
     return false;
   }
@@ -36,8 +37,9 @@ export async function GET(){
   if(!await authenticated())return denied();
   try{
     return NextResponse.json(await listProjects(),{headers:{'Cache-Control':'private,no-store'}});
-  }catch{
-    return NextResponse.json({error:'Unable to load projects'},{status:500,headers:{'Cache-Control':'no-store'}});
+  }catch(error){
+    console.error('[projects] list failed',error);
+    return NextResponse.json({error:'Unable to load projects. Please refresh and try again.'},{status:500,headers:{'Cache-Control':'no-store'}});
   }
 }
 
@@ -89,6 +91,6 @@ export async function POST(request:NextRequest){
     return NextResponse.json(saved,{status:201,headers:{'Cache-Control':'no-store'}});
   }catch(error){
     console.error('[projects] create failed',error);
-    return NextResponse.json({error:'Unable to save project'},{status:500,headers:{'Cache-Control':'no-store'}});
+    return NextResponse.json({error:'Project could not be saved. Check the database connection and try again.'},{status:500,headers:{'Cache-Control':'no-store'}});
   }
 }
