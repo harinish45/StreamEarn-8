@@ -90,7 +90,6 @@
   .media-smooth { image-rendering: auto; backface-visibility: hidden; }
 }
 
-/* StreamEarn motion scrollbar: compact, animated, theme-aware, and keyboard-safe. */
 html { scrollbar-width: thin; scrollbar-color: hsl(var(--text-accent) / .75) transparent; }
 body { scrollbar-gutter: stable; }
 * { scrollbar-width: thin; scrollbar-color: hsl(var(--text-accent) / .72) transparent; }
@@ -116,17 +115,48 @@ body { scrollbar-gutter: stable; }
   box-shadow: 0 0 0 1px hsl(var(--text-accent) / .4), 0 0 24px hsl(var(--text-accent) / .36);
 }
 *::-webkit-scrollbar-corner { background: transparent; }
-
 .category-carousel-scrollbar { scrollbar-color: hsl(var(--text-accent) / .8) transparent; }
 .category-carousel-scrollbar::-webkit-scrollbar { height: 7px; }
 .category-carousel-scrollbar::-webkit-scrollbar-thumb { background: linear-gradient(90deg, hsl(var(--text-accent) / .45), hsl(var(--text-accent)), hsl(var(--text-accent) / .45)); background-clip: padding-box; animation: stream-scroll-shimmer 2.4s linear infinite; }
+@keyframes stream-scroll-shimmer { 0% { filter: brightness(.85); } 50% { filter: brightness(1.2); } 100% { filter: brightness(.85); } }
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .001ms !important; animation-iteration-count: 1 !important; transition-duration: .001ms !important; } }
 
-@keyframes stream-scroll-shimmer {
-  0% { filter: brightness(.85); }
-  50% { filter: brightness(1.2); }
-  100% { filter: brightness(.85); }
+/* Project card refinements: move the live status editor into the bottom Action/metadata strip. */
+article:has(select[aria-label^="Edit status for"]) {
+  position: relative;
+  padding-bottom: 44px !important;
+  overflow: hidden;
 }
-
-@media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .001ms !important; animation-iteration-count: 1 !important; transition-duration: .001ms !important; }
+article:has(select[aria-label^="Edit status for"]) > div:first-child > div:first-child > div:first-child > div {
+  position: absolute;
+  left: 12px;
+  bottom: 11px;
+  z-index: 3;
+}
+article:has(select[aria-label^="Edit status for"]) > div:first-child > div:first-child > div:first-child > span:first-child {
+  display: none;
+}
+article:has(select[aria-label^="Edit status for"]) > div:nth-child(2) {
+  padding-left: 118px;
+  min-height: 26px;
+  align-items: center;
+}
+article:has(select[aria-label^="Edit status for"]) select[aria-label^="Edit status for"] {
+  min-width: 100px;
+  border-radius: 8px;
+  border-color: hsl(var(--text-accent) / .28);
+  background: linear-gradient(180deg, hsl(var(--text-accent) / .08), hsl(var(--card-bg) / .92));
+  box-shadow: 0 4px 16px hsl(var(--text-accent) / .08), inset 0 1px 0 hsl(0 0% 100% / .04);
+}
+article:has(select[aria-label^="Edit status for"]) select[aria-label^="Edit status for"]:hover {
+  border-color: hsl(var(--text-accent) / .48);
+  transform: translateY(-1px);
+}
+article:has(select[aria-label^="Edit status for"]) select[aria-label^="Edit status for"]:focus-visible {
+  outline: 2px solid hsl(var(--ring-color) / .48);
+  outline-offset: 2px;
+}
+@media (max-width: 640px) {
+  article:has(select[aria-label^="Edit status for"]) > div:nth-child(2) { padding-left: 0; padding-top: 34px; }
+  article:has(select[aria-label^="Edit status for"]) > div:first-child > div:first-child > div:first-child > div { left: 12px; bottom: 47px; }
 }
