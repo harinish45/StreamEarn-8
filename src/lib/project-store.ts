@@ -32,11 +32,7 @@ async function db() {
   const { data, error } = await sb.auth.getClaims();
   const userId = data?.claims?.sub;
   if (error || !userId) throw new Error('Unauthorized');
-  // Identity is still verified from the user's SSR session. Persistence uses the
-  // server-only Supabase secret to avoid RLS failures caused by refreshed Render
-  // cookies, while every query remains explicitly scoped to the verified owner.
-  const admin = createSupabaseAdminClient();
-  return { admin, userId };
+  return { sb, userId };
 }
 
 function fromRow(r: any, people: string[] = []): Project {
@@ -58,16 +54,17 @@ function row(p: Project, ownerId: string) {
   };
 }
 
-export async function listProjects() {
-  const ctx = await db();
-  if (!ctx) return legacy();
-  const { admin, userId } = ctx;
-  const { data, error } = await admin.from('projects').select('*').eq('owner_id', userId).order('updated_at', { ascending: false });
+async function admin() {
+  return createSupabaseAdminClient();
+}
+
+async function listWith(client:any, userId:string) {
+  const { data, error } = await client.from('projects').select('*').eq('owner_id', userId).order('updated_at', { ascending: false });
   if (error) throw error;
   const projects = data || [];
   if (!projects.length) return [];
-  const ids = projects.map(p => p.id);
-  const { data: peopleRows, error: peopleError } = await admin.from('project_people').select('project_id,name').eq('owner_id', userId).in('project_id', ids);
+  const ids = projects.map((p:any) => p.id);
+  const { data: peopleRows, error: peopleError } = await client.from('project_people').select('project_id,name').eq('owner_id', userId).in('project_id', ids);
   if (peopleError) throw peopleError;
   const peopleByProject = new Map<string, string[]>();
   for (const person of peopleRows || []) {
@@ -75,7 +72,21 @@ export async function listProjects() {
     current.push(person.name);
     peopleByProject.set(person.project_id, current);
   }
-  return projects.map(p => fromRow(p, peopleByProject.get(p.id) || []));
+  return projects.map((p:any) => fromRow(p, peopleByProject.get(p.id) || []));
+}
+
+export async function listProjects() {
+  const ctx = await db();
+  if (!ctx) return legacy();
+  try {
+    return await listWith(ctx.sb, ctx.userId);
+  } catch (firstError) {
+    try {
+      return await listWith(await admin(), ctx.userId);
+    } catch {
+      throw firstError;
+    }
+  }
 }
 
 export async function addProject(p: Project) {
@@ -88,14 +99,30 @@ export async function addProject(p: Project) {
     await fs.rename(tmp, file);
     return p;
   }
-  const { admin, userId } = ctx;
-  const { data, error } = await admin.from('projects').insert(row(p, userId)).select('*').single();
-  if (error) throw error;
+
+  const payload = row(p, ctx.userId);
+  let data:any;
+  try {
+    const result = await ctx.sb.from('projects').insert(payload).select('*').single();
+    if (result.error) throw result.error;
+    data = result.data;
+  } catch (firstError) {
+    const result = await (await admin()).from('projects').insert(payload).select('*').single();
+    if (result.error) throw firstError;
+    data = result.data;
+  }
+
   if (p.people.length) {
-    const { error: peopleError } = await admin.from('project_people').insert(p.people.map(name => ({ project_id: p.id, owner_id: userId, name, role: '', organization: p.organization || '', notes: '' })));
-    if (peopleError) {
-      await admin.from('projects').delete().eq('id', p.id).eq('owner_id', userId);
-      throw peopleError;
+    const peoplePayload = p.people.map(name => ({ project_id: p.id, owner_id: ctx.userId, name, role: '', organization: p.organization || '', notes: '' }));
+    try {
+      const result = await ctx.sb.from('project_people').insert(peoplePayload);
+      if (result.error) throw result.error;
+    } catch (firstError) {
+      const result = await (await admin()).from('project_people').insert(peoplePayload);
+      if (result.error) {
+        await (await admin()).from('projects').delete().eq('id', p.id).eq('owner_id', ctx.userId);
+        throw firstError;
+      }
     }
   }
   return fromRow(data, p.people);
@@ -113,7 +140,11 @@ export async function archiveProject(id: string) {
     await fs.rename(tmp, file);
     return;
   }
-  const { admin, userId } = ctx;
-  const { error } = await admin.from('projects').update({ status: 'archived', archived_at: new Date().toISOString() }).eq('id', id).eq('owner_id', userId);
-  if (error) throw error;
+  try {
+    const result = await ctx.sb.from('projects').update({ status: 'archived', archived_at: new Date().toISOString() }).eq('id', id).eq('owner_id', ctx.userId);
+    if (result.error) throw result.error;
+  } catch {
+    const result = await (await admin()).from('projects').update({ status: 'archived', archived_at: new Date().toISOString() }).eq('id', id).eq('owner_id', ctx.userId);
+    if (result.error) throw result.error;
+  }
 }
