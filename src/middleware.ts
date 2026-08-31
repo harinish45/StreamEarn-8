@@ -40,16 +40,13 @@ export async function middleware(request: NextRequest) {
 
   let userId = '';
   try {
-    const claims = await supabase.auth.getClaims();
-    userId = claims.data?.claims?.sub || '';
+    const { data } = await supabase.auth.getClaims();
+    userId = data?.claims?.sub || '';
   } catch {}
-  // getUser() is the authoritative fallback when local JWT/JWKS claim
-  // verification is unavailable or a refreshed SSR session has not yet been
-  // reflected in getClaims(). This keeps authenticated API routes usable.
   if (!userId) {
     try {
-      const user = await supabase.auth.getUser();
-      userId = user.data.user?.id || '';
+      const { data } = await supabase.auth.getUser();
+      userId = data.user?.id || '';
     } catch {}
   }
 
