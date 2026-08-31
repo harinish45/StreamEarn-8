@@ -14,9 +14,9 @@ function cleanString(value:unknown,max=500){
   return typeof value==='string'?value.trim().slice(0,max):'';
 }
 function cleanList(value:unknown,maxItems=20,maxLength=120){
-  return Array.isArray(value)
-    ? value.filter((x):x is string=>typeof x==='string').slice(0,maxItems).map(x=>x.trim().slice(0,maxLength)).filter(Boolean)
-    : [];
+  if(Array.isArray(value)) return value.filter((x):x is string=>typeof x==='string').slice(0,maxItems).map(x=>x.trim().slice(0,maxLength)).filter(Boolean);
+  if(typeof value==='string') return value.split(',').map(x=>x.trim().slice(0,maxLength)).filter(Boolean).slice(0,maxItems);
+  return [];
 }
 
 async function authenticated(){
@@ -24,8 +24,6 @@ async function authenticated(){
     const sb=await createSupabaseServerClient();
     const claims=await sb.auth.getClaims();
     if(!claims.error&&claims.data?.claims?.sub)return true;
-    // Fallback for sessions whose JWT cannot be locally verified immediately
-    // after refresh. This keeps the project API consistent with the login state.
     const user=await sb.auth.getUser();
     return !user.error&&Boolean(user.data.user?.id);
   }catch{
@@ -47,16 +45,23 @@ export async function POST(request:NextRequest){
   const blocked=rejectCrossOrigin(request);
   if(blocked)return blocked;
   if(!await authenticated())return denied();
-  if(!(request.headers.get('content-type')||'').toLowerCase().startsWith('application/json'))
-    return NextResponse.json({error:'Invalid request'},{status:400});
-  const length=Number(request.headers.get('content-length')||0);
-  if(Number.isFinite(length)&&length>64*1024)
-    return NextResponse.json({error:'Request too large'},{status:413});
 
   try{
-    const body=await request.json();
-    if(!body||typeof body!=='object'||Array.isArray(body))
+    const contentType=(request.headers.get('content-type')||'').toLowerCase();
+    let body:Record<string,unknown>={};
+
+    if(contentType.includes('application/json')){
+      const length=Number(request.headers.get('content-length')||0);
+      if(Number.isFinite(length)&&length>64*1024)return NextResponse.json({error:'Request too large'},{status:413});
+      const parsed=await request.json();
+      if(!parsed||typeof parsed!=='object'||Array.isArray(parsed))return NextResponse.json({error:'Invalid request'},{status:400});
+      body=parsed as Record<string,unknown>;
+    }else if(contentType.includes('application/x-www-form-urlencoded')||contentType.includes('multipart/form-data')){
+      const form=await request.formData();
+      body=Object.fromEntries(form.entries());
+    }else{
       return NextResponse.json({error:'Invalid request'},{status:400});
+    }
 
     const name=cleanString(body.name,120);
     if(!name)return NextResponse.json({error:'Project name is required'},{status:400});
@@ -65,32 +70,27 @@ export async function POST(request:NextRequest){
     const liveUrl=safeHttpUrl(body.liveUrl,500);
     const now=new Date().toISOString();
     const project:Project={
-      id:crypto.randomUUID(),
-      name,
-      description:cleanString(body.description),
-      people:cleanList(body.people),
-      organization:cleanString(body.organization,160),
-      role:cleanString(body.role,120),
-      priority:['P0','P1','P2','P3'].includes(body.priority)?body.priority:'P2',
-      status:['idea','planning','in-progress','blocked','testing','completed','archived'].includes(body.status)?body.status:'idea',
+      id:crypto.randomUUID(), name,
+      description:cleanString(body.description), people:cleanList(body.people),
+      organization:cleanString(body.organization,160), role:cleanString(body.role,120),
+      priority:['P0','P1','P2','P3'].includes(String(body.priority))?String(body.priority) as Project['priority']:'P2',
+      status:['idea','planning','in-progress','blocked','testing','completed','archived'].includes(String(body.status))?String(body.status) as Project['status']:'idea',
       progress:Math.min(100,Math.max(0,Number.isFinite(Number(body.progress))?Number(body.progress):0)),
-      startDate:cleanString(body.startDate,40),
-      targetDate:cleanString(body.targetDate,40),
-      phase:cleanString(body.phase,120),
-      techStack:cleanList(body.techStack),
-      repository,
-      liveUrl,
-      nextAction:cleanString(body.nextAction,300),
-      blockers:cleanList(body.blockers),
-      notes:cleanList(body.notes,50,1000),
-      createdAt:now,
-      updatedAt:now,
+      startDate:cleanString(body.startDate,40), targetDate:cleanString(body.targetDate,40), phase:cleanString(body.phase,120),
+      techStack:cleanList(body.techStack), repository, liveUrl, nextAction:cleanString(body.nextAction,300),
+      blockers:cleanList(body.blockers), notes:cleanList(body.notes,50,1000), createdAt:now, updatedAt:now,
     };
 
     const saved=await addProject(project);
+    if(!contentType.includes('application/json')){
+      return NextResponse.redirect(new URL('/projects?created=1',request.url),303);
+    }
     return NextResponse.json(saved,{status:201,headers:{'Cache-Control':'no-store'}});
   }catch(error){
     console.error('[projects] create failed',error);
+    if((request.headers.get('accept')||'').includes('text/html')){
+      return NextResponse.redirect(new URL('/projects?created=0',request.url),303);
+    }
     return NextResponse.json({error:'Project could not be saved. Check the database connection and try again.'},{status:500,headers:{'Cache-Control':'no-store'}});
   }
 }
