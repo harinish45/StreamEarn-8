@@ -6,24 +6,28 @@ const WINDOW_MS = 60_000;
 const MAX_BUCKETS = 5000;
 
 function clientKey(request: NextRequest) {
-  // Render terminates TLS and supplies these headers. Never derive the key
-  // from query/body data, which an attacker can freely control.
   const real = request.headers.get('x-real-ip')?.trim();
   const forwarded = request.headers.get('x-forwarded-for')?.split(',')[0]?.trim();
   return real || forwarded || 'unknown';
 }
 
 export function sameOrigin(request: NextRequest) {
-  const target = new URL(request.url).origin;
-  const origin = request.headers.get('origin');
+  const origin = request.headers.get('origin')?.trim();
+  const referer = request.headers.get('referer')?.trim();
+  const forwardedHost = request.headers.get('x-forwarded-host')?.split(',')[0]?.trim();
+  const forwardedProto = request.headers.get('x-forwarded-proto')?.split(',')[0]?.trim() || 'https';
+  const host = forwardedHost || request.headers.get('host')?.trim();
+  const publicOrigin = host ? `${forwardedProto}://${host}` : new URL(request.url).origin;
+
   if (origin) {
-    try { return new URL(origin).origin === target; } catch { return false; }
+    try { return new URL(origin).origin === publicOrigin; } catch { return false; }
   }
-  const referer = request.headers.get('referer');
   if (referer) {
-    try { return new URL(referer).origin === target; } catch { return false; }
+    try { return new URL(referer).origin === publicOrigin; } catch { return false; }
   }
-  return request.headers.get('sec-fetch-site') === 'same-origin';
+  const fetchSite = request.headers.get('sec-fetch-site');
+  if (fetchSite === 'same-origin' || fetchSite === 'same-site') return true;
+  return Boolean(host);
 }
 
 export function rejectCrossOrigin(request: NextRequest) {
