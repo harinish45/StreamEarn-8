@@ -1,66 +1,38 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createSupabaseServerClient } from '@/lib/supabase/server';
-import { createSupabaseAdminClient } from '@/lib/supabase/admin';
 import { rejectCrossOrigin } from '@/lib/security';
-import crypto from 'node:crypto';
 
-export const runtime = 'nodejs';
-export const dynamic = 'force-dynamic';
+export const runtime='nodejs';
+export const dynamic='force-dynamic';
 
-async function getUserId() {
-  const sb = await createSupabaseServerClient();
-  let id = '';
-  try { id = (await sb.auth.getUser()).data.user?.id || ''; } catch {}
-  if (!id) { try { id = (await sb.auth.getClaims()).data?.claims?.sub || ''; } catch {} }
-  if (!id) throw new Error('Unauthorized');
-  return id;
+const edgeUrl=()=>`${process.env.NEXT_PUBLIC_SUPABASE_URL}/functions/v1/project-store`;
+
+async function token(){
+  const sb=await createSupabaseServerClient();
+  const session=(await sb.auth.getSession()).data.session;
+  if(!session?.access_token)throw new Error('Unauthorized');
+  return session.access_token;
 }
-
-const clean = (value: unknown, max: number) => typeof value === 'string' ? value.trim().slice(0, max) : '';
-const unauthorized = () => NextResponse.json({ error: 'Authentication required. Please sign in again.' }, { status: 401, headers: { 'Cache-Control': 'no-store' } });
-const select = 'id,name,description,created_at,updated_at';
-
-export async function GET() {
-  try {
-    const id = await getUserId();
-    const { data, error } = await createSupabaseAdminClient().from('project_ideas').select(select).eq('owner_id', id).order('updated_at', { ascending: false });
-    if (error) throw error;
-    return NextResponse.json(data || [], { headers: { 'Cache-Control': 'private,no-store' } });
-  } catch (error) {
-    console.error('[project-ideas] list failed', error);
-    return unauthorized();
-  }
+async function call(action:string,payload:Record<string,unknown>={}){
+  const accessToken=await token();
+  const r=await fetch(edgeUrl(),{method:'POST',cache:'no-store',headers:{'Content-Type':'application/json','Authorization':`Bearer ${accessToken}`},body:JSON.stringify({action,...payload})});
+  const d=await r.json().catch(()=>({}));
+  if(!r.ok)throw new Error(d?.error||`Idea operation failed (${r.status})`);
+  return d;
 }
+const denied=()=>NextResponse.json({error:'Authentication required. Please sign in again.'},{status:401,headers:{'Cache-Control':'no-store'}});
 
-export async function POST(request: NextRequest) {
-  const blocked = rejectCrossOrigin(request);
-  if (blocked) return blocked;
-  try {
-    const id = await getUserId();
-    const contentType = (request.headers.get('content-type') || '').toLowerCase();
-    let name = '';
-    let description = '';
-    if (contentType.includes('application/json')) {
-      const body = await request.json();
-      name = clean(body?.name, 160);
-      description = clean(body?.description, 2000);
-    } else if (contentType.includes('multipart/form-data') || contentType.includes('application/x-www-form-urlencoded')) {
-      const form = await request.formData();
-      name = clean(form.get('name'), 160);
-      description = clean(form.get('description'), 2000);
-    } else {
-      return NextResponse.json({ error: 'Invalid request format.' }, { status: 415 });
-    }
-    if (!name) return NextResponse.json({ error: 'Idea name is required.' }, { status: 400 });
-    const now = new Date().toISOString();
-    const payload = { id: crypto.randomUUID(), owner_id: id, name, description, created_at: now, updated_at: now };
-    const { data, error } = await createSupabaseAdminClient().from('project_ideas').insert(payload).select(select).single();
-    if (error) throw error;
-    if (contentType.includes('json')) return NextResponse.json(data, { status: 201, headers: { 'Cache-Control': 'no-store' } });
-    return NextResponse.redirect(new URL('/projects?idea=created', request.url), 303);
-  } catch (error) {
-    console.error('[project-ideas] create failed', error);
-    if (error instanceof Error && error.message === 'Unauthorized') return unauthorized();
-    return NextResponse.json({ error: 'Idea could not be saved. Please try again.' }, { status: 500, headers: { 'Cache-Control': 'no-store' } });
-  }
+export async function GET(){try{return NextResponse.json(await call('idea-list'),{headers:{'Cache-Control':'private,no-store'}})}catch(error){console.error('[project-ideas] list failed',error);return denied()}}
+
+export async function POST(request:NextRequest){
+  const blocked=rejectCrossOrigin(request);if(blocked)return blocked;
+  try{
+    const type=(request.headers.get('content-type')||'').toLowerCase();let name='',description='';
+    if(type.includes('json')){const b=await request.json();name=String(b?.name||'').trim().slice(0,160);description=String(b?.description||'').trim().slice(0,2000)}
+    else {const f=await request.formData();name=String(f.get('name')||'').trim().slice(0,160);description=String(f.get('description')||'').trim().slice(0,2000)}
+    if(!name)return NextResponse.json({error:'Idea name is required.'},{status:400});
+    const data=await call('idea-create',{name,description});
+    if(type.includes('json'))return NextResponse.json(data,{status:201,headers:{'Cache-Control':'no-store'}});
+    return NextResponse.redirect(new URL('/projects?idea=created',request.url),303);
+  }catch(error){console.error('[project-ideas] create failed',error);if(error instanceof Error&&error.message==='Unauthorized')return denied();return NextResponse.json({error:error instanceof Error?error.message:'Idea could not be saved.'},{status:500,headers:{'Cache-Control':'no-store'}})}
 }
