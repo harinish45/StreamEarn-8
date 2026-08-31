@@ -29,9 +29,18 @@ async function db() {
     return null;
   }
   const sb = await createSupabaseServerClient();
-  const { data, error } = await sb.auth.getClaims();
-  const userId = data?.claims?.sub;
-  if (error || !userId) throw new Error('Unauthorized');
+  let userId = '';
+  try {
+    const claims = await sb.auth.getClaims();
+    userId = claims.data?.claims?.sub || '';
+  } catch {}
+  if (!userId) {
+    try {
+      const user = await sb.auth.getUser();
+      userId = user.data.user?.id || '';
+    } catch {}
+  }
+  if (!userId) throw new Error('Unauthorized');
   return { sb, userId };
 }
 
@@ -54,9 +63,7 @@ function row(p: Project, ownerId: string) {
   };
 }
 
-async function admin() {
-  return createSupabaseAdminClient();
-}
+async function admin() { return createSupabaseAdminClient(); }
 
 async function listWith(client:any, userId:string) {
   const { data, error } = await client.from('projects').select('*').eq('owner_id', userId).order('updated_at', { ascending: false });
@@ -67,25 +74,17 @@ async function listWith(client:any, userId:string) {
   const { data: peopleRows, error: peopleError } = await client.from('project_people').select('project_id,name').eq('owner_id', userId).in('project_id', ids);
   if (peopleError) throw peopleError;
   const peopleByProject = new Map<string, string[]>();
-  for (const person of peopleRows || []) {
-    const current = peopleByProject.get(person.project_id) || [];
-    current.push(person.name);
-    peopleByProject.set(person.project_id, current);
-  }
+  for (const person of peopleRows || []) peopleByProject.set(person.project_id, [...(peopleByProject.get(person.project_id) || []), person.name]);
   return projects.map((p:any) => fromRow(p, peopleByProject.get(p.id) || []));
 }
 
 export async function listProjects() {
   const ctx = await db();
   if (!ctx) return legacy();
-  try {
-    return await listWith(ctx.sb, ctx.userId);
-  } catch (firstError) {
-    try {
-      return await listWith(await admin(), ctx.userId);
-    } catch {
-      throw firstError;
-    }
+  try { return await listWith(ctx.sb, ctx.userId); }
+  catch (firstError) {
+    try { return await listWith(await admin(), ctx.userId); }
+    catch { throw firstError; }
   }
 }
 
@@ -108,7 +107,7 @@ export async function addProject(p: Project) {
     data = result.data;
   } catch (firstError) {
     const result = await (await admin()).from('projects').insert(payload).select('*').single();
-    if (result.error) throw firstError;
+    if (result.error) throw new Error(`${firstError instanceof Error ? firstError.message : 'Project insert failed'}; admin fallback: ${result.error.message}`);
     data = result.data;
   }
 
@@ -121,7 +120,7 @@ export async function addProject(p: Project) {
       const result = await (await admin()).from('project_people').insert(peoplePayload);
       if (result.error) {
         await (await admin()).from('projects').delete().eq('id', p.id).eq('owner_id', ctx.userId);
-        throw firstError;
+        throw new Error(`${firstError instanceof Error ? firstError.message : 'People insert failed'}; admin fallback: ${result.error.message}`);
       }
     }
   }
