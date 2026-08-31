@@ -9,25 +9,23 @@ export const dynamic = 'force-dynamic';
 
 async function getUserId() {
   const sb = await createSupabaseServerClient();
-  const claims = await sb.auth.getClaims().catch(() => null);
-  const id = claims?.data?.claims?.sub;
-  if (id) return { sb, id };
-  const user = await sb.auth.getUser();
-  if (user.error || !user.data.user) throw new Error('Unauthorized');
-  return { sb, id: user.data.user.id };
+  let id = '';
+  try { id = (await sb.auth.getUser()).data.user?.id || ''; } catch {}
+  if (!id) { try { id = (await sb.auth.getClaims()).data?.claims?.sub || ''; } catch {} }
+  if (!id) throw new Error('Unauthorized');
+  return id;
 }
 
 const clean = (value: unknown, max: number) => typeof value === 'string' ? value.trim().slice(0, max) : '';
 const unauthorized = () => NextResponse.json({ error: 'Authentication required. Please sign in again.' }, { status: 401, headers: { 'Cache-Control': 'no-store' } });
+const select = 'id,name,description,created_at,updated_at';
 
 export async function GET() {
   try {
-    const { sb, id } = await getUserId();
-    const result = await sb.from('project_ideas').select('id,name,description,created_at,updated_at').eq('owner_id', id).order('updated_at', { ascending: false });
-    if (!result.error) return NextResponse.json(result.data || [], { headers: { 'Cache-Control': 'private,no-store' } });
-    const fallback = await createSupabaseAdminClient().from('project_ideas').select('id,name,description,created_at,updated_at').eq('owner_id', id).order('updated_at', { ascending: false });
-    if (fallback.error) throw result.error;
-    return NextResponse.json(fallback.data || [], { headers: { 'Cache-Control': 'private,no-store' } });
+    const id = await getUserId();
+    const { data, error } = await createSupabaseAdminClient().from('project_ideas').select(select).eq('owner_id', id).order('updated_at', { ascending: false });
+    if (error) throw error;
+    return NextResponse.json(data || [], { headers: { 'Cache-Control': 'private,no-store' } });
   } catch (error) {
     console.error('[project-ideas] list failed', error);
     return unauthorized();
@@ -38,7 +36,7 @@ export async function POST(request: NextRequest) {
   const blocked = rejectCrossOrigin(request);
   if (blocked) return blocked;
   try {
-    const { sb, id } = await getUserId();
+    const id = await getUserId();
     const contentType = (request.headers.get('content-type') || '').toLowerCase();
     let name = '';
     let description = '';
@@ -54,15 +52,11 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Invalid request format.' }, { status: 415 });
     }
     if (!name) return NextResponse.json({ error: 'Idea name is required.' }, { status: 400 });
-    const payload = { id: crypto.randomUUID(), owner_id: id, name, description, created_at: new Date().toISOString(), updated_at: new Date().toISOString() };
-    const result = await sb.from('project_ideas').insert(payload).select('id,name,description,created_at,updated_at').single();
-    if (!result.error) {
-      if (contentType.includes('json')) return NextResponse.json(result.data, { status: 201, headers: { 'Cache-Control': 'no-store' } });
-      return NextResponse.redirect(new URL('/projects?idea=created', request.url), 303);
-    }
-    const fallback = await createSupabaseAdminClient().from('project_ideas').insert(payload).select('id,name,description,created_at,updated_at').single();
-    if (fallback.error) throw new Error(`${result.error.message}; fallback: ${fallback.error.message}`);
-    if (contentType.includes('json')) return NextResponse.json(fallback.data, { status: 201, headers: { 'Cache-Control': 'no-store' } });
+    const now = new Date().toISOString();
+    const payload = { id: crypto.randomUUID(), owner_id: id, name, description, created_at: now, updated_at: now };
+    const { data, error } = await createSupabaseAdminClient().from('project_ideas').insert(payload).select(select).single();
+    if (error) throw error;
+    if (contentType.includes('json')) return NextResponse.json(data, { status: 201, headers: { 'Cache-Control': 'no-store' } });
     return NextResponse.redirect(new URL('/projects?idea=created', request.url), 303);
   } catch (error) {
     console.error('[project-ideas] create failed', error);
