@@ -2,12 +2,6 @@
 
 import { useEffect } from 'react';
 
-/**
- * Production fallback for the project modal. It deliberately listens at the
- * document level so a stale/hydrated modal handler cannot swallow the create
- * action. The server route accepts native FormData and redirects back to the
- * command center after persistence.
- */
 export default function ProjectCreateBridge() {
   useEffect(() => {
     const onClick = async (event: MouseEvent) => {
@@ -20,12 +14,14 @@ export default function ProjectCreateBridge() {
       event.preventDefault();
       event.stopImmediatePropagation();
 
-      const name = String(new FormData(form).get('name') || '').trim();
+      const payload = new FormData(form);
+      const nameInput = form.querySelector<HTMLInputElement>('input[required]');
+      const name = String(payload.get('name') || nameInput?.value || '').trim();
       if (!name) {
-        const input = form.querySelector<HTMLInputElement>('input[required]');
-        input?.focus();
+        nameInput?.focus();
         return;
       }
+      payload.set('name', name);
 
       button.setAttribute('aria-busy', 'true');
       button.setAttribute('disabled', 'true');
@@ -37,21 +33,15 @@ export default function ProjectCreateBridge() {
           method: 'POST',
           credentials: 'same-origin',
           headers: { Accept: 'application/json' },
-          body: new FormData(form),
+          body: payload,
           cache: 'no-store',
         });
         const contentType = response.headers.get('content-type') || '';
         if (!response.ok) {
-          const payload = contentType.includes('application/json') ? await response.json().catch(() => ({})) : {};
-          throw new Error(payload?.error || `Project creation failed (${response.status})`);
+          const data = contentType.includes('application/json') ? await response.json().catch(() => ({})) : {};
+          throw new Error(data?.error || `Project creation failed (${response.status})`);
         }
-        if (contentType.includes('application/json')) {
-          // The modal's normal state handler is bypassed intentionally. Reload
-          // guarantees the authoritative DB-backed list is rendered.
-          window.location.assign('/projects?created=1');
-        } else {
-          window.location.assign('/projects?created=1');
-        }
+        window.location.assign('/projects?created=1');
       } catch (error) {
         button.removeAttribute('disabled');
         button.removeAttribute('aria-busy');
