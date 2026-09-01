@@ -4,6 +4,7 @@ import "./globals.css";
 import "./stream-fixes.css";
 import { Toaster } from "@/components/ui/toaster";
 import { ThemeProvider } from "@/components/theme-provider";
+import { ThemeEffects } from "@/components/theme-effects";
 import { AppShell } from "@/components/app-shell";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-sans" });
@@ -13,13 +14,12 @@ const orbitron = Orbitron({ subsets: ["latin"], variable: "--font-orbitron" });
 
 export const metadata: Metadata = {
   title: "StreamEarn",
-  description: "Your AI, learning, opportunity and project command center.",
+  description: "Personal AI, learning, opportunity and project command centre.",
   icons: {
     icon: [{ url: "/streamearn-mark.svg", type: "image/svg+xml" }],
     shortcut: ["/streamearn-mark.svg"],
     apple: [{ url: "/streamearn-mark.svg" }],
   },
-  manifest: "/manifest.webmanifest",
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
@@ -28,6 +28,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
       <head><link rel="stylesheet" href="/project-command-center.css" /></head>
       <body className={`${inter.variable} ${playfair.variable} ${courier.variable} ${orbitron.variable} font-sans antialiased`}>
         <ThemeProvider storageKey="theme" defaultTheme="Batman">
+          <ThemeEffects />
           <AppShell>{children}</AppShell>
           <Toaster />
         </ThemeProvider>
