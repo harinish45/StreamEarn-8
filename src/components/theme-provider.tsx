@@ -1,4 +1,3 @@
-
 'use client';
 
 import * as React from 'react';
@@ -15,90 +14,67 @@ type ThemeProviderState = {
   setTheme: (theme: string) => void;
 };
 
-const initialState: ThemeProviderState = {
-  theme: 'system',
-  setTheme: () => null,
+const initialState: ThemeProviderState = { theme: 'system', setTheme: () => null };
+
+const legacyThemeMap: Record<string, string> = {
+  Matrix: 'Harry Potter',
+  'Iron Man': 'Pirates of the Caribbean',
+  Hulk: 'Stranger Things',
 };
 
-const ThemeProviderContext = React.createContext<ThemeProviderState>(initialState);
-
 function getThemeClass(themeName: string | undefined) {
-  if (!themeName) return 'light';
-  return themeName.toLowerCase().replace(/\s+/g, '-');
+  const canonical = legacyThemeMap[themeName ?? ''] ?? themeName ?? 'Light';
+  return canonical.toLowerCase().replace(/\s+/g, '-');
 }
 
-export function ThemeProvider({
-  children,
-  defaultTheme = 'Light',
-  storageKey = 'theme',
-  ...props
-}: ThemeProviderProps) {
+function canonicalThemeName(themeName: string, defaultTheme: string) {
+  if (themeName === 'system') return defaultTheme;
+  return legacyThemeMap[themeName] ?? themeName;
+}
+
+export function ThemeProvider({ children, defaultTheme = 'Light', storageKey = 'theme', ...props }: ThemeProviderProps) {
   const [theme, setTheme] = React.useState(defaultTheme);
 
   React.useEffect(() => {
-    const storedTheme = localStorage.getItem(storageKey);
-    // On initial load, use stored theme or default, but don't set 'system' directly
-    const initialTheme = storedTheme || defaultTheme;
-    setTheme(initialTheme);
+    const stored = localStorage.getItem(storageKey);
+    const normalized = stored ? canonicalThemeName(stored, defaultTheme) : defaultTheme;
+    setTheme(normalized);
   }, [storageKey, defaultTheme]);
 
   React.useEffect(() => {
-    const body = window.document.body;
-    
-    // Remove all possible theme classes before adding the new one
-    themes.forEach(t => {
-      const themeClass = getThemeClass(t.name);
-      if (themeClass) {
-        body.classList.remove(themeClass);
-      }
-    });
-    
-    // remove light/dark from previous themes
-    body.classList.remove('light', 'dark');
+    const body = document.body;
+    const allThemeClasses = new Set(['light', 'dark', ...themes.map(t => getThemeClass(t.name))]);
+    allThemeClasses.forEach(cls => body.classList.remove(cls));
 
-    let effectiveThemeName = theme;
-    if (theme === 'system') {
-        effectiveThemeName = window.matchMedia("(prefers-color-scheme: dark)").matches ? "Dark" : "Light";
-    }
+    const effective = theme === 'system'
+      ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'Dark' : 'Light')
+      : canonicalThemeName(theme, defaultTheme);
+    const nextClass = getThemeClass(effective);
+    body.classList.add(nextClass);
 
-    const newThemeClass = getThemeClass(effectiveThemeName);
-    if(newThemeClass) {
-      body.classList.add(newThemeClass);
-    }
-    
-    // Also update the html element for shadcn dark mode compatibility
-    const doc = window.document.documentElement;
+    const doc = document.documentElement;
     doc.classList.remove('light', 'dark');
-    
-    const isDark = ['dark', 'matrix', 'batman', 'spider-man', 'iron-man', 'hulk'].includes(newThemeClass);
-    if (isDark) {
-        doc.classList.add('dark');
-    } else {
-        doc.classList.add('light');
-    }
+    const darkThemes = new Set([
+      'dark', 'dark-web-series', 'harry-potter', 'spider-man', 'batman',
+      'pirates-of-the-caribbean', 'stranger-things'
+    ]);
+    doc.classList.add(darkThemes.has(nextClass) ? 'dark' : 'light');
+  }, [theme, defaultTheme]);
 
-  }, [theme]);
-
-  const value = {
+  const value = React.useMemo(() => ({
     theme,
     setTheme: (newTheme: string) => {
-      localStorage.setItem(storageKey, newTheme);
-      setTheme(newTheme);
+      const normalized = canonicalThemeName(newTheme, defaultTheme);
+      localStorage.setItem(storageKey, normalized);
+      setTheme(normalized);
     },
-  };
+  }), [theme, storageKey, defaultTheme]);
 
-  return (
-    <ThemeProviderContext.Provider {...props} value={value}>
-      {children}
-    </ThemeProviderContext.Provider>
-  );
+  return <ThemeProviderContext.Provider {...props} value={value}>{children}</ThemeProviderContext.Provider>;
 }
 
 export const useTheme = () => {
   const context = React.useContext(ThemeProviderContext);
-
-  if (context === undefined)
-    throw new Error('useTheme must be used within a ThemeProvider');
-
+  if (!context) throw new Error('useTheme must be used within a ThemeProvider');
   return context;
 };
