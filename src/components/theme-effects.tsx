@@ -7,7 +7,7 @@ export function ThemeEffects() {
 
   useEffect(() => {
     const read = () => {
-      const match = document.body.className.match(/(?:^|\\s)(matrix|batman|spider-man|iron-man|superman|hulk)(?:\\s|$)/);
+      const match = document.body.className.match(/(?:^|\s)(matrix|batman|spider-man|iron-man|superman|hulk)(?:\s|$)/);
       setTheme(match?.[1] ?? '');
     };
     read();
