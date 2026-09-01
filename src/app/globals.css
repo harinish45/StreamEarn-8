@@ -160,3 +160,74 @@ article:has(select[aria-label^="Edit status for"]) select[aria-label^="Edit stat
   article:has(select[aria-label^="Edit status for"]) > div:nth-child(2) { padding-left: 0; padding-top: 34px; }
   article:has(select[aria-label^="Edit status for"]) > div:first-child > div:first-child > div:first-child > div { left: 12px; bottom: 47px; }
 }
+
+/* Interactive theme layers. All visuals are CSS-generated so they remain fast, local and CSP-safe. */
+.spider-man body, body.spider-man { position: relative; overflow-x: hidden; }
+.spider-man body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  opacity: .18;
+  z-index: 0;
+  background-image: linear-gradient(30deg, transparent 48%, rgba(80,150,255,.22) 49%, transparent 50%), linear-gradient(150deg, transparent 48%, rgba(80,150,255,.18) 49%, transparent 50%);
+  background-size: 110px 110px;
+  mask-image: radial-gradient(circle at 85% 15%, black 0 28%, transparent 66%);
+  animation: web-drift 18s linear infinite;
+}
+.spider-man body::after {
+  content: "";
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: 34vw;
+  height: 34vw;
+  max-width: 520px;
+  max-height: 520px;
+  pointer-events: none;
+  z-index: 0;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(239,68,68,.16), rgba(30,64,175,.06) 38%, transparent 68%);
+  filter: blur(10px);
+  animation: hero-pulse 4.5s ease-in-out infinite;
+}
+.theme-pet {
+  position: fixed;
+  right: 22px;
+  bottom: 22px;
+  width: 72px;
+  height: 72px;
+  z-index: 60;
+  pointer-events: none;
+}
+.theme-pet-web { position: absolute; left: 35px; top: -2px; width: 1px; height: 50px; background: linear-gradient(180deg, rgba(255,255,255,.75), rgba(255,255,255,0)); transform-origin: top; }
+.theme-pet-web.web-a { transform: rotate(10deg); }
+.theme-pet-web.web-b { transform: rotate(-10deg); opacity: .45; }
+.theme-pet-spider-body {
+  position: absolute;
+  left: 23px;
+  top: 35px;
+  width: 28px;
+  height: 21px;
+  border-radius: 50% 50% 46% 46%;
+  background: radial-gradient(circle at 35% 30%, #30363f, #0d1117 72%);
+  border: 1px solid rgba(255,255,255,.15);
+  box-shadow: 0 7px 22px rgba(0,0,0,.45), 0 0 18px rgba(239,68,68,.18);
+  animation: pet-sway 3.2s ease-in-out infinite;
+}
+.theme-pet-eye { position: absolute; top: 6px; width: 5px; height: 7px; border-radius: 60% 40% 60% 40%; background: #fff; transform: skewY(-12deg); box-shadow: 0 0 5px rgba(255,255,255,.55); }
+.theme-pet-eye.eye-a { left: 7px; }
+.theme-pet-eye.eye-b { right: 7px; }
+.theme-pet-leg { position: absolute; width: 18px; height: 1.5px; background: #161b22; border-top: 1px solid rgba(255,255,255,.12); transform-origin: left center; }
+.theme-pet-leg.l1 { left: 2px; top: 4px; transform: rotate(-28deg); }
+.theme-pet-leg.l2 { left: 1px; top: 9px; transform: rotate(-8deg); }
+.theme-pet-leg.l3 { left: 1px; top: 15px; transform: rotate(10deg); }
+.theme-pet-leg.l4 { left: 5px; top: 19px; transform: rotate(26deg); }
+.theme-pet-leg.l5 { right: 2px; top: 4px; transform: rotate(208deg); }
+.theme-pet-leg.l6 { right: 1px; top: 9px; transform: rotate(188deg); }
+.theme-pet-leg.l7 { right: 1px; top: 15px; transform: rotate(170deg); }
+.theme-pet-leg.l8 { right: 5px; top: 19px; transform: rotate(154deg); }
+@keyframes web-drift { from { transform: translate3d(0,0,0); } to { transform: translate3d(-110px,0,0); } }
+@keyframes hero-pulse { 0%,100% { transform: scale(.96); opacity: .72; } 50% { transform: scale(1.04); opacity: 1; } }
+@keyframes pet-sway { 0%,100% { transform: translateY(0) rotate(-2deg); } 50% { transform: translateY(6px) rotate(2deg); } }
+@media (prefers-reduced-motion: reduce) { .spider-man body::before, .spider-man body::after, .theme-pet-spider-body { animation: none !important; } }
