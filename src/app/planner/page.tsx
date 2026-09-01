@@ -1,7 +1,8 @@
-import PlannerV4 from '../planner-v4/page';
+import { PlannerCloud } from '@/components/planner-cloud';
 
 export const dynamic = 'force-dynamic';
 
-// /planner is the canonical unified Planner entrypoint. Reuse the hardened
-// implementation directly instead of adding a client-visible redirect.
-export default PlannerV4;
+// Canonical unified Planner entrypoint. The Planner owns its own shell.
+export default function PlannerPage() {
+  return <PlannerCloud />;
+}
