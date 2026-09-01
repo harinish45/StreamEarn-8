@@ -2,7 +2,7 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { Compass, LayoutDashboard, Library, Newspaper, Search, ShieldCheck, Sparkles, WalletCards, BriefcaseBusiness, ClipboardList, FolderKanban } from 'lucide-react';
-import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem, SidebarSeparator } from '@/components/ui/sidebar';
+import { Sidebar, SidebarContent, SidebarFooter, SidebarMenu, SidebarMenuButton, SidebarMenuItem, SidebarSeparator } from '@/components/ui/sidebar';
 
 const groups = [
  {label:'Overview',items:[{href:'/',label:'Command Center',icon:LayoutDashboard},{href:'/news',label:'AI Tech News',icon:Newspaper}]},
@@ -17,8 +17,7 @@ const groups = [
 export function UnifiedSidebar(){
  const pathname=usePathname();
  return <Sidebar variant="inset" collapsible="icon">
-  <SidebarHeader className="p-2"><Link href="/" className="flex items-center gap-2 rounded-lg px-2 py-1.5 font-bold"><div className="flex h-7 w-7 items-center justify-center rounded-lg bg-primary text-primary-foreground"><Sparkles className="h-3.5 w-3.5"/></div><span className="group-data-[collapsible=icon]:hidden">StreamEarn</span></Link></SidebarHeader>
-  <SidebarContent className="px-1.5"><div className="mb-2 flex items-center gap-2 rounded-lg border bg-card px-2.5 py-1.5 text-[11px] text-muted-foreground"><Search className="h-3 w-3"/><span className="group-data-[collapsible=icon]:hidden">Search StreamEarn</span></div>{groups.map(group=><div key={group.label} className="mb-2"><p className="mb-0.5 px-2 text-[9px] font-semibold uppercase tracking-[0.18em] text-muted-foreground group-data-[collapsible=icon]:hidden">{group.label}</p><SidebarMenu>{group.items.map(item=>{const active=pathname===item.href||(item.href!=='/'&&pathname.startsWith(item.href));return <SidebarMenuItem key={item.href}><SidebarMenuButton asChild isActive={active} tooltip={item.label} className="h-8"><Link href={item.href}><item.icon className="h-3.5 w-3.5"/><span>{item.label}</span></Link></SidebarMenuButton></SidebarMenuItem>})}</SidebarMenu></div>)}</SidebarContent>
+  <SidebarContent className="px-1.5 pt-2"><div className="mb-2 flex items-center gap-2 rounded-lg border bg-card px-2.5 py-1.5 text-[11px] text-muted-foreground"><Search className="h-3 w-3"/><span className="group-data-[collapsible=icon]:hidden">Search StreamEarn</span></div>{groups.map(group=><div key={group.label} className="mb-2"><p className="mb-0.5 px-2 text-[9px] font-semibold uppercase tracking-[0.18em] text-muted-foreground group-data-[collapsible=icon]:hidden">{group.label}</p><SidebarMenu>{group.items.map(item=>{const active=pathname===item.href||(item.href!=='/'&&pathname.startsWith(item.href));return <SidebarMenuItem key={item.href}><SidebarMenuButton asChild isActive={active} tooltip={item.label} className="h-8"><Link href={item.href}><item.icon className="h-3.5 w-3.5"/><span>{item.label}</span></Link></SidebarMenuButton></SidebarMenuItem>})}</SidebarMenu></div>)}</SidebarContent>
   <SidebarSeparator/><SidebarFooter className="p-1.5"><div className="px-2 py-1 text-[9px] text-muted-foreground group-data-[collapsible=icon]:hidden">AI ecosystem • 2026</div></SidebarFooter>
  </Sidebar>;
 }
