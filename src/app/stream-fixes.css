@@ -5,6 +5,19 @@ body > div { width: 100%; min-width: 0; }
 main { min-width: 0; max-width: 100%; }
 /* Planner: content should fill the available shell instead of leaving a white gutter. */
 main:has(h1:first-child) { box-sizing: border-box; }
+
+/* Project Command Center: keep every card compact while allowing the status menu to escape the card. */
+main .mx-auto.max-w-6xl article.group { position: relative; z-index: 1; overflow: visible !important; }
+main .mx-auto.max-w-6xl article.group:hover { z-index: 40; }
+main .mx-auto.max-w-6xl article.group > div.flex[class*="min-h-[114px]"] { min-height: 92px !important; }
+main .mx-auto.max-w-6xl article.group > div.flex > div.min-w-0.flex-1 { padding: 8px !important; }
+main .mx-auto.max-w-6xl article.group > div.flex > div.min-w-0.flex-1 > div.mt-3 { margin-top: 6px !important; padding: 5px !important; }
+main .mx-auto.max-w-6xl article.group > div.flex > div.min-w-0.flex-1 > div.mt-3 button[class*="px-2.5"][class*="py-2"] { padding: 5px 9px !important; }
+main .mx-auto.max-w-6xl article.group > div.flex > div.min-w-0.flex-1 > div.mt-3 [class*="max-w-[220px]"],
+main .mx-auto.max-w-6xl article.group > div.flex > div.min-w-0.flex-1 > div.mt-3 [class*="max-w-[170px]"] { padding-top: 5px !important; padding-bottom: 5px !important; }
+main .mx-auto.max-w-6xl article.group [class*="bottom-[calc(100%+9px)"] { z-index: 100 !important; }
+main .mx-auto.max-w-6xl article.group [class*="bottom-[calc(100%+9px)"] button { min-height: 30px; }
+
 @media (max-width: 1100px) {
   [data-sidebar="inset"] { width: 100%; }
 }
