@@ -13,7 +13,13 @@ const orbitron = Orbitron({ subsets: ["latin"], variable: "--font-orbitron" });
 
 export const metadata: Metadata = {
   title: "StreamEarn",
-  description: "Your gateway to online earning opportunities.",
+  description: "Your AI, learning, opportunity and project command center.",
+  icons: {
+    icon: [{ url: "/streamearn-mark.svg", type: "image/svg+xml" }],
+    shortcut: ["/streamearn-mark.svg"],
+    apple: [{ url: "/streamearn-mark.svg" }],
+  },
+  manifest: "/manifest.webmanifest",
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
