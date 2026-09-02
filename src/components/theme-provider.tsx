@@ -3,78 +3,31 @@
 import * as React from 'react';
 import { themes } from '@/lib/themes';
 
-type ThemeProviderProps = {
-  children: React.ReactNode;
-  defaultTheme?: string;
-  storageKey?: string;
-};
-
-type ThemeProviderState = {
-  theme: string;
-  setTheme: (theme: string) => void;
-};
-
+type ThemeProviderProps = { children: React.ReactNode; defaultTheme?: string; storageKey?: string };
+export type ThemeProviderState = { theme: string; setTheme: (theme: string) => void };
 const initialState: ThemeProviderState = { theme: 'system', setTheme: () => null };
+const ThemeProviderContext = React.createContext<ThemeProviderState>(initialState);
 
-const legacyThemeMap: Record<string, string> = {
-  Matrix: 'Harry Potter',
-  'Iron Man': 'Pirates of the Caribbean',
-  Hulk: 'Stranger Things',
-};
-
-function getThemeClass(themeName: string | undefined) {
-  const canonical = legacyThemeMap[themeName ?? ''] ?? themeName ?? 'Light';
-  return canonical.toLowerCase().replace(/\s+/g, '-');
-}
-
-function canonicalThemeName(themeName: string, defaultTheme: string) {
-  if (themeName === 'system') return defaultTheme;
-  return legacyThemeMap[themeName] ?? themeName;
-}
+function getThemeClass(themeName: string | undefined) { return themeName ? themeName.toLowerCase().replace(/\s+/g, '-') : 'light'; }
 
 export function ThemeProvider({ children, defaultTheme = 'Light', storageKey = 'theme', ...props }: ThemeProviderProps) {
-  const [theme, setTheme] = React.useState(defaultTheme);
-
-  React.useEffect(() => {
-    const stored = localStorage.getItem(storageKey);
-    const normalized = stored ? canonicalThemeName(stored, defaultTheme) : defaultTheme;
-    setTheme(normalized);
-  }, [storageKey, defaultTheme]);
-
+  const [theme, setThemeState] = React.useState<string>(defaultTheme);
+  React.useEffect(() => { setThemeState(localStorage.getItem(storageKey) || defaultTheme); }, [storageKey, defaultTheme]);
   React.useEffect(() => {
     const body = document.body;
-    const allThemeClasses = new Set(['light', 'dark', ...themes.map(t => getThemeClass(t.name))]);
-    allThemeClasses.forEach(cls => body.classList.remove(cls));
-
-    const effective = theme === 'system'
-      ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'Dark' : 'Light')
-      : canonicalThemeName(theme, defaultTheme);
-    const nextClass = getThemeClass(effective);
-    body.classList.add(nextClass);
-
+    themes.forEach(t => body.classList.remove(getThemeClass(t.name)));
+    body.classList.remove('light','dark');
+    const effective = theme === 'system' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'Dark' : 'Light') : theme;
+    body.classList.add(getThemeClass(effective));
     const doc = document.documentElement;
-    doc.classList.remove('light', 'dark');
-    const darkThemes = new Set([
-      'dark', 'dark-web-series', 'harry-potter', 'spider-man', 'batman',
-      'pirates-of-the-caribbean', 'stranger-things'
-    ]);
-    doc.classList.add(darkThemes.has(nextClass) ? 'dark' : 'light');
-  }, [theme, defaultTheme]);
-
-  const value = React.useMemo(() => ({
-    theme,
-    setTheme: (newTheme: string) => {
-      const normalized = canonicalThemeName(newTheme, defaultTheme);
-      localStorage.setItem(storageKey, normalized);
-      setTheme(normalized);
-    },
-  }), [theme, storageKey, defaultTheme]);
-
+    doc.classList.remove('light','dark');
+    const darkThemes = ['dark','matrix','batman','spider-man','iron-man','hulk','harry-potter','pirates-of-the-caribbean','stranger-things','dark-web-series'];
+    doc.classList.add(darkThemes.includes(getThemeClass(effective)) ? 'dark' : 'light');
+  }, [theme]);
+  const value: ThemeProviderState = { theme, setTheme: (newTheme: string) => { localStorage.setItem(storageKey, newTheme); setThemeState(newTheme); } };
   return <ThemeProviderContext.Provider {...props} value={value}>{children}</ThemeProviderContext.Provider>;
 }
 
-export const useTheme = () => {
-  const context = React.useContext(ThemeProviderContext);
-  if (!context) throw new Error('useTheme must be used within a ThemeProvider');
-  return context;
-};
+export function useTheme(): ThemeProviderState {
+  return React.useContext(ThemeProviderContext);
+}
