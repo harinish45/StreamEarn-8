@@ -66,9 +66,14 @@
   --button-bg: 51 100% 50%; --button-text: 0 0% 0%; --text-primary: 0 0% 96%;
   --text-secondary: 0 0% 72%; --text-accent: 51 100% 55%; --border-color: 0 0% 25%; --sidebar-border: 0 0% 22%; --ring-color: 51 100% 55%;
 }
+.superman {
+  --main-bg: 210 40% 15%; --sidebar-bg: 210 45% 10%; --card-bg: 210 35% 18%;
+  --button-bg: 0 80% 50%; --button-text: 0 0% 100%; --text-primary: 0 0% 98%;
+  --text-secondary: 210 20% 80%; --text-accent: 45 100% 60%; --border-color: 210 30% 30%; --sidebar-border: 210 30% 25%; --ring-color: 45 100% 60%;
+}
 
 .harry-potter body::before, .dark-web-series body::before, .spider-man body::before,
-.pirates-of-the-caribbean body::before, .stranger-things body::before, .batman body::before {
+.pirates-of-the-caribbean body::before, .stranger-things body::before, .batman body::before, .superman body::before {
   content: ""; position: fixed; inset: 0; pointer-events: none; z-index: 0;
 }
 .harry-potter body::before { opacity:.18; background: radial-gradient(circle at 20% 20%, rgba(255,220,130,.22), transparent 30%), radial-gradient(circle at 80% 80%, rgba(120,160,255,.12), transparent 32%); }
@@ -77,6 +82,7 @@
 .pirates-of-the-caribbean body::before { opacity:.20; background: radial-gradient(ellipse at 50% 100%, rgba(20,180,170,.16), transparent 52%), linear-gradient(180deg, rgba(0,0,0,.08), transparent 45%, rgba(0,0,0,.22)); }
 .stranger-things body::before { opacity:.22; background: radial-gradient(circle at 50% 65%, rgba(220,40,55,.18), transparent 48%), linear-gradient(180deg, rgba(255,255,255,.02), transparent 40%); }
 .batman body::before { opacity:.16; background: radial-gradient(circle at 84% 18%, rgba(250,204,21,.16), transparent 18%), linear-gradient(160deg, transparent 45%, rgba(255,255,255,.025) 50%, transparent 55%); }
+.superman body::before { opacity:.15; background: radial-gradient(circle at 50% 0%, rgba(255,200,100,.2), transparent 50%), linear-gradient(180deg, rgba(0,100,255,.1), transparent 60%); }
 
 /* Supplied pet images: preserved full-frame, high-resolution local assets, gently animated. */
 .theme-pet-layer {
@@ -84,10 +90,24 @@
   display:flex; align-items:center; justify-content:center; filter: drop-shadow(0 18px 28px rgba(0,0,0,.5));
   animation: theme-pet-float 4.8s ease-in-out infinite;
 }
-.theme-pet-image {
-  position:relative; z-index:2; width:220px; height:150px; object-fit:contain; object-position:center; border-radius:14px; opacity:.98;
-  filter: saturate(1.04) contrast(1.03); mix-blend-mode:normal; user-select:none;
+
+/* Pet click interactions & background removal */
+.theme-pet-layer {
+  pointer-events: auto !important; /* Allow clicking */
+  cursor: pointer;
+  transition: transform 0.2s ease;
 }
+.theme-pet-layer:active {
+  transform: scale(0.95);
+}
+.theme-pet-image {
+  /* Helps remove solid white backgrounds, making it look like a cutout */
+  mix-blend-mode: multiply; 
+  isolation: isolate;
+  background: transparent;
+}
+/* Note: If the supplied asset has a black background, change mix-blend-mode to 'screen' */
+
 .theme-pet-glow { position:absolute; width:150px; height:42px; bottom:4px; border-radius:50%; background:hsl(var(--text-accent) / .18); filter:blur(18px); }
 .theme-pet-orbit { position:absolute; width:188px; height:76px; bottom:24px; border:1px solid hsl(var(--text-accent) / .18); border-radius:50%; animation: theme-pet-orbit 7s linear infinite; }
 .theme-pet-spark { position:absolute; width:5px; height:5px; border-radius:999px; background:hsl(var(--text-accent)); box-shadow:0 0 12px hsl(var(--text-accent)); animation: theme-pet-spark 2.4s ease-in-out infinite; }
@@ -98,3 +118,152 @@
 @keyframes theme-pet-spark { 0%,100% { opacity:.2; transform:scale(.8); } 50% { opacity:1; transform:scale(1.25); } }
 @media (max-width: 768px) { .theme-pet-layer { right:8px; bottom:8px; transform:scale(.82); transform-origin:bottom right; } }
 @media (prefers-reduced-motion: reduce) { .theme-pet-layer, .theme-pet-orbit, .theme-pet-spark { animation:none; } }
+
+/* Click effect base */
+.click-effect {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  z-index: 1;
+}
+.click-effect.effect-active {
+  opacity: 1;
+  animation: effect-pop 0.8s ease-out forwards;
+}
+
+/* Spider-Man: Web burst */
+.click-effect.spider-web::before {
+  content: '';
+  position: absolute;
+  top: 50%; left: 50%;
+  width: 200px; height: 200px;
+  transform: translate(-50%, -50%) scale(0);
+  background: radial-gradient(circle, transparent 20%, rgba(255,255,255,0.8) 21%, transparent 22%),
+              radial-gradient(circle, transparent 40%, rgba(255,255,255,0.6) 41%, transparent 42%),
+              linear-gradient(0deg, transparent 49%, rgba(255,255,255,0.8) 50%, transparent 51%),
+              linear-gradient(45deg, transparent 49%, rgba(255,255,255,0.8) 50%, transparent 51%),
+              linear-gradient(90deg, transparent 49%, rgba(255,255,255,0.8) 50%, transparent 51%),
+              linear-gradient(135deg, transparent 49%, rgba(255,255,255,0.8) 50%, transparent 51%);
+  border-radius: 50%;
+}
+.click-effect.spider-web.effect-active::before {
+  animation: web-expand 0.6s ease-out forwards;
+}
+
+/* Harry Potter: Magic sparkle */
+.click-effect.magic-sparkle::before {
+  content: '✨';
+  position: absolute;
+  top: -20px; right: -20px;
+  font-size: 40px;
+  filter: drop-shadow(0 0 10px gold);
+}
+.click-effect.magic-sparkle.effect-active::before {
+  animation: sparkle-float 1s ease-out forwards;
+}
+
+/* Batman: Bat signal flash */
+.click-effect.bat-signal::before {
+  content: '';
+  position: absolute;
+  top: -50px; left: 50%;
+  transform: translateX(-50%);
+  width: 100px; height: 60px;
+  background: radial-gradient(ellipse, rgba(255,255,255,0.9) 0%, transparent 70%);
+  border-radius: 50%;
+}
+.click-effect.bat-signal.effect-active::before {
+  animation: signal-flash 0.8s ease-out forwards;
+}
+
+/* Pirates: Cannon smoke */
+.click-effect.cannon-smoke::before {
+  content: '💨';
+  position: absolute;
+  bottom: 0; left: -30px;
+  font-size: 50px;
+  opacity: 0.8;
+}
+.click-effect.cannon-smoke.effect-active::before {
+  animation: smoke-drift 1s ease-out forwards;
+}
+
+/* Superman: Energy burst */
+.click-effect.energy-burst::before {
+  content: '';
+  position: absolute;
+  top: 50%; left: 50%;
+  width: 10px; height: 10px;
+  background: radial-gradient(circle, #ff3333, transparent);
+  box-shadow: 0 0 20px #ff3333, 0 0 40px #ffaa00;
+  border-radius: 50%;
+}
+.click-effect.energy-burst.effect-active::before {
+  animation: energy-burst-anim 0.6s ease-out forwards;
+}
+
+/* Stranger Things: Dimensional ripple */
+.click-effect.dimensional-ripple::before {
+  content: '';
+  position: absolute;
+  top: 50%; left: 50%;
+  width: 10px; height: 10px;
+  border: 2px solid #ff3333;
+  border-radius: 50%;
+  box-shadow: 0 0 10px #ff3333;
+}
+.click-effect.dimensional-ripple.effect-active::before {
+  animation: ripple-expand 1s ease-out forwards;
+}
+
+/* Dark Web Series: Security shield (Many security layers) */
+.click-effect.security-shield::before {
+  content: '🛡️';
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%) scale(0);
+  font-size: 60px;
+  filter: drop-shadow(0 0 15px #00ff00);
+}
+.click-effect.security-shield.effect-active::before {
+  animation: shield-pop 0.8s ease-out forwards;
+}
+
+@keyframes effect-pop {
+  0% { opacity: 0; transform: scale(0.5); }
+  50% { opacity: 1; transform: scale(1.1); }
+  100% { opacity: 0; transform: scale(1); }
+}
+@keyframes web-expand {
+  0% { transform: translate(-50%, -50%) scale(0) rotate(0deg); opacity: 1; }
+  100% { transform: translate(-50%, -50%) scale(1.5) rotate(45deg); opacity: 0; }
+}
+@keyframes sparkle-float {
+  0% { transform: translateY(0) scale(0.5); opacity: 0; }
+  50% { opacity: 1; transform: translateY(-20px) scale(1.2); }
+  100% { transform: translateY(-40px) scale(0.8); opacity: 0; }
+}
+@keyframes signal-flash {
+  0% { opacity: 0; transform: translateX(-50%) scale(0.5); }
+  30% { opacity: 1; transform: translateX(-50%) scale(1.2); }
+  100% { opacity: 0; transform: translateX(-50%) scale(1.5); }
+}
+@keyframes smoke-drift {
+  0% { transform: translateX(0) scale(0.5); opacity: 0.8; }
+  100% { transform: translateX(-40px) translateY(-20px) scale(1.5); opacity: 0; }
+}
+@keyframes energy-burst-anim {
+  0% { transform: translate(-50%, -50%) scale(0); opacity: 1; }
+  100% { transform: translate(-50%, -50%) scale(3); opacity: 0; }
+}
+@keyframes ripple-expand {
+  0% { transform: translate(-50%, -50%) scale(0); opacity: 1; border-width: 4px; }
+  100% { transform: translate(-50%, -50%) scale(4); opacity: 0; border-width: 0px; }
+}
+@keyframes shield-pop {
+  0% { transform: translate(-50%, -50%) scale(0); opacity: 0; }
+  50% { transform: translate(-50%, -50%) scale(1.2); opacity: 1; }
+  100% { transform: translate(-50%, -50%) scale(1); opacity: 0; }
+}
