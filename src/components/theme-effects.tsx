@@ -115,25 +115,15 @@ function knockoutBackground(source: string): Promise<string> {
 
 function scheduleProcessing(source: string, onDone: (src: string) => void) {
   let cancelled = false;
-  const run = () => {
+  const timer = globalThis.setTimeout(() => {
     if (cancelled) return;
     void knockoutBackground(source).then((result) => {
       if (!cancelled) onDone(result);
     });
-  };
-
-  if ('requestIdleCallback' in window) {
-    const idleId = window.requestIdleCallback(run, { timeout: 1200 });
-    return () => {
-      cancelled = true;
-      window.cancelIdleCallback(idleId);
-    };
-  }
-
-  const timer = window.setTimeout(run, 0);
+  }, 0);
   return () => {
     cancelled = true;
-    window.clearTimeout(timer);
+    globalThis.clearTimeout(timer);
   };
 }
 
@@ -141,7 +131,7 @@ export function ThemeEffects() {
   const [theme, setTheme] = useState('');
   const [petSrc, setPetSrc] = useState('');
   const [isClicked, setIsClicked] = useState(false);
-  const clickTimer = useRef<number | null>(null);
+  const clickTimer = useRef<ReturnType<typeof globalThis.setTimeout> | null>(null);
   const pet = useMemo(() => petByTheme[theme], [theme]);
 
   useEffect(() => {
@@ -157,22 +147,22 @@ export function ThemeEffects() {
   useEffect(() => {
     setPetSrc('');
     setIsClicked(false);
-    if (clickTimer.current !== null) window.clearTimeout(clickTimer.current);
+    if (clickTimer.current !== null) globalThis.clearTimeout(clickTimer.current);
     clickTimer.current = null;
     if (!pet) return;
     return scheduleProcessing(pet.image, setPetSrc);
   }, [pet]);
 
   useEffect(() => () => {
-    if (clickTimer.current !== null) window.clearTimeout(clickTimer.current);
+    if (clickTimer.current !== null) globalThis.clearTimeout(clickTimer.current);
   }, []);
 
   if (!pet || !petSrc) return null;
 
   const handlePetClick = () => {
     setIsClicked(true);
-    if (clickTimer.current !== null) window.clearTimeout(clickTimer.current);
-    clickTimer.current = window.setTimeout(() => {
+    if (clickTimer.current !== null) globalThis.clearTimeout(clickTimer.current);
+    clickTimer.current = globalThis.setTimeout(() => {
       setIsClicked(false);
       clickTimer.current = null;
     }, 500);
