@@ -1,0 +1,81 @@
+/* Theme pet reliability overrides. Keep decorative layers non-interactive; only the pet control receives pointer input. */
+.theme-pet-layer {
+  pointer-events: none !important;
+  cursor: default !important;
+  isolation: isolate;
+  contain: layout paint style;
+}
+
+.theme-pet-layer .theme-pet-interaction {
+  pointer-events: auto;
+  cursor: pointer;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  margin: 0;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  appearance: none;
+  outline: none;
+}
+
+.theme-pet-layer .theme-pet-interaction:focus-visible {
+  border-radius: 18px;
+  box-shadow: 0 0 0 2px hsl(var(--ring-color) / .65), 0 0 0 5px hsl(var(--ring-color) / .12);
+}
+
+.theme-pet-layer .theme-pet-image {
+  width: min(100%, 220px) !important;
+  height: 100% !important;
+  max-width: 220px;
+  max-height: 160px;
+  object-fit: contain !important;
+  object-position: center;
+  display: block;
+  opacity: 1 !important;
+  filter: none !important;
+  mix-blend-mode: normal !important;
+  isolation: auto !important;
+  background: transparent !important;
+  backface-visibility: hidden;
+  transform: translateZ(0);
+}
+
+.theme-pet-layer .theme-pet-glow,
+.theme-pet-layer .theme-pet-orbit,
+.theme-pet-layer .theme-pet-spark,
+.theme-pet-layer .click-effect {
+  pointer-events: none;
+}
+
+.theme-pet-layer.pet-clicked .theme-pet-image {
+  animation: theme-pet-click-pulse .65s cubic-bezier(.22, .9, .34, 1) both;
+}
+
+.theme-pet-layer .click-effect.effect-active {
+  pointer-events: none;
+}
+
+@keyframes theme-pet-click-pulse {
+  0% { transform: translateZ(0) scale(1); }
+  45% { transform: translateZ(0) scale(1.035); }
+  100% { transform: translateZ(0) scale(1); }
+}
+
+@media (max-width: 768px) {
+  .theme-pet-layer {
+    width: 180px;
+    height: 132px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .theme-pet-layer.pet-clicked .theme-pet-image {
+    animation: none;
+  }
+}
