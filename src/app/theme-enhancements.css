@@ -8,12 +8,15 @@
 .batman .text-foreground, .batman .text-card-foreground, .batman .text-popover-foreground,
 .pirates-of-the-caribbean .text-foreground, .pirates-of-the-caribbean .text-card-foreground, .pirates-of-the-caribbean .text-popover-foreground,
 .stranger-things .text-foreground, .stranger-things .text-card-foreground, .stranger-things .text-popover-foreground,
-.dark-web-series .text-foreground, .dark-web-series .text-card-foreground, .dark-web-series .text-popover-foreground {
+.dark-web-series .text-foreground, .dark-web-series .text-card-foreground, .dark-web-series .text-popover-foreground,
+.superman .text-foreground, .superman .text-card-foreground, .superman .text-popover-foreground,
+.light .text-foreground, .light .text-card-foreground, .light .text-popover-foreground {
   color: hsl(var(--text-primary)) !important;
 }
 .dark .text-muted-foreground, .harry-potter .text-muted-foreground, .spider-man .text-muted-foreground,
 .batman .text-muted-foreground, .pirates-of-the-caribbean .text-muted-foreground,
-.stranger-things .text-muted-foreground, .dark-web-series .text-muted-foreground {
+.stranger-things .text-muted-foreground, .dark-web-series .text-muted-foreground,
+.superman .text-muted-foreground, .light .text-muted-foreground {
   color: hsl(var(--text-secondary)) !important;
 }
 .dark input, .dark textarea, .dark select,
@@ -22,7 +25,9 @@
 .batman input, .batman textarea, .batman select,
 .pirates-of-the-caribbean input, .pirates-of-the-caribbean textarea, .pirates-of-the-caribbean select,
 .stranger-things input, .stranger-things textarea, .stranger-things select,
-.dark-web-series input, .dark-web-series textarea, .dark-web-series select {
+.dark-web-series input, .dark-web-series textarea, .dark-web-series select,
+.superman input, .superman textarea, .superman select,
+.light input, .light textarea, .light select {
   color: hsl(var(--text-primary)) !important;
   caret-color: hsl(var(--text-accent));
 }
@@ -32,7 +37,9 @@
 .batman input::placeholder, .batman textarea::placeholder,
 .pirates-of-the-caribbean input::placeholder, .pirates-of-the-caribbean textarea::placeholder,
 .stranger-things input::placeholder, .stranger-things textarea::placeholder,
-.dark-web-series input::placeholder, .dark-web-series textarea::placeholder {
+.dark-web-series input::placeholder, .dark-web-series textarea::placeholder,
+.superman input::placeholder, .superman textarea::placeholder,
+.light input::placeholder, .light textarea::placeholder {
   color: hsl(var(--text-secondary) / .9) !important;
 }
 
@@ -71,9 +78,14 @@
   --button-bg: 0 80% 50%; --button-text: 0 0% 100%; --text-primary: 0 0% 98%;
   --text-secondary: 210 20% 80%; --text-accent: 45 100% 60%; --border-color: 210 30% 30%; --sidebar-border: 210 30% 25%; --ring-color: 45 100% 60%;
 }
+.light {
+  --main-bg: 0 0% 98%; --sidebar-bg: 220 14% 96%; --card-bg: 0 0% 100%;
+  --button-bg: 221 83% 53%; --button-text: 0 0% 100%; --text-primary: 222 47% 11%;
+  --text-secondary: 215 16% 47%; --text-accent: 221 83% 53%; --border-color: 220 13% 91%; --sidebar-border: 220 13% 91%; --ring-color: 221 83% 53%;
+}
 
 .harry-potter body::before, .dark-web-series body::before, .spider-man body::before,
-.pirates-of-the-caribbean body::before, .stranger-things body::before, .batman body::before, .superman body::before {
+.pirates-of-the-caribbean body::before, .stranger-things body::before, .batman body::before, .superman body::before, .light body::before {
   content: ""; position: fixed; inset: 0; pointer-events: none; z-index: 0;
 }
 .harry-potter body::before { opacity:.18; background: radial-gradient(circle at 20% 20%, rgba(255,220,130,.22), transparent 30%), radial-gradient(circle at 80% 80%, rgba(120,160,255,.12), transparent 32%); }
@@ -83,17 +95,16 @@
 .stranger-things body::before { opacity:.22; background: radial-gradient(circle at 50% 65%, rgba(220,40,55,.18), transparent 48%), linear-gradient(180deg, rgba(255,255,255,.02), transparent 40%); }
 .batman body::before { opacity:.16; background: radial-gradient(circle at 84% 18%, rgba(250,204,21,.16), transparent 18%), linear-gradient(160deg, transparent 45%, rgba(255,255,255,.025) 50%, transparent 55%); }
 .superman body::before { opacity:.15; background: radial-gradient(circle at 50% 0%, rgba(255,200,100,.2), transparent 50%), linear-gradient(180deg, rgba(0,100,255,.1), transparent 60%); }
+.light body::before { opacity:.05; background: radial-gradient(circle at 80% 20%, rgba(59,130,246,.05), transparent 40%); }
 
-/* Supplied pet images: preserved full-frame, high-resolution local assets, gently animated. */
 .theme-pet-layer {
   position: fixed; right: 24px; bottom: 20px; z-index: 25; width: 220px; height: 160px; pointer-events: none;
   display:flex; align-items:center; justify-content:center; filter: drop-shadow(0 18px 28px rgba(0,0,0,.5));
   animation: theme-pet-float 4.8s ease-in-out infinite;
 }
 
-/* Pet click interactions & background removal */
 .theme-pet-layer {
-  pointer-events: auto !important; /* Allow clicking */
+  pointer-events: auto !important;
   cursor: pointer;
   transition: transform 0.2s ease;
 }
@@ -101,12 +112,10 @@
   transform: scale(0.95);
 }
 .theme-pet-image {
-  /* Helps remove solid white backgrounds, making it look like a cutout */
   mix-blend-mode: multiply; 
   isolation: isolate;
   background: transparent;
 }
-/* Note: If the supplied asset has a black background, change mix-blend-mode to 'screen' */
 
 .theme-pet-glow { position:absolute; width:150px; height:42px; bottom:4px; border-radius:50%; background:hsl(var(--text-accent) / .18); filter:blur(18px); }
 .theme-pet-orbit { position:absolute; width:188px; height:76px; bottom:24px; border:1px solid hsl(var(--text-accent) / .18); border-radius:50%; animation: theme-pet-orbit 7s linear infinite; }
@@ -119,7 +128,6 @@
 @media (max-width: 768px) { .theme-pet-layer { right:8px; bottom:8px; transform:scale(.82); transform-origin:bottom right; } }
 @media (prefers-reduced-motion: reduce) { .theme-pet-layer, .theme-pet-orbit, .theme-pet-spark { animation:none; } }
 
-/* Click effect base */
 .click-effect {
   position: absolute;
   inset: 0;
@@ -133,7 +141,6 @@
   animation: effect-pop 0.8s ease-out forwards;
 }
 
-/* Spider-Man: Web burst */
 .click-effect.spider-web::before {
   content: '';
   position: absolute;
@@ -152,7 +159,6 @@
   animation: web-expand 0.6s ease-out forwards;
 }
 
-/* Harry Potter: Magic sparkle */
 .click-effect.magic-sparkle::before {
   content: '✨';
   position: absolute;
@@ -164,7 +170,6 @@
   animation: sparkle-float 1s ease-out forwards;
 }
 
-/* Batman: Bat signal flash */
 .click-effect.bat-signal::before {
   content: '';
   position: absolute;
@@ -178,7 +183,6 @@
   animation: signal-flash 0.8s ease-out forwards;
 }
 
-/* Pirates: Cannon smoke */
 .click-effect.cannon-smoke::before {
   content: '💨';
   position: absolute;
@@ -190,7 +194,6 @@
   animation: smoke-drift 1s ease-out forwards;
 }
 
-/* Superman: Energy burst */
 .click-effect.energy-burst::before {
   content: '';
   position: absolute;
@@ -204,7 +207,6 @@
   animation: energy-burst-anim 0.6s ease-out forwards;
 }
 
-/* Stranger Things: Dimensional ripple */
 .click-effect.dimensional-ripple::before {
   content: '';
   position: absolute;
@@ -218,7 +220,6 @@
   animation: ripple-expand 1s ease-out forwards;
 }
 
-/* Dark Web Series: Security shield (Many security layers) */
 .click-effect.security-shield::before {
   content: '🛡️';
   position: absolute;
@@ -266,4 +267,72 @@
   0% { transform: translate(-50%, -50%) scale(0); opacity: 0; }
   50% { transform: translate(-50%, -50%) scale(1.2); opacity: 1; }
   100% { transform: translate(-50%, -50%) scale(1); opacity: 0; }
+}
+
+.theme-sidebar-rope {
+  position: fixed;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 40px;
+  z-index: 10;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.theme-rope-pirates-of-the-caribbean {
+  background: repeating-linear-gradient(
+    180deg,
+    #5c4033 0px,
+    #8b5a2b 10px,
+    #3e2723 20px
+  );
+  box-shadow: inset -5px 0 10px rgba(0,0,0,0.5);
+  animation: rope-sway 6s ease-in-out infinite;
+  transform-origin: top center;
+}
+.theme-rope-pirates-of-the-caribbean::after {
+  content: '';
+  position: absolute;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 20px;
+  height: 20px;
+  background: #d4af37;
+  border-radius: 50%;
+  box-shadow: 0 0 10px #d4af37;
+}
+
+.theme-rope-spider-man {
+  background: transparent;
+  border-left: 2px solid rgba(255, 255, 255, 0.6);
+  box-shadow: 0 0 8px rgba(255, 255, 255, 0.8);
+  animation: web-sway 5s ease-in-out infinite;
+  transform-origin: top center;
+}
+.theme-rope-spider-man::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -20px;
+  width: 60px;
+  height: 100%;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent 0px,
+    transparent 40px,
+    rgba(255, 255, 255, 0.4) 41px,
+    transparent 42px
+  );
+  mask-image: radial-gradient(circle at 0% 50%, black 0%, transparent 100%);
+}
+
+@keyframes rope-sway {
+  0%, 100% { transform: rotate(0deg); }
+  50% { transform: rotate(1.5deg); }
+}
+@keyframes web-sway {
+  0%, 100% { transform: translateX(0) skewY(0deg); }
+  50% { transform: translateX(2px) skewY(1deg); }
 }
