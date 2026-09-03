@@ -3,6 +3,7 @@ import { Inter, Playfair_Display, Courier_Prime, Orbitron } from "next/font/goog
 import "./globals.css";
 import "./stream-fixes.css";
 import "./theme-enhancements.css";
+import "./theme-runtime-fixes.css";
 import { Toaster } from "@/components/ui/toaster";
 import { ThemeProvider } from "@/components/theme-provider";
 import { ThemeEffects } from "@/components/theme-effects";
