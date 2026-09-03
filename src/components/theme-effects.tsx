@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { themePetImages } from '@/lib/theme-pet-images';
 
 const petByTheme: Record<string, { image: string; label: string; clickEffect: string }> = {
@@ -13,52 +13,67 @@ const petByTheme: Record<string, { image: string; label: string; clickEffect: st
   'superman': { image: themePetImages.superman, label: 'Superman companion', clickEffect: 'energy-burst' },
 };
 
+const THEME_CLASSES = new Set(Object.keys(petByTheme));
+
 export function ThemeEffects() {
   const [theme, setTheme] = useState('');
   const [isClicked, setIsClicked] = useState(false);
+  const resetTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
     const read = () => {
-      const classes = Array.from(document.body.classList);
-      const match = classes.find((value) => 
-        value === 'harry-potter' || value === 'stranger-things' || value === 'pirates-of-the-caribbean' || 
-        value === 'dark-web-series' || value === 'spider-man' || value === 'batman' || value === 'superman'
-      );
+      const match = Array.from(document.body.classList).find((value) => THEME_CLASSES.has(value));
       setTheme(match ?? '');
     };
+
     read();
     const observer = new MutationObserver(read);
     observer.observe(document.body, { attributes: true, attributeFilter: ['class'] });
-    return () => observer.disconnect();
+
+    return () => {
+      observer.disconnect();
+      if (resetTimer.current) {
+        clearTimeout(resetTimer.current);
+        resetTimer.current = null;
+      }
+    };
   }, []);
+
+  useEffect(() => {
+    setIsClicked(false);
+    if (resetTimer.current) {
+      clearTimeout(resetTimer.current);
+      resetTimer.current = null;
+    }
+  }, [theme]);
 
   const pet = petByTheme[theme];
   if (!pet) return null;
 
   const handlePetClick = () => {
+    if (resetTimer.current) clearTimeout(resetTimer.current);
     setIsClicked(true);
-    setTimeout(() => setIsClicked(false), 1000); // Reset after 1 second
+    resetTimer.current = setTimeout(() => {
+      setIsClicked(false);
+      resetTimer.current = null;
+    }, 850);
   };
 
   return (
-    <div 
-      className={`theme-pet-layer theme-pet-${theme} ${isClicked ? 'pet-clicked' : ''}`} 
-      aria-hidden="true"
-      onClick={handlePetClick}
-      style={{ pointerEvents: 'auto', cursor: 'pointer' }}
-      title={`Click to interact with ${pet.label}`}
-    >
-      <div className="theme-pet-glow" />
-      <div className="theme-pet-orbit" />
-      <img
-        className="theme-pet-image"
-        src={pet.image}
-        alt={pet.label}
-        draggable={false}
-      />
-      <div className={`theme-pet-spark spark-a ${isClicked ? 'spark-active' : ''}`} />
-      <div className={`theme-pet-spark spark-b ${isClicked ? 'spark-active' : ''}`} />
-      <div className={`click-effect ${pet.clickEffect} ${isClicked ? 'effect-active' : ''}`} />
+    <div className={`theme-pet-layer theme-pet-${theme} ${isClicked ? 'pet-clicked' : ''}`}>
+      <div className="theme-pet-glow" aria-hidden="true" />
+      <div className="theme-pet-orbit" aria-hidden="true" />
+      <button
+        type="button"
+        className="theme-pet-interaction"
+        aria-label={`Interact with ${pet.label}`}
+        onClick={handlePetClick}
+      >
+        <img className="theme-pet-image" src={pet.image} alt="" draggable={false} />
+        <span className="theme-pet-spark spark-a" aria-hidden="true" />
+        <span className="theme-pet-spark spark-b" aria-hidden="true" />
+        <span className={`click-effect ${pet.clickEffect} ${isClicked ? 'effect-active' : ''}`} aria-hidden="true" />
+      </button>
     </div>
   );
 }
