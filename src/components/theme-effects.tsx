@@ -11,6 +11,7 @@ const petByTheme: Record<string, { image: string; label: string; clickEffect: st
   'spider-man': { image: themePetImages.spider, label: 'Spider-Man companion', clickEffect: 'spider-web' },
   'batman': { image: themePetImages.batman, label: 'Batman companion', clickEffect: 'bat-signal' },
   'superman': { image: themePetImages.superman, label: 'Superman companion', clickEffect: 'energy-burst' },
+  'light': { image: themePetImages.light, label: 'Light companion', clickEffect: 'magic-sparkle' },
 };
 
 const THEME_CLASSES = new Set(Object.keys(petByTheme));
@@ -60,20 +61,27 @@ export function ThemeEffects() {
   };
 
   return (
-    <div className={`theme-pet-layer theme-pet-${theme} ${isClicked ? 'pet-clicked' : ''}`}>
-      <div className="theme-pet-glow" aria-hidden="true" />
-      <div className="theme-pet-orbit" aria-hidden="true" />
-      <button
-        type="button"
-        className="theme-pet-interaction"
-        aria-label={`Interact with ${pet.label}`}
-        onClick={handlePetClick}
-      >
-        <img className="theme-pet-image" src={pet.image} alt="" draggable={false} />
-        <span className="theme-pet-spark spark-a" aria-hidden="true" />
-        <span className="theme-pet-spark spark-b" aria-hidden="true" />
-        <span className={`click-effect ${pet.clickEffect} ${isClicked ? 'effect-active' : ''}`} aria-hidden="true" />
-      </button>
-    </div>
+    <>
+      <div className={`theme-pet-layer theme-pet-${theme} ${isClicked ? 'pet-clicked' : ''}`}>
+        <div className="theme-pet-glow" aria-hidden="true" />
+        <div className="theme-pet-orbit" aria-hidden="true" />
+        <button
+          type="button"
+          className="theme-pet-interaction"
+          aria-label={`Interact with ${pet.label}`}
+          onClick={handlePetClick}
+        >
+          <img className="theme-pet-image" src={pet.image} alt="" draggable={false} />
+          <span className="theme-pet-spark spark-a" aria-hidden="true" />
+          <span className="theme-pet-spark spark-b" aria-hidden="true" />
+          <span className={`click-effect ${pet.clickEffect} ${isClicked ? 'effect-active' : ''}`} aria-hidden="true" />
+        </button>
+      </div>
+      
+      {/* Sidebar Rope/Web Decorations */}
+      {(theme === 'pirates-of-the-caribbean' || theme === 'spider-man') && (
+        <div className={`theme-sidebar-rope theme-rope-${theme}`} aria-hidden="true" />
+      )}
+    </>
   );
 }
