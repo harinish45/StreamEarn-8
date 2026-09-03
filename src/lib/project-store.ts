@@ -57,7 +57,16 @@ async function directCreateProject(p:Project){
   const {sb,userId}=await getSessionClient();
   const {data,error}=await sb.from('projects').insert(directRow(p,userId)).select('*').single();
   if(error) throw error;
-  return fromRow(data,p.people);
+
+  const people=(p.people||[]).map(name=>name.trim()).filter(Boolean).slice(0,20);
+  if(people.length){
+    const peopleResult=await sb.from('project_people').insert(people.map(name=>({project_id:p.id,owner_id:userId,name}))).select('name');
+    if(peopleResult.error){
+      await sb.from('projects').delete().eq('id',p.id).eq('owner_id',userId);
+      throw peopleResult.error;
+    }
+  }
+  return fromRow(data,people);
 }
 
 async function directUpdateProject(id:string,patch:Record<string,unknown>){
@@ -67,7 +76,8 @@ async function directUpdateProject(id:string,patch:Record<string,unknown>){
   for(const [key,value] of Object.entries(patch)) mapped[keys[key]||key]=value;
   const {data,error}=await sb.from('projects').update(mapped).eq('id',id).eq('owner_id',userId).select('*').single();
   if(error) throw error;
-  const people=Array.isArray((data as any)?.people)?(data as any).people:[];
+  const peopleResult=await sb.from('project_people').select('name').eq('project_id',id).eq('owner_id',userId).order('created_at',{ascending:true});
+  const people=!peopleResult.error?(peopleResult.data||[]).map((x:any)=>x.name).filter((x:any)=>typeof x==='string'&&x.trim()):[];
   return fromRow(data,people);
 }
 
