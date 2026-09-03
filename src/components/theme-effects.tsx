@@ -115,7 +115,7 @@ function knockoutBackground(source: string): Promise<string> {
 
 function scheduleProcessing(source: string, onDone: (src: string) => void) {
   let cancelled = false;
-  const timer = globalThis.setTimeout(() => {
+  const timer = setTimeout(() => {
     if (cancelled) return;
     void knockoutBackground(source).then((result) => {
       if (!cancelled) onDone(result);
@@ -123,7 +123,7 @@ function scheduleProcessing(source: string, onDone: (src: string) => void) {
   }, 0);
   return () => {
     cancelled = true;
-    globalThis.clearTimeout(timer);
+    clearTimeout(timer);
   };
 }
 
@@ -131,7 +131,7 @@ export function ThemeEffects() {
   const [theme, setTheme] = useState('');
   const [petSrc, setPetSrc] = useState('');
   const [isClicked, setIsClicked] = useState(false);
-  const clickTimer = useRef<ReturnType<typeof globalThis.setTimeout> | null>(null);
+  const clickTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const pet = useMemo(() => petByTheme[theme], [theme]);
 
   useEffect(() => {
@@ -147,22 +147,22 @@ export function ThemeEffects() {
   useEffect(() => {
     setPetSrc('');
     setIsClicked(false);
-    if (clickTimer.current !== null) globalThis.clearTimeout(clickTimer.current);
+    if (clickTimer.current !== null) clearTimeout(clickTimer.current);
     clickTimer.current = null;
     if (!pet) return;
     return scheduleProcessing(pet.image, setPetSrc);
   }, [pet]);
 
   useEffect(() => () => {
-    if (clickTimer.current !== null) globalThis.clearTimeout(clickTimer.current);
+    if (clickTimer.current !== null) clearTimeout(clickTimer.current);
   }, []);
 
   if (!pet || !petSrc) return null;
 
   const handlePetClick = () => {
     setIsClicked(true);
-    if (clickTimer.current !== null) globalThis.clearTimeout(clickTimer.current);
-    clickTimer.current = globalThis.setTimeout(() => {
+    if (clickTimer.current !== null) clearTimeout(clickTimer.current);
+    clickTimer.current = setTimeout(() => {
       setIsClicked(false);
       clickTimer.current = null;
     }, 500);
