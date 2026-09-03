@@ -46,7 +46,6 @@ async function directListProjects(){
   if(ids.length){
     const peopleResult=await sb.from('project_people').select('project_id,name').eq('owner_id',userId).in('project_id',ids).order('created_at',{ascending:true});
     if(!peopleResult.error){
-      peopleByProject=new Map<string,string[]>();
       for(const person of peopleResult.data||[]){const current=peopleByProject.get(person.project_id)||[];if(typeof person.name==='string'&&person.name.trim())current.push(person.name.trim());peopleByProject.set(person.project_id,current);}
     }
   }
@@ -61,10 +60,7 @@ async function directCreateProject(p:Project){
   const people=(p.people||[]).map(name=>name.trim()).filter(Boolean).slice(0,20);
   if(people.length){
     const peopleResult=await sb.from('project_people').insert(people.map(name=>({project_id:p.id,owner_id:userId,name}))).select('name');
-    if(peopleResult.error){
-      await sb.from('projects').delete().eq('id',p.id).eq('owner_id',userId);
-      throw peopleResult.error;
-    }
+    if(peopleResult.error) console.error('[projects] people metadata save failed',peopleResult.error);
   }
   return fromRow(data,people);
 }
@@ -90,7 +86,7 @@ async function directArchiveProject(id:string){
 
 async function directDeleteProject(id:string){
   const {sb,userId}=await getSessionClient();
-  const {error}=await sb.from('projects').delete().eq('id',id).eq('owner_id',userId);
+  const {error}=await sb.from('projects').update({status:'archived',archived_at:new Date().toISOString(),updated_at:new Date().toISOString()}).eq('id',id).eq('owner_id',userId);
   if(error) throw error;
 }
 
