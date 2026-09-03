@@ -19,7 +19,11 @@ const petByTheme: Record<string, Pet> = {
 const THEME_CLASSES = new Set(Object.keys(petByTheme));
 const processedCache = new Map<string, string>();
 
-function knockoutBackground(source: string): Promise<string> {
+function colorDistance(r: number, g: number, b: number, bg: readonly number[]) {
+  return Math.hypot(r - bg[0], g - bg[1], b - bg[2]);
+}
+
+function knockoutAndCrop(source: string): Promise<string> {
   const cached = processedCache.get(source);
   if (cached) return Promise.resolve(cached);
 
@@ -30,7 +34,7 @@ function knockoutBackground(source: string): Promise<string> {
       try {
         const width = image.naturalWidth;
         const height = image.naturalHeight;
-        if (!width || !height || width * height > 1000000) return resolve(source);
+        if (!width || !height || width * height > 1200000) return resolve(source);
 
         const canvas = document.createElement('canvas');
         canvas.width = width;
@@ -41,26 +45,32 @@ function knockoutBackground(source: string): Promise<string> {
 
         const frame = ctx.getImageData(0, 0, width, height);
         const pixels = frame.data;
-        const samplePoints = [
-          [0, 0], [width - 1, 0], [0, height - 1], [width - 1, height - 1],
-        ];
-        const samples = samplePoints
-          .map(([x, y]) => {
-            const i = (y * width + x) * 4;
-            return [pixels[i], pixels[i + 1], pixels[i + 2], pixels[i + 3]] as const;
-          })
-          .filter((p) => p[3] > 0);
-        if (samples.length < 2) return resolve(source);
+        const samplePoints: Array<[number, number]> = [];
+        const inset = Math.max(1, Math.round(Math.min(width, height) * 0.01));
+        for (let i = 0; i < 5; i += 1) {
+          const t = i / 4;
+          samplePoints.push(
+            [inset + Math.round((width - inset * 2 - 1) * t), inset],
+            [inset + Math.round((width - inset * 2 - 1) * t), height - inset - 1],
+            [inset, inset + Math.round((height - inset * 2 - 1) * t)],
+            [width - inset - 1, inset + Math.round((height - inset * 2 - 1) * t)],
+          );
+        }
 
-        const bg = samples
-          .reduce((sum, p) => [sum[0] + p[0], sum[1] + p[1], sum[2] + p[2]], [0, 0, 0])
-          .map((value) => value / samples.length);
-        const distance = (i: number) => {
-          const dr = pixels[i] - bg[0];
-          const dg = pixels[i + 1] - bg[1];
-          const db = pixels[i + 2] - bg[2];
-          return Math.hypot(dr, dg, db);
-        };
+        const samples = samplePoints.map(([x, y]) => {
+          const i = (y * width + x) * 4;
+          return [pixels[i], pixels[i + 1], pixels[i + 2], pixels[i + 3]] as const;
+        }).filter((p) => p[3] > 0);
+        if (samples.length < 4) return resolve(source);
+
+        const bg = samples.reduce(
+          (sum, p) => [sum[0] + p[0], sum[1] + p[1], sum[2] + p[2]],
+          [0, 0, 0],
+        ).map((value) => value / samples.length);
+
+        const distanceAt = (index: number) => colorDistance(
+          pixels[index], pixels[index + 1], pixels[index + 2], bg,
+        );
 
         const visited = new Uint8Array(width * height);
         const queue = new Int32Array(width * height);
@@ -71,7 +81,8 @@ function knockoutBackground(source: string): Promise<string> {
           const p = y * width + x;
           if (visited[p]) return;
           const i = p * 4;
-          if (pixels[i + 3] === 0 || distance(i) <= 64) {
+          const alpha = pixels[i + 3];
+          if (alpha === 0 || distanceAt(i) <= 58) {
             visited[p] = 1;
             queue[tail++] = p;
           }
@@ -89,9 +100,14 @@ function knockoutBackground(source: string): Promise<string> {
         while (head < tail) {
           const p = queue[head++];
           const i = p * 4;
-          const d = distance(i);
-          if (d < 46) pixels[i + 3] = 0;
-          else if (d < 76) pixels[i + 3] = Math.round(((d - 46) / 30) * pixels[i + 3]);
+          const distance = distanceAt(i);
+          if (distance <= 34) {
+            pixels[i + 3] = 0;
+          } else if (distance < 82) {
+            const feather = (distance - 34) / 48;
+            pixels[i + 3] = Math.min(pixels[i + 3], Math.round(feather * 255));
+          }
+
           const x = p % width;
           const y = Math.floor(p / width);
           enqueue(x - 1, y);
@@ -101,7 +117,42 @@ function knockoutBackground(source: string): Promise<string> {
         }
 
         ctx.putImageData(frame, 0, 0);
-        const result = canvas.toDataURL('image/png');
+
+        let minX = width;
+        let minY = height;
+        let maxX = -1;
+        let maxY = -1;
+        for (let y = 0; y < height; y += 1) {
+          for (let x = 0; x < width; x += 1) {
+            const alpha = pixels[(y * width + x) * 4 + 3];
+            if (alpha > 12) {
+              if (x < minX) minX = x;
+              if (y < minY) minY = y;
+              if (x > maxX) maxX = x;
+              if (y > maxY) maxY = y;
+            }
+          }
+        }
+
+        if (maxX < minX || maxY < minY) return resolve(source);
+
+        const pad = Math.max(4, Math.round(Math.min(width, height) * 0.035));
+        minX = Math.max(0, minX - pad);
+        minY = Math.max(0, minY - pad);
+        maxX = Math.min(width - 1, maxX + pad);
+        maxY = Math.min(height - 1, maxY + pad);
+
+        const cropWidth = maxX - minX + 1;
+        const cropHeight = maxY - minY + 1;
+        const cropped = document.createElement('canvas');
+        cropped.width = cropWidth;
+        cropped.height = cropHeight;
+        const cropCtx = cropped.getContext('2d');
+        if (!cropCtx) return resolve(source);
+        cropCtx.imageSmoothingEnabled = true;
+        cropCtx.drawImage(canvas, minX, minY, cropWidth, cropHeight, 0, 0, cropWidth, cropHeight);
+
+        const result = cropped.toDataURL('image/png');
         processedCache.set(source, result);
         resolve(result);
       } catch {
@@ -115,15 +166,15 @@ function knockoutBackground(source: string): Promise<string> {
 
 function scheduleProcessing(source: string, onDone: (src: string) => void) {
   let cancelled = false;
-  const timer = setTimeout(() => {
+  const timer = globalThis.setTimeout(() => {
     if (cancelled) return;
-    void knockoutBackground(source).then((result) => {
+    void knockoutAndCrop(source).then((result) => {
       if (!cancelled) onDone(result);
     });
   }, 0);
   return () => {
     cancelled = true;
-    clearTimeout(timer);
+    globalThis.clearTimeout(timer);
   };
 }
 
@@ -131,7 +182,7 @@ export function ThemeEffects() {
   const [theme, setTheme] = useState('');
   const [petSrc, setPetSrc] = useState('');
   const [isClicked, setIsClicked] = useState(false);
-  const clickTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const clickTimer = useRef<ReturnType<typeof globalThis.setTimeout> | null>(null);
   const pet = useMemo(() => petByTheme[theme], [theme]);
 
   useEffect(() => {
@@ -147,32 +198,40 @@ export function ThemeEffects() {
   useEffect(() => {
     setPetSrc('');
     setIsClicked(false);
-    if (clickTimer.current !== null) clearTimeout(clickTimer.current);
+    if (clickTimer.current !== null) globalThis.clearTimeout(clickTimer.current);
     clickTimer.current = null;
     if (!pet) return;
     return scheduleProcessing(pet.image, setPetSrc);
   }, [pet]);
 
   useEffect(() => () => {
-    if (clickTimer.current !== null) clearTimeout(clickTimer.current);
+    if (clickTimer.current !== null) globalThis.clearTimeout(clickTimer.current);
   }, []);
 
   if (!pet || !petSrc) return null;
 
   const handlePetClick = () => {
     setIsClicked(true);
-    if (clickTimer.current !== null) clearTimeout(clickTimer.current);
-    clickTimer.current = setTimeout(() => {
+    if (clickTimer.current !== null) globalThis.clearTimeout(clickTimer.current);
+    clickTimer.current = globalThis.setTimeout(() => {
       setIsClicked(false);
       clickTimer.current = null;
-    }, 500);
+    }, 450);
   };
 
   return (
     <div
       className={`theme-pet-layer theme-pet-${theme}`}
-      style={{ animation: 'none', filter: 'none' }}
       aria-label={pet.label}
+      style={{
+        width: 'min(176px, 22vw)',
+        height: 'min(176px, 22vw)',
+        right: 'clamp(12px, 2vw, 28px)',
+        bottom: 'clamp(12px, 2vw, 28px)',
+        animation: 'none',
+        filter: 'none',
+        transform: 'none',
+      }}
     >
       <button
         type="button"
@@ -186,7 +245,15 @@ export function ThemeEffects() {
           src={petSrc}
           alt=""
           draggable={false}
-          style={{ animation: 'none', background: 'transparent' }}
+          style={{
+            width: '100%',
+            height: '100%',
+            objectFit: 'contain',
+            animation: 'none',
+            background: 'transparent',
+            filter: 'none',
+            mixBlendMode: 'normal',
+          }}
         />
         {isClicked && <span className="theme-pet-click-ring" aria-hidden="true" />}
       </button>
