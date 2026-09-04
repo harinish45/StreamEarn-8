@@ -2,6 +2,7 @@ import { Header } from '@/components/header';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { ThemeSettings } from '@/components/theme-settings';
 import { MfaSettings } from '@/components/mfa-settings';
+import { ApiTokensSettings } from '@/components/api-tokens-settings';
 
 export const metadata = { title: 'Settings | StreamEarn' };
 
@@ -26,6 +27,15 @@ export default function SettingsPage() {
             <div className="mb-2 text-sm font-semibold">Two-factor authentication</div>
             <p className="mb-4 text-xs text-muted-foreground">Optional -- once enabled, sign-in requires both your password and a code from your authenticator app.</p>
             <MfaSettings />
+          </div>
+        </CardContent>
+      </Card>
+      <Card className="themed-card">
+        <CardHeader><CardTitle>API access</CardTitle></CardHeader>
+        <CardContent>
+          <div className="rounded-xl border bg-background/40 p-4">
+            <div className="mb-2 text-sm font-semibold">MCP server</div>
+            <ApiTokensSettings />
           </div>
         </CardContent>
       </Card>

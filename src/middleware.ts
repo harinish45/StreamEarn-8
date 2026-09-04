@@ -10,6 +10,12 @@ export async function middleware(request: NextRequest) {
   const path = request.nextUrl.pathname;
   const isApi = path.startsWith('/api/');
   const publicPath = path === '/login' || path.startsWith('/_next/') || path === '/favicon.ico' || path === '/api/health';
+  // Routes that authenticate themselves (a bearer token or shared secret checked inside the
+  // route handler) instead of the cookie-based Supabase session set up below. Without this
+  // exemption, any caller with no session cookie -- an MCP client, or the scheduler's own cron
+  // job -- would be rejected by the generic `if (!userId)` check before ever reaching the
+  // route's own check.
+  const selfAuthenticated = path === '/api/mcp' || (path === '/api/scheduler' && request.method !== 'GET');
 
   if (isApi && path === '/api/health') {
     // Unauthenticated by design (uptime monitors need it), but still rate-limited
@@ -26,6 +32,8 @@ export async function middleware(request: NextRequest) {
       if (blocked) return security(blocked, request);
     }
   }
+
+  if (selfAuthenticated) return security(response, request);
 
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const key = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
