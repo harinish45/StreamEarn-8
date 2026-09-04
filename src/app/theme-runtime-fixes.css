@@ -23,13 +23,13 @@ body.batman::before { opacity:.16; background:radial-gradient(circle at 84% 18%,
 body.superman::before { opacity:.16; background:radial-gradient(circle at 50% 0%,rgba(255,200,100,.20),transparent 50%),radial-gradient(ellipse at 30% 25%,rgba(255,255,255,.10),transparent 26%),linear-gradient(180deg,rgba(0,100,255,.10),transparent 60%); }
 body.light::before { opacity:.05; background:radial-gradient(circle at 80% 20%,rgba(59,130,246,.05),transparent 40%); }
 
-/* The companion is a single transparent object. No decorative container, glow, orbit, rope, or animation. */
+/* Small, unobtrusive mascot. Animation stays on the already-rendered SVG, so there is no canvas work or runtime image processing. */
 .theme-pet-layer {
   position:fixed !important;
-  right:clamp(12px,2vw,28px) !important;
-  bottom:clamp(12px,2vw,28px) !important;
-  width:min(186px,22vw) !important;
-  height:min(186px,22vw) !important;
+  right:clamp(10px,1.6vw,22px) !important;
+  bottom:clamp(10px,1.6vw,22px) !important;
+  width:min(154px,17vw) !important;
+  height:min(154px,17vw) !important;
   z-index:25;
   display:flex;
   align-items:center;
@@ -73,7 +73,7 @@ body.light::before { opacity:.05; background:radial-gradient(circle at 80% 20%,r
   object-fit:contain;
   object-position:center;
   opacity:1 !important;
-  filter:drop-shadow(0 12px 16px rgba(0,0,0,.28)) !important;
+  filter:drop-shadow(0 10px 14px rgba(0,0,0,.24)) !important;
   mix-blend-mode:normal !important;
   isolation:auto;
   background:transparent !important;
@@ -81,16 +81,81 @@ body.light::before { opacity:.05; background:radial-gradient(circle at 80% 20%,r
   box-shadow:none !important;
   transform:translate3d(0,0,0) scale(1);
   backface-visibility:hidden;
-  transition:transform .16s cubic-bezier(.2,.8,.2,1),filter .16s ease;
+  will-change:transform,filter;
+  animation:theme-pet-float 4.8s ease-in-out infinite;
+  transition:transform .18s cubic-bezier(.2,.8,.2,1),filter .18s ease;
 }
 
+/* Each theme gets a slightly different personality without creating a heavy animation loop. */
+.theme-pet-harry-potter .theme-pet-image { animation:theme-pet-wiggle 4.6s ease-in-out infinite; }
+.theme-pet-stranger-things .theme-pet-image { animation:theme-pet-pulse 3.8s ease-in-out infinite; }
+.theme-pet-pirates-of-the-caribbean .theme-pet-image { animation:theme-pet-sway 5.2s ease-in-out infinite; }
+.theme-pet-dark-web-series .theme-pet-image { animation:theme-pet-glitch-float 4.2s ease-in-out infinite; }
+.theme-pet-spider-man .theme-pet-image { animation:theme-pet-bounce 3.9s ease-in-out infinite; }
+.theme-pet-batman .theme-pet-image { animation:theme-pet-bat-sway 5s ease-in-out infinite; }
+.theme-pet-superman .theme-pet-image { animation:theme-pet-hero 4.4s ease-in-out infinite; }
+.theme-pet-light .theme-pet-image { animation:theme-pet-light 3.6s ease-in-out infinite; }
+
 .theme-pet-interaction:hover .theme-pet-image {
-  transform:translate3d(0,-4px,0) scale(1.045);
-  filter:drop-shadow(0 16px 20px rgba(0,0,0,.34)) !important;
+  animation-play-state:paused;
+  transform:translate3d(0,-5px,0) scale(1.045);
+  filter:drop-shadow(0 15px 19px rgba(0,0,0,.31)) !important;
 }
 
 .theme-pet-interaction:active .theme-pet-image {
+  animation-play-state:paused;
   transform:translate3d(0,-1px,0) scale(.98);
+}
+
+@keyframes theme-pet-float {
+  0%,100% { transform:translate3d(0,2px,0) rotate(0deg) scale(1); }
+  50% { transform:translate3d(0,-5px,0) rotate(-1deg) scale(1.012); }
+}
+
+@keyframes theme-pet-wiggle {
+  0%,100% { transform:translate3d(0,2px,0) rotate(0deg) scale(1); }
+  28% { transform:translate3d(-2px,-2px,0) rotate(-1.2deg) scale(1.01); }
+  58% { transform:translate3d(2px,-5px,0) rotate(1.2deg) scale(1.015); }
+  78% { transform:translate3d(0,-2px,0) rotate(0deg) scale(1); }
+}
+
+@keyframes theme-pet-pulse {
+  0%,100% { transform:translate3d(0,2px,0) scale(1); filter:drop-shadow(0 9px 14px rgba(0,0,0,.22)) !important; }
+  50% { transform:translate3d(0,-3px,0) scale(1.025); filter:drop-shadow(0 13px 17px rgba(120,20,35,.3)) !important; }
+}
+
+@keyframes theme-pet-sway {
+  0%,100% { transform:translate3d(0,2px,0) rotate(-1deg) scale(1); }
+  50% { transform:translate3d(0,-4px,0) rotate(1.5deg) scale(1.012); }
+}
+
+@keyframes theme-pet-glitch-float {
+  0%,100% { transform:translate3d(0,2px,0) rotate(0deg) scale(1); opacity:1; }
+  46% { transform:translate3d(1px,-4px,0) rotate(.5deg) scale(1.012); opacity:1; }
+  49% { transform:translate3d(-2px,-3px,0) rotate(-.6deg) scale(1.014); opacity:.94; }
+  52% { transform:translate3d(2px,-4px,0) rotate(.5deg) scale(1.012); opacity:1; }
+}
+
+@keyframes theme-pet-bounce {
+  0%,100% { transform:translate3d(0,3px,0) scale(1); }
+  45% { transform:translate3d(0,-7px,0) scale(1.01); }
+  60% { transform:translate3d(0,-2px,0) scale(1.018); }
+}
+
+@keyframes theme-pet-bat-sway {
+  0%,100% { transform:translate3d(0,2px,0) rotate(0deg) scale(1); }
+  35% { transform:translate3d(-2px,-3px,0) rotate(-1deg) scale(1.008); }
+  70% { transform:translate3d(2px,-4px,0) rotate(1deg) scale(1.012); }
+}
+
+@keyframes theme-pet-hero {
+  0%,100% { transform:translate3d(0,3px,0) rotate(0deg) scale(1); }
+  50% { transform:translate3d(0,-6px,0) rotate(-.8deg) scale(1.02); }
+}
+
+@keyframes theme-pet-light {
+  0%,100% { transform:translate3d(0,2px,0) scale(1); filter:drop-shadow(0 9px 15px rgba(37,99,235,.20)) !important; }
+  50% { transform:translate3d(0,-4px,0) scale(1.035); filter:drop-shadow(0 13px 19px rgba(37,99,235,.34)) !important; }
 }
 
 .theme-pet-click-ring {
@@ -123,10 +188,10 @@ body.light::before { opacity:.05; background:radial-gradient(circle at 80% 20%,r
 
 @media (max-width:768px) {
   .theme-pet-layer {
-    width:min(142px,32vw) !important;
-    height:min(142px,32vw) !important;
-    right:8px !important;
-    bottom:8px !important;
+    width:min(118px,27vw) !important;
+    height:min(118px,27vw) !important;
+    right:7px !important;
+    bottom:7px !important;
   }
   .theme-pet-interaction:hover .theme-pet-image {
     transform:translate3d(0,-2px,0) scale(1.02);
