@@ -45,7 +45,12 @@ export function MfaSettings() {
       if (enrollError) throw enrollError;
       setFactorId(data.id);
       setSecret(data.totp.secret);
-      setQrDataUri(`data:image/svg+xml;charset=UTF-8,${encodeURIComponent(data.totp.qr_code)}`);
+      // Despite its own doc comment suggesting a prefix is needed, the installed SDK's own
+      // usage example passes qr_code directly as an <img src> -- it's already a complete data
+      // URI in this version. Only add the prefix ourselves if it genuinely isn't one, so this
+      // stays correct even if a different Supabase project/version returns raw SVG instead.
+      const rawQr = data.totp.qr_code;
+      setQrDataUri(rawQr.startsWith('data:') ? rawQr : `data:image/svg+xml;utf-8,${encodeURIComponent(rawQr)}`);
       setEnrolling(true);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Could not start setup. Please try again.');
