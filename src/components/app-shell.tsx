@@ -4,8 +4,8 @@ import { usePathname } from 'next/navigation';
 import { SidebarInset, SidebarProvider } from '@/components/ui/sidebar';
 import { UnifiedSidebar } from '@/components/unified-sidebar';
 
-// Login and the canonical Planner route. Planner owns its own shell.
-const PUBLIC = ['/login'];
+// Login, the two-factor step-up page, and the canonical Planner route. Planner owns its own shell.
+const PUBLIC = ['/login', '/mfa'];
 const SELF_SHELL_ROUTES = ['/planner'];
 
 function matches(pathname: string, route: string) {

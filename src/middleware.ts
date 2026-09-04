@@ -63,6 +63,26 @@ export async function middleware(request: NextRequest) {
     redirect.searchParams.set('next', path);
     return NextResponse.redirect(redirect);
   }
+
+  // Two-factor is opt-in per user (enrolled from /settings). Only step up to /mfa when the
+  // account actually has a verified TOTP factor; accounts without one are unaffected.
+  // /mfa itself and sign-out must stay reachable so a stuck mid-verification session can
+  // always finish or bail out instead of being stranded in a redirect loop.
+  if (path !== '/mfa' && path !== '/api/auth/logout') {
+    try {
+      const { data: aal } = await supabase.auth.mfa.getAuthenticatorAssuranceLevel();
+      if (aal && aal.nextLevel === 'aal2' && aal.currentLevel !== aal.nextLevel) {
+        if (isApi) return security(NextResponse.json({ error: 'Two-factor verification required' }, { status: 401, headers: { 'Cache-Control': 'no-store' } }), request);
+        const redirect = request.nextUrl.clone();
+        redirect.pathname = '/mfa';
+        redirect.searchParams.set('next', path);
+        return NextResponse.redirect(redirect);
+      }
+    } catch {
+      // Fail open: this request already passed password auth above, so a transient error in
+      // the assurance-level check should never lock the account owner out of their own app.
+    }
+  }
   return security(response, request);
 }
 
