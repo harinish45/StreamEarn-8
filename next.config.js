@@ -6,6 +6,17 @@ const nextConfig = {
   eslint: { ignoreDuringBuilds: false },
   poweredByHeader: false,
   reactStrictMode: true,
+  images: {
+    // next/image throws for any external hostname not explicitly allowlisted here.
+    // Several components pass picsum.photos URLs to <Image> with no remotePatterns
+    // configured at all, so those images failed to load on every render -- this is
+    // the actual cause, not a network/CDN issue. Kept in sync with the CSP img-src
+    // allowlist in src/middleware.ts.
+    remotePatterns: [
+      { protocol: 'https', hostname: 'picsum.photos' },
+      { protocol: 'https', hostname: 'fastly.picsum.photos' },
+    ],
+  },
   async headers() {
     return [{
       source: '/(.*)',

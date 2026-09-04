@@ -33,8 +33,8 @@ body.light::before { opacity:.05; background:radial-gradient(circle at 80% 20%,r
   position:fixed !important;
   right:clamp(10px,1.6vw,22px) !important;
   bottom:clamp(10px,1.6vw,22px) !important;
-  width:min(154px,17vw) !important;
-  height:min(154px,17vw) !important;
+  width:min(124px,13.5vw) !important;
+  height:min(124px,13.5vw) !important;
   z-index:25;
   display:flex;
   align-items:center;
@@ -90,7 +90,7 @@ body.light::before { opacity:.05; background:radial-gradient(circle at 80% 20%,r
   backface-visibility:hidden;
   will-change:transform;
   animation:theme-pet-float 4.8s ease-in-out infinite;
-  transition:transform .18s cubic-bezier(.2,.8,.2,1),filter .18s ease;
+  transition:transform .22s cubic-bezier(.25,.65,.35,1),filter .22s ease;
 }
 
 /* Each theme gets a slightly different personality without creating a heavy animation loop. */
@@ -103,15 +103,19 @@ body.light::before { opacity:.05; background:radial-gradient(circle at 80% 20%,r
 .theme-pet-superman .theme-pet-image { animation:theme-pet-hero 4.4s ease-in-out infinite; }
 .theme-pet-light .theme-pet-image { animation:theme-pet-light 3.6s ease-in-out infinite; }
 
+/* Gentle hover lift and a soft press on click -- previously a big hover pop (scale 1.045)
+   followed by an active-state drop below resting scale (0.98) read as the pet getting
+   "slapped" rather than boop'd. Kept the delta between hover and active small instead. */
 .theme-pet-interaction:hover .theme-pet-image {
   animation-play-state:paused;
-  transform:translate3d(0,-5px,0) scale(1.045);
-  filter:drop-shadow(0 15px 19px rgba(0,0,0,.31)) !important;
+  transform:translate3d(0,-3px,0) scale(1.03);
+  filter:drop-shadow(0 12px 16px rgba(0,0,0,.26)) !important;
 }
 
 .theme-pet-interaction:active .theme-pet-image {
   animation-play-state:paused;
-  transform:translate3d(0,-1px,0) scale(.98);
+  transform:translate3d(0,-1px,0) scale(.99);
+  transition:transform .12s ease-out;
 }
 
 @keyframes theme-pet-float {
@@ -199,8 +203,8 @@ body.light::before { opacity:.05; background:radial-gradient(circle at 80% 20%,r
 
 @media (max-width:768px) {
   .theme-pet-layer {
-    width:min(118px,27vw) !important;
-    height:min(118px,27vw) !important;
+    width:min(92px,22vw) !important;
+    height:min(92px,22vw) !important;
     right:7px !important;
     bottom:7px !important;
   }
