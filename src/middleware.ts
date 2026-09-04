@@ -11,7 +11,12 @@ export async function middleware(request: NextRequest) {
   const isApi = path.startsWith('/api/');
   const publicPath = path === '/login' || path.startsWith('/_next/') || path === '/favicon.ico' || path === '/api/health';
 
-  if (isApi && path !== '/api/health') {
+  if (isApi && path === '/api/health') {
+    // Unauthenticated by design (uptime monitors need it), but still rate-limited
+    // so it isn't a free, unthrottled target for probing/scanning.
+    const limited = rateLimit(request, 120);
+    if (limited) return security(limited, request);
+  } else if (isApi) {
     const unsupported = rejectUnsupportedMethod(request, API_METHODS);
     if (unsupported) return security(unsupported, request);
     const limited = rateLimit(request, request.method === 'GET' ? 180 : 60);
