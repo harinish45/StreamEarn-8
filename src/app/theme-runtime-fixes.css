@@ -23,7 +23,12 @@ body.batman::before { opacity:.16; background:radial-gradient(circle at 84% 18%,
 body.superman::before { opacity:.16; background:radial-gradient(circle at 50% 0%,rgba(255,200,100,.20),transparent 50%),radial-gradient(ellipse at 30% 25%,rgba(255,255,255,.10),transparent 26%),linear-gradient(180deg,rgba(0,100,255,.10),transparent 60%); }
 body.light::before { opacity:.05; background:radial-gradient(circle at 80% 20%,rgba(59,130,246,.05),transparent 40%); }
 
-/* Small, unobtrusive mascot. Animation stays on the already-rendered SVG, so there is no canvas work or runtime image processing. */
+/* Small, unobtrusive mascot. Animation and the drop-shadow filter belong ONLY on
+   .theme-pet-image below. src/app/theme-enhancements.css sets a `filter` and an
+   `animation` on this same .theme-pet-layer selector (unrelated to the per-theme
+   animation on the image); those two properties are reset to none here so the pet
+   isn't two nested elements each independently animating + repainting their own
+   filtered layer every frame — that double layer was the actual cause of pet jank. */
 .theme-pet-layer {
   position:fixed !important;
   right:clamp(10px,1.6vw,22px) !important;
@@ -39,6 +44,8 @@ body.light::before { opacity:.05; background:radial-gradient(circle at 80% 20%,r
   -webkit-user-select:none;
   isolation:isolate;
   overflow:visible;
+  filter:none;
+  animation:none;
 }
 
 .theme-pet-interaction {
@@ -81,7 +88,7 @@ body.light::before { opacity:.05; background:radial-gradient(circle at 80% 20%,r
   box-shadow:none !important;
   transform:translate3d(0,0,0) scale(1);
   backface-visibility:hidden;
-  will-change:transform,filter;
+  will-change:transform;
   animation:theme-pet-float 4.8s ease-in-out infinite;
   transition:transform .18s cubic-bezier(.2,.8,.2,1),filter .18s ease;
 }
@@ -119,9 +126,12 @@ body.light::before { opacity:.05; background:radial-gradient(circle at 80% 20%,r
   78% { transform:translate3d(0,-2px,0) rotate(0deg) scale(1); }
 }
 
+/* transform-only: animating `filter` here previously forced a real repaint every
+   frame (drop-shadow can't be interpolated by the compositor the way transform can),
+   which is what made this pet variant janky. */
 @keyframes theme-pet-pulse {
-  0%,100% { transform:translate3d(0,2px,0) scale(1); filter:drop-shadow(0 9px 14px rgba(0,0,0,.22)) !important; }
-  50% { transform:translate3d(0,-3px,0) scale(1.025); filter:drop-shadow(0 13px 17px rgba(120,20,35,.3)) !important; }
+  0%,100% { transform:translate3d(0,2px,0) scale(1); }
+  50% { transform:translate3d(0,-3px,0) scale(1.025); }
 }
 
 @keyframes theme-pet-sway {
@@ -153,9 +163,10 @@ body.light::before { opacity:.05; background:radial-gradient(circle at 80% 20%,r
   50% { transform:translate3d(0,-6px,0) rotate(-.8deg) scale(1.02); }
 }
 
+/* transform-only, same reason as theme-pet-pulse above. */
 @keyframes theme-pet-light {
-  0%,100% { transform:translate3d(0,2px,0) scale(1); filter:drop-shadow(0 9px 15px rgba(37,99,235,.20)) !important; }
-  50% { transform:translate3d(0,-4px,0) scale(1.035); filter:drop-shadow(0 13px 19px rgba(37,99,235,.34)) !important; }
+  0%,100% { transform:translate3d(0,2px,0) scale(1); }
+  50% { transform:translate3d(0,-4px,0) scale(1.035); }
 }
 
 .theme-pet-click-ring {
