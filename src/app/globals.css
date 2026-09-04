@@ -68,6 +68,10 @@
   .matrix [data-sidebar="sidebar"] { border-right: 1px solid hsl(var(--sidebar-border)); }
   .btn-main { background-color: hsl(var(--button-bg)); color: hsl(var(--button-text)); box-shadow: var(--glow); border-color: transparent; }
   .btn-main:hover { filter: brightness(1.1); }
+  /* Matrix theme's --button-bg is the literal keyword "transparent", which is invalid inside
+     hsl() and gets silently dropped by the browser. Set it explicitly instead of relying on
+     that fallback, so the intended transparent/outlined look is robust to future rule changes. */
+  .matrix .btn-main, .matrix .bg-primary { background-color: transparent; }
   .matrix .btn-main { border: 1px solid hsl(var(--border-color)); }
   .matrix .btn-main:hover { background-color: hsl(var(--border-color)); color: #000; }
   .hulk .btn-main { border: 2px solid hsl(var(--border-color)); }
@@ -121,7 +125,10 @@ body { scrollbar-gutter: stable; }
 @keyframes stream-scroll-shimmer { 0% { filter: brightness(.85); } 50% { filter: brightness(1.2); } 100% { filter: brightness(.85); } }
 @media (prefers-reduced-motion: reduce) { *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .001ms !important; animation-iteration-count: 1 !important; transition-duration: .001ms !important; } }
 
-/* Project card refinements: move the live status editor into the bottom Action/metadata strip. */
+/* Project card refinements: move the live status editor into the bottom Action/metadata strip.
+   NOTE: src/app/stream-fixes.css also patches this same card (selectors rooted at
+   `main .mx-auto.max-w-6xl article.group`) with a different, class-based selector strategy. If
+   this card's markup changes, check both files — they're not aware of each other. */
 article:has(select[aria-label^="Edit status for"]) {
   position: relative;
   padding-bottom: 44px !important;

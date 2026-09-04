@@ -1,11 +1,26 @@
 'use client';
 
-import { FormEvent, useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { FormEvent, Suspense, useState } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { createClient } from '@/lib/supabase/client';
 
+function safeNextPath(value: string | null): string {
+  // Only allow a same-origin relative path so this can never become an open redirect.
+  if (!value || !value.startsWith('/') || value.startsWith('//') || value.includes('\\')) return '/';
+  return value;
+}
+
 export default function LoginPage() {
+  return (
+    <Suspense fallback={null}>
+      <LoginForm />
+    </Suspense>
+  );
+}
+
+function LoginForm() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -45,7 +60,7 @@ export default function LoginPage() {
         throw new Error('Sign-in is currently unavailable. Please try again.');
       }
 
-      router.replace('/');
+      router.replace(safeNextPath(searchParams.get('next')));
       router.refresh();
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Sign-in failed. Please try again.');

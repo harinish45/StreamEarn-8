@@ -2,22 +2,13 @@ import { NextRequest, NextResponse } from 'next/server';
 import crypto from 'node:crypto';
 import { createSupabaseAdminClient } from '@/lib/supabase/admin';
 import { rejectCrossOrigin } from '@/lib/security';
+import { cronAuthorized } from '@/lib/scheduler-auth';
 import { isSchedulerCategory } from '@/lib/scheduler-categories';
 
 export const runtime = 'nodejs';
 
 function clean(v: unknown, max: number) {
   return typeof v === 'string' ? v.trim().slice(0, max) : '';
-}
-
-function cronAuthorized(request: NextRequest) {
-  const expected = process.env.SCHEDULER_CRON_SECRET || '';
-  const supplied = request.headers.get('x-scheduler-secret') || '';
-  if (!expected || !supplied) return false;
-  const expectedBytes = Buffer.from(expected, 'utf8');
-  const suppliedBytes = Buffer.from(supplied, 'utf8');
-  if (expectedBytes.length !== suppliedBytes.length) return false;
-  return crypto.timingSafeEqual(suppliedBytes, expectedBytes);
 }
 
 export async function GET(request: NextRequest) {

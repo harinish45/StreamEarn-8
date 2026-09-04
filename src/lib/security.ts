@@ -1,5 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
 
+// Deliberately does NOT import `node:crypto` here: this module is imported by
+// src/middleware.ts, which runs on the Edge runtime and cannot bundle Node built-ins.
+// Callers that need the cron secret check use `cronAuthorized` from
+// src/lib/scheduler-auth.ts instead, which is only imported by nodejs-runtime routes.
+
 type Bucket = { count: number; resetAt: number };
 const buckets = new Map<string, Bucket>();
 const WINDOW_MS = 60_000;

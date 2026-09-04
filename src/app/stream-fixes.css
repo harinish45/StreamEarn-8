@@ -6,7 +6,11 @@ main { min-width: 0; max-width: 100%; }
 /* Planner: content should fill the available shell instead of leaving a white gutter. */
 main:has(h1:first-child) { box-sizing: border-box; }
 
-/* Project Command Center: keep every card compact while allowing the status menu to escape the card. */
+/* Project Command Center: keep every card compact while allowing the status menu to escape the card.
+   NOTE: src/app/globals.css also patches this same <article> (the block scoped to
+   `article:has(select[aria-label^="Edit status for"])`) with positional child selectors that move
+   the status editor into the card's footer. The two files target the same DOM from different
+   selector strategies — if the card component's markup structure changes, check BOTH files. */
 main .mx-auto.max-w-6xl article.group { position: relative; z-index: 1; overflow: visible !important; }
 main .mx-auto.max-w-6xl article.group:hover { z-index: 40; }
 main .mx-auto.max-w-6xl article.group > div.flex[class*="min-h-[114px]"] { min-height: 92px !important; }
