@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createSupabaseServerClient } from '@/lib/supabase/server';
 import { rejectCrossOrigin } from '@/lib/security';
+import { projectTaskCreateSchema } from '@/lib/api-validation';
 export const runtime='nodejs';
 async function requireUser(){const sb=await createSupabaseServerClient();const {data:{user}}=await sb.auth.getUser();return user?{sb,user}:null}
 export async function GET(request:NextRequest){
@@ -14,15 +15,13 @@ export async function POST(request:NextRequest){
   const auth=await requireUser();if(!auth)return NextResponse.json({error:'Unauthorized'},{status:401});
   try{
     const {sb,user}=auth;
-    const body=await request.json();
-    const projectId=typeof body?.projectId==='string'?body.projectId:'';
-    const title=typeof body?.title==='string'?body.title.trim().slice(0,300):'';
-    if(!/^[0-9a-f-]{36}$/i.test(projectId)||!title)return NextResponse.json({error:'Invalid task'},{status:400});
+    const body=await request.json().catch(()=>null);
+    const parsed=projectTaskCreateSchema.safeParse(body);
+    if(!parsed.success)return NextResponse.json({error:'Invalid task',issues:parsed.error.issues.map(issue=>issue.message)},{status:400});
+    const {projectId,title,description,priority,status,dueDate}=parsed.data;
     const {data:p}=await sb.from('projects').select('id').eq('id',projectId).eq('owner_id',user.id).maybeSingle();
     if(!p)return NextResponse.json({error:'Not found'},{status:404});
-    const priority=['P0','P1','P2','P3'].includes(body.priority)?body.priority:'P2';
-    const status=['todo','in-progress','blocked','done'].includes(body.status)?body.status:'todo';
-    const {data,error}=await sb.from('project_tasks').insert({project_id:projectId,owner_id:user.id,title,description:typeof body.description==='string'?body.description.trim().slice(0,5000):'',priority,status,due_date:typeof body.dueDate==='string'?body.dueDate:null}).select('*').single();
+    const {data,error}=await sb.from('project_tasks').insert({project_id:projectId,owner_id:user.id,title,description,priority,status,due_date:dueDate??null}).select('*').single();
     if(error)throw error;
     return NextResponse.json(data,{status:201,headers:{'Cache-Control':'no-store'}});
   }catch{return NextResponse.json({error:'Unable to create task'},{status:500})}

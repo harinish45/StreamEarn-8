@@ -5,7 +5,7 @@ import { rateLimit, rejectCrossOrigin, rejectUnsupportedMethod } from '@/lib/sec
 const API_METHODS = ['GET', 'HEAD', 'OPTIONS', 'POST', 'PUT', 'PATCH', 'DELETE'] as const;
 const SUPABASE_ORIGIN = 'https://xhmaqgyyajyxacbtdutz.supabase.co';
 
-export async function middleware(request: NextRequest) {
+export async function proxy(request: NextRequest) {
   const response = NextResponse.next({ request: { headers: request.headers } });
   const path = request.nextUrl.pathname;
   const isApi = path.startsWith('/api/');

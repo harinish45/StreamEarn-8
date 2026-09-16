@@ -3,7 +3,6 @@ const isDev = process.env.NODE_ENV !== 'production';
 
 const nextConfig = {
   typescript: { ignoreBuildErrors: false },
-  eslint: { ignoreDuringBuilds: false },
   poweredByHeader: false,
   reactStrictMode: true,
   images: {
@@ -11,7 +10,7 @@ const nextConfig = {
     // Several components pass picsum.photos URLs to <Image> with no remotePatterns
     // configured at all, so those images failed to load on every render -- this is
     // the actual cause, not a network/CDN issue. Kept in sync with the CSP img-src
-    // allowlist in src/middleware.ts.
+    // allowlist in src/proxy.ts.
     remotePatterns: [
       { protocol: 'https', hostname: 'picsum.photos' },
       { protocol: 'https', hostname: 'fastly.picsum.photos' },
