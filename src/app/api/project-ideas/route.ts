@@ -1,40 +1,19 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createSupabaseServerClient } from '@/lib/supabase/server';
 import { rejectCrossOrigin } from '@/lib/security';
+import { addIdea, listIdeas } from '@/lib/project-store';
 import { projectIdeaCreateSchema } from '@/lib/api-validation';
 
 export const runtime='nodejs';
 export const dynamic='force-dynamic';
 
-const edgeUrl=()=>`${process.env.NEXT_PUBLIC_SUPABASE_URL}/functions/v1/project-store`;
-
-async function call(action:string,payload:Record<string,unknown>={}){
-  const sb=await createSupabaseServerClient();
-  const {data:{session},error}=await sb.auth.getSession();
-  if(error||!session?.access_token)throw new Error('Unauthorized');
-  const controller=new AbortController();
-  const timeout=setTimeout(()=>controller.abort(),15000);
-  try{
-    let response:Response;
-    try{
-      response=await fetch(edgeUrl(),{method:'POST',cache:'no-store',signal:controller.signal,headers:{'Content-Type':'application/json','Accept':'application/json','Authorization':`Bearer ${session.access_token}`},body:JSON.stringify({action,...payload})});
-    }catch(error){
-      if(error instanceof Error&&error.name==='AbortError')throw new Error('Idea storage timed out. Please try again.');
-      throw new Error('Unable to reach idea storage. Please check your connection and try again.');
-    }
-    const data=await response.json().catch(()=>({}));
-    if(!response.ok)throw new Error(data?.error||`Idea operation failed (${response.status})`);
-    return data;
-  }finally{clearTimeout(timeout)}
+export async function GET(){
+  try{return NextResponse.json(await listIdeas(),{headers:{'Cache-Control':'private,no-store'}})}
+  catch(error){
+    if(error instanceof Error&&error.message==='Unauthorized')return NextResponse.json({error:'Authentication required. Please sign in again.'},{status:401,headers:{'Cache-Control':'no-store'}});
+    console.error('[project-ideas] list failed',error);
+    return NextResponse.json({error:'Unable to load project ideas.'},{status:500,headers:{'Cache-Control':'no-store'}});
+  }
 }
-
-function fail(error:unknown){
-  if(error instanceof Error&&error.message==='Unauthorized')return NextResponse.json({error:'Authentication required. Please sign in again.'},{status:401,headers:{'Cache-Control':'no-store'}});
-  console.error('[project-ideas] operation failed',error);
-  return NextResponse.json({error:'Idea operation failed. Please try again.'},{status:500,headers:{'Cache-Control':'no-store'}});
-}
-
-export async function GET(){try{return NextResponse.json(await call('idea-list'),{headers:{'Cache-Control':'private,no-store'}})}catch(error){return fail(error)}}
 
 export async function POST(request:NextRequest){
   const blocked=rejectCrossOrigin(request);if(blocked)return blocked;
@@ -45,13 +24,14 @@ export async function POST(request:NextRequest){
     else if(type.includes('application/x-www-form-urlencoded')||type.includes('multipart/form-data')) raw=Object.fromEntries((await request.formData()).entries());
     else return NextResponse.json({error:'Invalid request.'},{status:415,headers:{'Cache-Control':'no-store'}});
     const body=projectIdeaCreateSchema.parse(raw);
-    const data=await call('idea-create',body);
+    const data=await addIdea(body.name,body.description);
     if(type.includes('json'))return NextResponse.json(data,{status:201,headers:{'Cache-Control':'no-store'}});
     return NextResponse.redirect(new URL('/projects?idea=created',request.url),303);
   }catch(error){
     if(error instanceof Error&&error.name==='ZodError')return NextResponse.json({error:'Invalid idea data.'},{status:400,headers:{'Cache-Control':'no-store'}});
-    if(error instanceof Error&&error.message==='Unauthorized')return fail(error);
+    if(error instanceof Error&&error.message==='Unauthorized')return NextResponse.json({error:'Authentication required. Please sign in again.'},{status:401,headers:{'Cache-Control':'no-store'}});
+    console.error('[project-ideas] create failed',error);
     if((request.headers.get('accept')||'').includes('text/html'))return NextResponse.redirect(new URL('/projects?idea=failed',request.url),303);
-    return fail(error);
+    return NextResponse.json({error:'Unable to save project idea.'},{status:500,headers:{'Cache-Control':'no-store'}});
   }
 }
