@@ -23,7 +23,7 @@ concurrency:
 jobs:
   verify-feeds:
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 25
     steps:
       - name: Checkout main
         uses: actions/checkout@v4
@@ -36,14 +36,37 @@ jobs:
           node-version: '22'
           cache: npm
 
+      - name: Configure npm retries
+        run: |
+          npm config set fetch-retries 5
+          npm config set fetch-retry-factor 2
+          npm config set fetch-retry-mintimeout 1000
+          npm config set fetch-retry-maxtimeout 60000
+
       - name: Install exact dependencies
-        run: npm ci --ignore-scripts
+        run: |
+          for attempt in 1 2 3; do
+            if npm ci --ignore-scripts --no-audit --fund=false; then
+              exit 0
+            fi
+            echo "npm ci failed (attempt $attempt/3); retrying..."
+            sleep $((attempt * 5))
+          done
+          exit 1
 
       - name: Run Active-Data Verification Pipeline
         env:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
-        run: node scripts/verify-active-feeds.mjs
+        run: |
+          for attempt in 1 2; do
+            if node scripts/verify-active-feeds.mjs; then
+              exit 0
+            fi
+            echo "Active-data verification failed (attempt $attempt/2); retrying after a short backoff..."
+            sleep $((attempt * 10))
+          done
+          exit 1
 
       - name: Verify repository was not modified
         run: git diff --exit-code -- src/data/scheduled || (echo 'Scheduler must never modify local JSON data directly' && exit 1)

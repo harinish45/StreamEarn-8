@@ -10,6 +10,7 @@ const searches = {
 const EXPIRY_DAYS = { ai_news: 7, earnings: 30, internships: 60, scholarships: 90 };
 const limit = 12;
 const maxBytes = 2 * 1024 * 1024;
+const RETRIES = 4;
 
 const clean = (v, max) => typeof v === 'string'
   ? v.replace(/<[^>]*>/g, ' ').replace(/[\u0000-\u001F\u007F]/g, ' ').replace(/\s+/g, ' ').trim().slice(0, max)
@@ -18,6 +19,26 @@ const tag = (xml, name) => {
   const m = xml.match(new RegExp(`<${name}(?:\\s[^>]*)?>([\\s\\S]*?)</${name}>`, 'i'));
   return m ? m[1].replace(/<!\[CDATA\[|\]\]>/g, '') : '';
 };
+
+function sleep(ms) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+async function retry(label, fn, attempts = RETRIES) {
+  let lastError;
+  for (let attempt = 1; attempt <= attempts; attempt++) {
+    try {
+      return await fn();
+    } catch (error) {
+      lastError = error;
+      if (attempt === attempts) break;
+      const delay = Math.min(15_000, 750 * 2 ** (attempt - 1));
+      console.warn(`[retry] ${label} failed (attempt ${attempt}/${attempts}); retrying in ${delay}ms: ${error?.message || 'unknown error'}`);
+      await sleep(delay);
+    }
+  }
+  throw lastError;
+}
 
 function isPublicHttps(value) {
   try {
@@ -32,11 +53,19 @@ function isPublicHttps(value) {
 
 async function fetchFeed(q) {
   const u = `https://news.google.com/rss/search?q=${encodeURIComponent(q)}&hl=en-IN&gl=IN&ceid=IN:en`;
-  const r = await fetch(u, { redirect: 'error', signal: AbortSignal.timeout(15000), headers: { 'user-agent': 'StreamEarn-ActiveData/2.0' } });
-  if (!r.ok) throw new Error(`RSS ${r.status}`);
-  const t = await r.text();
-  if (Buffer.byteLength(t) > maxBytes) throw new Error('RSS too large');
-  return [...t.matchAll(/<item>([\s\S]*?)<\/item>/gi)].map(m => {
+  const r = await retry(`RSS ${q}`, async () => {
+    const response = await fetch(u, {
+      redirect: 'error',
+      signal: AbortSignal.timeout(15_000),
+      headers: { 'user-agent': 'StreamEarn-ActiveData/2.1' }
+    });
+    if (!response.ok) throw new Error(`RSS ${response.status}`);
+    const text = await response.text();
+    if (Buffer.byteLength(text) > maxBytes) throw new Error('RSS too large');
+    return text;
+  });
+
+  return [...r.matchAll(/<item>([\s\S]*?)<\/item>/gi)].map((m) => {
     const x = m[1];
     return {
       title: clean(tag(x, 'title'), 500),
@@ -44,7 +73,7 @@ async function fetchFeed(q) {
       source: clean(tag(x, 'source'), 300) || 'Google News',
       published: tag(x, 'pubDate')
     };
-  }).filter(x => x.title && isPublicHttps(x.url));
+  }).filter((x) => x.title && isPublicHttps(x.url));
 }
 
 function hash(c, x) {
@@ -68,28 +97,38 @@ async function main() {
     auth: { persistSession: false, autoRefreshToken: false }
   });
 
+  console.log('--- PHASE 0: DATABASE PREFLIGHT ---');
+  await retry('Supabase scheduler preflight', async () => {
+    const { error } = await db.from('scheduler_items').select('id').limit(1);
+    if (error) throw error;
+  });
+
   console.log('--- PHASE 1: ARCHIVE STALE DATA ---');
   const now = new Date();
   let archived = 0;
 
-  const { data: activeItems, error: activeError } = await db
-    .from('scheduler_items')
-    .select('id, category, published_at, url, archived_at')
-    .is('archived_at', null);
-
+  const { data: activeItems, error: activeError } = await retry('load active scheduler rows', () =>
+    db.from('scheduler_items')
+      .select('id, category, published_at, url, archived_at')
+      .is('archived_at', null)
+  );
   if (activeError) throw activeError;
 
   for (const item of activeItems || []) {
     const expiryDays = EXPIRY_DAYS[item.category] || 45;
     const publishedDate = item.published_at ? new Date(item.published_at) : now;
-    const ageDays = (now.getTime() - publishedDate.getTime()) / 86400000;
+    const ageDays = Number.isFinite(publishedDate.getTime())
+      ? (now.getTime() - publishedDate.getTime()) / 86400000
+      : 0;
     if (ageDays > expiryDays) {
-      const { error } = await db
-        .from('scheduler_items')
-        .update({ archived_at: now.toISOString() })
-        .eq('id', item.id)
-        .is('archived_at', null);
-      if (error) throw error;
+      await retry(`archive scheduler row ${item.id}`, async () => {
+        const { error } = await db
+          .from('scheduler_items')
+          .update({ archived_at: now.toISOString() })
+          .eq('id', item.id)
+          .is('archived_at', null);
+        if (error) throw error;
+      });
       archived++;
     }
   }
@@ -102,54 +141,62 @@ async function main() {
     const seen = new Set();
     let added = 0;
 
-    const { data: existing, error: existingError } = await db
-      .from('scheduler_items')
-      .select('url, content_hash')
-      .in('category', [category]);
-    if (existingError) throw existingError;
+    try {
+      const { data: existing, error: existingError } = await retry(`load existing ${category} rows`, () =>
+        db.from('scheduler_items').select('url, content_hash').eq('category', category)
+      );
+      if (existingError) throw existingError;
 
-    for (const row of existing || []) {
-      if (row.url) seen.add(row.url);
-      if (row.content_hash) seen.add(row.content_hash);
-    }
-
-    for (const q of qs) {
-      if (added >= limit) break;
-      try {
-        for (const x of await fetchFeed(q)) {
-          if (added >= limit || seen.has(x.url)) continue;
-
-          let publishedAt = null;
-          if (x.published) {
-            const d = new Date(x.published);
-            if (Number.isNaN(d.getTime())) continue;
-            publishedAt = d.toISOString();
-          }
-
-          const content_hash = hash(category, { ...x, publishedAt });
-          if (seen.has(content_hash)) continue;
-          seen.add(x.url);
-          seen.add(content_hash);
-
-          const { error } = await db.rpc('append_scheduler_item', {
-            p_category: category,
-            p_title: x.title,
-            p_description: clean(x.title, 10000),
-            p_source: x.source,
-            p_url: x.url,
-            p_published_at: publishedAt,
-            p_content_hash: content_hash
-          });
-          if (error) throw error;
-          added++;
-        }
-      } catch (error) {
-        console.warn(`[${category}] query skipped: ${error?.message || 'unknown error'}`);
+      for (const row of existing || []) {
+        if (row.url) seen.add(row.url);
+        if (row.content_hash) seen.add(row.content_hash);
       }
-    }
 
-    console.log(`${category}: ${added} new active records.`);
-    totalDiscovered += added;
+      for (const q of qs) {
+        if (added >= limit) break;
+        try {
+          const feed = await fetchFeed(q);
+          for (const x of feed) {
+            if (added >= limit || seen.has(x.url)) continue;
+
+            let publishedAt = null;
+            if (x.published) {
+              const d = new Date(x.published);
+              if (Number.isNaN(d.getTime())) continue;
+              publishedAt = d.toISOString();
+            }
+
+            const content_hash = hash(category, { ...x, publishedAt });
+            if (seen.has(content_hash)) continue;
+            seen.add(x.url);
+            seen.add(content_hash);
+
+            await retry(`append ${category} item`, async () => {
+              const { error } = await db.rpc('append_scheduler_item', {
+                p_category: category,
+                p_title: x.title,
+                p_description: clean(x.title, 10_000),
+                p_source: x.source,
+                p_url: x.url,
+                p_published_at: publishedAt,
+                p_content_hash: content_hash
+              });
+              if (error) throw error;
+            });
+            added++;
+          }
+        } catch (error) {
+          // One bad feed must never stop the remaining queries/categories.
+          console.warn(`[${category}] query skipped after retries: ${error?.message || 'unknown error'}`);
+        }
+      }
+
+      console.log(`${category}: ${added} new active records.`);
+      totalDiscovered += added;
+    } catch (error) {
+      // Keep the daily run resilient to a single category's transient provider/DB issue.
+      console.warn(`[${category}] category skipped after retries: ${error?.message || 'unknown error'}`);
+    }
   }
 
   console.log(`Active-data verification complete. Archived ${archived}; discovered ${totalDiscovered} new records.`);
