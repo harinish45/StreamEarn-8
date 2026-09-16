@@ -4,6 +4,9 @@ on:
   push:
     branches:
       - chore/next16-react19-upgrade
+  pull_request:
+    branches:
+      - main
 
 permissions:
   contents: write
@@ -16,7 +19,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
         with:
-          ref: ${{ github.ref_name }}
+          ref: ${{ github.head_ref || github.ref_name }}
           fetch-depth: 0
 
       - name: Setup Node 22
@@ -35,4 +38,4 @@ jobs:
           git add package-lock.json
           git rm .github/workflows/prepare-next16-lock.yml
           git commit -m "chore: regenerate lockfile for Next.js 16 upgrade" || true
-          git push
+          git push origin HEAD:${{ github.head_ref || github.ref_name }}
