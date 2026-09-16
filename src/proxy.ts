@@ -3,23 +3,15 @@ import { NextRequest, NextResponse } from 'next/server';
 import { rateLimit, rejectCrossOrigin, rejectUnsupportedMethod } from '@/lib/security';
 
 const API_METHODS = ['GET', 'HEAD', 'OPTIONS', 'POST', 'PUT', 'PATCH', 'DELETE'] as const;
-const SUPABASE_ORIGIN = 'https://xhmaqgyyajyxacbtdutz.supabase.co';
 
 export async function proxy(request: NextRequest) {
   const response = NextResponse.next({ request: { headers: request.headers } });
   const path = request.nextUrl.pathname;
   const isApi = path.startsWith('/api/');
   const publicPath = path === '/login' || path.startsWith('/_next/') || path === '/favicon.ico' || path === '/api/health';
-  // Routes that authenticate themselves (a bearer token or shared secret checked inside the
-  // route handler) instead of the cookie-based Supabase session set up below. Without this
-  // exemption, any caller with no session cookie -- an MCP client, or the scheduler's own cron
-  // job -- would be rejected by the generic `if (!userId)` check before ever reaching the
-  // route's own check.
   const selfAuthenticated = path === '/api/mcp' || (path === '/api/scheduler' && request.method !== 'GET');
 
   if (isApi && path === '/api/health') {
-    // Unauthenticated by design (uptime monitors need it), but still rate-limited
-    // so it isn't a free, unthrottled target for probing/scanning.
     const limited = rateLimit(request, 120);
     if (limited) return security(limited, request);
   } else if (isApi) {
@@ -72,10 +64,6 @@ export async function proxy(request: NextRequest) {
     return NextResponse.redirect(redirect);
   }
 
-  // Two-factor is opt-in per user (enrolled from /settings). Only step up to /mfa when the
-  // account actually has a verified TOTP factor; accounts without one are unaffected.
-  // /mfa itself and sign-out must stay reachable so a stuck mid-verification session can
-  // always finish or bail out instead of being stranded in a redirect loop.
   if (path !== '/mfa' && path !== '/api/auth/logout') {
     try {
       const { data: aal } = await supabase.auth.mfa.getAuthenticatorAssuranceLevel();
@@ -87,8 +75,9 @@ export async function proxy(request: NextRequest) {
         return NextResponse.redirect(redirect);
       }
     } catch {
-      // Fail open: this request already passed password auth above, so a transient error in
-      // the assurance-level check should never lock the account owner out of their own app.
+      // Do not fail open: if MFA assurance cannot be established, protected content must not be served.
+      if (isApi) return security(NextResponse.json({ error: 'Authentication verification unavailable' }, { status: 503, headers: { 'Cache-Control': 'no-store' } }), request);
+      return security(NextResponse.json({ error: 'Authentication verification unavailable' }, { status: 503, headers: { 'Cache-Control': 'no-store' } }), request);
     }
   }
   return security(response, request);
@@ -105,7 +94,11 @@ function security(response: NextResponse, request: NextRequest) {
   response.headers.set('X-Permitted-Cross-Domain-Policies', 'none');
   response.headers.set('X-Download-Options', 'noopen');
   response.headers.set('Origin-Agent-Cluster', '?1');
-  response.headers.set('Content-Security-Policy', `default-src 'self'; base-uri 'self'; frame-ancestors 'none'; object-src 'none'; form-action 'self'; img-src 'self' data: blob: https://picsum.photos https://fastly.picsum.photos; font-src 'self' data: https://fonts.gstatic.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; script-src 'self' 'unsafe-inline' ${SUPABASE_ORIGIN}; connect-src 'self' ${SUPABASE_ORIGIN} wss://xhmaqgyyajyxacbtdutz.supabase.co; frame-src 'self' ${SUPABASE_ORIGIN}; upgrade-insecure-requests`);
+  const supabaseOrigin = (() => {
+    try { return new URL(process.env.NEXT_PUBLIC_SUPABASE_URL || '').origin; } catch { return ''; }
+  })();
+  const connectSources = supabaseOrigin ? ` ${supabaseOrigin} wss://${new URL(supabaseOrigin).hostname}` : '';
+  response.headers.set('Content-Security-Policy', `default-src 'self'; base-uri 'self'; frame-ancestors 'none'; object-src 'none'; form-action 'self'; img-src 'self' data: blob: https://picsum.photos https://fastly.picsum.photos; font-src 'self' data: https://fonts.gstatic.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; script-src 'self' 'unsafe-inline'${supabaseOrigin}; connect-src 'self'${connectSources}; frame-src 'self'${supabaseOrigin}; upgrade-insecure-requests`);
   response.headers.set('Cache-Control', request.nextUrl.pathname.startsWith('/api/') ? 'private, no-store' : 'no-cache');
   response.headers.set('X-Robots-Tag', 'noindex, nofollow, noarchive');
   if (request.nextUrl.protocol === 'https:') response.headers.set('Strict-Transport-Security', 'max-age=31536000; includeSubDomains; preload');

@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { rejectCrossOrigin } from '@/lib/security';
 import { deleteProject, updateProject } from '@/lib/project-store';
+import { projectUpdateSchema } from '@/lib/api-validation';
 
 export const runtime='nodejs';
 export const dynamic='force-dynamic';
@@ -27,24 +28,13 @@ export async function GET(_request:NextRequest,{params}:{params:Promise<{id:stri
 export async function PATCH(request:NextRequest,{params}:{params:Promise<{id:string}>}){
   const blocked=rejectCrossOrigin(request); if(blocked)return blocked;
   const id=await paramsId(params); if(!id)return NextResponse.json({error:'Invalid project.'},{status:400});
-  const body=await request.json().catch(()=>null);
-  if(!body||typeof body!=='object'||Array.isArray(body))return NextResponse.json({error:'Invalid request.'},{status:400});
-  const source=body as Record<string,unknown>;
-  const patch:Record<string,unknown>={};
-  const statuses=['idea','planning','in-progress','blocked','testing','completed','archived'];
-  const priorities=['P0','P1','P2','P3'];
-  if(typeof source.name==='string'&&source.name.trim())patch.name=source.name.trim().slice(0,120);
-  if(typeof source.description==='string')patch.description=source.description.trim().slice(0,2000);
-  if(typeof source.status==='string'&&statuses.includes(source.status))patch.status=source.status;
-  if(typeof source.priority==='string'&&priorities.includes(source.priority))patch.priority=source.priority;
-  if(Number.isFinite(Number(source.progress)))patch.progress=Math.min(100,Math.max(0,Number(source.progress)));
-  if(typeof source.nextAction==='string')patch.nextAction=source.nextAction.trim().slice(0,300);
-  if(typeof source.phase==='string')patch.phase=source.phase.trim().slice(0,120);
   try{
+    const patch=projectUpdateSchema.parse(await request.json());
     return NextResponse.json(await updateProject(id,patch),{headers:{'Cache-Control':'no-store'}});
   }catch(error){
+    if(error instanceof Error&&error.name==='ZodError')return NextResponse.json({error:'Invalid project data.'},{status:400,headers:{'Cache-Control':'no-store'}});
     console.error('[projects] update failed',error);
-    return NextResponse.json({error:error instanceof Error?error.message:'Unable to update project.'},{status:500,headers:{'Cache-Control':'no-store'}});
+    return NextResponse.json({error:'Unable to update project.'},{status:500,headers:{'Cache-Control':'no-store'}});
   }
 }
 
@@ -56,6 +46,6 @@ export async function DELETE(request:NextRequest,{params}:{params:Promise<{id:st
     return NextResponse.json({ok:true},{headers:{'Cache-Control':'no-store'}});
   }catch(error){
     console.error('[projects] delete failed',error);
-    return NextResponse.json({error:error instanceof Error?error.message:'Unable to delete project.'},{status:500,headers:{'Cache-Control':'no-store'}});
+    return NextResponse.json({error:'Unable to delete project.'},{status:500,headers:{'Cache-Control':'no-store'}});
   }
 }
