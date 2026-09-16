@@ -30,6 +30,16 @@ export const projectCreateSchema = z.object({
   notes: stringList(50, 1000).optional().default([]),
 }).strict()
 
+export const projectUpdateSchema = z.object({
+  name: shortText(120).optional(),
+  description: boundedText(2000).optional(),
+  status: z.enum(['idea', 'planning', 'in-progress', 'blocked', 'testing', 'completed', 'archived']).optional(),
+  priority: z.enum(['P0', 'P1', 'P2', 'P3']).optional(),
+  progress: z.number().finite().min(0).max(100).optional(),
+  nextAction: boundedText(300).optional(),
+  phase: boundedText(120).optional(),
+}).strict()
+
 export const projectIdSchema = z.object({ projectId: uuid }).strict()
 export const projectArchiveSchema = z.object({ id: uuid }).strict()
 
