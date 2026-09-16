@@ -9,9 +9,11 @@ const edgeUrl=()=>`${process.env.NEXT_PUBLIC_SUPABASE_URL}/functions/v1/project-
 
 async function getSessionClient(){
   const sb=await createSupabaseServerClient();
-  const {data:{session},error}=await sb.auth.getSession();
-  if(error||!session) throw new Error('Unauthorized');
-  return {sb,userId:session.user.id,accessToken:session.access_token};
+  const {data:{user},error:userError}=await sb.auth.getUser();
+  if(userError||!user) throw new Error('Unauthorized');
+  const {data:{session},error:sessionError}=await sb.auth.getSession();
+  if(sessionError||!session?.access_token) throw new Error('Unauthorized');
+  return {sb,userId:user.id,accessToken:session.access_token};
 }
 
 async function callEdge(action:string,payload:Record<string,unknown>={}){
@@ -56,7 +58,6 @@ async function directCreateProject(p:Project){
   const {sb,userId}=await getSessionClient();
   const {data,error}=await sb.from('projects').insert(directRow(p,userId)).select('*').single();
   if(error) throw error;
-
   const people=(p.people||[]).map(name=>name.trim()).filter(Boolean).slice(0,20);
   if(people.length){
     const peopleResult=await sb.from('project_people').insert(people.map(name=>({project_id:p.id,owner_id:userId,name}))).select('name');
@@ -86,7 +87,8 @@ async function directArchiveProject(id:string){
 
 async function directDeleteProject(id:string){
   const {sb,userId}=await getSessionClient();
-  const {error}=await sb.from('projects').update({status:'archived',archived_at:new Date().toISOString(),updated_at:new Date().toISOString()}).eq('id',id).eq('owner_id',userId);
+  const stamp=new Date().toISOString();
+  const {error}=await sb.from('projects').update({status:'archived',archived_at:stamp,updated_at:stamp}).eq('id',id).eq('owner_id',userId);
   if(error) throw error;
 }
 
