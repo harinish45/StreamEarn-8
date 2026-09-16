@@ -69,7 +69,9 @@ export function Header({ viewMode, setViewMode, searchQuery, setSearchQuery, sho
     <div className="flex items-center gap-2 md:gap-3">
       {showSearch && <div className="relative hidden md:block"><Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" /><Input placeholder="Search..." className="w-48 bg-secondary pl-8 md:w-64" value={searchQuery} onChange={e => setSearchQuery(e.target.value)} /></div>}
       <span className="hidden rounded-full border bg-card/70 px-3 py-1 text-xs text-muted-foreground lg:inline-flex">{dateLabel || 'Today'}</span>
-      <Button variant="ghost" size="icon" className="rounded-full"><Bell className="h-5 w-5" /><span className="sr-only">Notifications</span></Button>
+      <Link href="/notifications" aria-label="Notifications" className="inline-flex h-10 w-10 items-center justify-center rounded-full hover:bg-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
+        <Bell className="h-5 w-5" /><span className="sr-only">Notifications</span>
+      </Link>
       <div ref={accountRef} className="relative">
         <Button variant="ghost" size="icon" aria-haspopup="menu" aria-expanded={accountOpen} onClick={() => { setAccountOpen(v => !v); setThemeOpen(false); }} className="rounded-full ring-offset-background transition hover:ring-2 hover:ring-primary/30">
           <Avatar className="h-9 w-9"><AvatarImage src={userAvatar.src} alt="Account" /><AvatarFallback>H</AvatarFallback></Avatar>
