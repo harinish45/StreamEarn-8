@@ -2,12 +2,15 @@ name: StreamEarn Daily Verification Pipeline
 
 on:
   schedule:
+    # GitHub Actions schedules run in UTC. 02:30 UTC = 08:00 IST.
     - cron: '30 2 * * *'
   workflow_dispatch:
   push:
     branches: [main]
     paths:
       - 'scripts/verify-active-feeds.mjs'
+      - 'package.json'
+      - 'package-lock.json'
       - '.github/workflows/stream-earn-daily-append.yml'
 
 permissions:
@@ -31,6 +34,10 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '22'
+          cache: npm
+
+      - name: Install exact dependencies
+        run: npm ci --ignore-scripts
 
       - name: Run Active-Data Verification Pipeline
         env:
