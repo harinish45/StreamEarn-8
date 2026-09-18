@@ -28,6 +28,7 @@ export const projectUpdateSchema = z.object({
 
 export const projectIdSchema = z.object({ projectId: uuid }).strict()
 export const projectArchiveSchema = z.object({ id: uuid }).strict()
+export const schedulerArchiveSchema = z.union([z.object({ id: uuid }).strict(), z.object({ ids: z.array(uuid).min(1).max(100) }).strict()])
 
 export const projectActivitySchema = z.object({
   projectId: uuid, action: shortText(120), details: z.record(z.string(), z.unknown()).optional().default({}),
