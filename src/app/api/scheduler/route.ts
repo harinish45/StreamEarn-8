@@ -19,15 +19,16 @@ export async function GET(request: NextRequest) {
   try {
     const sb = createSupabaseAdminClient();
     let q = sb.from('scheduler_items')
-      .select('id,category,title,description,source,url,published_at,created_at', { count: 'exact' })
+      .select('id,category,title,description,source,url,published_at,created_at')
       .is('archived_at', null)
       .order('created_at', { ascending: false })
-      .range(offset, offset + limit - 1);
+      .range(offset, offset + limit);
     if (category) q = q.eq('category', category);
-    const { data, error, count } = await q;
+    const { data, error } = await q;
     if (error) throw error;
-    const rows = data || [];
-    const hasMore = typeof count === 'number' ? offset + rows.length < count : rows.length === limit;
+    const fetched = data || [];
+    const hasMore = fetched.length > limit;
+    const rows = hasMore ? fetched.slice(0, limit) : fetched;
     return NextResponse.json(rows, {
       headers: {
         'Cache-Control': 'private, no-store',
