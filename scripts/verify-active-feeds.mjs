@@ -3,11 +3,13 @@ import crypto from 'node:crypto';
 const searches = {
   ai_news: ['artificial intelligence AI agents LLM developer tools', 'OpenAI Anthropic Google AI Microsoft AI', 'AI cybersecurity security research', 'AI infrastructure chips models startups'],
   internships: ['cybersecurity internship 2026 India', 'software engineering internship 2026 India', 'AI machine learning internship 2026 India', 'student internship 2026 remote technology'],
-  scholarships: ['scholarship 2026 India undergraduate', 'engineering scholarship 2026 India students', 'computer science scholarship 2026 India', 'government scholarship 2026 India college'],
-  earnings: ['remote freelance paid opportunities India 2026', 'online earning jobs students India 2026', 'remote work freelance gigs technology 2026', 'AI freelance jobs paid opportunities 2026']
+  scholarships: ['scholarship 2026 India undergraduate', 'engineering scholarship 2026 India students', 'computer science scholarship 2026 India', 'government scholarship 2026 India college']
 };
 
-const EXPIRY_DAYS = { ai_news: 7, earnings: 30, internships: 60, scholarships: 90 };
+// Only these three categories are maintained by the daily automation.
+// Historical earnings records are left untouched and can be managed manually.
+const AUTOMATED_CATEGORIES = new Set(['ai_news', 'internships', 'scholarships']);
+const EXPIRY_DAYS = { ai_news: 7, internships: 60, scholarships: 90 };
 const limit = 12;
 const maxBytes = 2 * 1024 * 1024;
 const RETRIES = 4;
@@ -115,7 +117,8 @@ async function main() {
   if (activeError) throw activeError;
 
   for (const item of activeItems || []) {
-    const expiryDays = EXPIRY_DAYS[item.category] || 45;
+    if (!AUTOMATED_CATEGORIES.has(item.category)) continue;
+    const expiryDays = EXPIRY_DAYS[item.category];
     const publishedDate = item.published_at ? new Date(item.published_at) : now;
     const ageDays = Number.isFinite(publishedDate.getTime())
       ? (now.getTime() - publishedDate.getTime()) / 86400000
