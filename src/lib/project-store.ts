@@ -1,3 +1,4 @@
+import { createSupabaseAdminClient } from '@/lib/supabase/admin';
 import { createSupabaseServerClient } from '@/lib/supabase/server';
 
 export type ProjectStatus = 'idea' | 'planning' | 'in-progress' | 'blocked' | 'testing' | 'completed' | 'archived';
@@ -16,11 +17,13 @@ function fromRow(r:any,people:string[]=[]):Project{return {id:r.id,name:r.name,d
 function directRow(p:Project,userId:string){return {id:p.id,owner_id:userId,name:p.name,description:p.description,organization:p.organization,role:p.role,priority:p.priority,status:p.status,progress:p.progress,start_date:p.startDate||null,target_date:p.targetDate||null,phase:p.phase,tech_stack:p.techStack,repository:p.repository||'',live_url:p.liveUrl||'',next_action:p.nextAction,blockers:p.blockers,notes:p.notes,created_at:p.createdAt,updated_at:p.updatedAt,archived_at:p.archivedAt||null};}
 
 export async function listProjects(){
-  const {sb,userId}=await getSessionClient();
-  // Keep the initial Project Management request small and fast. Heavy metadata
-  // such as notes/blockers and collaborator rows are fetched only when needed.
-  const {data,error}=await sb.from('projects').select(
-    'id,name,description,organization,role,priority,status,progress,start_date,target_date,phase,tech_stack,repository,live_url,next_action,created_at,updated_at,archived_at'
+  const {userId}=await getSessionClient();
+  // The identity is validated with Supabase Auth first. The service-role read is
+  // then strictly scoped to that authenticated owner so Project Management does
+  // not depend on browser-cookie RLS propagation during initial hydration.
+  const db=createSupabaseAdminClient();
+  const {data,error}=await db.from('projects').select(
+    'id,name,description,organization,role,priority,status,progress,start_date,target_date,phase,tech_stack,repository,live_url,next_action,blockers,notes,created_at,updated_at,archived_at'
   ).eq('owner_id',userId).order('updated_at',{ascending:false});
   if(error) throw new Error('Unable to load projects.');
   return (data||[]).map((r:any)=>fromRow(r,[]));
@@ -66,8 +69,9 @@ export async function deleteProject(id:string){
 }
 
 export async function listIdeas():Promise<Idea[]>{
-  const {sb,userId}=await getSessionClient();
-  const {data,error}=await sb.from('project_ideas').select('id,name,description,created_at,updated_at').eq('owner_id',userId).order('updated_at',{ascending:false});
+  const {userId}=await getSessionClient();
+  const db=createSupabaseAdminClient();
+  const {data,error}=await db.from('project_ideas').select('id,name,description,created_at,updated_at').eq('owner_id',userId).order('updated_at',{ascending:false});
   if(error) throw new Error('Unable to load project ideas.');
   return (data||[]) as Idea[];
 }
