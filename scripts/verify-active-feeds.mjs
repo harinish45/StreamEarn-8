@@ -6,10 +6,10 @@ const searches = {
   scholarships: ['scholarship 2026 India undergraduate', 'engineering scholarship 2026 India students', 'computer science scholarship 2026 India', 'government scholarship 2026 India college']
 };
 
+// Daily automation is append-only. It never archives, deletes, truncates, or replaces records.
+
 // Only these three categories are maintained by the daily automation.
 // Historical earnings records are left untouched and can be managed manually.
-const AUTOMATED_CATEGORIES = new Set(['ai_news', 'internships', 'scholarships']);
-const EXPIRY_DAYS = { ai_news: 7, internships: 60, scholarships: 90 };
 const limit = 12;
 const maxBytes = 2 * 1024 * 1024;
 const RETRIES = 4;
@@ -105,38 +105,7 @@ async function main() {
     if (error) throw error;
   });
 
-  console.log('--- PHASE 1: ARCHIVE STALE DATA ---');
-  const now = new Date();
-  let archived = 0;
-
-  const { data: activeItems, error: activeError } = await retry('load active scheduler rows', () =>
-    db.from('scheduler_items')
-      .select('id, category, published_at, url, archived_at')
-      .is('archived_at', null)
-  );
-  if (activeError) throw activeError;
-
-  for (const item of activeItems || []) {
-    if (!AUTOMATED_CATEGORIES.has(item.category)) continue;
-    const expiryDays = EXPIRY_DAYS[item.category];
-    const publishedDate = item.published_at ? new Date(item.published_at) : now;
-    const ageDays = Number.isFinite(publishedDate.getTime())
-      ? (now.getTime() - publishedDate.getTime()) / 86400000
-      : 0;
-    if (ageDays > expiryDays) {
-      await retry(`archive scheduler row ${item.id}`, async () => {
-        const { error } = await db
-          .from('scheduler_items')
-          .update({ archived_at: now.toISOString() })
-          .eq('id', item.id)
-          .is('archived_at', null);
-        if (error) throw error;
-      });
-      archived++;
-    }
-  }
-  console.log(`Archived ${archived} stale records.`);
-
+  console.log('--- PHASE 1: APPEND-ONLY DISCOVERY ---');
   console.log('--- PHASE 2: DISCOVER, NORMALIZE & DEDUPLICATE ---');
   let totalDiscovered = 0;
 
@@ -202,7 +171,7 @@ async function main() {
     }
   }
 
-  console.log(`Active-data verification complete. Archived ${archived}; discovered ${totalDiscovered} new records.`);
+  console.log(`Active-data verification complete. Discovered ${totalDiscovered} new records; existing records were left untouched.`);
 }
 
 await main();
