@@ -9,15 +9,33 @@ import { schedulerItemCreateSchema } from '@/lib/api-validation';
 export const runtime = 'nodejs';
 
 export async function GET(request: NextRequest) {
-  const category = new URL(request.url).searchParams.get('category');
+  const params = new URL(request.url).searchParams;
+  const category = params.get('category');
+  const limitValue = Number(params.get('limit') || 50);
+  const offsetValue = Number(params.get('offset') || 0);
+  const limit = Number.isInteger(limitValue) ? Math.min(100, Math.max(1, limitValue)) : 50;
+  const offset = Number.isInteger(offsetValue) ? Math.max(0, offsetValue) : 0;
   if (category && !isSchedulerCategory(category)) return NextResponse.json({ error: 'Invalid category' }, { status: 400 });
   try {
     const sb = createSupabaseAdminClient();
-    let q = sb.from('scheduler_items').select('id,category,title,description,source,url,published_at,created_at').is('archived_at', null).order('created_at', { ascending: false }).limit(100);
+    let q = sb.from('scheduler_items')
+      .select('id,category,title,description,source,url,published_at,created_at')
+      .is('archived_at', null)
+      .order('created_at', { ascending: false })
+      .range(offset, offset + limit);
     if (category) q = q.eq('category', category);
     const { data, error } = await q;
     if (error) throw error;
-    return NextResponse.json(data || [], { headers: { 'Cache-Control': 'private, no-store' } });
+    const fetched = data || [];
+    const hasMore = fetched.length > limit;
+    const rows = hasMore ? fetched.slice(0, limit) : fetched;
+    return NextResponse.json(rows, {
+      headers: {
+        'Cache-Control': 'private, no-store',
+        'X-Scheduler-Has-More': hasMore ? '1' : '0',
+        'X-Scheduler-Next-Offset': String(offset + rows.length),
+      }
+    });
   } catch (error) {
     console.error('[scheduler] list failed', error);
     return NextResponse.json({ error: 'Unable to load scheduler items' }, { status: 500, headers: { 'Cache-Control': 'no-store' } });
