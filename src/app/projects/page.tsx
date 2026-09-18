@@ -4,7 +4,7 @@ import { listProjects } from '@/lib/project-store';
 export const dynamic = 'force-dynamic';
 
 export default async function ProjectsPage(){
-  let initialProjects = [];
+  let initialProjects: Awaited<ReturnType<typeof listProjects>> = [];
   try {
     initialProjects = await listProjects();
   } catch (error) {
