@@ -6,14 +6,12 @@ const stores = {
   news: new URL('src/data/scheduled/ai-news.json', ROOT),
   internships: new URL('src/data/scheduled/internships.json', ROOT),
   scholarships: new URL('src/data/scheduled/scholarships.json', ROOT),
-  earnings: new URL('src/data/scheduled/earnings.json', ROOT),
 };
 
 const searches = {
   news: ['artificial intelligence AI agents LLM developer tools', 'OpenAI Anthropic Google AI Microsoft AI', 'AI cybersecurity security research', 'AI infrastructure chips models startups'],
   internships: ['cybersecurity internship 2026 India', 'software engineering internship 2026 India', 'AI machine learning internship 2026 India', 'student internship 2026 remote technology'],
   scholarships: ['scholarship 2026 India undergraduate', 'engineering scholarship 2026 India students', 'computer science scholarship 2026 India', 'government scholarship 2026 India college'],
-  earnings: ['remote freelance paid opportunities India 2026', 'online earning jobs students India 2026', 'remote work freelance gigs technology 2026', 'AI freelance jobs paid opportunities 2026'],
 };
 
 const limitPerFeed = 12;
