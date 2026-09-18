@@ -17,16 +17,13 @@ function directRow(p:Project,userId:string){return {id:p.id,owner_id:userId,name
 
 export async function listProjects(){
   const {sb,userId}=await getSessionClient();
-  const {data,error}=await sb.from('projects').select('*').eq('owner_id',userId).order('updated_at',{ascending:false});
+  // Keep the initial Project Management request small and fast. Heavy metadata
+  // such as notes/blockers and collaborator rows are fetched only when needed.
+  const {data,error}=await sb.from('projects').select(
+    'id,name,description,organization,role,priority,status,progress,start_date,target_date,phase,tech_stack,repository,live_url,next_action,created_at,updated_at,archived_at'
+  ).eq('owner_id',userId).order('updated_at',{ascending:false});
   if(error) throw new Error('Unable to load projects.');
-  const ids=(data||[]).map((r:any)=>r.id);
-  const peopleByProject=new Map<string,string[]>();
-  if(ids.length){
-    const peopleResult=await sb.from('project_people').select('project_id,name').eq('owner_id',userId).in('project_id',ids).order('created_at',{ascending:true});
-    if(peopleResult.error) throw new Error('Unable to load project collaborators.');
-    for(const person of peopleResult.data||[]){const current=peopleByProject.get(person.project_id)||[];if(typeof person.name==='string'&&person.name.trim())current.push(person.name.trim());peopleByProject.set(person.project_id,current);}
-  }
-  return (data||[]).map((r:any)=>fromRow(r,peopleByProject.get(r.id)||[]));
+  return (data||[]).map((r:any)=>fromRow(r,[]));
 }
 
 export async function addProject(p:Project){
