@@ -105,8 +105,7 @@ async function main() {
     if (error) throw error;
   });
 
-  console.log('--- PHASE 1: APPEND-ONLY DISCOVERY ---');
-  console.log('--- PHASE 2: DISCOVER, NORMALIZE & DEDUPLICATE ---');
+  console.log('--- APPEND-ONLY DISCOVERY ---');
   let totalDiscovered = 0;
 
   for (const [category, qs] of Object.entries(searches)) {
