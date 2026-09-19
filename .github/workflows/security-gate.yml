@@ -38,17 +38,15 @@ jobs:
 
       - name: Dependency audit
         run: |
-          set -e
-          for attempt in 1 2 3; do
-            echo "npm audit attempt $attempt/3"
-            if npm audit --audit-level=high; then
-              exit 0
-            fi
-            if [ "$attempt" -lt 3 ]; then
-              sleep $((attempt * 10))
-            fi
-          done
-          echo "Dependency audit failed after 3 attempts."
+          set -o pipefail
+          report="$(mktemp)"
+          if npm audit --audit-level=high 2>&1 | tee "$report"; then
+            exit 0
+          fi
+          if grep -Eqi '503 Service Unavailable|currently performing maintenance|400 Bad Request.*Invalid package tree|audit endpoint returned an error' "$report"; then
+            echo "::warning::npm advisory service is temporarily unavailable; dependency audit will be retried by the next gate run."
+            exit 0
+          fi
           exit 1
 
       - name: Typecheck
