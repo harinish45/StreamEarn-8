@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { Archive, CalendarDays, ChevronLeft, ChevronRight, Grip, MoreHorizontal, Plus, RotateCcw, Search, Trash2 } from 'lucide-react';
+import { createClient } from '@/lib/supabase/client';
 
 type Palette = 'lemon'|'blush'|'sky'|'mint'|'peach'|'lilac';
 type PaperStyle = 'plain'|'lined'|'grid'|'legal'|'stripe';
@@ -10,6 +11,7 @@ type Page = { id:string; title:string; created:string; updated:string };
 type Persisted = { pages:Page[]; notes:Sticky[]; activePageId:string };
 
 const KEY='streamearn-planner-sticky-v5';
+const LEGACY_KEYS=['streamearn-planner-sticky-v5','streamearn-planner-sticky-wall-v3'];
 const colors:Record<Palette,{p1:string;p2:string;fold:string}>={
   lemon:{p1:'#E9CD4E',p2:'#DDBB2E',fold:'#A98A20'},
   blush:{p1:'#EC7FA6',p2:'#E66E9B',fold:'#B24A73'},
@@ -30,17 +32,23 @@ const makeEmpty=():Persisted=>{const p=newPage();return{pages:[p],notes:[],activ
 function load():Persisted{
   if(typeof window==='undefined')return makeEmpty();
   try{
-    const parsed=JSON.parse(localStorage.getItem(KEY)||'null');
-    if(!parsed||typeof parsed!=='object')return makeEmpty();
-    const rawPages=Array.isArray(parsed.pages)?parsed.pages:[];
-    const pages:Page[]=rawPages.filter((p:any)=>p&&typeof p.id==='string').map((p:any)=>({id:p.id,title:typeof p.title==='string'&&p.title.trim()?p.title.trim():'Untitled',created:typeof p.created==='string'?p.created:now(),updated:typeof p.updated==='string'?p.updated:now()}));
-    const safePages=pages.length?pages:[newPage()];
-    const notes:Sticky[]=Array.isArray(parsed.notes)?parsed.notes.filter((n:any)=>n&&typeof n==='object').map((n:any,i:number)=>({
-      id:typeof n.id==='string'?n.id:uid(),pageId:safePages.some(p=>p.id===n.pageId)?n.pageId:safePages[0].id,text:typeof n.text==='string'?n.text:'',
-      color:validPalette(n.color),style:validPaper(n.style),x:Number.isFinite(n.x)?Number(n.x):24+(i%4)*285,y:Number.isFinite(n.y)?Number(n.y):24+(Math.floor(i/4)%5)*275,
-      rotation:Number.isFinite(n.rotation)?Number(n.rotation):[-2,1,-1,2,0][i%5],done:Boolean(n.done),created:typeof n.created==='string'?n.created:now(),updated:typeof n.updated==='string'?n.updated:now(),archived:Boolean(n.archived)
-    })):[];
-    return{pages:safePages,notes,activePageId:safePages.some(p=>p.id===parsed.activePageId)?parsed.activePageId:safePages[0].id};
+    let data=makeEmpty();
+    const v5=(parsed:any)=>{
+      if(!parsed||typeof parsed!=='object'||!Array.isArray(parsed.pages))return;
+      const pages=parsed.pages.filter((p:any)=>p&&typeof p.id==='string').map((p:any)=>({id:p.id,title:typeof p.title==='string'&&p.title.trim()?p.title.trim():'Untitled',created:typeof p.created==='string'?p.created:now(),updated:typeof p.updated==='string'?p.updated:now()}));
+      if(!pages.length)return;
+      const ids=new Set(pages.map(p=>p.id));
+      const notes=Array.isArray(parsed.notes)?parsed.notes.filter(Boolean).map((n:any,i:number)=>({id:typeof n.id==='string'?n.id:uid(),pageId:ids.has(n.pageId)?n.pageId:pages[0].id,text:typeof n.text==='string'?n.text:'',color:validPalette(n.color),style:validPaper(n.style),x:Number.isFinite(n.x)?n.x:24+(i%4)*285,y:Number.isFinite(n.y)?n.y:24+(Math.floor(i/4)%5)*275,rotation:Number.isFinite(n.rotation)?n.rotation:0,done:Boolean(n.done),created:typeof n.created==='string'?n.created:now(),updated:typeof n.updated==='string'?n.updated:now(),archived:Boolean(n.archived)})):[]; 
+      data={pages,notes,activePageId:ids.has(parsed.activePageId)?parsed.activePageId:pages[0].id};
+    };
+    const v3=(parsed:any)=>{
+      if(!Array.isArray(parsed))return;
+      const p=data.pages[0];
+      const notes=parsed.filter(Boolean).map((n:any,i:number)=>({id:typeof n.id==='string'?n.id:uid(),pageId:p.id,text:typeof n.text==='string'?n.text:'',color:validPalette(n.color),style:typeof n.style==='number'?(['plain','lined','grid','legal','stripe'][Math.max(0,Math.min(4,n.style-1))] as PaperStyle):validPaper(n.style),x:Number.isFinite(n.x)?n.x:24+(i%4)*285,y:Number.isFinite(n.y)?n.y:24+(Math.floor(i/4)%5)*275,rotation:Number.isFinite(n.rotation)?n.rotation:0,done:false,created:typeof n.created==='string'?n.created:now(),updated:typeof n.updated==='string'?n.updated:now(),archived:Boolean(n.archived)}));
+      data={...data,notes:[...data.notes,...notes]};
+    };
+    for(const key of LEGACY_KEYS){const raw=localStorage.getItem(key);if(!raw)continue;const parsed=JSON.parse(raw);if(key==='streamearn-planner-sticky-wall-v3')v3(parsed);else v5(parsed);}
+    return data;
   }catch{return makeEmpty()}
 }
 
@@ -55,23 +63,81 @@ export function PlannerStickyWorkspace(){
   const dataRef=useRef(data);
   dataRef.current=data;
   const saveTimer=useRef<ReturnType<typeof setTimeout>|null>(null);
+  const cloudSyncQueue=useRef(Promise.resolve());
+  const cloudReady=useRef(false);
+  const cloudPageIds=useRef<Set<string>>(new Set());
+  const cloudNoteIds=useRef<Set<string>>(new Set());
+  const db=useMemo(()=>createClient(),[]);
 
-  useEffect(()=>{setData(load());setReady(true)},[]);
-  // Debounce the localStorage write: without this, every keystroke and every drag
-  // pointermove re-serializes and writes the whole board, which is what caused typing/drag lag.
+  const toPageRow=(p:Page,userId:string)=>({id:p.id,owner_id:userId,title:p.title,created_at:p.created,updated_at:p.updated});
+  const toNoteRow=(n:Sticky,userId:string)=>({id:n.id,owner_id:userId,page_id:n.pageId,text:n.text,color:n.color,style:n.style,x:n.x,y:n.y,rotation:n.rotation,done:n.done,archived:n.archived,created_at:n.created,updated_at:n.updated});
+  const fromPageRow=(p:any):Page=>({id:p.id,title:p.title||'Untitled',created:p.created_at||now(),updated:p.updated_at||p.created_at||now()});
+  const fromNoteRow=(n:any):Sticky=>({id:n.id,pageId:n.page_id,text:n.text||'',color:validPalette(n.color),style:validPaper(n.style),x:Number(n.x)||24,y:Number(n.y)||24,rotation:Number(n.rotation)||0,done:Boolean(n.done),created:n.created_at||now(),updated:n.updated_at||n.created_at||now(),archived:Boolean(n.archived)});
+
+  const queueCloudSync=(snapshot:Persisted)=>{
+    cloudSyncQueue.current=cloudSyncQueue.current.then(async()=>{
+      if(!cloudReady.current)return;
+      const {data:{user}}=await db.auth.getUser();
+      if(!user)return;
+      const pageIds=new Set(snapshot.pages.map(p=>p.id));
+      const noteIds=new Set(snapshot.notes.map(n=>n.id));
+      const removedNotes=[...cloudNoteIds.current].filter(id=>!noteIds.has(id));
+      const removedPages=[...cloudPageIds.current].filter(id=>!pageIds.has(id));
+      if(removedNotes.length)await db.from('planner_sticky_notes').delete().in('id',removedNotes).eq('owner_id',user.id);
+      if(removedPages.length)await db.from('planner_sticky_pages').delete().in('id',removedPages).eq('owner_id',user.id);
+      if(snapshot.pages.length)await db.from('planner_sticky_pages').upsert(snapshot.pages.map(p=>toPageRow(p,user.id)),{onConflict:'id'});
+      if(snapshot.notes.length)await db.from('planner_sticky_notes').upsert(snapshot.notes.map(n=>toNoteRow(n,user.id)),{onConflict:'id'});
+      cloudPageIds.current=pageIds;
+      cloudNoteIds.current=noteIds;
+    }).catch(error=>console.error('[planner-sticky] sync failed',error));
+  };
+
+  useEffect(()=>{
+    const local=load();
+    setData(local); setReady(true);
+    let cancelled=false;
+    const hydrate=async()=>{
+      try{
+        const {data:{user},error:authError}=await db.auth.getUser();
+        if(authError||!user)return;
+        const [pr,nr]=await Promise.all([
+          db.from('planner_sticky_pages').select('*').eq('owner_id',user.id).order('updated_at',{ascending:false}),
+          db.from('planner_sticky_notes').select('*').eq('owner_id',user.id).order('updated_at',{ascending:false})
+        ]);
+        if(pr.error||nr.error)throw pr.error||nr.error;
+        const remotePages=(pr.data||[]).map(fromPageRow);
+        const remoteNotes=(nr.data||[]).map(fromNoteRow);
+        const localNow=dataRef.current;
+        const pm=new Map<string,Page>();
+        [...remotePages,...localNow.pages].forEach(p=>{const old=pm.get(p.id);if(!old||new Date(p.updated).getTime()>=new Date(old.updated).getTime())pm.set(p.id,p)});
+        const pages=[...pm.values()];
+        const pageIds=new Set(pages.map(p=>p.id));
+        const nm=new Map<string,Sticky>();
+        [...remoteNotes,...localNow.notes].forEach(n=>{if(!pageIds.has(n.pageId)&&pages[0])n.pageId=pages[0].id;const old=nm.get(n.id);if(!old||new Date(n.updated).getTime()>=new Date(old.updated).getTime())nm.set(n.id,n)});
+        const merged={pages:pages.length?pages:[newPage()],notes:[...nm.values()],activePageId:pageIds.has(localNow.activePageId)?localNow.activePageId:(pages[0]?.id||'')};
+        if(cancelled)return;
+        dataRef.current=merged; setData(merged);
+        cloudPageIds.current=new Set(remotePages.map(p=>p.id)); cloudNoteIds.current=new Set(remoteNotes.map(n=>n.id)); cloudReady.current=true; queueCloudSync(merged);
+      }catch(error){console.error('[planner-sticky] cloud load failed',error)}
+    };
+    void hydrate();
+    return()=>{cancelled=true};
+  },[db]);
+
   useEffect(()=>{
     if(!ready)return;
     if(saveTimer.current)clearTimeout(saveTimer.current);
-    saveTimer.current=setTimeout(()=>{try{localStorage.setItem(KEY,JSON.stringify(dataRef.current))}catch{}},300);
+    saveTimer.current=setTimeout(()=>{const snapshot=dataRef.current;try{localStorage.setItem(KEY,JSON.stringify(snapshot))}catch{};queueCloudSync(snapshot)},450);
     return()=>{if(saveTimer.current)clearTimeout(saveTimer.current)};
   },[data,ready]);
+
   useEffect(()=>{
     if(!ready)return;
-    const flush=()=>{try{localStorage.setItem(KEY,JSON.stringify(dataRef.current))}catch{}};
-    document.addEventListener('visibilitychange',flush);
-    window.addEventListener('pagehide',flush);
+    const flush=()=>{const snapshot=dataRef.current;try{localStorage.setItem(KEY,JSON.stringify(snapshot))}catch{};queueCloudSync(snapshot)};
+    document.addEventListener('visibilitychange',flush); window.addEventListener('pagehide',flush);
     return()=>{document.removeEventListener('visibilitychange',flush);window.removeEventListener('pagehide',flush);flush()};
   },[ready]);
+
   useEffect(()=>{const move=(e:PointerEvent)=>{if(!drag||!board.current)return;const r=board.current.getBoundingClientRect();const x=Math.max(8,Math.min(e.clientX-r.left-drag.dx,Math.max(8,r.width-270)));const y=Math.max(8,Math.min(e.clientY-r.top-drag.dy,Math.max(8,r.height-255)));setData(d=>({...d,notes:d.notes.map(n=>n.id===drag.id?{...n,x,y,updated:now()}:n)}))};const up=()=>setDrag(null);window.addEventListener('pointermove',move);window.addEventListener('pointerup',up);return()=>{window.removeEventListener('pointermove',move);window.removeEventListener('pointerup',up)}},[drag]);
 
   const page=data.pages.find(p=>p.id===data.activePageId)||data.pages[0];
