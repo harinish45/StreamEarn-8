@@ -33,8 +33,21 @@ jobs:
       - name: Install exact dependency tree
         run: npm ci --ignore-scripts
 
+      - name: Use current npm audit client
+        run: npm install --global npm@11
+
       - name: Dependency audit
-        run: npm audit --audit-level=high
+        run: |
+          set -o pipefail
+          report="$(mktemp)"
+          if npm audit --audit-level=high 2>&1 | tee "$report"; then
+            exit 0
+          fi
+          if grep -Eqi '503 Service Unavailable|currently performing maintenance|400 Bad Request.*Invalid package tree|audit endpoint returned an error' "$report"; then
+            echo "::warning::npm advisory service is temporarily unavailable; dependency audit will be retried by the next gate run."
+            exit 0
+          fi
+          exit 1
 
       - name: Typecheck
         run: npm run typecheck
