@@ -33,6 +33,9 @@ jobs:
       - name: Install exact dependency tree
         run: npm ci --ignore-scripts
 
+      - name: Use current npm audit client
+        run: npm install --global npm@11
+
       - name: Dependency audit
         run: npm audit --audit-level=high
 
