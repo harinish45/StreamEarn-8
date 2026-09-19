@@ -37,7 +37,19 @@ jobs:
         run: npm install --global npm@11
 
       - name: Dependency audit
-        run: npm audit --audit-level=high
+        run: |
+          set -e
+          for attempt in 1 2 3; do
+            echo "npm audit attempt $attempt/3"
+            if npm audit --audit-level=high; then
+              exit 0
+            fi
+            if [ "$attempt" -lt 3 ]; then
+              sleep $((attempt * 10))
+            fi
+          done
+          echo "Dependency audit failed after 3 attempts."
+          exit 1
 
       - name: Typecheck
         run: npm run typecheck
