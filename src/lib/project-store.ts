@@ -17,15 +17,18 @@ function fromRow(r:any,people:string[]=[]):Project{return {id:r.id,name:r.name,d
 function directRow(p:Project,userId:string){return {id:p.id,owner_id:userId,name:p.name,description:p.description,organization:p.organization,role:p.role,priority:p.priority,status:p.status,progress:p.progress,start_date:p.startDate||null,target_date:p.targetDate||null,phase:p.phase,tech_stack:p.techStack,repository:p.repository||'',live_url:p.liveUrl||'',next_action:p.nextAction,blockers:p.blockers,notes:p.notes,created_at:p.createdAt,updated_at:p.updatedAt,archived_at:p.archivedAt||null};}
 
 export async function listProjects(){
-  const {userId}=await getSessionClient();
-  // The identity is validated with Supabase Auth first. The service-role read is
-  // then strictly scoped to that authenticated owner so Project Management does
-  // not depend on browser-cookie RLS propagation during initial hydration.
-  const db=createSupabaseAdminClient();
+  const {sb,userId}=await getSessionClient();
+  // The server secret is optional. When it is unavailable (for example on
+  // Render), use the authenticated SSR client with the exact same owner scope.
+  const serverKey=process.env.SUPABASE_SECRET_KEY||process.env.SUPABASE_SERVICE_ROLE_KEY;
+  const db=serverKey?createSupabaseAdminClient():sb;
   const {data,error}=await db.from('projects').select(
     'id,name,description,organization,role,priority,status,progress,start_date,target_date,phase,tech_stack,repository,live_url,next_action,blockers,notes,created_at,updated_at,archived_at'
   ).eq('owner_id',userId).order('updated_at',{ascending:false});
-  if(error) throw new Error('Unable to load projects.');
+  if(error) {
+    console.error('[projects] list failed',error);
+    throw new Error('Unable to load projects.');
+  }
   return (data||[]).map((r:any)=>fromRow(r,[]));
 }
 
@@ -69,10 +72,14 @@ export async function deleteProject(id:string){
 }
 
 export async function listIdeas():Promise<Idea[]>{
-  const {userId}=await getSessionClient();
-  const db=createSupabaseAdminClient();
+  const {sb,userId}=await getSessionClient();
+  const serverKey=process.env.SUPABASE_SECRET_KEY||process.env.SUPABASE_SERVICE_ROLE_KEY;
+  const db=serverKey?createSupabaseAdminClient():sb;
   const {data,error}=await db.from('project_ideas').select('id,name,description,created_at,updated_at').eq('owner_id',userId).order('updated_at',{ascending:false});
-  if(error) throw new Error('Unable to load project ideas.');
+  if(error) {
+    console.error('[project-ideas] list failed',error);
+    throw new Error('Unable to load project ideas.');
+  }
   return (data||[]) as Idea[];
 }
 
