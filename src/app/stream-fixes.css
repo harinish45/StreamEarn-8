@@ -46,3 +46,41 @@ main .mx-auto.max-w-6xl article.group [class*="bottom-[calc(100%+9px)"] button {
   pointer-events: auto !important;
   touch-action: manipulation;
 }
+
+
+/* Global pointer-hit protection.
+   Keep the React application root above decorative body/theme layers and ensure
+   real interactive controls can receive mouse/touch input. Intentional modal
+   portals still manage their own z-index and pointer behavior. */
+html, body {
+  pointer-events: auto !important;
+}
+body > div {
+  position: relative;
+  z-index: 1;
+  pointer-events: auto !important;
+}
+body > div main,
+body > div header,
+body > div section,
+body > div nav,
+body > div aside,
+body > div footer,
+body > div form,
+body > div button,
+body > div a,
+body > div input,
+body > div textarea,
+body > div select,
+body > div [role="button"],
+body > div [role="menuitem"] {
+  pointer-events: auto;
+}
+body > div .theme-pet-layer,
+body > div .theme-sidebar-rope,
+body > div .click-effect,
+body > div .theme-pet-glow,
+body > div .theme-pet-orbit,
+body > div .theme-pet-spark {
+  pointer-events: none !important;
+}
