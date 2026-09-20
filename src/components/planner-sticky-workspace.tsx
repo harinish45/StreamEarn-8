@@ -11,7 +11,7 @@ type Page = { id:string; title:string; created:string; updated:string };
 type Persisted = { pages:Page[]; notes:Sticky[]; activePageId:string };
 
 const KEY='streamearn-planner-sticky-v5';
-const LEGACY_KEYS=['streamearn-planner-sticky-v5','streamearn-planner-sticky-wall-v3'];
+const LEGACY_KEYS=['streamearn-planner-sticky-v5','streamearn-planner-sticky-wall-v3','streamearn-planner-sticky-wall-v2'];
 const colors:Record<Palette,{p1:string;p2:string;fold:string}>={
   lemon:{p1:'#E9CD4E',p2:'#DDBB2E',fold:'#A98A20'},
   blush:{p1:'#EC7FA6',p2:'#E66E9B',fold:'#B24A73'},
@@ -41,13 +41,13 @@ function load():Persisted{
       const notes=Array.isArray(parsed.notes)?parsed.notes.filter(Boolean).map((n:any,i:number)=>({id:typeof n.id==='string'?n.id:uid(),pageId:ids.has(n.pageId)?n.pageId:pages[0].id,text:typeof n.text==='string'?n.text:'',color:validPalette(n.color),style:validPaper(n.style),x:Number.isFinite(n.x)?n.x:24+(i%4)*285,y:Number.isFinite(n.y)?n.y:24+(Math.floor(i/4)%5)*275,rotation:Number.isFinite(n.rotation)?n.rotation:0,done:Boolean(n.done),created:typeof n.created==='string'?n.created:now(),updated:typeof n.updated==='string'?n.updated:now(),archived:Boolean(n.archived)})):[]; 
       data={pages,notes,activePageId:ids.has(parsed.activePageId)?parsed.activePageId:pages[0].id};
     };
-    const v3=(parsed:any)=>{
+    const v2=(parsed:any)=>{\n      if(!Array.isArray(parsed))return;\n      const p=data.pages[0];\n      const notes=parsed.filter(Boolean).map((n:any,i:number)=>({id:typeof n.id==='string'?n.id:uid(),pageId:p.id,text:typeof n.text==='string'?n.text:'',color:validPalette(n.color),style:typeof n.style==='number'?(['plain','lined','grid','legal','stripe'][Math.max(0,Math.min(4,n.style-1))] as PaperStyle):validPaper(n.style),x:Number.isFinite(n.x)?n.x:24+(i%4)*285,y:Number.isFinite(n.y)?n.y:24+(Math.floor(i/4)%5)*275,rotation:Number.isFinite(n.rotation)?n.rotation:0,done:false,created:typeof n.created==='string'?n.created:now(),updated:typeof n.updated==='string'?n.updated:now(),archived:Boolean(n.archived)}));\n      data={...data,notes:[...data.notes,...notes]};\n    };\n    const v3=(parsed:any)=>{
       if(!Array.isArray(parsed))return;
       const p=data.pages[0];
       const notes=parsed.filter(Boolean).map((n:any,i:number)=>({id:typeof n.id==='string'?n.id:uid(),pageId:p.id,text:typeof n.text==='string'?n.text:'',color:validPalette(n.color),style:typeof n.style==='number'?(['plain','lined','grid','legal','stripe'][Math.max(0,Math.min(4,n.style-1))] as PaperStyle):validPaper(n.style),x:Number.isFinite(n.x)?n.x:24+(i%4)*285,y:Number.isFinite(n.y)?n.y:24+(Math.floor(i/4)%5)*275,rotation:Number.isFinite(n.rotation)?n.rotation:0,done:false,created:typeof n.created==='string'?n.created:now(),updated:typeof n.updated==='string'?n.updated:now(),archived:Boolean(n.archived)}));
       data={...data,notes:[...data.notes,...notes]};
     };
-    for(const key of LEGACY_KEYS){const raw=localStorage.getItem(key);if(!raw)continue;const parsed=JSON.parse(raw);if(key==='streamearn-planner-sticky-wall-v3')v3(parsed);else v5(parsed);}
+    for(const key of LEGACY_KEYS){const raw=localStorage.getItem(key);if(!raw)continue;const parsed=JSON.parse(raw);if(key==='streamearn-planner-sticky-wall-v3')v3(parsed);else if(key==='streamearn-planner-sticky-wall-v2')v2(parsed);else v5(parsed);}\n    const unique=new Map<string,Sticky>();\n    for(const note of data.notes){const old=unique.get(note.id);if(!old||new Date(note.updated).getTime()>=new Date(old.updated).getTime())unique.set(note.id,note);}\n    data={...data,notes:[...unique.values()]};
     return data;
   }catch{return makeEmpty()}
 }
