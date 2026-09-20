@@ -47,7 +47,10 @@ function load():Persisted{
       const notes=parsed.filter(Boolean).map((n:any,i:number)=>({id:typeof n.id==='string'?n.id:uid(),pageId:p.id,text:typeof n.text==='string'?n.text:'',color:validPalette(n.color),style:typeof n.style==='number'?(['plain','lined','grid','legal','stripe'][Math.max(0,Math.min(4,n.style-1))] as PaperStyle):validPaper(n.style),x:Number.isFinite(n.x)?n.x:24+(i%4)*285,y:Number.isFinite(n.y)?n.y:24+(Math.floor(i/4)%5)*275,rotation:Number.isFinite(n.rotation)?n.rotation:0,done:false,created:typeof n.created==='string'?n.created:now(),updated:typeof n.updated==='string'?n.updated:now(),archived:Boolean(n.archived)}));
       data={...data,notes:[...data.notes,...notes]};
     };
-    for(const key of LEGACY_KEYS){const raw=localStorage.getItem(key);if(!raw)continue;const parsed=JSON.parse(raw);if(key==='streamearn-planner-sticky-wall-v3')v3(parsed);else if(key==='streamearn-planner-sticky-wall-v2')v2(parsed);else v5(parsed);}\n    const unique=new Map<string,Sticky>();\n    for(const note of data.notes){const old=unique.get(note.id);if(!old||new Date(note.updated).getTime()>=new Date(old.updated).getTime())unique.set(note.id,note);}\n    data={...data,notes:[...unique.values()]};
+    for(const key of LEGACY_KEYS){const raw=localStorage.getItem(key);if(!raw)continue;const parsed=JSON.parse(raw);if(key==='streamearn-planner-sticky-wall-v3')v3(parsed);else if(key==='streamearn-planner-sticky-wall-v2')v2(parsed);else v5(parsed);}
+    const unique=new Map<string,Sticky>();
+    for(const note of data.notes){const old=unique.get(note.id);if(!old||new Date(note.updated).getTime()>=new Date(old.updated).getTime())unique.set(note.id,note);}
+    data={...data,notes:[...unique.values()]};
     return data;
   }catch{return makeEmpty()}
 }
