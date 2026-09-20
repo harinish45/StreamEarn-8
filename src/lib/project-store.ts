@@ -1,3 +1,4 @@
+import { createSupabaseAdminClient } from '@/lib/supabase/admin';
 import { createSupabaseServerClient } from '@/lib/supabase/server';
 
 export type ProjectStatus = 'idea' | 'planning' | 'in-progress' | 'blocked' | 'testing' | 'completed' | 'archived';
@@ -8,8 +9,12 @@ export type Idea = { id:string; name:string; description:string; created_at:stri
 async function getSessionClient(){
   const sb=await createSupabaseServerClient();
   const {data,error}=await sb.auth.getClaims();
-  const userId=typeof data?.claims?.sub==='string'?data.claims.sub:'';
-  if(error||!userId) throw new Error('Unauthorized');
+  let userId=typeof data?.claims?.sub==='string'?data.claims.sub:'';
+  if(error||!userId){
+    const fallback=await sb.auth.getUser();
+    userId=fallback.data.user?.id||'';
+  }
+  if(!userId) throw new Error('Unauthorized');
   return {sb,userId};
 }
 
@@ -18,9 +23,12 @@ function directRow(p:Project,userId:string){return {id:p.id,owner_id:userId,name
 
 export async function listProjects(){
   const {sb,userId}=await getSessionClient();
-  // Use the verified SSR session after getClaims; keep the normal authenticated
-  // RLS path and avoid requiring a server-only secret for project reads.
-  const {data,error}=await sb.from('projects').select(
+  // Authentication is established from the SSR session first. If the server
+  // secret is configured, use it only for the owner-scoped read to avoid JWT
+  // clock-skew failures at PostgREST; otherwise retain the authenticated RLS path.
+  const serverKey=process.env.SUPABASE_SECRET_KEY||process.env.SUPABASE_SERVICE_ROLE_KEY;
+  const db=serverKey?createSupabaseAdminClient():sb;
+  const {data,error}=await db.from('projects').select(
     'id,name,description,organization,role,priority,status,progress,start_date,target_date,phase,tech_stack,repository,live_url,next_action,blockers,notes,created_at,updated_at,archived_at'
   ).eq('owner_id',userId).order('updated_at',{ascending:false});
   if(error) {
@@ -71,7 +79,9 @@ export async function deleteProject(id:string){
 
 export async function listIdeas():Promise<Idea[]>{
   const {sb,userId}=await getSessionClient();
-  const {data,error}=await sb.from('project_ideas').select('id,name,description,created_at,updated_at').eq('owner_id',userId).order('updated_at',{ascending:false});
+  const serverKey=process.env.SUPABASE_SECRET_KEY||process.env.SUPABASE_SERVICE_ROLE_KEY;
+  const db=serverKey?createSupabaseAdminClient():sb;
+  const {data,error}=await db.from('project_ideas').select('id,name,description,created_at,updated_at').eq('owner_id',userId).order('updated_at',{ascending:false});
   if(error) {
     console.error('[project-ideas] list failed',error);
     throw new Error('Unable to load project ideas.');
