@@ -18,11 +18,10 @@ function directRow(p:Project,userId:string){return {id:p.id,owner_id:userId,name
 
 export async function listProjects(){
   const {sb,userId}=await getSessionClient();
-  // The server secret is optional. When it is unavailable (for example on
-  // Render), use the authenticated SSR client with the exact same owner scope.
-  const serverKey=process.env.SUPABASE_SECRET_KEY||process.env.SUPABASE_SERVICE_ROLE_KEY;
-  const db=serverKey?createSupabaseAdminClient():sb;
-  const {data,error}=await db.from('projects').select(
+  // Project reads use the server-side Supabase secret after the user is
+  // authenticated above. This avoids transient browser JWT clock-skew failures
+  // from PostgREST while preserving the exact owner_id scope.
+  const {data,error}=await createSupabaseAdminClient().from('projects').select(
     'id,name,description,organization,role,priority,status,progress,start_date,target_date,phase,tech_stack,repository,live_url,next_action,blockers,notes,created_at,updated_at,archived_at'
   ).eq('owner_id',userId).order('updated_at',{ascending:false});
   if(error) {
@@ -73,9 +72,7 @@ export async function deleteProject(id:string){
 
 export async function listIdeas():Promise<Idea[]>{
   const {sb,userId}=await getSessionClient();
-  const serverKey=process.env.SUPABASE_SECRET_KEY||process.env.SUPABASE_SERVICE_ROLE_KEY;
-  const db=serverKey?createSupabaseAdminClient():sb;
-  const {data,error}=await db.from('project_ideas').select('id,name,description,created_at,updated_at').eq('owner_id',userId).order('updated_at',{ascending:false});
+  const {data,error}=await createSupabaseAdminClient().from('project_ideas').select('id,name,description,created_at,updated_at').eq('owner_id',userId).order('updated_at',{ascending:false});
   if(error) {
     console.error('[project-ideas] list failed',error);
     throw new Error('Unable to load project ideas.');
