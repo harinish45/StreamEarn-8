@@ -3,6 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { ThemeSettings } from '@/components/theme-settings';
 import { MfaSettings } from '@/components/mfa-settings';
 import { ApiTokensSettings } from '@/components/api-tokens-settings';
+import { IntegrationsSettings } from '@/components/integrations-settings';
 
 export const metadata = { title: 'Settings | StreamEarn' };
 
@@ -28,6 +29,12 @@ export default function SettingsPage() {
             <p className="mb-4 text-xs text-muted-foreground">Optional -- once enabled, sign-in requires both your password and a code from your authenticator app.</p>
             <MfaSettings />
           </div>
+        </CardContent>
+      </Card>
+      <Card className="themed-card">
+        <CardHeader><CardTitle>Integrations</CardTitle></CardHeader>
+        <CardContent>
+          <IntegrationsSettings />
         </CardContent>
       </Card>
       <Card className="themed-card">
