@@ -393,55 +393,86 @@ export function OpportunityTypePage({ kind }: { kind: Kind }) {
 
   return <>
     <Header showSidebarTrigger />
-    <main className="mx-auto w-full max-w-[1380px] px-3 pb-10 pt-3 sm:px-5 lg:px-7">
-      <section className="rounded-2xl border bg-card p-5 sm:p-6">
-        <div className="flex flex-wrap items-start justify-between gap-4">
+    <main className="mx-auto w-full max-w-[1440px] px-3 pb-12 pt-4 sm:px-5 lg:px-7">
+      <section className={`relative overflow-hidden rounded-[26px] border border-border/70 bg-card ${isProgram ? 'bg-[radial-gradient(circle_at_85%_0%,rgba(217,70,239,.16),transparent_28%)]' : isIntern ? 'bg-[radial-gradient(circle_at_85%_0%,rgba(34,211,238,.14),transparent_28%)]' : 'bg-[radial-gradient(circle_at_85%_0%,rgba(52,211,153,.14),transparent_28%)]'}`}>
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_10%_0%,hsl(var(--text-accent)/.12),transparent_32%)]" />
+        <div className="relative grid gap-6 p-5 md:grid-cols-[minmax(0,1fr)_280px] md:p-7 lg:p-8">
           <div>
-            <div className="flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[.16em] text-primary">
-              {isIntern ? <BriefcaseBusiness className="h-4 w-4" /> : isScholarship ? <GraduationCap className="h-4 w-4" /> : <Lightbulb className="h-4 w-4" />}
-              {isProgram ? 'Verified Program Radar' : isIntern ? 'Verified Internship Radar' : 'Verified Scholarship Radar'}
+            <div className="flex flex-wrap items-center gap-2 text-[9px] font-semibold uppercase tracking-[.18em] text-primary">
+              {isIntern ? <BriefcaseBusiness className="h-3.5 w-3.5" /> : isScholarship ? <GraduationCap className="h-3.5 w-3.5" /> : <Lightbulb className="h-3.5 w-3.5" />}
+              {isProgram ? 'Opportunity Programs' : isIntern ? 'Career Opportunities' : 'Student Funding'}
+              <span className="rounded-full border border-border bg-background/45 px-2 py-1 text-muted-foreground">
+                Verified radar
+              </span>
             </div>
-            <h1 className="mt-2 text-3xl font-bold">{heading}</h1>
-            <p className="mt-1 max-w-4xl text-sm text-muted-foreground">{radarDescription}</p>
+            <h1 className="mt-3 font-serif text-4xl italic tracking-tight md:text-5xl">{heading}</h1>
+            <p className="mt-2 max-w-3xl text-xs leading-5 text-muted-foreground md:text-sm">
+              {radarDescription}
+            </p>
+
+            <div className="mt-5 flex flex-wrap gap-2">
+              {[
+                ['All', records.length],
+                ['Open now', records.filter((x) => x.opening === 'Open now').length],
+                ['Upcoming', records.filter((x) => x.opening === 'Upcoming').length],
+              ].map(([label, count]) => (
+                <button
+                  key={String(label)}
+                  type="button"
+                  onClick={() => setOpening(label as 'All' | Opening)}
+                  className={`rounded-xl border px-3 py-2 text-left transition ${opening === label ? 'border-primary/40 bg-primary/10' : 'border-border bg-background/40 hover:border-primary/30'}`}
+                >
+                  <div className="text-[9px] uppercase tracking-[.14em] text-muted-foreground">{label}</div>
+                  <div className="mt-0.5 text-sm font-semibold">{count}</div>
+                </button>
+              ))}
+            </div>
           </div>
-          <div className="rounded-xl border bg-background px-4 py-3 text-center">
-            <div className="text-2xl font-semibold">{records.length}</div>
-            <div className="text-[10px] text-muted-foreground">{isProgram ? 'listed programs' : 'verified active'}</div>
+
+          <div className="relative hidden overflow-hidden rounded-2xl border border-border/70 bg-background/40 md:block">
+            <img src={visual(heading, kind, kind)} alt="" className="h-full min-h-44 w-full object-cover opacity-90" />
+            <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/75 via-black/25 to-transparent p-4">
+              <div className="text-[9px] font-semibold uppercase tracking-[.16em] text-white/65">Opportunity radar</div>
+              <div className="mt-1 text-sm font-semibold text-white">{records.length} items to review</div>
+              <div className="mt-1 text-[10px] leading-4 text-white/70">Use the filters below to narrow the next action.</div>
+            </div>
           </div>
         </div>
+      </section>
 
-        <div className="mt-4 flex flex-col gap-2 lg:flex-row">
-          <div className="relative flex-1">
+      <section className="mt-4 rounded-2xl border border-border/70 bg-card/75 p-3 md:p-4">
+        <div className="flex flex-col gap-3 xl:flex-row xl:items-center">
+          <div className="relative min-w-0 flex-1">
             <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-            <Input value={q} onChange={(e) => setQ(e.target.value)} className="h-10 pl-9" placeholder={isProgram ? 'Search program, organization, skill, category…' : 'Search role, skill, company, location…'} />
+            <Input value={q} onChange={(e) => setQ(e.target.value)} className="h-10 border-border/70 bg-background/55 pl-9" placeholder={isProgram ? 'Search program, organization, skill, category…' : 'Search role, skill, company, location…'} />
           </div>
-          <div className="flex gap-1 rounded-lg border bg-background p-1">
+          <div className="flex gap-1 rounded-xl border border-border/70 bg-background/45 p-1">
             <Button size="sm" variant={view === 'list' ? 'secondary' : 'ghost'} onClick={() => setView('list')}>List</Button>
             <Button size="sm" variant={view === 'grid' ? 'secondary' : 'ghost'} onClick={() => setView('grid')}>Grid</Button>
           </div>
         </div>
-      </section>
 
-      {isProgram && (
-        <section className="mt-3 flex flex-wrap gap-1.5">
-          {programTypes.map((type) => (
-            <Button key={type} size="sm" variant={programType === type ? 'default' : 'outline'} className="h-8" onClick={() => setProgramType(type)}>
-              {type !== 'All' && iconForProgram(type)}
-              {type}
-            </Button>
+        {isProgram && (
+          <div className="mt-3 flex gap-1.5 overflow-x-auto pb-1">
+            {programTypes.map((type) => (
+              <Button key={type} size="sm" variant={programType === type ? 'default' : 'outline'} className="h-8 shrink-0" onClick={() => setProgramType(type)}>
+                {type !== 'All' && iconForProgram(type)}
+                {type}
+              </Button>
+            ))}
+          </div>
+        )}
+
+        <div className="mt-2 flex gap-1.5 overflow-x-auto pb-1">
+          <Button size="sm" variant={opening === 'All' ? 'default' : 'outline'} className="h-8 shrink-0" onClick={() => setOpening('All')}>All</Button>
+          {(Object.keys(rank) as Opening[]).map((status) => (
+            <Button size="sm" key={status} variant={opening === status ? 'default' : 'outline'} className="h-8 shrink-0" onClick={() => setOpening(status)}>{status}</Button>
           ))}
-        </section>
-      )}
-
-      <section className="mt-3 flex flex-wrap gap-1.5">
-        <Button size="sm" variant={opening === 'All' ? 'default' : 'outline'} className="h-8" onClick={() => setOpening('All')}>All</Button>
-        {(Object.keys(rank) as Opening[]).map((status) => (
-          <Button size="sm" key={status} variant={opening === status ? 'default' : 'outline'} className="h-8" onClick={() => setOpening(status)}>{status}</Button>
-        ))}
+        </div>
       </section>
 
       {filtered.length === 0 ? (
-        <section className="mt-3 rounded-2xl border border-dashed bg-card p-12 text-center">
+        <section className="mt-4 rounded-2xl border border-dashed bg-card p-12 text-center">
           <Filter className="mx-auto h-7 w-7 text-muted-foreground" />
           <h2 className="mt-3 font-semibold">No matching {kind.toLowerCase()} right now</h2>
           <p className="mx-auto mt-2 max-w-2xl text-sm text-muted-foreground">
@@ -454,57 +485,62 @@ export function OpportunityTypePage({ kind }: { kind: Kind }) {
           )}
         </section>
       ) : (
-        <section className={view === 'grid' ? 'mt-3 grid gap-3 sm:grid-cols-2 xl:grid-cols-3' : 'mt-3 space-y-2'}>
+        <section className={view === 'grid' ? 'mt-4 grid gap-3 sm:grid-cols-2 xl:grid-cols-3' : 'mt-4 space-y-3'}>
           {filtered.map((item) => {
             const personalStatus = tracker[item.id] || 'Not reviewed';
             const saved = personalStatus === 'Saved for later';
 
             return (
-              <article key={item.id} className="overflow-hidden rounded-xl border bg-card transition hover:border-primary/40">
-                {view === 'grid' && (
-                  <div className="relative">
-                    <img src={visual(item.title, item.kind, item.seed)} alt="" className="h-28 w-full object-cover" loading="lazy" />
-                    <Badge className="absolute left-2 top-2">{item.opening}</Badge>
-                    {item.programType && <Badge variant="secondary" className="absolute right-2 top-2">{item.programType}</Badge>}
-                  </div>
-                )}
-
-                <div className="p-4">
-                  <div className="flex items-start gap-3">
-                    <div className="grid h-9 w-9 shrink-0 place-items-center rounded-lg border bg-muted text-[10px] font-bold">{mark(item.org)}</div>
-                    <div className="min-w-0 flex-1">
-                      <p className="text-xs font-semibold">{item.org}</p>
-                      <p className="mt-0.5 text-[10px] text-muted-foreground">Official source • {item.location} • {item.mode}</p>
+              <article key={item.id} className="group overflow-hidden rounded-2xl border border-border/80 bg-card transition duration-200 hover:-translate-y-0.5 hover:border-primary/35 hover:shadow-[0_16px_42px_rgba(0,0,0,.12)]">
+                <div className={view === 'grid' ? 'block' : 'grid md:grid-cols-[168px_minmax(0,1fr)]'}>
+                  <div className={view === 'grid' ? 'relative' : 'relative hidden overflow-hidden border-r border-border/70 md:block'}>
+                    <img src={visual(item.title, item.kind, item.seed)} alt="" className={view === 'grid' ? 'h-32 w-full object-cover' : 'h-full min-h-56 w-full object-cover'} loading="lazy" />
+                    <div className="absolute inset-x-0 top-0 flex items-center justify-between gap-2 p-2.5">
+                      <Badge>{item.opening}</Badge>
+                      {item.programType && <Badge variant="secondary">{item.programType}</Badge>}
                     </div>
-                    <Button size="icon" variant={saved ? 'default' : 'ghost'} className="h-8 w-8" onClick={() => save(item.id, saved ? 'Not reviewed' : 'Saved for later')}>
-                      <Heart className={`h-4 w-4 ${saved ? 'fill-current' : ''}`} />
-                    </Button>
                   </div>
 
-                  <div className="mt-3 flex flex-wrap gap-2">
-                    <Badge>{item.opening}</Badge>
-                    {item.programType && <Badge variant="outline" className="inline-flex items-center gap-1">{iconForProgram(item.programType)}{item.programType}</Badge>}
-                    {item.deadline && <Badge variant="outline">Deadline {item.deadline}</Badge>}
-                  </div>
+                  <div className="p-4 md:p-5">
+                    <div className="flex items-start gap-3">
+                      <div className="grid h-9 w-9 shrink-0 place-items-center rounded-xl border border-border/70 bg-background/60 text-[10px] font-bold">{mark(item.org)}</div>
+                      <div className="min-w-0 flex-1">
+                        <div className="flex flex-wrap items-center gap-2">
+                          <p className="text-xs font-semibold">{item.org}</p>
+                          <span className="text-[9px] text-muted-foreground">Official source</span>
+                        </div>
+                        <p className="mt-0.5 text-[10px] text-muted-foreground">{item.location} • {item.mode}</p>
+                      </div>
+                      <Button size="icon" variant={saved ? 'default' : 'ghost'} className="h-8 w-8 shrink-0" onClick={() => save(item.id, saved ? 'Not reviewed' : 'Saved for later')}>
+                        <Heart className={`h-4 w-4 ${saved ? 'fill-current' : ''}`} />
+                      </Button>
+                    </div>
 
-                  <h2 className="mt-3 text-base font-semibold">{item.title}</h2>
-                  <p className="mt-1 text-xs font-medium text-primary">{item.focus}</p>
-                  <p className="mt-2 text-xs leading-5 text-muted-foreground">{item.summary}</p>
+                    <div className="mt-3 flex flex-wrap gap-2">
+                      <Badge>{item.opening}</Badge>
+                      {item.programType && <Badge variant="outline" className="inline-flex items-center gap-1">{iconForProgram(item.programType)}{item.programType}</Badge>}
+                      {item.deadline && <Badge variant="outline">Deadline {item.deadline}</Badge>}
+                    </div>
 
-                  <div className="mt-3 rounded-lg border bg-muted/30 p-2.5">
-                    <p className="text-[10px] font-semibold uppercase tracking-wide text-muted-foreground">Eligibility</p>
-                    <p className="mt-1 text-xs leading-5">{item.eligibility}</p>
-                  </div>
+                    <h2 className="mt-3 text-lg font-semibold tracking-tight">{item.title}</h2>
+                    <p className="mt-1 text-[10px] font-semibold uppercase tracking-[.08em] text-primary">{item.focus}</p>
+                    <p className="mt-2 text-xs leading-5 text-muted-foreground">{item.summary}</p>
 
-                  <div className="mt-3 flex flex-wrap items-center justify-between gap-2">
-                    <span className="text-[10px] text-muted-foreground">{item.benefit}</span>
-                    <div className="flex items-center gap-2">
-                      <select value={personalStatus} onChange={(e) => save(item.id, e.target.value as Personal)} className="h-8 rounded-md border bg-background px-2 text-[10px]">
-                        {['Not reviewed', 'Interested', 'Applied', 'Interview / Selection', 'Selected', 'Not selected', 'Saved for later'].map((status) => <option key={status}>{status}</option>)}
-                      </select>
-                      <a href={item.url} target="_blank" rel="noopener noreferrer" className="inline-flex h-8 items-center gap-1 rounded-md border px-2 text-[10px] font-medium hover:bg-muted">
-                        Open official source <ExternalLink className="h-3 w-3" />
-                      </a>
+                    <div className="mt-3 rounded-xl border border-border/70 bg-background/45 p-3">
+                      <p className="text-[9px] font-semibold uppercase tracking-[.14em] text-muted-foreground">Eligibility</p>
+                      <p className="mt-1 text-xs leading-5">{item.eligibility}</p>
+                    </div>
+
+                    <div className="mt-3 flex flex-col gap-2 border-t border-border/70 pt-3 sm:flex-row sm:items-center sm:justify-between">
+                      <span className="text-[10px] leading-4 text-muted-foreground">{item.benefit}</span>
+                      <div className="flex flex-wrap items-center gap-2">
+                        <select value={personalStatus} onChange={(e) => save(item.id, e.target.value as Personal)} className="h-8 rounded-lg border border-border/70 bg-background/55 px-2 text-[10px]">
+                          {['Not reviewed', 'Interested', 'Applied', 'Interview / Selection', 'Selected', 'Not selected', 'Saved for later'].map((status) => <option key={status}>{status}</option>)}
+                        </select>
+                        <a href={item.url} target="_blank" rel="noopener noreferrer" className="inline-flex h-8 items-center gap-1 rounded-lg border border-border/70 bg-background/55 px-2.5 text-[10px] font-medium hover:border-primary/40 hover:bg-primary/5">
+                          Open official source <ExternalLink className="h-3 w-3" />
+                        </a>
+                      </div>
                     </div>
                   </div>
                 </div>
