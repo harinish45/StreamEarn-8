@@ -1,4 +1,3 @@
-import { createSupabaseAdminClient } from '@/lib/supabase/admin';
 import { createSupabaseServerClient } from '@/lib/supabase/server';
 
 export type ProjectStatus = 'idea' | 'planning' | 'in-progress' | 'blocked' | 'testing' | 'completed' | 'archived';
@@ -8,9 +7,10 @@ export type Idea = { id:string; name:string; description:string; created_at:stri
 
 async function getSessionClient(){
   const sb=await createSupabaseServerClient();
-  const {data:{user},error}=await sb.auth.getUser();
-  if(error||!user) throw new Error('Unauthorized');
-  return {sb,userId:user.id};
+  const {data,error}=await sb.auth.getClaims();
+  const userId=typeof data?.claims?.sub==='string'?data.claims.sub:'';
+  if(error||!userId) throw new Error('Unauthorized');
+  return {sb,userId};
 }
 
 function fromRow(r:any,people:string[]=[]):Project{return {id:r.id,name:r.name,description:r.description||'',people,organization:r.organization||'',role:r.role||'',priority:r.priority,status:r.status,progress:Number(r.progress||0),startDate:r.start_date||undefined,targetDate:r.target_date||undefined,phase:r.phase||'',techStack:Array.isArray(r.tech_stack)?r.tech_stack:[],repository:r.repository||undefined,liveUrl:r.live_url||undefined,nextAction:r.next_action||'',blockers:Array.isArray(r.blockers)?r.blockers:[],notes:Array.isArray(r.notes)?r.notes:[],createdAt:r.created_at,updatedAt:r.updated_at,archivedAt:r.archived_at||undefined};}
@@ -18,10 +18,9 @@ function directRow(p:Project,userId:string){return {id:p.id,owner_id:userId,name
 
 export async function listProjects(){
   const {sb,userId}=await getSessionClient();
-  // Project reads use the server-side Supabase secret after the user is
-  // authenticated above. This avoids transient browser JWT clock-skew failures
-  // from PostgREST while preserving the exact owner_id scope.
-  const {data,error}=await createSupabaseAdminClient().from('projects').select(
+  // Use the verified SSR session after getClaims; keep the normal authenticated
+  // RLS path and avoid requiring a server-only secret for project reads.
+  const {data,error}=await sb.from('projects').select(
     'id,name,description,organization,role,priority,status,progress,start_date,target_date,phase,tech_stack,repository,live_url,next_action,blockers,notes,created_at,updated_at,archived_at'
   ).eq('owner_id',userId).order('updated_at',{ascending:false});
   if(error) {
@@ -72,7 +71,7 @@ export async function deleteProject(id:string){
 
 export async function listIdeas():Promise<Idea[]>{
   const {sb,userId}=await getSessionClient();
-  const {data,error}=await createSupabaseAdminClient().from('project_ideas').select('id,name,description,created_at,updated_at').eq('owner_id',userId).order('updated_at',{ascending:false});
+  const {data,error}=await sb.from('project_ideas').select('id,name,description,created_at,updated_at').eq('owner_id',userId).order('updated_at',{ascending:false});
   if(error) {
     console.error('[project-ideas] list failed',error);
     throw new Error('Unable to load project ideas.');
