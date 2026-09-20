@@ -1,6 +1,8 @@
 name: Projects Root Cause Validation
 
 on:
+  pull_request:
+    branches: [main]
   push:
     branches: [projects-root-cause-fix]
     paths:
