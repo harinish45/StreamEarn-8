@@ -4,7 +4,7 @@ import { createSupabaseAdminClient } from '@/lib/supabase/admin';
 import { createSupabaseServerClient } from '@/lib/supabase/server';
 import { rejectCrossOrigin } from '@/lib/security';
 import { cronAuthorized } from '@/lib/scheduler-auth';
-import { isSchedulerCategory } from '@/lib/scheduler-categories';
+import { isAutomatedSchedulerCategory, isSchedulerCategory } from '@/lib/scheduler-categories';
 import { schedulerItemCreateSchema } from '@/lib/api-validation';
 
 export const runtime = 'nodejs';
@@ -21,16 +21,9 @@ export async function GET(request: NextRequest) {
   }
 
   try {
-    // User-facing scheduler reads use the authenticated Supabase session.
-    // The cron/service-role client is reserved for the append job below.
+    // Scheduler reads are intentionally available through the table's
+    // public SELECT policy. Manual deletion remains authenticated below.
     const sb = await createSupabaseServerClient();
-    const { data: { user } } = await sb.auth.getUser();
-    if (!user) {
-      return NextResponse.json({ error: 'Authentication required' }, {
-        status: 401,
-        headers: { 'Cache-Control': 'no-store' },
-      });
-    }
 
     let q = sb.from('scheduler_items')
       .select('id,category,title,description,source,url,published_at,created_at')
@@ -86,6 +79,12 @@ export async function POST(request: NextRequest) {
     if (!isSchedulerCategory(body.category)) {
       return NextResponse.json({ error: 'Invalid category' }, {
         status: 400,
+        headers: { 'Cache-Control': 'no-store' },
+      });
+    }
+    if (!isAutomatedSchedulerCategory(body.category)) {
+      return NextResponse.json({ error: 'Scheduled append is limited to AI News, Internships, and Scholarships' }, {
+        status: 403,
         headers: { 'Cache-Control': 'no-store' },
       });
     }
