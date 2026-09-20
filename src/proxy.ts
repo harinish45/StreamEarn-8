@@ -98,7 +98,7 @@ function security(response: NextResponse, request: NextRequest) {
     try { return new URL(process.env.NEXT_PUBLIC_SUPABASE_URL || '').origin; } catch { return ''; }
   })();
   const connectSources = supabaseOrigin ? ` ${supabaseOrigin} wss://${new URL(supabaseOrigin).hostname}` : '';
-  response.headers.set('Content-Security-Policy', `default-src 'self'; base-uri 'self'; frame-ancestors 'none'; object-src 'none'; form-action 'self'; img-src 'self' data: blob: https://picsum.photos https://fastly.picsum.photos; font-src 'self' data: https://fonts.gstatic.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; script-src 'self' 'unsafe-inline'${supabaseOrigin ? ` ${supabaseOrigin}` : ''}; connect-src 'self'${connectSources}; frame-src 'self'${supabaseOrigin}; upgrade-insecure-requests`);
+  response.headers.set('Content-Security-Policy', `default-src 'self'; base-uri 'self'; frame-ancestors 'none'; object-src 'none'; form-action 'self'; img-src 'self' data: blob: https://picsum.photos https://fastly.picsum.photos; font-src 'self' data: https://fonts.gstatic.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; script-src 'self' 'unsafe-inline'; connect-src 'self'${connectSources}; frame-src 'self'${supabaseOrigin}; upgrade-insecure-requests`);
   response.headers.set('Cache-Control', request.nextUrl.pathname.startsWith('/api/') ? 'private, no-store' : 'no-cache');
   response.headers.set('X-Robots-Tag', 'noindex, nofollow, noarchive');
   if (request.nextUrl.protocol === 'https:') response.headers.set('Strict-Transport-Security', 'max-age=31536000; includeSubDomains; preload');
