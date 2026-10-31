@@ -84,3 +84,23 @@ body > div .theme-pet-orbit,
 body > div .theme-pet-spark {
   pointer-events: none !important;
 }
+
+/* Live Stream chat reaction animations */
+@keyframes floatUpAndFade {
+  0% {
+    opacity: 1;
+    transform: translateY(0) scale(0.8);
+  }
+  50% {
+    opacity: 0.9;
+    transform: translateY(-80px) scale(1.2);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-160px) scale(1.4);
+  }
+}
+
+.animate-floating-emoji {
+  animation: floatUpAndFade 1.8s ease-out forwards;
+}

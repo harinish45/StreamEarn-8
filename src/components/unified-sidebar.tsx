@@ -2,11 +2,12 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Compass, LayoutDashboard, Library, Newspaper, Search, ShieldCheck, Sparkles, WalletCards, BriefcaseBusiness, ClipboardList, FolderKanban, Lightbulb } from 'lucide-react';
+import { Compass, LayoutDashboard, Library, Newspaper, Search, ShieldCheck, Sparkles, WalletCards, BriefcaseBusiness, ClipboardList, FolderKanban, Lightbulb, Radio, Video } from 'lucide-react';
 import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem, SidebarSeparator } from '@/components/ui/sidebar';
 
 const groups = [
  {label:'Overview',items:[{href:'/',label:'Command Center',icon:LayoutDashboard},{href:'/news',label:'AI Tech News',icon:Newspaper}]},
+ {label:'Streaming',items:[{href:'/stream',label:'Live Stream',icon:Radio},{href:'/creator',label:'Creator Studio',icon:Video}]},
  {label:'AI Intelligence',items:[{href:'/ai-tools',label:'AI Tools',icon:Sparkles},{href:'/hub',label:'Resource Hub',icon:Library}]},
  {label:'Build & Earn',items:[{href:'/earnings',label:'Earning Opportunities',icon:WalletCards},{href:'/directory',label:'Directory',icon:Compass}]},
  {label:'Opportunities',items:[{href:'/internships',label:'Internships',icon:BriefcaseBusiness},{href:'/scholarships',label:'Scholarships',icon:Sparkles},{href:'/programs',label:'Programs',icon:Lightbulb}]},
