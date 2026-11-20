@@ -38,7 +38,6 @@ const searchConfig = {
 const limit = 12;
 const maxBytes = 2 * 1024 * 1024;
 const RETRIES = 4;
-const FUTURE_DATE_TOLERANCE_MS = 6 * 60 * 60 * 1000;
 
 const clean = (v, max) => typeof v === 'string'
   ? v.replace(/<[^>]*>/g, ' ').replace(/[\u0000-\u001F\u007F]/g, ' ').replace(/\s+/g, ' ').trim().slice(0, max)
@@ -169,7 +168,7 @@ async function main() {
 
             const publishedTime = new Date(item.published).getTime();
             if (!Number.isFinite(publishedTime)) continue;
-            if (publishedTime < cutoff || publishedTime > now + FUTURE_DATE_TOLERANCE_MS) continue;
+            if (publishedTime < cutoff || publishedTime > now) continue;
 
             const candidate = { ...item, publishedAt: new Date(publishedTime).toISOString() };
             const previous = candidatesByUrl.get(candidate.url);
