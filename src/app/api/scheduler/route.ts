@@ -28,6 +28,9 @@ export async function GET(request: NextRequest) {
     let q = sb.from('scheduler_items')
       .select('id,category,title,description,source,url,published_at,created_at')
       .is('archived_at', null)
+      // Sort by the actual publication date, not by when the automation inserted it.
+      // Null publication dates fall behind dated items; created_at breaks ties/fills order.
+      .order('published_at', { ascending: false, nullsFirst: false })
       .order('created_at', { ascending: false })
       .range(offset, offset + limit);
 
